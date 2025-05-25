@@ -16,8 +16,8 @@ function Router() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center">
-          <div className="w-16 h-16 bg-primary-100 rounded-full mx-auto mb-4 flex items-center justify-center animate-pulse-soft">
-            <i className="fas fa-cube text-primary-600 text-2xl"></i>
+          <div className="w-16 h-16 bg-primary/10 rounded-full mx-auto mb-4 flex items-center justify-center animate-pulse">
+            <div className="w-8 h-8 bg-primary rounded"></div>
           </div>
           <p className="text-slate-600">Loading FormBuilder Pro...</p>
         </div>
