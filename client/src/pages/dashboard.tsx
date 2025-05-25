@@ -8,7 +8,9 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import Navigation from "@/components/navigation";
-import { Plus, Search, FileText, Calendar, User } from "lucide-react";
+import NewFormDialog from "@/components/form-builder/new-form-dialog";
+import JSONValidatorDialog from "@/components/form-builder/json-validator-dialog";
+import { Plus, Search, FileText, Calendar, User, FileCheck } from "lucide-react";
 import type { Form, FormTemplate } from "@shared/schema";
 
 export default function Dashboard() {
@@ -65,12 +67,15 @@ export default function Dashboard() {
             <h1 className="text-3xl font-bold text-slate-900">Dashboard</h1>
             <p className="text-slate-600 mt-1">Manage your forms and templates</p>
           </div>
-          <Link href="/form-builder">
-            <Button className="enterprise-gradient">
-              <Plus className="w-4 h-4 mr-2" />
-              New Form
-            </Button>
-          </Link>
+          <div className="flex gap-3">
+            <JSONValidatorDialog />
+            <NewFormDialog 
+              onCreateForm={(config) => {
+                // Navigate to form builder with the new form config
+                window.location.href = `/form-builder?menuId=${config.menuId}&label=${config.label}&width=${config.formWidth}&layout=${config.layout}`;
+              }}
+            />
+          </div>
         </div>
 
         {/* Stats Cards */}
