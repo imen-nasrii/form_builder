@@ -234,79 +234,34 @@ export default function FormBuilder() {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <div className="min-h-screen bg-white">
         <Navigation />
         
-        {/* Modern Header Bar */}
-        <div className="bg-white/80 backdrop-blur-sm border-b border-slate-200/50 px-6 py-4 shadow-sm">
+        {/* Simple Header */}
+        <div className="bg-white border-b px-4 py-3">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                Form Builder Pro
-              </h1>
-              <p className="text-sm text-slate-600 mt-1">
-                Drag components • Build forms • Generate JSON • Export code
-              </p>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleValidate}
-                disabled={validateFormMutation.isPending}
-                className="gap-2 hover:bg-green-50 hover:border-green-200"
-              >
-                <Eye className="w-4 h-4" />
-                Validate
-              </Button>
-              
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleSave}
-                disabled={saveFormMutation.isPending}
-                className="gap-2 hover:bg-blue-50 hover:border-blue-200"
-              >
+            <h1 className="text-lg font-semibold text-gray-900">Form Builder</h1>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" onClick={handleSave}>
                 <Save className="w-4 h-4" />
-                {saveFormMutation.isPending ? "Saving..." : "Save"}
               </Button>
-              
-              <div className="relative">
-                <input
-                  type="file"
-                  accept=".json"
-                  onChange={handleImport}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                />
-                <Button variant="outline" size="sm" className="gap-2 hover:bg-purple-50 hover:border-purple-200">
-                  <Upload className="w-4 h-4" />
-                  Import
-                </Button>
-              </div>
-              
               <MultiFrameworkExport 
                 formData={generateLiveJson()}
-                trigger={
-                  <Button size="sm" className="gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
-                    <Code2 className="w-4 h-4" />
-                    Export Code
-                  </Button>
-                }
+                trigger={<Button size="sm"><Code2 className="w-4 h-4" /></Button>}
               />
             </div>
           </div>
         </div>
 
-        {/* Main Workspace */}
-        <div className="flex h-[calc(100vh-140px)]">
-          {/* Component Palette - Sleek Sidebar */}
-          <div className="w-72 bg-white/90 backdrop-blur-sm border-r border-slate-200/50 shadow-sm">
+        {/* Clean Layout */}
+        <div className="flex h-[calc(100vh-120px)]">
+          {/* Components */}
+          <div className="w-60 bg-gray-50 border-r p-3">
             <ComponentPalette onAddField={addField} />
           </div>
 
-          {/* Center: Form Canvas */}
-          <div className="flex-1 bg-white/40 backdrop-blur-sm">
+          {/* Form Canvas */}
+          <div className="flex-1 bg-white p-4">
             <FormCanvas
               formData={formData}
               selectedField={selectedField}
@@ -317,91 +272,30 @@ export default function FormBuilder() {
             />
           </div>
 
-          {/* Right: Live JSON Preview */}
-          <div className="w-96 bg-gradient-to-b from-slate-900 to-slate-800 text-white flex flex-col shadow-xl">
-            <div className="p-4 border-b border-slate-700 bg-slate-800/50">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                  <Code2 className="w-4 h-4 text-green-400" />
-                  Live JSON
-                </h3>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => setShowJsonPreview(!showJsonPreview)}
-                  className="text-slate-300 hover:text-white hover:bg-slate-700"
-                >
-                  {showJsonPreview ? 'Hide' : 'Show'}
-                </Button>
-              </div>
-              <p className="text-xs text-slate-400 mt-1">
-                Real-time generation • Auto-sync • Ready to export
-              </p>
-            </div>
-
-            {showJsonPreview && (
-              <div className="flex-1 overflow-auto p-4">
-                <div className="bg-slate-950/50 rounded-lg border border-slate-700 p-4">
-                  <pre className="text-xs text-green-300 whitespace-pre-wrap font-mono leading-relaxed">
+          {/* JSON & Properties */}
+          <div className="w-80 bg-gray-50 border-l">
+            <Tabs defaultValue="json" className="h-full">
+              <TabsList className="w-full">
+                <TabsTrigger value="json" className="flex-1">JSON</TabsTrigger>
+                <TabsTrigger value="properties" className="flex-1">Properties</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="json" className="h-full p-3">
+                <div className="h-full bg-black rounded p-3">
+                  <pre className="text-green-400 text-xs overflow-auto h-full">
                     {JSON.stringify(generateLiveJson(), null, 2)}
                   </pre>
                 </div>
-                
-                <div className="mt-4 space-y-3">
-                  <Button
-                    size="sm"
-                    onClick={handleExport}
-                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white border-0 gap-2"
-                  >
-                    <Download className="w-3 h-3" />
-                    Download JSON
-                  </Button>
-                  
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
-                      navigator.clipboard.writeText(JSON.stringify(generateLiveJson(), null, 2));
-                      toast({ title: "Copied to clipboard!", description: "JSON schema ready to use" });
-                    }}
-                    className="w-full border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white"
-                  >
-                    Copy to Clipboard
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Properties Panel - Floating Style */}
-          <div className="w-80 bg-white/90 backdrop-blur-sm border-l border-slate-200/50 shadow-sm overflow-y-auto">
-            <div className="p-4 space-y-6">
-              {/* Advanced Validator */}
-              <AdvancedValidator 
-                formData={generateLiveJson()}
-                onSuggestionApply={(suggestion) => {
-                  if (suggestion.autoFixable && suggestion.fieldId) {
-                    const fieldIndex = formData.fields.findIndex(f => f.Id === suggestion.fieldId);
-                    if (fieldIndex !== -1) {
-                      const updatedField = { ...formData.fields[fieldIndex], required: true };
-                      updateField(updatedField);
-                      toast({ 
-                        title: "Suggestion Applied! ✨", 
-                        description: `${suggestion.title} has been applied automatically.` 
-                      });
-                    }
-                  }
-                }}
-              />
+              </TabsContent>
               
-              {/* Properties Panel */}
-              <PropertiesPanel
-                selectedField={selectedField}
-                onUpdateField={updateField}
-                formData={formData}
-              />
-            </div>
+              <TabsContent value="properties" className="h-full p-3">
+                <PropertiesPanel
+                  selectedField={selectedField}
+                  onUpdateField={updateField}
+                  formData={formData}
+                />
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       </div>
