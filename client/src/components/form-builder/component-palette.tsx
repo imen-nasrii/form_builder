@@ -1,11 +1,14 @@
+import { useState } from "react";
 import { useDrag } from "react-dnd";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { 
   Table, 
   List, 
   Calendar, 
   ChevronDown, 
+  ChevronRight,
   CheckSquare, 
   Radio, 
   FolderOpen,
@@ -70,6 +73,19 @@ function DraggableComponent({ type, icon, label, description, color, onAddField 
 }
 
 export default function ComponentPalette({ onAddField }: ComponentPaletteProps) {
+  const [expandedSections, setExpandedSections] = useState({
+    input: true,
+    selection: true,
+    special: true
+  });
+
+  const toggleSection = (section: string) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
+
   const inputComponents = [
     {
       type: "GRIDLKP",
