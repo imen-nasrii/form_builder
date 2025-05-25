@@ -8,6 +8,7 @@ import NotFound from "@/pages/not-found";
 import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import FormBuilder from "@/pages/form-builder";
+import AdminPage from "@/pages/admin";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -34,6 +35,7 @@ function Router() {
           <Route path="/" component={Dashboard} />
           <Route path="/form-builder/:formId?" component={FormBuilder} />
           <Route path="/dashboard" component={Dashboard} />
+          <Route path="/admin" component={AdminPage} />
         </>
       )}
       <Route component={NotFound} />
