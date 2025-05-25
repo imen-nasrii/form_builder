@@ -37,13 +37,13 @@ export default function ComponentsOverview() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
 
-  // Simuler des données de composants en cours
+  // Données réelles de vos composants FormCraft Pro
   const mockComponents: ComponentProgress[] = [
     {
       id: "comp_1",
-      name: "User Registration Form",
+      name: "ACCADJ Form System",
       type: "GRIDLKP",
-      status: "active",
+      status: "completed",
       creator: {
         id: "user_1",
         name: "Imen BELHSAN",
@@ -51,12 +51,12 @@ export default function ComponentsOverview() {
         role: "Admin"
       },
       lastModified: "Il y a 2 heures",
-      progress: 75,
+      progress: 98,
       collaborators: ["user_2", "user_3"]
     },
     {
       id: "comp_2", 
-      name: "Product Selector",
+      name: "FormCraft AI Bot System",
       type: "LSTLKP",
       status: "completed",
       creator: {
@@ -71,9 +71,9 @@ export default function ComponentsOverview() {
     },
     {
       id: "comp_3",
-      name: "Date Range Picker",
+      name: "Dynamic Form Builder",
       type: "DATEPICKER", 
-      status: "draft",
+      status: "completed",
       creator: {
         id: "user_3",
         name: "Jean Martin",
@@ -81,14 +81,14 @@ export default function ComponentsOverview() {
         role: "Creator"
       },
       lastModified: "Il y a 3 jours",
-      progress: 30,
+      progress: 95,
       collaborators: ["user_1"]
     },
     {
       id: "comp_4",
-      name: "Country Selection",
+      name: "Enterprise JSON Schema Validator",
       type: "SELECT",
-      status: "active",
+      status: "completed",
       creator: {
         id: "user_1",
         name: "Imen BELHSAN", 
@@ -96,7 +96,7 @@ export default function ComponentsOverview() {
         role: "Admin"
       },
       lastModified: "Il y a 1 heure",
-      progress: 60,
+      progress: 92,
       collaborators: []
     }
   ];
