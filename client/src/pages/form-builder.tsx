@@ -11,6 +11,7 @@ import Navigation from "@/components/navigation";
 import ComponentPalette from "@/components/form-builder/component-palette";
 import FormCanvas from "@/components/form-builder/form-canvas";
 import PropertiesPanel from "@/components/form-builder/properties-panel";
+import ExportDialog from "@/components/form-builder/export-dialog";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Save, Eye, Download, Upload } from "lucide-react";
@@ -286,16 +287,18 @@ export default function FormBuilder() {
                 Validate
               </Button>
               
-              <Button variant="outline" onClick={handleExport}>
+              <ExportDialog formData={formData} />
+              
+              <Button variant="outline" onClick={handleExport} size="sm">
                 <Download className="w-4 h-4 mr-2" />
-                Export JSON
+                JSON
               </Button>
               
               <label>
-                <Button variant="outline" asChild>
+                <Button variant="outline" asChild size="sm">
                   <span>
                     <Upload className="w-4 h-4 mr-2" />
-                    Import JSON
+                    Import
                   </span>
                 </Button>
                 <input
