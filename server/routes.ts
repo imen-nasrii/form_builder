@@ -195,6 +195,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // API Integration route - Test external APIs
+  app.post('/api/test-external-api', isAuthenticated, async (req, res) => {
+    try {
+      const { url, method = 'GET', headers = {} } = req.body;
+
+      if (!url) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'URL is required' 
+        });
+      }
+
+      // Make the external API call
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'User-Agent': 'FormBuilder-Pro/1.0',
+          ...headers
+        }
+      });
+
+      if (!response.ok) {
+        return res.json({
+          success: false,
+          error: `HTTP ${response.status}: ${response.statusText}`
+        });
+      }
+
+      const data = await response.json();
+      
+      res.json({
+        success: true,
+        data: data,
+        status: response.status,
+        headers: Object.fromEntries(response.headers.entries())
+      });
+
+    } catch (error) {
+      console.error('API test error:', error);
+      res.json({
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error occurred'
+      });
+    }
+  });
+
   // Template management routes
   app.get('/api/templates', isAuthenticated, async (req: any, res) => {
     try {
