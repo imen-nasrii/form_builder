@@ -41,6 +41,7 @@ export default function FormBuilder() {
   
   const [selectedField, setSelectedField] = useState<FormField | null>(null);
   const [showJsonPreview, setShowJsonPreview] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   // Generate live JSON preview
   const generateLiveJson = () => {
@@ -235,62 +236,88 @@ export default function FormBuilder() {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50">
+      <div className="min-h-screen bg-white dark:bg-black transition-colors duration-300">
         <Navigation />
         
-        {/* Beautiful Modern Header */}
-        <div className="bg-white/70 backdrop-blur-xl border-b border-indigo-100 px-8 py-6 shadow-sm">
-          <div className="flex items-center justify-between max-w-7xl mx-auto">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                <Code2 className="w-6 h-6 text-white" />
+        {/* Ultra Modern Full-Width Header */}
+        <div className="bg-white/95 dark:bg-black/95 backdrop-blur-2xl border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
+          <div className="w-full px-8 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-6">
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-2xl animate-pulse">
+                  <Code2 className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                    FormBuilder Pro
+                  </h1>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Advanced Form Designer & Code Generator</p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                  Générateur de formulaires
-                </h1>
-                <p className="text-sm text-indigo-600/60">Créez des formulaires professionnels en quelques clics</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <Button 
-                variant="outline" 
-                className="border-indigo-200 text-indigo-700 hover:bg-indigo-50 rounded-xl px-6"
-                onClick={handleSave}
-                disabled={saveFormMutation.isPending}
-              >
-                <Save className="w-4 h-4 mr-2" />
-                {saveFormMutation.isPending ? "Sauvegarde..." : "Sauvegarder"}
-              </Button>
               
-              <MultiFrameworkExport 
-                formData={generateLiveJson()}
-                trigger={
-                  <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl px-6 shadow-lg">
-                    <Download className="w-4 h-4 mr-2" />
-                    Exporter
-                  </Button>
-                }
-              />
+              {/* Advanced Controls */}
+              <div className="flex items-center gap-4">
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className="text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  onClick={() => setIsCollapsed(!isCollapsed)}
+                >
+                  {isCollapsed ? "Expand" : "Collapse"}
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
+                  onClick={handleSave}
+                  disabled={saveFormMutation.isPending}
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  {saveFormMutation.isPending ? "Saving..." : "Save"}
+                </Button>
+                
+                <MultiFrameworkExport 
+                  formData={generateLiveJson()}
+                  trigger={
+                    <Button className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 text-white shadow-xl hover:shadow-2xl transition-all duration-300">
+                      <Download className="w-4 h-4 mr-2" />
+                      Export Code
+                    </Button>
+                  }
+                />
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Premium Layout */}
-        <div className="flex h-[calc(100vh-140px)] max-w-7xl mx-auto p-6 gap-6">
-          {/* Palette Élégante */}
-          <div className="w-80 bg-white/80 backdrop-blur-xl rounded-2xl border border-indigo-100 shadow-xl p-6">
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold text-indigo-900 mb-2">Composants</h3>
-              <p className="text-sm text-indigo-600/70">Glissez et déposez pour construire</p>
-            </div>
-            <ComponentPalette onAddField={addField} />
+        {/* Revolutionary Full-Width Layout */}
+        <div className={`flex h-[calc(100vh-90px)] w-full transition-all duration-500 ${isCollapsed ? 'gap-2 p-2' : 'gap-6 p-6'}`}>
+          
+          {/* Dynamic Left Panel - Components */}
+          <div className={`bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-2xl transition-all duration-500 overflow-hidden ${
+            isCollapsed ? 'w-16 rounded-lg' : 'w-80 rounded-3xl'
+          }`}>
+            {!isCollapsed && (
+              <div className="p-6">
+                <div className="mb-6">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Components</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Drag & drop to build</p>
+                </div>
+                <ComponentPalette onAddField={addField} />
+              </div>
+            )}
+            {isCollapsed && (
+              <div className="p-2 space-y-2">
+                <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-lg"></div>
+                <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-lg"></div>
+                <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-lg"></div>
+              </div>
+            )}
           </div>
 
-          {/* Zone de Conception Principale */}
-          <div className="flex-1 bg-white/60 backdrop-blur-xl rounded-2xl border border-indigo-100 shadow-xl p-8">
-            <div className="h-full bg-white/50 rounded-xl border-2 border-dashed border-indigo-200 p-6">
+          {/* Ultra-Wide Canvas Area */}
+          <div className="flex-1 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-3xl shadow-2xl p-8 overflow-hidden">
+            <div className="h-full bg-white dark:bg-black rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-600 p-8 transition-colors duration-300">
               <FormCanvas
                 formData={formData}
                 selectedField={selectedField}
@@ -302,71 +329,81 @@ export default function FormBuilder() {
             </div>
           </div>
 
-          {/* Panneau JSON & Propriétés Premium */}
-          <div className="w-96 bg-white/80 backdrop-blur-xl rounded-2xl border border-indigo-100 shadow-xl overflow-hidden">
-            <Tabs defaultValue="json" className="h-full">
-              <TabsList className="w-full bg-indigo-50/50 border-b border-indigo-100 p-1 rounded-none rounded-t-2xl">
-                <TabsTrigger 
-                  value="json" 
-                  className="flex-1 data-[state=active]:bg-white data-[state=active]:text-indigo-700 data-[state=active]:shadow-sm rounded-xl"
-                >
-                  <Code2 className="w-4 h-4 mr-2" />
-                  JSON Live
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="properties" 
-                  className="flex-1 data-[state=active]:bg-white data-[state=active]:text-indigo-700 data-[state=active]:shadow-sm rounded-xl"
-                >
-                  <Settings className="w-4 h-4 mr-2" />
-                  Propriétés
-                </TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="json" className="h-full p-6 m-0">
-                <div className="h-full bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-4 shadow-inner">
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                    <span className="text-green-400 text-sm font-medium">Génération temps réel</span>
+          {/* Advanced Right Panel - JSON & Properties */}
+          <div className={`bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-2xl overflow-hidden transition-all duration-500 ${
+            isCollapsed ? 'w-16 rounded-lg' : 'w-96 rounded-3xl'
+          }`}>
+            {!isCollapsed && (
+              <Tabs defaultValue="json" className="h-full">
+                <TabsList className="w-full bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-1 rounded-none rounded-t-3xl">
+                  <TabsTrigger 
+                    value="json" 
+                    className="flex-1 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 data-[state=active]:shadow-lg rounded-xl transition-all duration-300"
+                  >
+                    <Code2 className="w-4 h-4 mr-2" />
+                    JSON Live
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="properties" 
+                    className="flex-1 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:text-purple-600 dark:data-[state=active]:text-purple-400 data-[state=active]:shadow-lg rounded-xl transition-all duration-300"
+                  >
+                    <Settings className="w-4 h-4 mr-2" />
+                    Properties
+                  </TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="json" className="h-full p-6 m-0">
+                  <div className="h-full bg-black dark:bg-gray-950 rounded-2xl p-6 shadow-inner relative overflow-hidden">
+                    {/* Animated Background */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 animate-pulse"></div>
+                    
+                    <div className="relative z-10">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                          <span className="text-green-400 text-sm font-medium">Real-time Generation</span>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button 
+                            size="sm" 
+                            variant="ghost" 
+                            className="text-gray-400 hover:text-white hover:bg-gray-800"
+                            onClick={() => {
+                              navigator.clipboard.writeText(JSON.stringify(generateLiveJson(), null, 2));
+                              toast({ title: "Copied!", description: "JSON copied to clipboard" });
+                            }}
+                          >
+                            <Copy className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      <ScrollArea className="h-[calc(100%-4rem)]">
+                        <pre className="text-green-300 text-xs leading-relaxed font-mono selection:bg-green-400/20">
+                          {JSON.stringify(generateLiveJson(), null, 2)}
+                        </pre>
+                      </ScrollArea>
+                    </div>
                   </div>
-                  <ScrollArea className="h-[calc(100%-3rem)]">
-                    <pre className="text-green-300 text-xs leading-relaxed font-mono">
-                      {JSON.stringify(generateLiveJson(), null, 2)}
-                    </pre>
+                </TabsContent>
+                
+                <TabsContent value="properties" className="h-full p-6 m-0">
+                  <ScrollArea className="h-full">
+                    <PropertiesPanel
+                      selectedField={selectedField}
+                      onUpdateField={updateField}
+                      formData={formData}
+                    />
                   </ScrollArea>
-                  
-                  <div className="absolute bottom-4 right-4 flex gap-2">
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="bg-slate-800/50 border-slate-600 text-slate-300 hover:bg-slate-700"
-                      onClick={() => {
-                        navigator.clipboard.writeText(JSON.stringify(generateLiveJson(), null, 2));
-                        toast({ title: "Copié !", description: "JSON copié dans le presse-papiers" });
-                      }}
-                    >
-                      <Copy className="w-3 h-3" />
-                    </Button>
-                    <Button 
-                      size="sm"
-                      className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
-                      onClick={handleExport}
-                    >
-                      <Download className="w-3 h-3" />
-                    </Button>
-                  </div>
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="properties" className="h-full p-6 m-0">
-                <ScrollArea className="h-full">
-                  <PropertiesPanel
-                    selectedField={selectedField}
-                    onUpdateField={updateField}
-                    formData={formData}
-                  />
-                </ScrollArea>
-              </TabsContent>
-            </Tabs>
+                </TabsContent>
+              </Tabs>
+            )}
+            {isCollapsed && (
+              <div className="p-2 space-y-2">
+                <div className="w-12 h-12 bg-green-500/20 rounded-lg animate-pulse"></div>
+                <div className="w-12 h-12 bg-purple-500/20 rounded-lg"></div>
+              </div>
+            )}
           </div>
         </div>
       </div>
