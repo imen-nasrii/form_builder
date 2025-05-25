@@ -17,9 +17,10 @@ import PropertiesPanel from "@/components/form-builder/properties-panel";
 import ExportDialog from "@/components/form-builder/export-dialog";
 import AdvancedValidator from "@/components/form-builder/advanced-validator";
 import MultiFrameworkExport from "@/components/form-builder/multi-framework-export";
+import APIIntegrationPanel from "@/components/form-builder/api-integration-panel";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { Save, Eye, Download, Upload, Code2, FileText, Settings, Copy, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
+import { Save, Eye, Download, Upload, Code2, FileText, Settings, Copy, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Database } from "lucide-react";
 import type { Form } from "@shared/schema";
 import type { FormField } from "@/lib/form-types";
 
@@ -44,6 +45,7 @@ export default function FormBuilder() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [leftPanelOpen, setLeftPanelOpen] = useState(true);
   const [rightPanelOpen, setRightPanelOpen] = useState(true);
+  const [apiConnections, setApiConnections] = useState<any[]>([]);
 
   // Generate live JSON preview
   const generateLiveJson = () => {
@@ -372,15 +374,22 @@ export default function FormBuilder() {
                       value="json" 
                       className="flex-1 data-[state=active]:bg-white dark:data-[state=active]:bg-black data-[state=active]:text-black dark:data-[state=active]:text-white"
                     >
-                      <Code2 className="w-4 h-4 mr-2 text-green-500" />
+                      <Code2 className="w-3 h-3 mr-1 text-green-500" />
                       JSON
                     </TabsTrigger>
                     <TabsTrigger 
                       value="properties" 
                       className="flex-1 data-[state=active]:bg-white dark:data-[state=active]:bg-black data-[state=active]:text-black dark:data-[state=active]:text-white"
                     >
-                      <Settings className="w-4 h-4 mr-2 text-purple-500" />
+                      <Settings className="w-3 h-3 mr-1 text-purple-500" />
                       Props
+                    </TabsTrigger>
+                    <TabsTrigger 
+                      value="api" 
+                      className="flex-1 data-[state=active]:bg-white dark:data-[state=active]:bg-black data-[state=active]:text-black dark:data-[state=active]:text-white"
+                    >
+                      <Database className="w-3 h-3 mr-1 text-blue-500" />
+                      API
                     </TabsTrigger>
                   </TabsList>
                   
@@ -420,6 +429,19 @@ export default function FormBuilder() {
                         formData={formData}
                       />
                     </ScrollArea>
+                  </TabsContent>
+                  
+                  <TabsContent value="api" className="flex-1 m-0">
+                    <APIIntegrationPanel
+                      onConnectionSave={(connection) => {
+                        setApiConnections(prev => [...prev.filter(c => c.id !== connection.id), connection]);
+                        toast({
+                          title: "API Connection Saved! 🚀",
+                          description: `Connection "${connection.name}" is ready to use`
+                        });
+                      }}
+                      connections={apiConnections}
+                    />
                   </TabsContent>
                 </Tabs>
               )}
