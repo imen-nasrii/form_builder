@@ -244,43 +244,39 @@ export default function FormBuilder() {
       <div className="min-h-screen bg-white dark:bg-black transition-colors duration-300">
         <Navigation />
         
-        {/* Clean White/Black Header */}
-        <div className="bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
-          <div className="w-full px-6 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-gradient-to-r from-red-500 via-yellow-500 to-blue-500 rounded-lg flex items-center justify-center shadow-lg">
-                  <Code2 className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-black dark:text-white">
-                    FormBuilder Pro
-                  </h1>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Advanced Form Designer</p>
-                </div>
-              </div>
+        {/* Compact Action Bar */}
+        <div className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <h2 className="text-lg font-semibold text-black dark:text-white">
+                {formData.label || "Formulaire sans titre"}
+              </h2>
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                Formulaire {formData.layout}
+              </span>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="text-black dark:text-white border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800"
+                onClick={handleSave}
+                disabled={saveFormMutation.isPending}
+              >
+                <Save className="w-4 h-4 mr-2 text-green-500" />
+                {saveFormMutation.isPending ? "Saving..." : "Sauvegarder"}
+              </Button>
               
-              <div className="flex items-center gap-3">
-                <Button 
-                  variant="outline" 
-                  className="text-black dark:text-white border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800"
-                  onClick={handleSave}
-                  disabled={saveFormMutation.isPending}
-                >
-                  <Save className="w-4 h-4 mr-2 text-green-500" />
-                  {saveFormMutation.isPending ? "Saving..." : "Save"}
-                </Button>
-                
-                <MultiFrameworkExport 
-                  formData={generateLiveJson()}
-                  trigger={
-                    <Button className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200">
-                      <Download className="w-4 h-4 mr-2 text-blue-500" />
-                      Export
-                    </Button>
-                  }
-                />
-              </div>
+              <MultiFrameworkExport 
+                formData={generateLiveJson()}
+                trigger={
+                  <Button size="sm" className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200">
+                    <Download className="w-4 h-4 mr-2 text-blue-500" />
+                    Exporter
+                  </Button>
+                }
+              />
             </div>
           </div>
         </div>
