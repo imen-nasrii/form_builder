@@ -81,6 +81,16 @@ export default function Navigation() {
               Components
             </button>
           </Link>
+
+          <Link href="/ai-bot">
+            <button className={`px-4 py-2 rounded-lg transition-all ${
+              isActive("/ai-bot") 
+                ? "bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 text-purple-700 dark:text-purple-300 font-medium" 
+                : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+            }`}>
+              🤖 Bot IA
+            </button>
+          </Link>
           
           {user?.role === 'admin' && (
             <Link href="/admin">
