@@ -18,6 +18,7 @@ import ExportDialog from "@/components/form-builder/export-dialog";
 import AdvancedValidator from "@/components/form-builder/advanced-validator";
 import MultiFrameworkExport from "@/components/form-builder/multi-framework-export";
 import APIIntegrationPanel from "@/components/form-builder/api-integration-panel";
+import ComponentImportPanel from "@/components/form-builder/component-import-panel";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Save, Eye, Download, Upload, Code2, FileText, Settings, Copy, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Database } from "lucide-react";
@@ -391,6 +392,13 @@ export default function FormBuilder() {
                       <Database className="w-3 h-3 mr-1 text-blue-500" />
                       API
                     </TabsTrigger>
+                    <TabsTrigger 
+                      value="import" 
+                      className="flex-1 data-[state=active]:bg-white dark:data-[state=active]:bg-black data-[state=active]:text-black dark:data-[state=active]:text-white"
+                    >
+                      <Upload className="w-3 h-3 mr-1 text-orange-500" />
+                      Import
+                    </TabsTrigger>
                   </TabsList>
                   
                   <TabsContent value="json" className="flex-1 p-4 m-0">
@@ -441,6 +449,18 @@ export default function FormBuilder() {
                         });
                       }}
                       connections={apiConnections}
+                    />
+                  </TabsContent>
+                  
+                  <TabsContent value="import" className="flex-1 m-0">
+                    <ComponentImportPanel
+                      onImportComponent={(component) => {
+                        addField(component);
+                        toast({
+                          title: "Component Imported! ✅",
+                          description: `"${component.label}" is now available in your palette`
+                        });
+                      }}
                     />
                   </TabsContent>
                 </Tabs>
