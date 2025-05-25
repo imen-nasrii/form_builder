@@ -15,7 +15,7 @@ import {
   Wand2, 
   CheckCircle,
   Copy,
-  Sparkles
+  Zap
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -490,7 +490,7 @@ export default function DFMToJSONBot() {
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-4 h-4 mr-2" />
+                  <Zap className="w-4 h-4 mr-2" />
                   Analyser avec l'IA
                 </>
               )}
