@@ -12,7 +12,7 @@ import {
   Upload, 
   FileText, 
   Download, 
-  Settings, 
+  Loader2, 
   CheckCircle,
   Copy,
   Play
@@ -409,7 +409,7 @@ export default function DFMToJSONBotStable() {
             >
               {isProcessing ? (
                 <>
-                  <Settings className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   Analyse en cours...
                 </>
               ) : (
