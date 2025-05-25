@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import Navigation from "@/components/navigation";
@@ -14,7 +16,7 @@ import PropertiesPanel from "@/components/form-builder/properties-panel";
 import ExportDialog from "@/components/form-builder/export-dialog";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { Save, Eye, Download, Upload } from "lucide-react";
+import { Save, Eye, Download, Upload, Code2, FileText } from "lucide-react";
 import type { Form } from "@shared/schema";
 import type { FormField } from "@/lib/form-types";
 
@@ -35,6 +37,26 @@ export default function FormBuilder() {
   });
   
   const [selectedField, setSelectedField] = useState<FormField | null>(null);
+  const [showJsonPreview, setShowJsonPreview] = useState(true);
+
+  // Generate live JSON preview
+  const generateLiveJson = () => {
+    return {
+      MenuID: formData.menuId || "NEW_FORM",
+      FormWidth: formData.formWidth,
+      Layout: formData.layout,
+      Label: formData.label || "New Form",
+      Fields: formData.fields,
+      Actions: formData.actions.length > 0 ? formData.actions : [
+        {
+          ID: "PROCESS",
+          Label: "PROCESS",
+          MethodToInvoke: "ExecuteProcess"
+        }
+      ],
+      Validations: formData.validations
+    };
+  };
 
   const { data: form, isLoading } = useQuery<Form>({
     queryKey: [`/api/forms/${formId}`],
@@ -216,19 +238,78 @@ export default function FormBuilder() {
 
 
         {/* Main Layout */}
-        <div className="flex">
+        <div className="flex h-screen">
           {/* Component Palette */}
           <ComponentPalette onAddField={addField} />
 
-          {/* Form Canvas */}
-          <FormCanvas
-            formData={formData}
-            selectedField={selectedField}
-            onSelectField={setSelectedField}
-            onUpdateField={updateField}
-            onRemoveField={removeField}
-            onAddField={addField}
-          />
+          {/* Form Canvas and JSON Preview */}
+          <div className="flex-1 flex">
+            {/* Form Canvas */}
+            <div className="flex-1">
+              <FormCanvas
+                formData={formData}
+                selectedField={selectedField}
+                onSelectField={setSelectedField}
+                onUpdateField={updateField}
+                onRemoveField={removeField}
+                onAddField={addField}
+              />
+            </div>
+
+            {/* Live JSON Preview Panel */}
+            <div className="w-96 bg-white border-l border-slate-200 flex flex-col">
+              <div className="p-4 border-b border-slate-200 bg-slate-50">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold text-slate-900 flex items-center gap-2">
+                    <Code2 className="w-4 h-4 text-blue-600" />
+                    Live JSON Preview
+                  </h3>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setShowJsonPreview(!showJsonPreview)}
+                  >
+                    {showJsonPreview ? 'Hide' : 'Show'}
+                  </Button>
+                </div>
+                <p className="text-xs text-slate-600 mt-1">
+                  Updates in real-time as you build
+                </p>
+              </div>
+
+              {showJsonPreview && (
+                <div className="flex-1 overflow-auto p-4">
+                  <pre className="text-xs text-slate-800 whitespace-pre-wrap font-mono bg-slate-50 p-3 rounded border">
+                    {JSON.stringify(generateLiveJson(), null, 2)}
+                  </pre>
+                  
+                  <div className="mt-4 space-y-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={handleExport}
+                      className="w-full flex items-center gap-2"
+                    >
+                      <Download className="w-3 h-3" />
+                      Download JSON
+                    </Button>
+                    
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        navigator.clipboard.writeText(JSON.stringify(generateLiveJson(), null, 2));
+                        toast({ title: "Copied to clipboard!" });
+                      }}
+                      className="w-full"
+                    >
+                      Copy JSON
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
 
           {/* Properties Panel */}
           <PropertiesPanel
