@@ -409,12 +409,12 @@ export default function DFMToJSONBotStable() {
             >
               {isProcessing ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   Analyse en cours...
                 </>
               ) : (
                 <>
-                  <Play className="w-4 h-4 mr-2" />
+                  <div className="w-4 h-4 mr-2 bg-white rounded-sm opacity-80" />
                   Analyser avec l'IA
                 </>
               )}
