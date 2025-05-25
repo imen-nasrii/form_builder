@@ -82,9 +82,24 @@ export default function FormCanvas({
         case 'RADIOGRP':
           newField.OptionValues = {};
           break;
+        case 'CHECKBOX':
+          newField.CheckboxValue = false;
+          newField.Outlined = true;
+          break;
+        case 'DATEPICKER':
+        case 'DATEPKR':
+          newField.Value = "";
+          newField.Outlined = true;
+          break;
         case 'GROUP':
           newField.isGroup = true;
           newField.ChildFields = [];
+          break;
+        case 'ACTION':
+          newField.Value = "Action";
+          break;
+        case 'VALIDATION':
+          newField.Validations = [];
           break;
       }
 
@@ -122,10 +137,28 @@ export default function FormCanvas({
         return <RadioGroupField key={field.Id} {...commonProps} />;
       case 'GROUP':
         return <GroupField key={field.Id} {...commonProps} />;
+      case 'ACTION':
+        return (
+          <div key={field.Id} className="p-4 border border-blue-200 rounded-lg bg-blue-50 dark:bg-blue-900/20 dark:border-blue-700">
+            <Button size="sm" className="w-full">
+              {field.Value || field.label}
+            </Button>
+          </div>
+        );
+      case 'VALIDATION':
+        return (
+          <div key={field.Id} className="p-4 border border-purple-200 rounded-lg bg-purple-50 dark:bg-purple-900/20 dark:border-purple-700">
+            <p className="text-sm text-purple-700 dark:text-purple-300">
+              Validation: {field.label}
+            </p>
+          </div>
+        );
       default:
         return (
-          <div key={field.Id} className="p-4 border border-red-200 rounded-lg bg-red-50">
-            <p className="text-sm text-red-600">Unknown field type: {field.type}</p>
+          <div key={field.Id} className="p-4 border border-orange-200 rounded-lg bg-orange-50 dark:bg-orange-900/20 dark:border-orange-700">
+            <p className="text-sm text-orange-700 dark:text-orange-300">
+              Champ personnalisé: {field.type}
+            </p>
           </div>
         );
     }
