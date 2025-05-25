@@ -2,7 +2,7 @@ import { useDrop } from "react-dnd";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Settings, X } from "lucide-react";
+import { Plus, Settings, X, Play } from "lucide-react";
 import type { FormField } from "@/lib/form-types";
 import { 
   GridLookupField,
