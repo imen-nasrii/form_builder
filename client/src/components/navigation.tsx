@@ -123,13 +123,11 @@ export default function Navigation() {
               {user?.role === 'admin' && (
                 <>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <i className="fas fa-shield-alt w-4 h-4 mr-2"></i>
-                    Admin Panel
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <i className="fas fa-users w-4 h-4 mr-2"></i>
-                    User Management
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin" className="w-full flex items-center">
+                      <i className="fas fa-shield-alt w-4 h-4 mr-2"></i>
+                      Administration
+                    </Link>
                   </DropdownMenuItem>
                 </>
               )}
