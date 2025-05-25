@@ -1,4 +1,4 @@
-// Removed react-dnd to fix DOM manipulation errors
+import { useDrag } from "react-dnd";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -18,7 +18,7 @@ interface ComponentPaletteProps {
   onAddField: (field: FormField) => void;
 }
 
-interface ComponentProps {
+interface DraggableComponentProps {
   type: string;
   icon: React.ReactNode;
   label: string;
@@ -27,7 +27,15 @@ interface ComponentProps {
   onAddField: (field: FormField) => void;
 }
 
-function Component({ type, icon, label, description, color, onAddField }: ComponentProps) {
+function DraggableComponent({ type, icon, label, description, color, onAddField }: DraggableComponentProps) {
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: 'component',
+    item: { type, label },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  }));
+
   const handleClick = () => {
     const newField: FormField = {
       Id: `field_${Date.now()}`,
@@ -42,8 +50,14 @@ function Component({ type, icon, label, description, color, onAddField }: Compon
 
   return (
     <div
+      ref={drag}
       onClick={handleClick}
-      className="component-item bg-slate-50 hover:bg-slate-100 p-3 rounded-lg cursor-pointer transition-all duration-200 border border-transparent hover:border-slate-200"
+      className={`component-item bg-slate-50 hover:bg-slate-100 p-3 rounded-lg cursor-grab transition-all duration-200 border border-transparent hover:border-slate-200 ${
+        isDragging ? 'opacity-50 cursor-grabbing' : ''
+      }`}
+      style={{
+        transform: isDragging ? 'rotate(5deg)' : 'none',
+      }}
     >
       <div className="flex items-center space-x-3">
         <div className={`w-8 h-8 ${color} rounded-lg flex items-center justify-center`}>
@@ -148,7 +162,7 @@ export default function ComponentPalette({ onAddField }: ComponentPaletteProps) 
               </h4>
               <div className="space-y-2">
                 {inputComponents.map((component) => (
-                  <Component key={component.type} {...component} onAddField={onAddField} />
+                  <DraggableComponent key={component.type} {...component} onAddField={onAddField} />
                 ))}
               </div>
             </div>
@@ -160,7 +174,7 @@ export default function ComponentPalette({ onAddField }: ComponentPaletteProps) 
               </h4>
               <div className="space-y-2">
                 {layoutComponents.map((component) => (
-                  <Component key={component.type} {...component} onAddField={onAddField} />
+                  <DraggableComponent key={component.type} {...component} onAddField={onAddField} />
                 ))}
               </div>
             </div>
@@ -172,7 +186,7 @@ export default function ComponentPalette({ onAddField }: ComponentPaletteProps) 
               </h4>
               <div className="space-y-2">
                 {actionComponents.map((component) => (
-                  <Component key={component.type} {...component} onAddField={onAddField} />
+                  <DraggableComponent key={component.type} {...component} onAddField={onAddField} />
                 ))}
               </div>
             </div>
@@ -183,7 +197,7 @@ export default function ComponentPalette({ onAddField }: ComponentPaletteProps) 
         <div className="mt-6 p-4 bg-slate-50 rounded-lg">
           <h4 className="text-sm font-medium text-slate-900 mb-2">How to Use</h4>
           <ul className="text-xs text-slate-600 space-y-1">
-            <li>• Click components to add to form</li>
+            <li>• Drag & drop OR click to add components</li>
             <li>• Click on fields to edit properties</li>
             <li>• Use the properties panel to configure</li>
             <li>• Export JSON when ready</li>
