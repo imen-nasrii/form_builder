@@ -52,15 +52,18 @@ function DraggableComponent({ type, icon, label, description, color, onAddField 
     <div
       ref={drag}
       onClick={handleClick}
-      className={`p-2 rounded border cursor-move hover:bg-gray-100 ${
-        isDragging ? 'opacity-50' : ''
+      className={`group p-4 rounded-xl border border-indigo-100 bg-white/50 backdrop-blur-sm cursor-move hover:bg-indigo-50 hover:border-indigo-200 hover:shadow-lg transition-all duration-200 ${
+        isDragging ? 'opacity-60 scale-95 shadow-xl' : ''
       }`}
     >
-      <div className="flex items-center gap-2">
-        <div className="w-6 h-6 flex items-center justify-center">
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
           {icon}
         </div>
-        <span className="text-sm font-medium">{label}</span>
+        <div>
+          <span className="text-sm font-semibold text-indigo-900 block">{label}</span>
+          <span className="text-xs text-indigo-600/70">{description}</span>
+        </div>
       </div>
     </div>
   );
