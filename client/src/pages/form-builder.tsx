@@ -11,7 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import Navigation from "@/components/navigation";
-import ComponentPalette from "@/components/form-builder/component-palette";
+import CollapsibleComponentPalette from "@/components/form-builder/collapsible-component-palette";
 import FormCanvas from "@/components/form-builder/form-canvas";
 import PropertiesPanel from "@/components/form-builder/properties-panel";
 import ExportDialog from "@/components/form-builder/export-dialog";
@@ -319,7 +319,7 @@ export default function FormBuilder() {
               {/* Panel Content */}
               {leftPanelOpen && (
                 <div className="flex-1 p-4 overflow-auto">
-                  <ComponentPalette onAddField={addField} />
+                  <CollapsibleComponentPalette onAddField={addField} />
                 </div>
               )}
             </div>
