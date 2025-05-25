@@ -31,8 +31,8 @@ export default function NewFormDialog({ onCreateForm }: NewFormDialogProps) {
     
     if (!formConfig.menuId.trim()) {
       toast({
-        title: "Validation Error",
-        description: "MenuID is required",
+        title: "Erreur de validation",
+        description: "L'ID du menu est obligatoire",
         variant: "destructive",
       });
       return;
@@ -40,8 +40,8 @@ export default function NewFormDialog({ onCreateForm }: NewFormDialogProps) {
 
     if (!formConfig.label.trim()) {
       toast({
-        title: "Validation Error", 
-        description: "Label is required",
+        title: "Erreur de validation", 
+        description: "L'étiquette est obligatoire",
         variant: "destructive",
       });
       return;
@@ -59,8 +59,8 @@ export default function NewFormDialog({ onCreateForm }: NewFormDialogProps) {
     });
 
     toast({
-      title: "Form Created!",
-      description: `New form "${formConfig.label}" is ready for design`,
+      title: "Formulaire créé avec succès! 🎉",
+      description: `Le nouveau formulaire "${formConfig.label}" est prêt pour la conception`,
     });
   };
 
@@ -89,69 +89,66 @@ export default function NewFormDialog({ onCreateForm }: NewFormDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="enterprise-gradient">
-          <Plus className="w-4 h-4 mr-2" />
-          Create New Form
+        <Button className="enterprise-gradient text-lg px-6 py-3">
+          <Plus className="w-5 h-5 mr-2" />
+          Concepteur de formulaires
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-4xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Settings className="w-5 h-5" />
-            Create New Form
+          <DialogTitle className="flex items-center gap-3 text-2xl">
+            <Settings className="w-7 h-7 text-blue-600" />
+            Concepteur de formulaires
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="menuId" className="text-sm font-medium">
-                Menu ID <span className="text-red-500">*</span>
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="grid grid-cols-2 gap-6">
+            <div className="space-y-3">
+              <Label htmlFor="menuId" className="text-base font-semibold text-gray-900">
+                ID du menu <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="menuId"
                 value={formConfig.menuId}
                 onChange={(e) => handleInputChange('menuId', e.target.value.toUpperCase())}
                 placeholder="ACCADJ"
-                className="uppercase"
+                className="uppercase text-lg font-mono h-12"
                 maxLength={10}
                 required
               />
-              <p className="text-xs text-gray-500">
-                Unique identifier for the form (e.g., ACCADJ, FUNDMNT)
-              </p>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="label" className="text-sm font-medium">
-                Form Label <span className="text-red-500">*</span>
+            <div className="space-y-3">
+              <Label htmlFor="label" className="text-base font-semibold text-gray-900">
+                Étiquette <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="label"
                 value={formConfig.label}
                 onChange={(e) => handleInputChange('label', e.target.value)}
-                placeholder="Account Adjustment"
+                placeholder="Étiquette du formulaire"
+                className="text-lg h-12"
                 required
               />
-              <p className="text-xs text-gray-500">
-                Display name for the form
-              </p>
             </div>
+          </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="formWidth" className="text-sm font-medium">
-                Form Width
+          <div className="grid grid-cols-2 gap-6">
+            <div className="space-y-3">
+              <Label htmlFor="formWidth" className="text-base font-semibold text-gray-900">
+                Largeur
               </Label>
               <Select 
                 value={formConfig.formWidth} 
                 onValueChange={(value) => handleInputChange('formWidth', value)}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select width" />
+                <SelectTrigger className="h-12 text-lg">
+                  <SelectValue placeholder="Sélectionner largeur" />
                 </SelectTrigger>
                 <SelectContent>
                   {widthOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
+                    <SelectItem key={option.value} value={option.value} className="text-lg">
                       {option.label}
                     </SelectItem>
                   ))}
@@ -159,20 +156,20 @@ export default function NewFormDialog({ onCreateForm }: NewFormDialogProps) {
               </Select>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="layout" className="text-sm font-medium">
-                Layout Type
+            <div className="space-y-3">
+              <Label htmlFor="layout" className="text-base font-semibold text-gray-900">
+                Mise en page
               </Label>
               <Select 
                 value={formConfig.layout} 
                 onValueChange={(value) => handleInputChange('layout', value)}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select layout" />
+                <SelectTrigger className="h-12 text-lg">
+                  <SelectValue placeholder="Type de mise en page" />
                 </SelectTrigger>
                 <SelectContent>
                   {layoutOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
+                    <SelectItem key={option.value} value={option.value} className="text-lg">
                       {option.label}
                     </SelectItem>
                   ))}
@@ -181,22 +178,34 @@ export default function NewFormDialog({ onCreateForm }: NewFormDialogProps) {
             </div>
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h4 className="font-medium text-blue-900 mb-2">Form Preview</h4>
-            <div className="text-sm text-blue-800 space-y-1">
-              <div><strong>MenuID:</strong> {formConfig.menuId || "Not set"}</div>
-              <div><strong>Label:</strong> {formConfig.label || "Not set"}</div>
-              <div><strong>Width:</strong> {formConfig.formWidth}</div>
-              <div><strong>Layout:</strong> {formConfig.layout}</div>
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
+            <h4 className="font-bold text-blue-900 mb-4 text-lg">Aperçu du formulaire</h4>
+            <div className="grid grid-cols-2 gap-4 text-base">
+              <div className="bg-white rounded-lg p-3">
+                <span className="text-gray-600">ID du menu:</span>
+                <div className="font-bold text-blue-800">{formConfig.menuId || "Non défini"}</div>
+              </div>
+              <div className="bg-white rounded-lg p-3">
+                <span className="text-gray-600">Étiquette:</span>
+                <div className="font-bold text-blue-800">{formConfig.label || "Non défini"}</div>
+              </div>
+              <div className="bg-white rounded-lg p-3">
+                <span className="text-gray-600">Largeur:</span>
+                <div className="font-bold text-blue-800">{formConfig.formWidth}</div>
+              </div>
+              <div className="bg-white rounded-lg p-3">
+                <span className="text-gray-600">Mise en page:</span>
+                <div className="font-bold text-blue-800">{formConfig.layout}</div>
+              </div>
             </div>
           </div>
 
-          <div className="flex justify-end space-x-3">
-            <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>
-              Cancel
+          <div className="flex justify-end space-x-4 pt-4">
+            <Button type="button" variant="outline" onClick={() => setIsOpen(false)} className="px-8 py-3">
+              Annuler
             </Button>
-            <Button type="submit" className="enterprise-gradient">
-              Create Form
+            <Button type="submit" className="enterprise-gradient px-8 py-3">
+              Créer le formulaire
             </Button>
           </div>
         </form>
