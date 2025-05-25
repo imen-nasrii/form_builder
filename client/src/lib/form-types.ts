@@ -26,6 +26,20 @@ export interface FormField {
   LoadDataInfo?: {
     DataModel: string;
     ColumnsDefinition: ColumnDefinition[];
+    DataSource?: string;
+    APIConnection?: {
+      url: string;
+      method: string;
+      headers?: Record<string, string>;
+      authentication?: {
+        type: 'bearer' | 'basic' | 'apikey';
+        token?: string;
+        username?: string;
+        password?: string;
+        apiKey?: string;
+      };
+    };
+    RealTime?: boolean;
   };
   
   // Select/Radio specific properties
