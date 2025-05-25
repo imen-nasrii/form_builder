@@ -15,6 +15,7 @@ import FormCanvas from "@/components/form-builder/form-canvas";
 import PropertiesPanel from "@/components/form-builder/properties-panel";
 import ExportDialog from "@/components/form-builder/export-dialog";
 import AdvancedValidator from "@/components/form-builder/advanced-validator";
+import MultiFrameworkExport from "@/components/form-builder/multi-framework-export";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Save, Eye, Download, Upload, Code2, FileText } from "lucide-react";
@@ -283,6 +284,16 @@ export default function FormBuilder() {
                   Import
                 </Button>
               </div>
+              
+              <MultiFrameworkExport 
+                formData={generateLiveJson()}
+                trigger={
+                  <Button size="sm" className="gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+                    <Code2 className="w-4 h-4" />
+                    Export Code
+                  </Button>
+                }
+              />
             </div>
           </div>
         </div>
