@@ -45,11 +45,14 @@ export default function DynamicFieldConfigurrator({ field, apiConnections, onUpd
       onUpdateField({
         LoadDataInfo: {
           DataModel: selectedConnection.name || 'API_Model',
-          ColumnsDefinition: field.LoadDataInfo?.ColumnsDefinition || [],
+          ColumnsDefinition: field.LoadDataInfo?.ColumnsDefinition || [
+            { DataField: 'id', Caption: 'ID', DataType: 'STRING', Visible: true },
+            { DataField: 'name', Caption: 'Name', DataType: 'STRING', Visible: true }
+          ],
           DataSource: 'API',
           APIConnection: {
-            url: selectedConnection.url,
-            method: selectedConnection.method || 'GET'
+            url: selectedConnection.url || '',
+            method: (selectedConnection as any).method || 'GET'
           }
         }
       });
