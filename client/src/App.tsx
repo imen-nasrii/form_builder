@@ -33,7 +33,8 @@ function Router() {
       ) : (
         <>
           <Route path="/" component={Dashboard} />
-          <Route path="/form-builder/:formId?" component={FormBuilder} />
+          <Route path="/form-builder" component={FormBuilder} />
+          <Route path="/form-builder/:formId" component={FormBuilder} />
           <Route path="/dashboard" component={Dashboard} />
           <Route path="/admin" component={AdminPage} />
         </>
