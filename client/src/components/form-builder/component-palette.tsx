@@ -79,7 +79,7 @@ export default function ComponentPalette({ onAddField }: ComponentPaletteProps) 
     special: true
   });
 
-  const toggleSection = (section: string) => {
+  const toggleSection = (section: keyof typeof expandedSections) => {
     setExpandedSections(prev => ({
       ...prev,
       [section]: !prev[section]
