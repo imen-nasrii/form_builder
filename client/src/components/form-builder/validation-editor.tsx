@@ -102,15 +102,15 @@ export default function ValidationEditor({ field, onUpdateField }: ValidationEdi
   };
 
   const getOperatorOptions = () => {
-    return Object.entries(ValidationOperators).map(([key, value]) => ({
-      value: key,
+    return Object.entries(ValidationOperators).filter(([key]) => key !== "").map(([key, value]) => ({
+      value: key || "EQ",
       label: `${key} (${value})`
     }));
   };
 
   const getFieldTypeOptions = () => {
-    return Object.entries(FieldTypes).map(([key, value]) => ({
-      value: key,
+    return Object.entries(FieldTypes).filter(([key]) => key !== "").map(([key, value]) => ({
+      value: key || "STRING",
       label: value
     }));
   };
