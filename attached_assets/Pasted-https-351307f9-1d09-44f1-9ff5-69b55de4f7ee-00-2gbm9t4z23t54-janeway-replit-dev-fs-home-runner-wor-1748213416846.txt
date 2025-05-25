@@ -1,0 +1,28 @@
+https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=0b50fc04:323:16)
+    at Switch (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=0b50fc04:379:17)
+    at Router (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/src/App.tsx?v=u7qbt7-rDcqHNd7zItOhT:33:42)
+    at Provider (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFYO4PQK.js?v=0b50fc04:38:15)
+    at TooltipProvider (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=0b50fc04:61:5)
+    at QueryClientProvider (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=0b50fc04:2805:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-RPCDYKBN.js?v=0b50fc04:14032Understand this error
+chunk-RPCDYKBN.js?v=0b50fc04:9129 Uncaught NotFoundError: Failed to execute 'insertBefore' on 'Node': The node before which the new node is to be inserted is not a child of this node.
+    at insertBefore (chunk-RPCDYKBN.js?v=0b50fc04:8446:26)
+    at insertOrAppendPlacementNode (chunk-RPCDYKBN.js?v=0b50fc04:17432:15)
+    at insertOrAppendPlacementNode (chunk-RPCDYKBN.js?v=0b50fc04:17440:15)
+    at insertOrAppendPlacementNode (chunk-RPCDYKBN.js?v=0b50fc04:17440:15)
+    at commitPlacement (chunk-RPCDYKBN.js?v=0b50fc04:17389:15)
+    at commitReconciliationEffects (chunk-RPCDYKBN.js?v=0b50fc04:17906:15)
+    at commitMutationEffectsOnFiber (chunk-RPCDYKBN.js?v=0b50fc04:17700:15)
+    at recursivelyTraverseMutationEffects (chunk-RPCDYKBN.js?v=0b50fc04:17685:15)
+    at commitMutationEffectsOnFiber (chunk-RPCDYKBN.js?v=0b50fc04:17737:15)
+    at recursivelyTraverseMutationEffects (chunk-RPCDYKBN.js?v=0b50fc04:17685:15)Understand this error
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.
