@@ -8,6 +8,7 @@ import NotFound from "@/pages/not-found";
 import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import FormBuilder from "@/pages/form-builder";
+import ComponentsOverview from "@/pages/components-overview";
 import AdminPage from "@/pages/admin";
 
 function Router() {
@@ -36,6 +37,7 @@ function Router() {
           <Route path="/form-builder" component={FormBuilder} />
           <Route path="/form-builder/:formId" component={FormBuilder} />
           <Route path="/dashboard" component={Dashboard} />
+          <Route path="/components" component={ComponentsOverview} />
           <Route path="/admin" component={AdminPage} />
         </>
       )}
