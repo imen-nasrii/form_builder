@@ -195,6 +195,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Component Import from URL route
+  app.post('/api/import-component-url', isAuthenticated, async (req, res) => {
+    try {
+      const { url } = req.body;
+
+      if (!url) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'URL is required' 
+        });
+      }
+
+      // Fetch components from URL
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'User-Agent': 'FormBuilder-Pro/1.0',
+          'Accept': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        return res.json({
+          success: false,
+          error: `HTTP ${response.status}: ${response.statusText}`
+        });
+      }
+
+      const data = await response.json();
+      const components = Array.isArray(data) ? data : [data];
+      
+      res.json({
+        success: true,
+        components: components,
+        count: components.length
+      });
+
+    } catch (error) {
+      console.error('Component import error:', error);
+      res.json({
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to import components'
+      });
+    }
+  });
+
   // API Integration route - Test external APIs
   app.post('/api/test-external-api', isAuthenticated, async (req, res) => {
     try {

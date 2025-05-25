@@ -30,116 +30,80 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="bg-white border-b border-slate-200 px-6 py-4">
+    <nav className="bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 px-4 py-2">
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Link href="/">
-            <div className="flex items-center space-x-3 cursor-pointer">
-              <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                <i className="fas fa-cube text-white text-sm"></i>
-              </div>
-              <h1 className="text-xl font-semibold text-slate-900">FormBuilder Pro</h1>
-            </div>
+        {/* Simple Logo */}
+        <Link href="/">
+          <div className="flex items-center gap-2 cursor-pointer">
+            <div className="w-6 h-6 bg-gradient-to-r from-red-500 via-yellow-500 to-blue-500 rounded"></div>
+            <span className="text-lg font-bold text-black dark:text-white">FormBuilder Pro</span>
+          </div>
+        </Link>
+        
+        {/* Compact Navigation */}
+        <div className="flex items-center gap-6 text-sm">
+          <Link href="/dashboard">
+            <button className={`transition-colors ${
+              isActive("/dashboard") || isActive("/") 
+                ? "text-black dark:text-white font-medium" 
+                : "text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
+            }`}>
+              Tableau de bord
+            </button>
           </Link>
           
-          <div className="hidden md:flex items-center space-x-6 ml-8">
-            <Link href="/dashboard">
-              <button className={`text-sm font-medium transition-colors ${
-                isActive("/dashboard") || isActive("/") 
-                  ? "text-primary-600" 
-                  : "text-slate-600 hover:text-slate-900"
+          <Link href="/form-builder">
+            <button className={`transition-colors ${
+              isActive("/form-builder") 
+                ? "text-black dark:text-white font-medium" 
+                : "text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
+            }`}>
+              Concepteur
+            </button>
+          </Link>
+          
+          <button className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors">
+            Modules
+          </button>
+          
+          {user?.role === 'admin' && (
+            <Link href="/admin">
+              <button className={`transition-colors ${
+                isActive("/admin") 
+                  ? "text-black dark:text-white font-medium" 
+                  : "text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
               }`}>
-                Dashboard
+                Analytique
               </button>
             </Link>
-            
-            <Link href="/form-builder">
-              <button className={`text-sm font-medium transition-colors ${
-                isActive("/form-builder") 
-                  ? "text-primary-600" 
-                  : "text-slate-600 hover:text-slate-900"
-              }`}>
-                Form Designer
-              </button>
-            </Link>
-            
-            <button className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
-              Templates
-            </button>
-            
-            <button className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
-              Analytics
-            </button>
-          </div>
+          )}
         </div>
 
-        <div className="flex items-center space-x-4">
-          {/* Notifications */}
-          <Button variant="ghost" size="sm" className="relative">
-            <Bell className="h-4 w-4" />
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">
-              3
-            </span>
-          </Button>
+        {/* Compact User Section */}
+        <div className="flex items-center gap-3">
+          <div className="text-xs text-right">
+            <div className="text-black dark:text-white font-medium">
+              {user?.firstName || user?.email?.split('@')[0] || 'Utilisateur'}
+            </div>
+            <div className="text-gray-500 dark:text-gray-400">
+              {user?.role === 'admin' ? 'Administrateur' : 'Utilisateur'}
+            </div>
+          </div>
           
-          {/* User Menu */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="flex items-center space-x-3 text-left">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={user?.profileImageUrl || ""} />
-                  <AvatarFallback className="bg-primary-100 text-primary-600 text-sm font-medium">
-                    {getInitials(user?.firstName, user?.lastName)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="hidden md:block">
-                  <p className="text-sm font-medium text-slate-900">
-                    {user?.firstName && user?.lastName 
-                      ? `${user.firstName} ${user.lastName}` 
-                      : user?.email?.split('@')[0] || "User"
-                    }
-                  </p>
-                  <div className="flex items-center space-x-2">
-                    <p className="text-xs text-slate-500">{user?.email}</p>
-                    {user?.role === 'admin' && (
-                      <Badge variant="secondary" className="text-xs">Admin</Badge>
-                    )}
-                  </div>
-                </div>
-                <ChevronDown className="h-4 w-4 text-slate-400" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <i className="fas fa-user w-4 h-4 mr-2"></i>
-                Profile Settings
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <i className="fas fa-cog w-4 h-4 mr-2"></i>
-                Preferences
-              </DropdownMenuItem>
-              {user?.role === 'admin' && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href="/admin" className="w-full flex items-center">
-                      <i className="fas fa-shield-alt w-4 h-4 mr-2"></i>
-                      Administration
-                    </Link>
-                  </DropdownMenuItem>
-                </>
-              )}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <a href="/api/logout" className="w-full">
-                  <i className="fas fa-sign-out-alt w-4 h-4 mr-2"></i>
-                  Sign Out
-                </a>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {user?.profileImageUrl && (
+            <img 
+              src={user.profileImageUrl} 
+              alt="Profile" 
+              className="w-6 h-6 rounded-full object-cover"
+            />
+          )}
+          
+          <a 
+            href="/api/logout" 
+            className="text-xs text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
+          >
+            Déconnexion
+          </a>
         </div>
       </div>
     </nav>
