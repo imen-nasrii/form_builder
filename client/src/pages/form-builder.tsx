@@ -14,6 +14,7 @@ import ComponentPalette from "@/components/form-builder/component-palette";
 import FormCanvas from "@/components/form-builder/form-canvas";
 import PropertiesPanel from "@/components/form-builder/properties-panel";
 import ExportDialog from "@/components/form-builder/export-dialog";
+import AdvancedValidator from "@/components/form-builder/advanced-validator";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Save, Eye, Download, Upload, Code2, FileText } from "lucide-react";
@@ -363,12 +364,33 @@ export default function FormBuilder() {
           </div>
 
           {/* Properties Panel - Floating Style */}
-          <div className="w-80 bg-white/90 backdrop-blur-sm border-l border-slate-200/50 shadow-sm">
-            <PropertiesPanel
-              selectedField={selectedField}
-              onUpdateField={updateField}
-              formData={formData}
-            />
+          <div className="w-80 bg-white/90 backdrop-blur-sm border-l border-slate-200/50 shadow-sm overflow-y-auto">
+            <div className="p-4 space-y-6">
+              {/* Advanced Validator */}
+              <AdvancedValidator 
+                formData={generateLiveJson()}
+                onSuggestionApply={(suggestion) => {
+                  if (suggestion.autoFixable && suggestion.fieldId) {
+                    const fieldIndex = formData.fields.findIndex(f => f.Id === suggestion.fieldId);
+                    if (fieldIndex !== -1) {
+                      const updatedField = { ...formData.fields[fieldIndex], required: true };
+                      updateField(updatedField);
+                      toast({ 
+                        title: "Suggestion Applied! ✨", 
+                        description: `${suggestion.title} has been applied automatically.` 
+                      });
+                    }
+                  }
+                }}
+              />
+              
+              {/* Properties Panel */}
+              <PropertiesPanel
+                selectedField={selectedField}
+                onUpdateField={updateField}
+                formData={formData}
+              />
+            </div>
           </div>
         </div>
       </div>
