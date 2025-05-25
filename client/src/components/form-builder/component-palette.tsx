@@ -52,21 +52,25 @@ function DraggableComponent({ type, icon, label, description, color, onAddField 
     <div
       ref={drag}
       onClick={handleClick}
-      className={`component-item bg-slate-50 hover:bg-slate-100 p-3 rounded-lg cursor-grab transition-all duration-200 border border-transparent hover:border-slate-200 ${
-        isDragging ? 'opacity-50 cursor-grabbing' : ''
-      }`}
-      style={{
-        transform: isDragging ? 'rotate(5deg)' : 'none',
-      }}
+      className={`group relative p-4 rounded-xl cursor-move border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
+        isDragging 
+          ? 'opacity-60 scale-95 shadow-2xl' 
+          : 'hover:shadow-lg'
+      } ${color} backdrop-blur-sm`}
     >
       <div className="flex items-center space-x-3">
-        <div className={`w-8 h-8 ${color} rounded-lg flex items-center justify-center`}>
+        <div className="flex-shrink-0 p-2 rounded-lg bg-white/50 group-hover:bg-white/70 transition-colors">
           {icon}
         </div>
-        <div className="flex-1">
-          <p className="text-sm font-medium text-slate-900">{label}</p>
-          <p className="text-xs text-slate-500">{description}</p>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-bold text-slate-900 group-hover:text-slate-800">{label}</p>
+          <p className="text-xs text-slate-600 group-hover:text-slate-700 truncate">{description}</p>
         </div>
+      </div>
+      
+      {/* Drag indicator */}
+      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="w-2 h-2 bg-slate-400 rounded-full"></div>
       </div>
     </div>
   );
@@ -76,10 +80,10 @@ export default function ComponentPalette({ onAddField }: ComponentPaletteProps) 
   const inputComponents = [
     {
       type: "GRIDLKP",
-      icon: <Table className="w-4 h-4 text-blue-600" />,
+      icon: <Table className="w-5 h-5 text-blue-600" />,
       label: "Grid Lookup",
       description: "GRIDLKP",
-      color: "bg-blue-100"
+      color: "bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:border-blue-300"
     },
     {
       type: "LSTLKP",
