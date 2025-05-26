@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
+import { FormField } from "@/lib/form-types";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
-import { Button } from "@/components/ui/button";
-import { Trash2, Plus } from "lucide-react";
-import type { FormField } from "@/lib/form-types";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
+import { Radio } from "lucide-react";
 
 interface RadiogrpConfiguratorProps {
   field: FormField;
@@ -13,117 +13,67 @@ interface RadiogrpConfiguratorProps {
 }
 
 export default function RadiogrpConfigurator({ field, onUpdate }: RadiogrpConfiguratorProps) {
-  const [optionValues, setOptionValues] = useState<Record<string, string>>(field.OptionValues || {});
-
-  const addOption = () => {
-    const newKey = `option_${Object.keys(optionValues).length + 1}`;
-    const newOptions = { ...optionValues, [newKey]: "" };
-    setOptionValues(newOptions);
-    onUpdate({ OptionValues: newOptions });
-  };
-
-  const updateOptionKey = (oldKey: string, newKey: string) => {
-    const newOptions = { ...optionValues };
-    const value = newOptions[oldKey];
-    delete newOptions[oldKey];
-    newOptions[newKey] = value;
-    setOptionValues(newOptions);
-    onUpdate({ OptionValues: newOptions });
-  };
-
-  const updateOptionValue = (key: string, value: string) => {
-    const newOptions = { ...optionValues, [key]: value };
-    setOptionValues(newOptions);
-    onUpdate({ OptionValues: newOptions });
-  };
-
-  const removeOption = (key: string) => {
-    const newOptions = { ...optionValues };
-    delete newOptions[key];
-    setOptionValues(newOptions);
-    onUpdate({ OptionValues: newOptions });
-  };
-
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="text-lg">Configuration RADIOGRP</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Propriétés de base */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="radiogrp-id">ID</Label>
-            <Input
-              id="radiogrp-id"
-              value={field.Id || ""}
-              onChange={(e) => onUpdate({ Id: e.target.value })}
-              placeholder="ApprovalStatus"
-            />
-          </div>
-          <div>
-            <Label htmlFor="radiogrp-label">Label</Label>
-            <Input
-              id="radiogrp-label"
-              value={field.label || ""}
-              onChange={(e) => onUpdate({ label: e.target.value })}
-              placeholder="Statut d'approbation"
-            />
-          </div>
-        </div>
-
-        {/* Inline */}
-        <div className="flex items-center space-x-2">
-          <Switch
-            id="radiogrp-inline"
-            checked={field.Inline || false}
-            onCheckedChange={(checked) => onUpdate({ Inline: checked })}
-          />
-          <Label htmlFor="radiogrp-inline">Inline</Label>
-        </div>
-
-        {/* OptionValues */}
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <Label>OptionValues</Label>
-            <Button size="sm" onClick={addOption} className="h-8">
-              <Plus className="w-4 h-4 mr-1" />
-              Ajouter
-            </Button>
-          </div>
-          <div className="space-y-2">
-            {Object.entries(optionValues).map(([key, value]) => (
-              <div key={key} className="flex items-center gap-2">
-                <Input
-                  value={key}
-                  onChange={(e) => updateOptionKey(key, e.target.value)}
-                  placeholder="Clé (ex: Approved)"
-                  className="w-1/3"
-                />
-                <Input
-                  value={value}
-                  onChange={(e) => updateOptionValue(key, e.target.value)}
-                  placeholder="Valeur affichée"
-                  className="w-2/3"
-                />
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => removeOption(key)}
-                  className="h-8 w-8 p-0"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-            ))}
-          </div>
-          {Object.keys(optionValues).length === 0 && (
-            <div className="text-sm text-gray-500 italic">
-              Exemples: Approved, Pending, Rejected
+    <div className="space-y-4">
+      <Card className="border-orange-200 dark:border-orange-700">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm flex items-center gap-2">
+            <Radio className="w-3 h-3 text-orange-500" />
+            RADIOGRP Properties
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Component ID & Label */}
+          <div className="space-y-3">
+            <div>
+              <Label className="text-xs text-gray-600">Component ID</Label>
+              <Input
+                value={field.Id || ""}
+                onChange={(e) => onUpdate({ Id: e.target.value })}
+                placeholder="ApprovalStatus"
+                className="h-8 text-sm"
+              />
             </div>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+            <div>
+              <Label className="text-xs text-gray-600">Label</Label>
+              <Input
+                value={field.Label || ""}
+                onChange={(e) => onUpdate({ Label: e.target.value })}
+                placeholder="Approval Status"
+                className="h-8 text-sm"
+              />
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* RADIOGRP Specific Properties */}
+          <div className="space-y-3">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="inline"
+                checked={field.Inline || false}
+                onCheckedChange={(checked) => onUpdate({ Inline: !!checked })}
+              />
+              <Label htmlFor="inline" className="text-xs">Inline</Label>
+            </div>
+
+            <div>
+              <Label className="text-xs text-gray-600">OptionValues</Label>
+              <Textarea
+                value={field.OptionValues?.join('\n') || ""}
+                onChange={(e) => onUpdate({ 
+                  OptionValues: e.target.value.split('\n').filter(v => v.trim())
+                })}
+                placeholder="Approved&#10;Pending&#10;Rejected"
+                rows={4}
+                className="text-sm"
+              />
+              <p className="text-xs text-gray-500 mt-1">One option per line (e.g., Approved, Pending, Rejected)</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

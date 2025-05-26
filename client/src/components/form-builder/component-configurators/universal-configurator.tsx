@@ -14,6 +14,12 @@ import TextConfigurator from "./text-configurator";
 import TextareaConfigurator from "./textarea-configurator";
 import SelectConfigurator from "./select-configurator";
 import CheckboxConfigurator from "./checkbox-configurator";
+import DialogConfigurator from "./dialog-configurator";
+import LstLkpConfigurator from "./lstlkp-configurator";
+import GroupConfigurator from "./group-configurator";
+import ActionConfigurator from "./action-configurator";
+import FileuploadConfigurator from "./fileupload-configurator";
+import RadiogrpConfigurator from "./radiogrp-configurator";
 import type { FormField } from "@/lib/form-types";
 
 interface UniversalConfiguratorProps {
@@ -69,32 +75,28 @@ export default function UniversalConfigurator({ field, onUpdate }: UniversalConf
     return <TextareaConfigurator field={field} onUpdate={onUpdate} />;
   }
   
-  if (field.type === 'RADIOGRP') {
+  if (field.Type === 'RADIOGRP' || field.type === 'RADIOGRP') {
     return <RadiogrpConfigurator field={field} onUpdate={onUpdate} />;
   }
   
-  if (field.type === 'FILEUPLOAD') {
+  if (field.Type === 'FILEUPLOAD' || field.type === 'FILEUPLOAD') {
     return <FileuploadConfigurator field={field} onUpdate={onUpdate} />;
   }
   
-  if (field.type === 'TEXTAREA') {
-    return <TextAreaConfigurator field={field} onUpdate={onUpdate} />;
-  }
-  
-  if (field.type === 'ACTION') {
+  if (field.Type === 'ACTION' || field.type === 'ACTION') {
     return <ActionConfigurator field={field} onUpdate={onUpdate} />;
   }
   
-  if (field.type === 'GRIDLKP') {
-    return <GRIDLKPConfigurator field={field} onUpdate={onUpdate} />;
+  if (field.Type === 'LSTLKP' || field.type === 'LSTLKP') {
+    return <LstLkpConfigurator field={field} onUpdate={onUpdate} />;
   }
   
-  if (field.type === 'LSTLKP') {
-    return <LSTLKPConfigurator field={field} onUpdate={onUpdate} />;
+  if (field.Type === 'GROUP' || field.type === 'GROUP') {
+    return <GroupConfigurator field={field} onUpdate={onUpdate} />;
   }
   
-  if (field.type === 'DATEPICKER') {
-    return <DatePickerConfigurator field={field} onUpdate={onUpdate} />;
+  if (field.Type === 'DIALOG' || field.type === 'DIALOG') {
+    return <DialogConfigurator field={field} onUpdate={onUpdate} />;
   }
 
   // Configurateur SELECT
