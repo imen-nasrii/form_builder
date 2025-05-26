@@ -1,5 +1,8 @@
 import { ValidationOperators, FieldTypes, ComponentTypes } from "@shared/schema";
 
+// Import the new comprehensive FormField structure
+export * from "./form-types-new";
+
 // Base field interface matching PDF documentation structure
 export interface FormField {
   Id: string;
