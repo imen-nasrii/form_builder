@@ -92,28 +92,28 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
     {
       type: "TEXT",
       icon: <Type className="w-5 h-5 text-white" />,
-      label: "Champ texte",
+      label: "Text Field",
       description: "TEXT",
       color: "bg-green-500"
     },
     {
       type: "TEXTAREA",
       icon: <FileText className="w-5 h-5 text-white" />,
-      label: "Zone de texte",
+      label: "Text Area",
       description: "TEXTAREA", 
       color: "bg-green-600"
     },
     {
       type: "DATEPICKER",
       icon: <Calendar className="w-5 h-5 text-white" />,
-      label: "Sélecteur de date",
+      label: "Date Picker",
       description: "DATEPICKER",
       color: "bg-purple-500"
     },
     {
       type: "FILEUPLOAD",
       icon: <Upload className="w-5 h-5 text-white" />,
-      label: "Téléchargement de fichier",
+      label: "File Upload",
       description: "FILEUPLOAD",
       color: "bg-indigo-500"
     }
@@ -123,21 +123,21 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
     {
       type: "SELECT",
       icon: <ChevronDown className="w-5 h-5 text-white" />,
-      label: "Sélectionnez la liste déroulante",
+      label: "Dropdown Select",
       description: "SELECT",
       color: "bg-orange-500"
     },
     {
       type: "CHECKBOX",
       icon: <CheckSquare className="w-5 h-5 text-white" />,
-      label: "Case à cocher",
+      label: "Checkbox",
       description: "CHECKBOX",
       color: "bg-cyan-500"
     },
     {
       type: "RADIOGRP",
       icon: <Radio className="w-5 h-5 text-white" />,
-      label: "Groupe de radio",
+      label: "Radio Group",
       description: "RADIOGRP",
       color: "bg-pink-500"
     }
@@ -147,21 +147,21 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
     {
       type: "GRID",
       icon: <Grid3X3 className="w-5 h-5 text-white" />,
-      label: "Grille de données",
+      label: "Data Grid",
       description: "GRID",
       color: "bg-blue-600"
     },
     {
       type: "GRIDLKP",
       icon: <Table className="w-5 h-5 text-white" />,
-      label: "Recherche de grille",
+      label: "Grid Lookup",
       description: "GRIDLKP",
       color: "bg-blue-500"
     },
     {
       type: "LSTLKP",
       icon: <List className="w-5 h-5 text-white" />,
-      label: "Recherche de liste",
+      label: "List Lookup",
       description: "LSTLKP",
       color: "bg-teal-500"
     }
@@ -171,21 +171,21 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
     {
       type: "DIALOG",
       icon: <MessageSquare className="w-5 h-5 text-white" />,
-      label: "Boîte de dialogue",
+      label: "Dialog Box",
       description: "DIALOG",
       color: "bg-purple-600"
     },
     {
       type: "GROUP",
       icon: <FolderOpen className="w-5 h-5 text-white" />,
-      label: "Groupe de champs",
+      label: "Field Group",
       description: "GROUP",
       color: "bg-gray-500"
     },
     {
       type: "ACTION",
       icon: <Play className="w-5 h-5 text-white" />,
-      label: "Bouton d'action",
+      label: "Action Button",
       description: "ACTION",
       color: "bg-red-500"
     }
@@ -193,9 +193,9 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
 
   return (
     <div className="space-y-4">
-      {/* Titre principal */}
+      {/* Main Title */}
       <div className="text-center">
-        <h2 className="text-lg font-bold text-black dark:text-white">COMPOSANTS</h2>
+        <h2 className="text-lg font-bold text-black dark:text-white">COMPONENTS</h2>
       </div>
 
       {/* Input Controls Section */}
@@ -205,7 +205,7 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
           onClick={() => toggleSection('input')}
         >
           <h3 className="text-sm font-semibold text-black dark:text-white">
-            CONTRÔLES D'ENTRÉE
+            INPUT CONTROLS
           </h3>
           {expandedSections.input ? 
             <ChevronDown className="w-5 h-5 text-blue-500" /> : 
@@ -236,7 +236,7 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
           onClick={() => toggleSection('selection')}
         >
           <h3 className="text-sm font-semibold text-black dark:text-white">
-            CONTRÔLES DE SÉLECTION
+            SELECTION CONTROLS
           </h3>
           {expandedSections.selection ? 
             <ChevronDown className="w-5 h-5 text-green-500" /> : 
@@ -267,7 +267,7 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
           onClick={() => toggleSection('data')}
         >
           <h3 className="text-sm font-semibold text-black dark:text-white">
-            CONTRÔLES DE DONNÉES
+            DATA CONTROLS
           </h3>
           {expandedSections.data ? 
             <ChevronDown className="w-5 h-5 text-blue-500" /> : 
@@ -298,7 +298,7 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
           onClick={() => toggleSection('special')}
         >
           <h3 className="text-sm font-semibold text-black dark:text-white">
-            CONTRÔLES SPÉCIAUX
+            SPECIAL CONTROLS
           </h3>
           {expandedSections.special ? 
             <ChevronDown className="w-5 h-5 text-purple-500" /> : 
