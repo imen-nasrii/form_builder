@@ -179,22 +179,22 @@ export default function NewFormDialog({ onCreateForm }: NewFormDialogProps) {
           </div>
 
           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
-            <h4 className="font-bold text-blue-900 mb-4 text-lg">Aperçu du formulaire</h4>
+            <h4 className="font-bold text-blue-900 mb-4 text-lg">Form Preview</h4>
             <div className="grid grid-cols-2 gap-4 text-base">
               <div className="bg-white rounded-lg p-3">
-                <span className="text-gray-600">ID du menu:</span>
-                <div className="font-bold text-blue-800">{formConfig.menuId || "Non défini"}</div>
+                <span className="text-gray-600">Menu ID:</span>
+                <div className="font-bold text-blue-800">{formConfig.menuId || "Not defined"}</div>
               </div>
               <div className="bg-white rounded-lg p-3">
-                <span className="text-gray-600">Étiquette:</span>
-                <div className="font-bold text-blue-800">{formConfig.label || "Non défini"}</div>
+                <span className="text-gray-600">Label:</span>
+                <div className="font-bold text-blue-800">{formConfig.label || "Not defined"}</div>
               </div>
               <div className="bg-white rounded-lg p-3">
-                <span className="text-gray-600">Largeur:</span>
+                <span className="text-gray-600">Width:</span>
                 <div className="font-bold text-blue-800">{formConfig.formWidth}</div>
               </div>
               <div className="bg-white rounded-lg p-3">
-                <span className="text-gray-600">Mise en page:</span>
+                <span className="text-gray-600">Layout:</span>
                 <div className="font-bold text-blue-800">{formConfig.layout}</div>
               </div>
             </div>

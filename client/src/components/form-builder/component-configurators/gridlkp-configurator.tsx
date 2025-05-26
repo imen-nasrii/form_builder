@@ -254,13 +254,13 @@ export default function GRIDLKPConfigurator({ field, onUpdate }: GRIDLKPConfigur
       <Card className="border-orange-200 dark:border-orange-700">
         <CardHeader className="pb-3">
           <CardTitle className="text-sm text-orange-700 dark:text-orange-300">
-            Définition des colonnes
+            Column Definitions
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Add New Column */}
           <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg space-y-3">
-            <Label className="text-sm font-medium">Ajouter une colonne</Label>
+            <Label className="text-sm font-medium">Add Column</Label>
             <div className="grid grid-cols-4 gap-2">
               <Input 
                 placeholder="DataField"
