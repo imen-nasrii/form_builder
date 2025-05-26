@@ -68,18 +68,14 @@ export default function FormBuilderClean() {
 
   useEffect(() => {
     if (form) {
-      const parsedDefinition = typeof form.definition === 'string' 
-        ? JSON.parse(form.definition) 
-        : form.definition;
-      
       setFormData({
-        menuId: parsedDefinition.MenuID || form.menuId || "",
-        label: parsedDefinition.Label || form.label || "",
-        formWidth: parsedDefinition.FormWidth || "700px",
-        layout: parsedDefinition.Layout || "PROCESS",
-        fields: parsedDefinition.Fields || [],
-        actions: parsedDefinition.Actions || [],
-        validations: parsedDefinition.Validations || []
+        menuId: form.menuId || "",
+        label: form.label || "",
+        formWidth: form.formWidth || "700px",
+        layout: form.layout || "PROCESS",
+        fields: form.fields ? JSON.parse(form.fields as string) : [],
+        actions: form.actions ? JSON.parse(form.actions as string) : [],
+        validations: form.validations ? JSON.parse(form.validations as string) : []
       });
     }
   }, [form]);
