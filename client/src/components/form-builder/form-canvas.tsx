@@ -288,11 +288,23 @@ export default function FormCanvas({
           </div>
         );
       default:
+        // Pour tous les autres types, afficher un composant générique avec configuration
         return (
-          <div key={field.Id} className="p-4 border border-orange-200 rounded-lg bg-orange-50 dark:bg-orange-900/20 dark:border-orange-700">
-            <p className="text-sm text-orange-700 dark:text-orange-300">
-              Type non supporté: {field.type}
-            </p>
+          <div key={field.Id} className={`p-4 border rounded-lg ${isSelected ? 'border-blue-400 bg-blue-50' : 'border-gray-200 bg-white'} dark:bg-gray-800 dark:border-gray-600`}>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-sm font-medium">{field.label || `Composant ${field.type}`}</label>
+              <div className="flex gap-1">
+                <Button size="sm" variant="ghost" onClick={() => onSelectField(field)}>
+                  <Settings className="w-4 h-4" />
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => onRemoveField(field.Id)}>
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+            <div className="bg-gray-100 dark:bg-gray-700 p-2 rounded text-xs">
+              Type: {field.type}
+            </div>
           </div>
         );
     }
