@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import type { User } from "@shared/schema";
 import { Bell, ChevronDown } from "lucide-react";
+import LanguageToggle from "@/components/language-toggle";
 
 export default function Navigation() {
   const { user } = useAuth() as { user: User | null };
@@ -108,6 +109,8 @@ export default function Navigation() {
 
         {/* User Progress & Profile */}
         <div className="flex items-center gap-4">
+          {/* Language Toggle */}
+          <LanguageToggle />
           {/* User Progress Indicator */}
           <div className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
