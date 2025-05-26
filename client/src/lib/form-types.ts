@@ -24,8 +24,8 @@ export interface FormField {
     ShowDescription: boolean;
   };
   LoadDataInfo?: {
-    DataModel: string;
-    ColumnsDefinition: ColumnDefinition[];
+    DataModel?: string;
+    ColumnsDefinition?: ColumnDefinition[];
     DataSource?: string;
     Endpoint?: string;
     Entity?: string;
