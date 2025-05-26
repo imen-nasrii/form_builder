@@ -1,36 +1,37 @@
 import { ValidationOperators, FieldTypes, ComponentTypes } from "@shared/schema";
 
-// Base field interface matching PDF documentation structure
+// FormField interface exactly matching your PDF documentation
 export interface FormField {
+  // Core Identifier (required)
   Id: string;
   Label?: string;
-  label?: string; // Keep both for compatibility
   Type?: keyof typeof ComponentTypes;
-  type?: keyof typeof ComponentTypes; // Keep both for compatibility
   
-  // Core Properties from PDF
+  // Basic Layout Properties (from PDF examples)
   Inline?: boolean;
   Width?: string;
   Spacing?: string;
   Required?: boolean;
-  required?: boolean; // Keep both for compatibility
   Outlined?: boolean;
   UserIntKey?: boolean;
   CheckboxValue?: boolean;
   Value?: any;
-  value?: any; // Keep both for compatibility
   IsGroup?: boolean;
-  isGroup?: boolean; // Keep both for compatibility
   
-  // Data Binding Properties
+  // Data Binding Properties (from PDF examples: psource, descr)
   DataField?: string;
   
-  // Entity & Key Properties (from PDF)
+  // Entity & Key Properties (from PDF: SourceGrid, SourceDetails)
   Entity?: string;
   EntityKeyField?: string;
   KeyColumn?: string;
   
-  // GRIDLKP & LSTLKP Properties (from PDF)
+  // GRID Properties (from PDF: SourceGrid example)
+  RecordActions?: string[]; // Edit, Copy, Delete
+  ColumnDefinitions?: string[]; // pSource, descr
+  Endpoint?: string; // AllSources
+  
+  // GRIDLKP & LSTLKP Properties (from PDF: FundID, Ticker, SecCat, SecGrp examples)
   ItemInfo?: {
     MainProperty: string;
     DescProperty?: string;
@@ -60,36 +61,42 @@ export interface FormField {
     RealTime?: boolean;
   };
   
-  // GRID Properties (from PDF)
-  RecordActions?: string[]; // Edit, Copy, Delete
-  ColumnDefinitions?: string[];
-  Endpoint?: string;
-  
-  // Events (from PDF)
+  // Events (from PDF examples)
   Events?: {
     onClickRow?: string;
     onClose?: string;
     onSubmit?: string;
   };
   
-  // TEXTAREA Properties (from PDF)
+  // TEXTAREA Properties (from PDF: Comments example)
   Rows?: number;
   
-  // SELECT & RADIOGRP Properties (from PDF)
-  OptionValues?: Record<string, string>; // e.g., {Active: "Active", Inactive: "Inactive"}
+  // SELECT & RADIOGRP Properties (from PDF: Status, Priority, ApprovalStatus examples)
+  OptionValues?: Record<string, string>; // {Active: "Active", Inactive: "Inactive", Pending: "Pending"}
   
-  // ACTION Properties (from PDF)
+  // ACTION Properties (from PDF: Actions example)
   MethodToInvoke?: string;
   
-  // FILEUPLOAD Properties (from PDF)
+  // FILEUPLOAD Properties (from PDF: Attachments example)
   AcceptedTypes?: string[];
   MaxSize?: number;
   
-  // GROUP Properties (from PDF)
+  // GROUP Properties (from PDF: PROCAGAINST, AccrueTypeGroup, RPTOPTS examples)
   ChildFields?: FormField[];
   
-  // Validation Properties (from PDF)
+  // Conditional Logic (from PDF examples)
+  EnabledWhen?: ConditionExpression;
+  VisibleWhen?: ConditionExpression;
+  
+  // Validations (from PDF: ERROR/WARNING examples)
   Validations?: ValidationRule[];
+  
+  // Compatibility properties
+  label?: string;
+  type?: keyof typeof ComponentTypes;
+  required?: boolean;
+  value?: any;
+  isGroup?: boolean;
 }
 
 export interface ColumnDefinition {
@@ -133,7 +140,7 @@ export interface FormDefinition {
   Validations: ValidationRule[];
 }
 
-// Component property interfaces for different field types
+// Component props interfaces
 export interface GridLookupProps {
   field: FormField;
   isSelected: boolean;
@@ -149,7 +156,6 @@ export interface CheckboxFieldProps extends GridLookupProps {}
 export interface RadioGroupProps extends GridLookupProps {}
 export interface GroupFieldProps extends GridLookupProps {}
 
-// Drag and drop types
 export interface DragItem {
   type: string;
   fieldType: keyof typeof ComponentTypes;
@@ -160,7 +166,6 @@ export interface DropResult {
   position?: number;
 }
 
-// Form builder state
 export interface FormBuilderState {
   formData: FormDefinition;
   selectedField: FormField | null;
@@ -168,7 +173,6 @@ export interface FormBuilderState {
   draggedItem: DragItem | null;
 }
 
-// Validation engine types
 export interface ValidationResult {
   isValid: boolean;
   errors: ValidationError[];
@@ -182,5 +186,4 @@ export interface ValidationError {
   rule?: ValidationRule;
 }
 
-// Export utility type for field component props
 export type FieldComponentProps = GridLookupProps;
