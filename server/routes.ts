@@ -43,7 +43,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Enable 2FA (admin users)
   app.post('/api/auth/enable-2fa', requireAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const user = await storage.getUser(userId);
       
       if (user?.role !== 'admin') {
@@ -63,7 +63,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Verify 2FA token
   app.post('/api/auth/verify-2fa', requireAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const { token } = req.body;
 
       // Create 2FA token with 5 minute expiry
@@ -90,7 +90,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Form management routes
   app.get('/api/forms', requireAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const forms = await storage.getForms(userId);
       res.json(forms);
     } catch (error) {
@@ -133,7 +133,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/forms', requireAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const formData = insertFormSchema.parse({
         ...req.body,
         createdBy: userId
@@ -266,7 +266,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Template management routes
   app.get('/api/templates', requireAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const templates = await storage.getTemplates(userId);
       res.json(templates);
     } catch (error) {
@@ -277,7 +277,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/templates', requireAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const templateData = insertTemplateSchema.parse({
         ...req.body,
         createdBy: userId
@@ -331,7 +331,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Form import endpoint
   app.post('/api/forms/import', requireAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const { formJson } = req.body;
 
       const formData = insertFormSchema.parse({
