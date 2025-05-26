@@ -69,7 +69,7 @@ export default function DFMToJSONBot() {
     let componentType = "";
     
     lines.forEach((line, index) => {
-      // Détecter un nouveau composant
+      // Detect a new component
       if (line.includes('object ') && !line.includes(': TForm')) {
         if (currentComponent) {
           components.push(currentComponent);
@@ -88,13 +88,13 @@ export default function DFMToJSONBot() {
         };
       }
       
-      // Extraire les propriétés
+      // Extract properties
       if (currentComponent && line.includes(' = ')) {
         const [propName, propValue] = line.split(' = ');
         const cleanPropName = propName.trim();
         const cleanPropValue = propValue.replace(/'/g, '').trim();
         
-        // Mapper les propriétés Delphi vers nos propriétés
+        // Map Delphi properties to our properties
         switch (cleanPropName) {
           case 'Caption':
           case 'Text':

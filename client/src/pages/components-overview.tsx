@@ -37,7 +37,7 @@ export default function ComponentsOverview() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
 
-  // Données réelles de vos composants FormCraft Pro
+  // Real data from your FormCraft Pro components
   const mockComponents: ComponentProgress[] = [
     {
       id: "comp_1",

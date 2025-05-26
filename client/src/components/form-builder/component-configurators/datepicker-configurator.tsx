@@ -174,7 +174,7 @@ export default function DatePickerConfigurator({ field, onUpdate }: DatePickerCo
       <Card className="border-red-200 dark:border-red-700">
         <CardHeader className="pb-3">
           <CardTitle className="text-sm text-red-700 dark:text-red-300">
-            Règles de validation
+            Validation Rules
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -188,7 +188,7 @@ export default function DatePickerConfigurator({ field, onUpdate }: DatePickerCo
                 } 
               })}
             />
-            <Label>Jour ouvrable uniquement</Label>
+            <Label>Business days only</Label>
           </div>
 
           <div className="flex items-center space-x-2">
@@ -201,7 +201,7 @@ export default function DatePickerConfigurator({ field, onUpdate }: DatePickerCo
                 } 
               })}
             />
-            <Label>Date future uniquement</Label>
+            <Label>Future dates only</Label>
           </div>
 
           <div className="flex items-center space-x-2">
