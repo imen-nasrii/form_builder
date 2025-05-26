@@ -96,6 +96,29 @@ export default function FormBuilderClean() {
     setCustomComponents(prev => [...prev, newComponent]);
   };
 
+  // Fonction pour charger des composants depuis JSON (Solution 2)
+  const handleLoadComponents = (components: any[]) => {
+    const iconMap: { [key: string]: any } = {
+      'Grid3X3': Grid3X3,
+      'Type': Type,
+      'Square': Square,
+      'Calendar': Calendar,
+      'List': List,
+      'Upload': UploadIcon,
+      'Radio': Radio,
+      'FileText': FileText,
+    };
+
+    const processedComponents = components.map(comp => ({
+      type: comp.type,
+      label: comp.label,
+      icon: iconMap[comp.icon] || Type,
+      color: comp.color || 'text-blue-500'
+    }));
+
+    setCustomComponents(prev => [...prev, ...processedComponents]);
+  };
+
   // Load form data
   const { data: form } = useQuery<Form>({
     queryKey: ["/api/forms", formId],
@@ -364,7 +387,13 @@ export default function FormBuilderClean() {
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Custom Components</span>
                 </div>
-                <AddComponentDialog onAddComponent={handleAddComponent} />
+                <div className="space-y-2">
+                  <AddComponentDialog onAddComponent={handleAddComponent} />
+                  <ComponentConfigManager 
+                    onLoadComponents={handleLoadComponents}
+                    customComponents={customComponents}
+                  />
+                </div>
                 {customComponents.length > 0 && (
                   <div className="mt-2 space-y-2">
                     {customComponents.map(component => (
