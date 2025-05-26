@@ -167,7 +167,7 @@ export default function FormCanvas({
               </div>
             </div>
             <div className="bg-gray-100 dark:bg-gray-700 p-2 rounded text-xs">
-              Table avec colonnes et actions
+              Table with columns and actions
             </div>
           </div>
         );

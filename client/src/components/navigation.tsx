@@ -12,10 +12,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
+import type { User } from "@shared/schema";
 import { Bell, ChevronDown } from "lucide-react";
 
 export default function Navigation() {
-  const { user } = useAuth();
+  const { user } = useAuth() as { user: User | null };
   const [location] = useLocation();
 
   const getInitials = (firstName?: string, lastName?: string) => {
