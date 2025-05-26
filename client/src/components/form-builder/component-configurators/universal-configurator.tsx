@@ -40,25 +40,33 @@ export default function UniversalConfigurator({ field, onUpdate }: UniversalConf
     }
   };
 
-  // Configurateurs spécialisés
-  if (field.type === 'GRID') {
+  // Configurateurs spécialisés - utiliser Type avec majuscule
+  if (field.Type === 'GRID' || field.type === 'GRID') {
     return <GridConfigurator field={field} onUpdate={onUpdate} />;
   }
   
-  if (field.type === 'DIALOG') {
-    return <DialogConfigurator field={field} onUpdate={onUpdate} />;
-  }
-  
-  if (field.type === 'TEXT') {
+  if (field.Type === 'TEXT' || field.type === 'TEXT') {
     return <TextConfigurator field={field} onUpdate={onUpdate} />;
   }
   
-  if (field.type === 'SELECT') {
+  if (field.Type === 'SELECT' || field.type === 'SELECT') {
     return <SelectConfigurator field={field} onUpdate={onUpdate} />;
   }
   
-  if (field.type === 'CHECKBOX') {
+  if (field.Type === 'CHECKBOX' || field.type === 'CHECKBOX') {
     return <CheckboxConfigurator field={field} onUpdate={onUpdate} />;
+  }
+  
+  if (field.Type === 'GRIDLKP' || field.type === 'GRIDLKP') {
+    return <GridLkpConfigurator field={field} onUpdate={onUpdate} />;
+  }
+  
+  if (field.Type === 'DATEPICKER' || field.type === 'DATEPICKER') {
+    return <DatePickerConfigurator field={field} onUpdate={onUpdate} />;
+  }
+  
+  if (field.Type === 'TEXTAREA' || field.type === 'TEXTAREA') {
+    return <TextareaConfigurator field={field} onUpdate={onUpdate} />;
   }
   
   if (field.type === 'RADIOGRP') {
