@@ -24,20 +24,39 @@ interface UniversalConfiguratorProps {
 export default function UniversalConfigurator({ field, onUpdate }: UniversalConfiguratorProps) {
   const getIcon = () => {
     switch (field.type) {
+      case 'GRID': return <Settings className="w-4 h-4 text-blue-600" />;
+      case 'DIALOG': return <Settings className="w-4 h-4 text-purple-600" />;
+      case 'TEXT': return <Type className="w-4 h-4 text-green-600" />;
       case 'GRIDLKP': return <Settings className="w-4 h-4 text-blue-500" />;
       case 'LSTLKP': return <List className="w-4 h-4 text-green-500" />;
       case 'DATEPICKER': return <Calendar className="w-4 h-4 text-purple-500" />;
       case 'SELECT': return <List className="w-4 h-4 text-orange-500" />;
       case 'CHECKBOX': return <CheckSquare className="w-4 h-4 text-cyan-500" />;
       case 'RADIOGRP': return <Radio className="w-4 h-4 text-pink-500" />;
-      case 'INPUT': return <Type className="w-4 h-4 text-gray-500" />;
       case 'TEXTAREA': return <Type className="w-4 h-4 text-gray-600" />;
       case 'FILEUPLOAD': return <Upload className="w-4 h-4 text-indigo-500" />;
+      case 'ACTION': return <Settings className="w-4 h-4 text-orange-600" />;
       default: return <Settings className="w-4 h-4 text-gray-500" />;
     }
   };
 
   // Configurateurs spécialisés
+  if (field.type === 'GRID') {
+    return <GridConfigurator field={field} onUpdate={onUpdate} />;
+  }
+  
+  if (field.type === 'TEXT') {
+    return <TextConfigurator field={field} onUpdate={onUpdate} />;
+  }
+  
+  if (field.type === 'TEXTAREA') {
+    return <TextAreaConfigurator field={field} onUpdate={onUpdate} />;
+  }
+  
+  if (field.type === 'ACTION') {
+    return <ActionConfigurator field={field} onUpdate={onUpdate} />;
+  }
+  
   if (field.type === 'GRIDLKP') {
     return <GRIDLKPConfigurator field={field} onUpdate={onUpdate} />;
   }
@@ -349,7 +368,7 @@ export default function UniversalConfigurator({ field, onUpdate }: UniversalConf
             </div>
           )}
 
-          {field.type === 'INPUT' && (
+          {field.type === 'TEXT' && (
             <div>
               <Label>Placeholder</Label>
               <Input 
