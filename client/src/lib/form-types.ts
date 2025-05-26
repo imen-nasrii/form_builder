@@ -27,6 +27,11 @@ export interface FormField {
     DataModel: string;
     ColumnsDefinition: ColumnDefinition[];
     DataSource?: string;
+    Endpoint?: string;
+    Entity?: string;
+    EntityKeyField?: string;
+    RecordActions?: string[];
+    DataField?: string;
     APIConnection?: {
       url: string;
       method: string;
@@ -41,6 +46,19 @@ export interface FormField {
     };
     RealTime?: boolean;
   };
+  
+  // Events
+  Events?: {
+    onClickRow?: string;
+    onClose?: string;
+    onSubmit?: string;
+  };
+  
+  // TEXTAREA specific
+  Rows?: number;
+  
+  // ACTION specific
+  MethodToInvoke?: string;
   
   // Select/Radio specific properties
   OptionValues?: Record<string, string>;

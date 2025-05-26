@@ -7,9 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Trash2, Plus, Settings, CheckSquare, List, Calendar, Type, Upload, Radio } from "lucide-react";
+import GridConfigurator from "./grid-configurator";
 import GRIDLKPConfigurator from "./gridlkp-configurator";
 import LSTLKPConfigurator from "./lstlkp-configurator";
 import DatePickerConfigurator from "./datepicker-configurator";
+import TextConfigurator from "./text-configurator";
+import TextAreaConfigurator from "./textarea-configurator";
+import ActionConfigurator from "./action-configurator";
 import type { FormField } from "@/lib/form-types";
 
 interface UniversalConfiguratorProps {
