@@ -14,6 +14,7 @@ export function setupAuth(app: Express) {
     createTableIfMissing: true,
     ttl: sessionTtl,
     tableName: "sessions",
+    schemaName: "public",
   });
 
   app.use(session({
@@ -21,10 +22,12 @@ export function setupAuth(app: Express) {
     store: sessionStore,
     resave: false,
     saveUninitialized: false,
+    name: 'connect.sid',
     cookie: {
       httpOnly: true,
       secure: false, // Set to true in production with HTTPS
       maxAge: sessionTtl,
+      sameSite: 'lax',
     },
   }));
 
