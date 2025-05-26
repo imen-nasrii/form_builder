@@ -33,7 +33,7 @@ export default function FileuploadConfigurator({ field, onUpdate }: FileuploadCo
               id="fileupload-label"
               value={field.label || ""}
               onChange={(e) => onUpdate({ label: e.target.value })}
-              placeholder="Pièces jointes"
+              placeholder="Attachments"
             />
           </div>
         </div>
