@@ -95,7 +95,7 @@ export default function ComponentsOverview() {
         avatar: "",
         role: "Admin"
       },
-      lastModified: "Il y a 1 heure",
+      lastModified: "1 hour ago",
       progress: 92,
       collaborators: []
     }
