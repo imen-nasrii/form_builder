@@ -17,7 +17,7 @@ import PropertiesPanel from "@/components/form-builder/properties-panel";
 import ExportDialog from "@/components/form-builder/export-dialog";
 import AdvancedValidator from "@/components/form-builder/advanced-validator";
 import MultiFrameworkExport from "@/components/form-builder/multi-framework-export";
-import APIIntegrationPanel from "@/components/form-builder/api-integration-panel";
+
 import ComponentImportPanel from "@/components/form-builder/component-import-panel";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -46,7 +46,7 @@ export default function FormBuilder() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [leftPanelOpen, setLeftPanelOpen] = useState(true);
   const [rightPanelOpen, setRightPanelOpen] = useState(true);
-  const [apiConnections, setApiConnections] = useState<any[]>([]);
+
 
   // Generate live JSON preview
   const generateLiveJson = () => {
@@ -381,13 +381,7 @@ export default function FormBuilder() {
                       <Settings className="w-3 h-3 mr-1 text-purple-500" />
                       Props
                     </TabsTrigger>
-                    <TabsTrigger 
-                      value="api" 
-                      className="flex-1 data-[state=active]:bg-white dark:data-[state=active]:bg-black data-[state=active]:text-black dark:data-[state=active]:text-white"
-                    >
-                      <Database className="w-3 h-3 mr-1 text-blue-500" />
-                      API
-                    </TabsTrigger>
+
                     <TabsTrigger 
                       value="import" 
                       className="flex-1 data-[state=active]:bg-white dark:data-[state=active]:bg-black data-[state=active]:text-black dark:data-[state=active]:text-white"
@@ -435,18 +429,7 @@ export default function FormBuilder() {
                     </ScrollArea>
                   </TabsContent>
                   
-                  <TabsContent value="api" className="flex-1 m-0">
-                    <APIIntegrationPanel
-                      onConnectionSave={(connection) => {
-                        setApiConnections(prev => [...prev.filter(c => c.id !== connection.id), connection]);
-                        toast({
-                          title: "API Connection Saved! 🚀",
-                          description: `Connection "${connection.name}" is ready to use`
-                        });
-                      }}
-                      connections={apiConnections}
-                    />
-                  </TabsContent>
+
                   
                   <TabsContent value="import" className="flex-1 m-0">
                     <ComponentImportPanel
