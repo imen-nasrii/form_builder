@@ -1,8 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
+import { FormField } from "@/lib/form-types";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
-import type { FormField } from "@/lib/form-types";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/components/ui/separator";
+import { CheckSquare } from "lucide-react";
 
 interface CheckboxConfiguratorProps {
   field: FormField;
@@ -11,97 +13,109 @@ interface CheckboxConfiguratorProps {
 
 export default function CheckboxConfigurator({ field, onUpdate }: CheckboxConfiguratorProps) {
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="text-lg">Configuration CHECKBOX</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Propriétés de base */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="checkbox-id">ID</Label>
-            <Input
-              id="checkbox-id"
-              value={field.Id || ""}
-              onChange={(e) => onUpdate({ Id: e.target.value })}
-              placeholder="UpdateRates"
-            />
+    <div className="space-y-4">
+      <Card className="border-teal-200 dark:border-teal-700">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm flex items-center gap-2">
+            <CheckSquare className="w-3 h-3 text-teal-500" />
+            CHECKBOX Properties
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Component ID & Label */}
+          <div className="space-y-3">
+            <div>
+              <Label className="text-xs text-gray-600">Component ID</Label>
+              <Input
+                value={field.Id || ""}
+                onChange={(e) => onUpdate({ Id: e.target.value })}
+                placeholder="UpdateRates"
+                className="h-8 text-sm"
+              />
+            </div>
+            <div>
+              <Label className="text-xs text-gray-600">Label</Label>
+              <Input
+                value={field.Label || ""}
+                onChange={(e) => onUpdate({ Label: e.target.value })}
+                placeholder="Update Rates"
+                className="h-8 text-sm"
+              />
+            </div>
           </div>
-          <div>
-            <Label htmlFor="checkbox-label">Label</Label>
-            <Input
-              id="checkbox-label"
-              value={field.label || ""}
-              onChange={(e) => onUpdate({ label: e.target.value })}
-              placeholder="Mettre à jour les taux"
-            />
+
+          <Separator />
+
+          {/* CHECKBOX Specific Properties */}
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <Label className="text-xs text-gray-600">Width</Label>
+                <Input
+                  value={field.Width || ""}
+                  onChange={(e) => onUpdate({ Width: e.target.value })}
+                  placeholder="auto"
+                  className="h-8 text-sm"
+                />
+              </div>
+              <div>
+                <Label className="text-xs text-gray-600">Spacing</Label>
+                <Input
+                  value={field.Spacing || ""}
+                  onChange={(e) => onUpdate({ Spacing: e.target.value })}
+                  placeholder="5px"
+                  className="h-8 text-sm"
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label className="text-xs text-gray-600">CheckboxValue</Label>
+              <Input
+                value={field.CheckboxValue ? "true" : "false"}
+                onChange={(e) => onUpdate({ CheckboxValue: e.target.value === "true" })}
+                placeholder="true/false"
+                className="h-8 text-sm"
+              />
+              <p className="text-xs text-gray-500 mt-1">Default checked state</p>
+            </div>
+
+            <div>
+              <Label className="text-xs text-gray-600">Value</Label>
+              <Input
+                value={field.Value || ""}
+                onChange={(e) => onUpdate({ Value: e.target.value })}
+                placeholder="checked value"
+                className="h-8 text-sm"
+              />
+              <p className="text-xs text-gray-500 mt-1">Value when checked</p>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="inline"
+                checked={field.Inline || false}
+                onCheckedChange={(checked) => onUpdate({ Inline: !!checked })}
+              />
+              <Label htmlFor="inline" className="text-xs">Inline</Label>
+            </div>
           </div>
-        </div>
 
-        {/* Inline */}
-        <div className="flex items-center space-x-2">
-          <Switch
-            id="checkbox-inline"
-            checked={field.Inline || false}
-            onCheckedChange={(checked) => onUpdate({ Inline: checked })}
-          />
-          <Label htmlFor="checkbox-inline">Inline</Label>
-        </div>
+          <Separator />
 
-        {/* Width */}
-        <div>
-          <Label htmlFor="checkbox-width">Width</Label>
-          <Input
-            id="checkbox-width"
-            value={field.Width || ""}
-            onChange={(e) => onUpdate({ Width: e.target.value })}
-            placeholder="32"
-          />
-        </div>
-
-        {/* CheckboxValue */}
-        <div className="flex items-center space-x-2">
-          <Switch
-            id="checkbox-value"
-            checked={field.CheckboxValue || false}
-            onCheckedChange={(checked) => onUpdate({ CheckboxValue: checked })}
-          />
-          <Label htmlFor="checkbox-value">CheckboxValue (Valeur par défaut)</Label>
-        </div>
-
-        {/* Spacing */}
-        <div>
-          <Label htmlFor="checkbox-spacing">Spacing</Label>
-          <Input
-            id="checkbox-spacing"
-            value={field.Spacing || ""}
-            onChange={(e) => onUpdate({ Spacing: e.target.value })}
-            placeholder="Espacement"
-          />
-        </div>
-
-        {/* Value */}
-        <div>
-          <Label htmlFor="checkbox-val">Value</Label>
-          <Input
-            id="checkbox-val"
-            value={field.Value || ""}
-            onChange={(e) => onUpdate({ Value: e.target.value })}
-            placeholder="Valeur du composant"
-          />
-        </div>
-
-        {/* EnabledWhen */}
-        <div>
-          <Label htmlFor="checkbox-enabledwhen">EnabledWhen</Label>
-          <Input
-            id="checkbox-enabledwhen"
-            value={field.EnabledWhen || ""}
-            onChange={(e) => onUpdate({ EnabledWhen: e.target.value })}
-            placeholder="Conditions d'activation"
-          />
-        </div>
-      </CardContent>
-    </Card>
+          {/* EnabledWhen specific to CHECKBOX */}
+          <div className="space-y-2">
+            <Label className="text-xs text-gray-600">EnabledWhen</Label>
+            <Input
+              value={field.EnabledWhen || ""}
+              onChange={(e) => onUpdate({ EnabledWhen: e.target.value })}
+              placeholder="Form.isEditMode"
+              className="h-8 text-sm"
+            />
+            <p className="text-xs text-gray-500">When checkbox should be enabled</p>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

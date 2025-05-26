@@ -4,115 +4,131 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
+import { FileText } from "lucide-react";
 
-interface TextAreaConfiguratorProps {
+interface TextareaConfiguratorProps {
   field: FormField;
   onUpdate: (updates: Partial<FormField>) => void;
 }
 
-export default function TextAreaConfigurator({ field, onUpdate }: TextAreaConfiguratorProps) {
+export default function TextareaConfigurator({ field, onUpdate }: TextareaConfiguratorProps) {
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <div className="w-4 h-4 bg-purple-500 rounded"></div>
-            Configuration TEXTAREA
+    <div className="space-y-4">
+      <Card className="border-amber-200 dark:border-amber-700">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm flex items-center gap-2">
+            <FileText className="w-3 h-3 text-amber-500" />
+            TEXTAREA Properties
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Basic Properties */}
-          <div className="grid grid-cols-2 gap-4">
+          {/* Component ID & Label */}
+          <div className="space-y-3">
             <div>
-              <Label>ID du composant</Label>
+              <Label className="text-xs text-gray-600">Component ID</Label>
               <Input
                 value={field.Id || ""}
                 onChange={(e) => onUpdate({ Id: e.target.value })}
-                placeholder="Ex: Comments"
+                placeholder="Comments"
+                className="h-8 text-sm"
               />
             </div>
             <div>
-              <Label>Label</Label>
+              <Label className="text-xs text-gray-600">Label</Label>
               <Input
-                value={field.label || ""}
-                onChange={(e) => onUpdate({ label: e.target.value })}
-                placeholder="Ex: Commentaires"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <Label>Width</Label>
-              <Input
-                value={field.Width || ""}
-                onChange={(e) => onUpdate({ Width: e.target.value })}
-                placeholder="Ex: 100%"
-              />
-            </div>
-            <div>
-              <Label>Rows</Label>
-              <Input
-                type="number"
-                value={field.Rows || "3"}
-                onChange={(e) => onUpdate({ Rows: parseInt(e.target.value) || 3 })}
-                placeholder="3"
-              />
-            </div>
-            <div>
-              <Label>Spacing</Label>
-              <Input
-                value={field.Spacing || ""}
-                onChange={(e) => onUpdate({ Spacing: e.target.value })}
-                placeholder="Ex: 10px"
+                value={field.Label || ""}
+                onChange={(e) => onUpdate({ Label: e.target.value })}
+                placeholder="Comments"
+                className="h-8 text-sm"
               />
             </div>
           </div>
 
           <Separator />
 
-          {/* Layout Properties */}
+          {/* TEXTAREA Specific Properties */}
           <div className="space-y-3">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="inline"
-                checked={field.Inline || false}
-                onCheckedChange={(checked) => onUpdate({ Inline: !!checked })}
-              />
-              <Label htmlFor="inline">Inline</Label>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <Label className="text-xs text-gray-600">Width</Label>
+                <Input
+                  value={field.Width || ""}
+                  onChange={(e) => onUpdate({ Width: e.target.value })}
+                  placeholder="300px"
+                  className="h-8 text-sm"
+                />
+              </div>
+              <div>
+                <Label className="text-xs text-gray-600">Rows</Label>
+                <Input
+                  value={field.Rows || ""}
+                  onChange={(e) => onUpdate({ Rows: parseInt(e.target.value) || 3 })}
+                  placeholder="3"
+                  type="number"
+                  className="h-8 text-sm"
+                />
+                <p className="text-xs text-gray-500 mt-1">Number of visible rows</p>
+              </div>
             </div>
 
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="required"
-                checked={field.required || false}
-                onCheckedChange={(checked) => onUpdate({ required: !!checked })}
-              />
-              <Label htmlFor="required">Requis</Label>
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="inline"
+                  checked={field.Inline || false}
+                  onCheckedChange={(checked) => onUpdate({ Inline: !!checked })}
+                />
+                <Label htmlFor="inline" className="text-xs">Inline</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="required"
+                  checked={field.Required || false}
+                  onCheckedChange={(checked) => onUpdate({ Required: !!checked })}
+                />
+                <Label htmlFor="required" className="text-xs">Required</Label>
+              </div>
             </div>
 
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="outlined"
-                checked={field.Outlined || false}
-                onCheckedChange={(checked) => onUpdate({ Outlined: !!checked })}
+            <div>
+              <Label className="text-xs text-gray-600">Placeholder</Label>
+              <Input
+                value={field.placeholder || ""}
+                onChange={(e) => onUpdate({ placeholder: e.target.value })}
+                placeholder="Enter comments..."
+                className="h-8 text-sm"
               />
-              <Label htmlFor="outlined">Outlined</Label>
+              <p className="text-xs text-gray-500 mt-1">Placeholder text for empty textarea</p>
             </div>
           </div>
 
           <Separator />
 
-          {/* Default Value */}
-          <div>
-            <Label>Valeur par défaut</Label>
-            <textarea
-              rows={3}
-              value={field.Value || ""}
-              onChange={(e) => onUpdate({ Value: e.target.value })}
-              placeholder="Texte par défaut..."
-              className="w-full px-3 py-2 border rounded-md resize-vertical"
-            />
+          {/* Character limits for TEXTAREA */}
+          <div className="space-y-2">
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <Label className="text-xs text-gray-600">Min Length</Label>
+                <Input
+                  value={field.minLength || ""}
+                  onChange={(e) => onUpdate({ minLength: parseInt(e.target.value) || 0 })}
+                  placeholder="0"
+                  type="number"
+                  className="h-8 text-sm"
+                />
+              </div>
+              <div>
+                <Label className="text-xs text-gray-600">Max Length</Label>
+                <Input
+                  value={field.maxLength || ""}
+                  onChange={(e) => onUpdate({ maxLength: parseInt(e.target.value) || 1000 })}
+                  placeholder="1000"
+                  type="number"
+                  className="h-8 text-sm"
+                />
+              </div>
+            </div>
+            <p className="text-xs text-gray-500">Character limits for validation</p>
           </div>
         </CardContent>
       </Card>
