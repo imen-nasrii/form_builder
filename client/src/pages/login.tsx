@@ -117,10 +117,8 @@ export default function Login() {
             <span className="text-gray-600 dark:text-gray-400">
               Pas encore de compte ?{" "}
             </span>
-            <Link href="/register">
-              <a className="text-blue-600 hover:text-blue-500 font-medium">
-                S'inscrire
-              </a>
+            <Link href="/register" className="text-blue-600 hover:text-blue-500 font-medium">
+              S'inscrire
             </Link>
           </div>
         </CardContent>
