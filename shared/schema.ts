@@ -44,37 +44,37 @@ export const users = mysqlTable("users", {
 });
 
 // Form definitions table
-export const forms = pgTable("forms", {
+export const forms = mysqlTable("forms", {
   id: serial("id").primaryKey(),
-  menuId: varchar("menu_id").notNull().unique(),
-  label: varchar("label").notNull(),
-  formWidth: varchar("form_width").notNull().default("700px"),
-  layout: varchar("layout").notNull().default("PROCESS"),
-  fields: jsonb("fields").notNull().default("[]"),
-  actions: jsonb("actions").notNull().default("[]"),
-  validations: jsonb("validations").notNull().default("[]"),
-  createdBy: varchar("created_by").notNull(),
+  menuId: varchar("menu_id", { length: 255 }).notNull().unique(),
+  label: varchar("label", { length: 255 }).notNull(),
+  formWidth: varchar("form_width", { length: 100 }).notNull().default("700px"),
+  layout: varchar("layout", { length: 100 }).notNull().default("PROCESS"),
+  fields: json("fields").notNull().default("[]"),
+  actions: json("actions").notNull().default("[]"),
+  validations: json("validations").notNull().default("[]"),
+  createdBy: varchar("created_by", { length: 255 }).notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 // Form templates table
-export const formTemplates = pgTable("form_templates", {
+export const formTemplates = mysqlTable("form_templates", {
   id: serial("id").primaryKey(),
-  name: varchar("name").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
-  category: varchar("category").notNull(),
-  templateData: jsonb("template_data").notNull(),
+  category: varchar("category", { length: 100 }).notNull(),
+  templateData: json("template_data").notNull(),
   isPublic: boolean("is_public").notNull().default(false),
-  createdBy: varchar("created_by").notNull(),
+  createdBy: varchar("created_by", { length: 255 }).notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
 // User sessions and 2FA tokens
-export const twoFactorTokens = pgTable("two_factor_tokens", {
+export const twoFactorTokens = mysqlTable("two_factor_tokens", {
   id: serial("id").primaryKey(),
-  userId: varchar("user_id").notNull(),
-  token: varchar("token").notNull(),
+  userId: varchar("user_id", { length: 255 }).notNull(),
+  token: varchar("token", { length: 255 }).notNull(),
   expiresAt: timestamp("expires_at").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });
