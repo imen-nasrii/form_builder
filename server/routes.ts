@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
+import { setupAuth, requireAuth, requireAdmin } from "./auth";
 import { insertFormSchema, insertTemplateSchema } from "@shared/schema";
 import crypto from "crypto";
 
@@ -9,28 +9,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
   await setupAuth(app);
 
-  // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      res.json(user);
-    } catch (error) {
-      console.error("Error fetching user:", error);
-      res.status(500).json({ message: "Failed to fetch user" });
-    }
-  });
+  // Auth routes are now handled in auth.ts
 
   // Get all users (admin only)
-  app.get('/api/admin/users', isAuthenticated, async (req: any, res) => {
+  app.get('/api/admin/users', requireAdmin, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const currentUser = await storage.getUser(userId);
-      
-      if (currentUser?.role !== 'admin') {
-        return res.status(403).json({ message: "Admin access required" });
-      }
-
       const users = await storage.getAllUsers();
       res.json(users);
     } catch (error) {
@@ -40,15 +23,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Update user role (admin only)
-  app.patch('/api/admin/users/:userId/role', isAuthenticated, async (req: any, res) => {
+  app.patch('/api/admin/users/:userId/role', requireAdmin, async (req: any, res) => {
     try {
-      const currentUserId = req.user.claims.sub;
-      const currentUser = await storage.getUser(currentUserId);
-      
-      if (currentUser?.role !== 'admin') {
-        return res.status(403).json({ message: "Admin access required" });
-      }
-
       const { userId } = req.params;
       const { role } = req.body;
       
@@ -65,7 +41,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Enable 2FA (admin users)
-  app.post('/api/auth/enable-2fa', isAuthenticated, async (req: any, res) => {
+  app.post('/api/auth/enable-2fa', requireAuth, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
       const user = await storage.getUser(userId);
@@ -85,7 +61,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Verify 2FA token
-  app.post('/api/auth/verify-2fa', isAuthenticated, async (req: any, res) => {
+  app.post('/api/auth/verify-2fa', requireAuth, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
       const { token } = req.body;
@@ -112,7 +88,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Form management routes
-  app.get('/api/forms', isAuthenticated, async (req: any, res) => {
+  app.get('/api/forms', requireAuth, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
       const forms = await storage.getForms(userId);
@@ -123,7 +99,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/forms/:id', isAuthenticated, async (req: any, res) => {
+  app.get('/api/forms/:id', requireAuth, async (req: any, res) => {
     try {
       const formId = parseInt(req.params.id);
       const form = await storage.getForm(formId);
@@ -139,7 +115,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/forms/menu/:menuId', isAuthenticated, async (req: any, res) => {
+  app.get('/api/forms/menu/:menuId', requireAuth, async (req: any, res) => {
     try {
       const menuId = req.params.menuId;
       const form = await storage.getFormByMenuId(menuId);
@@ -155,7 +131,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/forms', isAuthenticated, async (req: any, res) => {
+  app.post('/api/forms', requireAuth, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
       const formData = insertFormSchema.parse({
@@ -171,7 +147,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put('/api/forms/:id', isAuthenticated, async (req: any, res) => {
+  app.put('/api/forms/:id', requireAuth, async (req: any, res) => {
     try {
       const formId = parseInt(req.params.id);
       const formData = req.body;
@@ -184,7 +160,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete('/api/forms/:id', isAuthenticated, async (req: any, res) => {
+  app.delete('/api/forms/:id', requireAuth, async (req: any, res) => {
     try {
       const formId = parseInt(req.params.id);
       await storage.deleteForm(formId);
@@ -196,7 +172,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Component Import from URL route
-  app.post('/api/import-component-url', isAuthenticated, async (req, res) => {
+  app.post('/api/import-component-url', requireAuth, async (req, res) => {
     try {
       const { url } = req.body;
 
@@ -242,7 +218,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // API Integration route - Test external APIs
-  app.post('/api/test-external-api', isAuthenticated, async (req, res) => {
+  app.post('/api/test-external-api', requireAuth, async (req, res) => {
     try {
       const { url, method = 'GET', headers = {} } = req.body;
 
@@ -288,7 +264,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Template management routes
-  app.get('/api/templates', isAuthenticated, async (req: any, res) => {
+  app.get('/api/templates', requireAuth, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
       const templates = await storage.getTemplates(userId);
@@ -299,7 +275,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/templates', isAuthenticated, async (req: any, res) => {
+  app.post('/api/templates', requireAuth, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
       const templateData = insertTemplateSchema.parse({
@@ -316,7 +292,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // JSON validation endpoint
-  app.post('/api/forms/validate', isAuthenticated, async (req, res) => {
+  app.post('/api/forms/validate', requireAuth, async (req, res) => {
     try {
       const { formData } = req.body;
       
@@ -353,7 +329,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Form import endpoint
-  app.post('/api/forms/import', isAuthenticated, async (req: any, res) => {
+  app.post('/api/forms/import', requireAuth, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
       const { formJson } = req.body;
