@@ -1,0 +1,65 @@
+Composant Type Propri´et´es principales
+SourceGrid GRID Id: SourceGrid
+RecordActions: Edit, Copy, Delete
+ColumnDefinitions: pSource, descr
+Endpoint: AllSources
+Entity: Source
+EntityKeyField: pSource
+Events: onClickRow
+SourceDetails DIALOG Id: SourceDetails
+Label: REC DETAILS
+isGroup: true
+Entity: Source
+VisibleWhen: Conditions bas´ees sur ShowDialog
+Events: onClose, onSubmit
+psource TEXT DataField: pSource
+EnabledWhen: Conditions bas´ees sur Mode
+Validations: V´erification si psource est non vide en fonction du
+Mode
+descr TEXT DataField: descr
+EnabledWhen: Conditions bas´ees sur Mode
+Validations: V´erification si descr est non vide en fonction du
+Mode
+Table 1: Composants et leurs propri´et´es principales
+Composant Type Propri´et´es principales
+FundID GRIDLKP Id, Label, Inline, Width, KeyColumn, ItemInfo (MainPropertyTicker GRIDLKP Id, Label, Inline, Width, KeyColumn, ItemInfo (MainPropertySecCat LSTLKP Id, Label, Inline, Width, KeyColumn, ItemInfo (MainPropertySecGrp LSTLKP Id, Label, Inline, Width, KeyColumn, ItemInfo (MainPropertyMSBTypeInput SELECT Id, Label, Inline, Width, Required, Outlined, UserIntKey, OptiAccrualDate DATEPICKER Id, Label, Inline, Width, Spacing, Required, Validations (Id, TPROCAGAINST GROUP Id, Label, IsGroup, Spacing, ChildFields (Doasof, ValDate)
+AccrueTypeGroup GROUP Id, Label, IsGroup, Spacing, ChildFields (AccrueType)
+UpdateRates CHECKBOX Id, Label, Inline, Width, CheckboxValue, Spacing, Value, EnabRPTOPTS GROUP Id, Label, Required, Inline, IsGroup, ChildFields (Spool, ReporActions ACTION ID, Label, MethodToInvoke
+Validations ERROR/WARNING Id, Type, CondExpression (LogicalOperator, Conditions)
+ProgramID TEXT Id, Label, Inline, Width, Required, Validations
+1
+Composant Type Propri´et´es principales
+StartDate DATEPICKER Id, Label, Inline, Width, Required, Validations (Id, Type, ConEndDate DATEPICKER Id, Label, Inline, Width, Required, Validations (Id, Type, ConStatus SELECT Id, Label, Inline, Width, OptionValues (Active, Inactive, PendComments TEXTAREA Id, Label, Inline, Width, Rows, Required
+Attachments FILEUPLOAD Id, Label, Inline, Width, Required
+Priority SELECT Id, Label, Inline, Width, OptionValues (High, Medium, Low)
+Department LSTLKP Id, Label, Inline, Width, KeyColumn, LoadDataInfo (DataModManager GRIDLKP Id, Label, Inline, Width, KeyColumn, ItemInfo (MainPropertyApprovalStatus RADIOGRP Id, Label, Inline, OptionValues (Approved, Pending, Rejected)
+2
+Component ID Type Properties
+SourceGrid GRID
+RecordActions, ColumnDefinitions, Endpoint, Entity, EntityKeyField, Events
+SourceDetails DIALOG isGroup, Entity, VisibleWhen,
+ChildFields, Events
+psource TEXT EnabledWhen, Validations
+descr TEXT EnabledWhen, Validations
+FundID GRIDLKP Inline, Width, KeyColumn,
+LoadDataInfo, Validations
+Ticker GRIDLKP Inline, Width, KeyColumn,
+LoadDataInfo
+Table 2: Composants et leurs propri´et´es principales (version 2)
+Types Trouv´es
+GRID
+DIALOG
+TEXT
+GRIDLKP
+LSTLKP
+SELECT
+DATEPICKER
+GROUP
+CHECKBOX
+ACTION
+ERROR/WARNING
+TEXTAREA
+FILEUPLOAD
+RADIOGRP
+Table 4: Liste compl`ete des types trouv´es
+3
