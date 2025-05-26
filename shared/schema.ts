@@ -1,80 +1,78 @@
 import {
-  mysqlTable,
+  pgTable,
   text,
   varchar,
   timestamp,
-  json,
+  jsonb,
   index,
-  int,
-  boolean,
   serial,
-} from "drizzle-orm/mysql-core";
+  boolean,
+  integer,
+} from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 // Session storage table.
 // (IMPORTANT) This table is mandatory for Replit Auth, don't drop it.
-export const sessions = mysqlTable(
+export const sessions = pgTable(
   "sessions",
   {
-    sid: varchar("sid", { length: 255 }).primaryKey(),
-    sess: json("sess").notNull(),
+    sid: varchar("sid").primaryKey(),
+    sess: jsonb("sess").notNull(),
     expire: timestamp("expire").notNull(),
   },
-  (table) => ({
-    expireIdx: index("IDX_session_expire").on(table.expire),
-  }),
+  (table) => [index("IDX_session_expire").on(table.expire)],
 );
 
 // User storage table.
 // (IMPORTANT) This table is mandatory for Replit Auth, don't drop it.
-export const users = mysqlTable("users", {
-  id: varchar("id", { length: 255 }).primaryKey().notNull(),
-  email: varchar("email", { length: 255 }).unique().notNull(),
-  password: varchar("password", { length: 255 }).notNull(),
-  firstName: varchar("first_name", { length: 255 }),
-  lastName: varchar("last_name", { length: 255 }),
-  profileImageUrl: varchar("profile_image_url", { length: 500 }),
-  role: varchar("role", { length: 50 }).notNull().default("user"), // "user" or "admin"
+export const users = pgTable("users", {
+  id: varchar("id").primaryKey().notNull(),
+  email: varchar("email").unique().notNull(),
+  password: varchar("password").notNull(),
+  firstName: varchar("first_name"),
+  lastName: varchar("last_name"),
+  profileImageUrl: varchar("profile_image_url"),
+  role: varchar("role").notNull().default("user"), // "user" or "admin"
   twoFactorEnabled: boolean("two_factor_enabled").notNull().default(false),
-  twoFactorSecret: varchar("two_factor_secret", { length: 255 }),
+  twoFactorSecret: varchar("two_factor_secret"),
   isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 // Form definitions table
-export const forms = mysqlTable("forms", {
+export const forms = pgTable("forms", {
   id: serial("id").primaryKey(),
-  menuId: varchar("menu_id", { length: 255 }).notNull().unique(),
-  label: varchar("label", { length: 255 }).notNull(),
-  formWidth: varchar("form_width", { length: 100 }).notNull().default("700px"),
-  layout: varchar("layout", { length: 100 }).notNull().default("PROCESS"),
-  fields: json("fields").notNull().default("[]"),
-  actions: json("actions").notNull().default("[]"),
-  validations: json("validations").notNull().default("[]"),
-  createdBy: varchar("created_by", { length: 255 }).notNull(),
+  menuId: varchar("menu_id").notNull().unique(),
+  label: varchar("label").notNull(),
+  formWidth: varchar("form_width").notNull().default("700px"),
+  layout: varchar("layout").notNull().default("PROCESS"),
+  fields: jsonb("fields").notNull().default("[]"),
+  actions: jsonb("actions").notNull().default("[]"),
+  validations: jsonb("validations").notNull().default("[]"),
+  createdBy: varchar("created_by").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 // Form templates table
-export const formTemplates = mysqlTable("form_templates", {
+export const formTemplates = pgTable("form_templates", {
   id: serial("id").primaryKey(),
-  name: varchar("name", { length: 255 }).notNull(),
+  name: varchar("name").notNull(),
   description: text("description"),
-  category: varchar("category", { length: 100 }).notNull(),
-  templateData: json("template_data").notNull(),
+  category: varchar("category").notNull(),
+  templateData: jsonb("template_data").notNull(),
   isPublic: boolean("is_public").notNull().default(false),
-  createdBy: varchar("created_by", { length: 255 }).notNull(),
+  createdBy: varchar("created_by").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
 // User sessions and 2FA tokens
-export const twoFactorTokens = mysqlTable("two_factor_tokens", {
+export const twoFactorTokens = pgTable("two_factor_tokens", {
   id: serial("id").primaryKey(),
-  userId: varchar("user_id", { length: 255 }).notNull(),
-  token: varchar("token", { length: 255 }).notNull(),
+  userId: varchar("user_id").notNull(),
+  token: varchar("token").notNull(),
   expiresAt: timestamp("expires_at").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });
