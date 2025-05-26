@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown, ChevronRight, Plus, X, MousePointer, Code } from "lucide-react";
 import ValidationEditor from "./validation-editor";
+import UniversalConfigurator from "./component-configurators/universal-configurator";
 import type { FormField } from "@/lib/form-types";
 
 interface PropertiesPanelProps {
@@ -27,8 +28,7 @@ export default function PropertiesPanel({
   formData 
 }: PropertiesPanelProps) {
   const [expandedSections, setExpandedSections] = useState({
-    basic: true,
-    advanced: false,
+    configurator: true,
     validation: false,
     conditional: false,
     json: false
