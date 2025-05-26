@@ -53,7 +53,11 @@ export function setupAuth(app: Express) {
         password: hashedPassword,
         firstName: firstName || null,
         lastName: lastName || null,
+        profileImageUrl: null,
         role: "user", // First user can be made admin manually
+        twoFactorEnabled: false,
+        twoFactorSecret: null,
+        isActive: true,
       });
 
       // Create session
