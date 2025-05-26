@@ -1,10 +1,8 @@
-import { useState } from "react";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import AuthModal from "@/components/auth/auth-modal";
 
 export default function Landing() {
-  const [showAuthModal, setShowAuthModal] = useState(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
@@ -20,9 +18,11 @@ export default function Landing() {
               </div>
               <h1 className="text-xl font-semibold text-slate-900">FormBuilder Pro</h1>
             </div>
-            <Button onClick={() => setShowAuthModal(true)} className="enterprise-gradient">
-              Sign In
-            </Button>
+            <Link href="/login">
+              <Button className="enterprise-gradient">
+                Se connecter
+              </Button>
+            </Link>
           </nav>
 
           {/* Hero Content */}
@@ -36,15 +36,16 @@ export default function Landing() {
                 conditional logic, and JSON schema generation for enterprise applications.
               </p>
               <div className="mt-10 flex items-center justify-center gap-x-6">
-                <Button 
-                  onClick={() => setShowAuthModal(true)}
-                  className="enterprise-gradient text-lg px-8 py-3"
-                >
-                  Get Started
-                </Button>
-                <Button variant="outline" className="text-lg px-8 py-3">
-                  View Demo
-                </Button>
+                <Link href="/register">
+                  <Button className="enterprise-gradient text-lg px-8 py-3">
+                    Commencer
+                  </Button>
+                </Link>
+                <Link href="/login">
+                  <Button variant="outline" className="text-lg px-8 py-3">
+                    Se connecter
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
@@ -164,18 +165,15 @@ export default function Landing() {
               Join thousands of developers who trust FormBuilder Pro for their enterprise applications.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
-              <Button 
-                onClick={() => setShowAuthModal(true)}
-                className="bg-white text-slate-900 hover:bg-slate-100 text-lg px-8 py-3"
-              >
-                Get Started Free
-              </Button>
+              <Link href="/register">
+                <Button className="bg-white text-slate-900 hover:bg-slate-100 text-lg px-8 py-3">
+                  Commencer gratuitement
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
       </div>
-
-      <AuthModal open={showAuthModal} onOpenChange={setShowAuthModal} />
     </div>
   );
 }
