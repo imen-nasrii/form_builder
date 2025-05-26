@@ -11,6 +11,8 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import FormCanvas from "@/components/form-builder/form-canvas";
 import UniversalConfigurator from "@/components/form-builder/component-configurators/universal-configurator";
+import AddComponentDialog from "@/components/form-builder/add-component-dialog";
+import ComponentConfigManager from "@/components/form-builder/component-config-manager";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { 
@@ -59,6 +61,40 @@ export default function FormBuilderClean() {
     lookupComponents: true,
     actionValidation: true
   });
+
+  // État pour les composants personnalisés (Solution 1)
+  const [customComponents, setCustomComponents] = useState<Array<{
+    type: string;
+    label: string;
+    icon: any;
+    color: string;
+  }>>([]);
+
+  // Fonction pour ajouter un nouveau composant (Solution 1)
+  const handleAddComponent = (componentType: string, iconName: string, label: string) => {
+    const iconMap: { [key: string]: any } = {
+      'Grid3X3': Grid3X3,
+      'Type': Type,
+      'Square': Square,
+      'Calendar': Calendar,
+      'List': List,
+      'Upload': UploadIcon,
+      'Radio': Radio,
+      'MessageSquare': X, // MessageSquare n'existe pas, utilisons X
+      'Folder': FileText,
+      'Play': Plus,
+      'FileText': FileText,
+    };
+
+    const newComponent = {
+      type: componentType,
+      label: label,
+      icon: iconMap[iconName] || Type,
+      color: 'text-purple-500'
+    };
+
+    setCustomComponents(prev => [...prev, newComponent]);
+  };
 
   // Load form data
   const { data: form } = useQuery<Form>({
@@ -317,6 +353,21 @@ export default function FormBuilderClean() {
                 {expandedSections.actionValidation && (
                   <div className="mt-2 space-y-2">
                     {actionComponents.map(component => (
+                      <DraggableComponent key={component.type} component={component} />
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Solution 1: Composants Personnalisés */}
+              <div className="mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Custom Components</span>
+                </div>
+                <AddComponentDialog onAddComponent={handleAddComponent} />
+                {customComponents.length > 0 && (
+                  <div className="mt-2 space-y-2">
+                    {customComponents.map(component => (
                       <DraggableComponent key={component.type} component={component} />
                     ))}
                   </div>
