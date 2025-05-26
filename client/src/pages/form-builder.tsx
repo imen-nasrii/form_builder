@@ -13,7 +13,7 @@ import { apiRequest } from "@/lib/queryClient";
 import Navigation from "@/components/navigation";
 import CollapsibleComponentPalette from "@/components/form-builder/collapsible-component-palette";
 import FormCanvas from "@/components/form-builder/form-canvas";
-import PropertiesPanel from "@/components/form-builder/properties-panel";
+import PropertiesPanel from "@/components/form-builder/properties-panel-clean";
 import ExportDialog from "@/components/form-builder/export-dialog";
 import AdvancedValidator from "@/components/form-builder/advanced-validator";
 import MultiFrameworkExport from "@/components/form-builder/multi-framework-export";
