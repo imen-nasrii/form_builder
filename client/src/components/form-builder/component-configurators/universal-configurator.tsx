@@ -14,6 +14,11 @@ import DatePickerConfigurator from "./datepicker-configurator";
 import TextConfigurator from "./text-configurator";
 import TextAreaConfigurator from "./textarea-configurator";
 import ActionConfigurator from "./action-configurator";
+import DialogConfigurator from "./dialog-configurator";
+import SelectConfigurator from "./select-configurator";
+import CheckboxConfigurator from "./checkbox-configurator";
+import RadiogrpConfigurator from "./radiogrp-configurator";
+import FileuploadConfigurator from "./fileupload-configurator";
 import type { FormField } from "@/lib/form-types";
 
 interface UniversalConfiguratorProps {
@@ -45,8 +50,28 @@ export default function UniversalConfigurator({ field, onUpdate }: UniversalConf
     return <GridConfigurator field={field} onUpdate={onUpdate} />;
   }
   
+  if (field.type === 'DIALOG') {
+    return <DialogConfigurator field={field} onUpdate={onUpdate} />;
+  }
+  
   if (field.type === 'TEXT') {
     return <TextConfigurator field={field} onUpdate={onUpdate} />;
+  }
+  
+  if (field.type === 'SELECT') {
+    return <SelectConfigurator field={field} onUpdate={onUpdate} />;
+  }
+  
+  if (field.type === 'CHECKBOX') {
+    return <CheckboxConfigurator field={field} onUpdate={onUpdate} />;
+  }
+  
+  if (field.type === 'RADIOGRP') {
+    return <RadiogrpConfigurator field={field} onUpdate={onUpdate} />;
+  }
+  
+  if (field.type === 'FILEUPLOAD') {
+    return <FileuploadConfigurator field={field} onUpdate={onUpdate} />;
   }
   
   if (field.type === 'TEXTAREA') {
