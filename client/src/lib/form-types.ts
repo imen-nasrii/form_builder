@@ -27,6 +27,8 @@ export interface FormField {
   
   // Data Binding Properties
   DataField?: string;
+  EnabledWhen?: any;
+  Validations?: any;
   
   // Entity & Key Properties (from PDF)
   Entity?: string;
