@@ -50,7 +50,7 @@ export default function ComponentsOverview() {
         avatar: "",
         role: "Admin"
       },
-      lastModified: "Il y a 2 heures",
+      lastModified: "2 hours ago",
       progress: 98,
       collaborators: ["user_2", "user_3"]
     },
@@ -65,7 +65,7 @@ export default function ComponentsOverview() {
         avatar: "",
         role: "Creator"
       },
-      lastModified: "Hier",
+      lastModified: "Yesterday",
       progress: 100,
       collaborators: []
     },
@@ -80,7 +80,7 @@ export default function ComponentsOverview() {
         avatar: "",
         role: "Creator"
       },
-      lastModified: "Il y a 3 jours",
+      lastModified: "3 days ago",
       progress: 95,
       collaborators: ["user_1"]
     },

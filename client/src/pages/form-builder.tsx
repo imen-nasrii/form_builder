@@ -283,13 +283,13 @@ export default function FormBuilder() {
                   document.body.removeChild(a);
                   URL.revokeObjectURL(url);
                   toast({
-                    title: "Téléchargement terminé !",
-                    description: "Le fichier JSON a été téléchargé avec succès."
+                    title: "Download Complete!",
+                    description: "JSON file has been downloaded successfully."
                   });
                 }}
               >
                 <Download className="w-4 h-4 mr-2 text-blue-500" />
-                Télécharger
+                Download
               </Button>
             </div>
           </div>
