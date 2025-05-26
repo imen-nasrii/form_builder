@@ -8,5 +8,5 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-const connection = mysql.createConnection(process.env.DATABASE_URL);
+const connection = await mysql.createConnection(process.env.DATABASE_URL);
 export const db = drizzle(connection, { schema, mode: 'default' });
