@@ -268,15 +268,29 @@ export default function FormBuilder() {
                 {saveFormMutation.isPending ? "Saving..." : "Sauvegarder"}
               </Button>
               
-              <MultiFrameworkExport 
-                formData={generateLiveJson()}
-                trigger={
-                  <Button size="sm" className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200">
-                    <Download className="w-4 h-4 mr-2 text-blue-500" />
-                    Exporter
-                  </Button>
-                }
-              />
+              <Button 
+                size="sm" 
+                className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
+                onClick={() => {
+                  const jsonData = JSON.stringify(generateLiveJson(), null, 2);
+                  const blob = new Blob([jsonData], { type: 'application/json' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `${formData.menuId || 'form'}.json`;
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                  URL.revokeObjectURL(url);
+                  toast({
+                    title: "Téléchargement terminé !",
+                    description: "Le fichier JSON a été téléchargé avec succès."
+                  });
+                }}
+              >
+                <Download className="w-4 h-4 mr-2 text-blue-500" />
+                Télécharger
+              </Button>
             </div>
           </div>
         </div>
