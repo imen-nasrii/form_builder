@@ -121,10 +121,10 @@ export function setupAuth(app: Express) {
     req.session.destroy((err) => {
       if (err) {
         console.error("Logout error:", err);
-        return res.status(500).json({ message: "Logout failed" });
+        return res.status(500).redirect("/?error=logout_failed");
       }
       res.clearCookie('connect.sid');
-      res.json({ message: "Logged out successfully" });
+      res.redirect("/");
     });
   });
 
