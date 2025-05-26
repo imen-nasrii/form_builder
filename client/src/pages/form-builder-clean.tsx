@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import FormCanvas from "@/components/form-builder/form-canvas";
 import UniversalConfigurator from "@/components/form-builder/component-configurators/universal-configurator";
-import { DndProvider } from "react-dnd";
+import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { 
   Save, 
@@ -171,19 +171,74 @@ export default function FormBuilderClean() {
     }));
   };
 
+  // Component types from PDF documentation
   const componentTypes = [
     { type: 'TEXT', icon: Type, label: 'Text', color: 'text-green-600' },
-    { type: 'GRID', icon: Grid3X3, label: 'Grid', color: 'text-blue-600' },
-    { type: 'GRIDLKP', icon: Settings, label: 'Grid Lookup', color: 'text-blue-500' },
-    { type: 'LSTLKP', icon: List, label: 'List Lookup', color: 'text-green-500' },
+    { type: 'TEXTAREA', icon: Type, label: 'Text Area', color: 'text-gray-600' },
     { type: 'DATEPICKER', icon: Calendar, label: 'Date Picker', color: 'text-purple-500' },
     { type: 'SELECT', icon: List, label: 'Select', color: 'text-orange-500' },
     { type: 'CHECKBOX', icon: Square, label: 'Checkbox', color: 'text-cyan-500' },
     { type: 'RADIOGRP', icon: Radio, label: 'Radio Group', color: 'text-pink-500' },
-    { type: 'TEXTAREA', icon: Type, label: 'Text Area', color: 'text-gray-600' },
-    { type: 'FILEUPLOAD', icon: UploadIcon, label: 'File Upload', color: 'text-indigo-500' },
-    { type: 'ACTION', icon: Settings, label: 'Action', color: 'text-orange-600' },
   ];
+
+  const lookupComponents = [
+    { type: 'GRIDLKP', icon: Settings, label: 'Grid Lookup', color: 'text-blue-500' },
+    { type: 'LSTLKP', icon: List, label: 'List Lookup', color: 'text-green-500' },
+  ];
+
+  const actionComponents = [
+    { type: 'GRID', icon: Grid3X3, label: 'Grid', color: 'text-blue-600' },
+    { type: 'DIALOG', icon: Settings, label: 'Dialog', color: 'text-purple-600' },
+    { type: 'ACTION', icon: Settings, label: 'Action', color: 'text-orange-600' },
+    { type: 'FILEUPLOAD', icon: UploadIcon, label: 'File Upload', color: 'text-indigo-500' },
+    { type: 'GROUP', icon: Settings, label: 'Group', color: 'text-gray-600' },
+  ];
+
+  // Draggable component
+  const DraggableComponent = ({ component }: { component: any }) => {
+    const [{ isDragging }, drag] = useDrag({
+      type: 'component',
+      item: { type: component.type },
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
+    });
+
+    return (
+      <button
+        ref={drag}
+        onClick={() => addField(component.type)}
+        className={`flex items-center space-x-2 w-full p-2 text-left text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-move ${
+          isDragging ? 'opacity-50' : ''
+        }`}
+      >
+        <component.icon className={`w-4 h-4 ${component.color}`} />
+        <span>{component.label}</span>
+      </button>
+    );
+  };
+
+  // Drop zone for canvas
+  const DropZone = ({ children }: { children: React.ReactNode }) => {
+    const [{ isOver }, drop] = useDrop({
+      accept: 'component',
+      drop: (item: { type: string }) => {
+        addField(item.type);
+      },
+      collect: (monitor) => ({
+        isOver: monitor.isOver(),
+      }),
+    });
+
+    return (
+      <div
+        ref={drop}
+        className={`min-h-96 ${isOver ? 'bg-blue-50 border-blue-300' : ''}`}
+      >
+        {children}
+      </div>
+    );
+  };
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -225,15 +280,8 @@ export default function FormBuilderClean() {
                 </button>
                 {expandedSections.inputControls && (
                   <div className="mt-2 space-y-2">
-                    {componentTypes.filter(c => ['TEXT', 'TEXTAREA', 'DATEPICKER', 'SELECT', 'CHECKBOX', 'RADIOGRP'].includes(c.type)).map(component => (
-                      <button
-                        key={component.type}
-                        onClick={() => addField(component.type)}
-                        className="flex items-center space-x-2 w-full p-2 text-left text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-                      >
-                        <component.icon className={`w-4 h-4 ${component.color}`} />
-                        <span>{component.label}</span>
-                      </button>
+                    {componentTypes.map(component => (
+                      <DraggableComponent key={component.type} component={component} />
                     ))}
                   </div>
                 )}
@@ -250,20 +298,9 @@ export default function FormBuilderClean() {
                 </button>
                 {expandedSections.lookupComponents && (
                   <div className="mt-2 space-y-2">
-                    <button
-                      onClick={() => addField('GRIDLKP')}
-                      className="flex items-center space-x-2 w-full p-2 text-left text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-                    >
-                      <Settings className="w-4 h-4 text-blue-500" />
-                      <span>Grid Lookup</span>
-                    </button>
-                    <button
-                      onClick={() => addField('LSTLKP')}
-                      className="flex items-center space-x-2 w-full p-2 text-left text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-                    >
-                      <List className="w-4 h-4 text-green-500" />
-                      <span>List Lookup</span>
-                    </button>
+                    {lookupComponents.map(component => (
+                      <DraggableComponent key={component.type} component={component} />
+                    ))}
                   </div>
                 )}
               </div>
@@ -279,27 +316,9 @@ export default function FormBuilderClean() {
                 </button>
                 {expandedSections.actionValidation && (
                   <div className="mt-2 space-y-2">
-                    <button
-                      onClick={() => addField('ACTION')}
-                      className="flex items-center space-x-2 w-full p-2 text-left text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-                    >
-                      <Settings className="w-4 h-4 text-orange-600" />
-                      <span>Action</span>
-                    </button>
-                    <button
-                      onClick={() => addField('FILEUPLOAD')}
-                      className="flex items-center space-x-2 w-full p-2 text-left text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-                    >
-                      <UploadIcon className="w-4 h-4 text-indigo-500" />
-                      <span>File Upload</span>
-                    </button>
-                    <button
-                      onClick={() => addField('GRID')}
-                      className="flex items-center space-x-2 w-full p-2 text-left text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-                    >
-                      <AlertTriangle className="w-4 h-4 text-yellow-600" />
-                      <span>Warning</span>
-                    </button>
+                    {actionComponents.map(component => (
+                      <DraggableComponent key={component.type} component={component} />
+                    ))}
                   </div>
                 )}
               </div>
@@ -338,81 +357,97 @@ export default function FormBuilderClean() {
             {/* Form Canvas */}
             <div className="flex-1 p-6 overflow-y-auto">
               <div className="max-w-4xl mx-auto">
-                <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 min-h-96">
-                  <div className="border-b border-gray-200 dark:border-gray-700 p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <AlertTriangle className="w-5 h-5 text-yellow-500" />
-                        <span className="font-medium text-gray-900 dark:text-white">
-                          {selectedField ? selectedField.Type?.toUpperCase() : 'WARNING'}
-                        </span>
+                <DropZone>
+                  <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 min-h-96">
+                    <div className="border-b border-gray-200 dark:border-gray-700 p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <FileText className="w-5 h-5 text-blue-500" />
+                          <span className="font-medium text-gray-900 dark:text-white">
+                            {selectedField ? selectedField.Type?.toUpperCase() : 'Form Builder'}
+                          </span>
+                        </div>
+                        {selectedField && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeField(selectedField.Id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        )}
                       </div>
-                      {selectedField && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeField(selectedField.Id)}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                    </div>
+                    <div className="p-6">
+                      {formData.fields.length === 0 ? (
+                        <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+                          <Plus className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                          <p>Drag components from the left panel to start building your form</p>
+                          <p className="text-sm mt-2">Or click on components to add them</p>
+                        </div>
+                      ) : (
+                        /* Render form fields */
+                        <div className="space-y-4">
+                          {formData.fields.map((field) => (
+                            <div
+                              key={field.Id}
+                              onClick={() => setSelectedField(field)}
+                              className={`p-4 border rounded-lg cursor-pointer transition-colors ${
+                                selectedField?.Id === field.Id
+                                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                                  : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
+                              }`}
+                            >
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-2">
+                                  <div className={`w-3 h-3 rounded-full ${
+                                    field.Type === 'TEXT' ? 'bg-green-500' :
+                                    field.Type === 'GRID' ? 'bg-blue-500' :
+                                    field.Type === 'GRIDLKP' ? 'bg-blue-400' :
+                                    field.Type === 'LSTLKP' ? 'bg-green-400' :
+                                    field.Type === 'SELECT' ? 'bg-orange-500' :
+                                    field.Type === 'DATEPICKER' ? 'bg-purple-500' :
+                                    field.Type === 'CHECKBOX' ? 'bg-cyan-500' :
+                                    field.Type === 'RADIOGRP' ? 'bg-pink-500' :
+                                    field.Type === 'TEXTAREA' ? 'bg-gray-500' :
+                                    field.Type === 'FILEUPLOAD' ? 'bg-indigo-500' :
+                                    field.Type === 'ACTION' ? 'bg-orange-600' :
+                                    field.Type === 'DIALOG' ? 'bg-purple-600' :
+                                    field.Type === 'GROUP' ? 'bg-gray-600' : 'bg-gray-500'
+                                  }`} />
+                                  <span className="font-medium">{field.Label || field.Id}</span>
+                                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                                    {field.Type}
+                                  </span>
+                                  {field.DataField && (
+                                    <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">
+                                      {field.DataField}
+                                    </span>
+                                  )}
+                                </div>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    removeField(field.Id);
+                                  }}
+                                >
+                                  <X className="w-4 h-4" />
+                                </Button>
+                              </div>
+                              {field.Entity && (
+                                <div className="mt-2 text-sm text-gray-600">
+                                  Entity: {field.Entity}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
                       )}
                     </div>
                   </div>
-                  <div className="p-6">
-                    {selectedField ? (
-                      <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded p-4">
-                        <div className="flex items-center space-x-2">
-                          <AlertTriangle className="w-4 h-4 text-yellow-600" />
-                          <span className="text-yellow-800 dark:text-yellow-200">
-                            {selectedField.Label || `${selectedField.Type} Component`}
-                          </span>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-                        <Plus className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                        <p>Drag components from the left panel to start building your form</p>
-                      </div>
-                    )}
-                    
-                    {/* Render form fields */}
-                    <div className="mt-6 space-y-4">
-                      {formData.fields.map((field) => (
-                        <div
-                          key={field.Id}
-                          onClick={() => setSelectedField(field)}
-                          className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-                            selectedField?.Id === field.Id
-                              ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                              : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-2">
-                              <div className={`w-3 h-3 rounded-full ${
-                                field.Type === 'TEXT' ? 'bg-green-500' :
-                                field.Type === 'GRID' ? 'bg-blue-500' :
-                                field.Type === 'SELECT' ? 'bg-orange-500' : 'bg-gray-500'
-                              }`} />
-                              <span className="font-medium">{field.Label || field.Id}</span>
-                              <span className="text-xs text-gray-500">({field.Type})</span>
-                            </div>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                removeField(field.Id);
-                              }}
-                            >
-                              <X className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+                </DropZone>
               </div>
             </div>
           </div>
