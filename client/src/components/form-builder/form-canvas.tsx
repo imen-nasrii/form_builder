@@ -122,10 +122,111 @@ export default function FormCanvas({
     };
 
     switch (field.type) {
+      case 'GRID':
+        return (
+          <div key={field.Id} className={`p-4 border rounded-lg ${isSelected ? 'border-blue-400 bg-blue-50' : 'border-gray-200 bg-white'} dark:bg-gray-800 dark:border-gray-600`}>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium">Grille de données: {field.label}</span>
+              <div className="flex gap-1">
+                <Button size="sm" variant="ghost" onClick={() => onSelectField(field)}>
+                  <Settings className="w-4 h-4" />
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => onRemoveField(field.Id)}>
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+            <div className="bg-gray-100 dark:bg-gray-700 p-2 rounded text-xs">
+              Table avec colonnes et actions
+            </div>
+          </div>
+        );
       case 'GRIDLKP':
         return <GridLookupField key={field.Id} {...commonProps} />;
       case 'LSTLKP':
         return <ListLookupField key={field.Id} {...commonProps} />;
+      case 'TEXT':
+        return (
+          <div key={field.Id} className={`p-4 border rounded-lg ${isSelected ? 'border-blue-400 bg-blue-50' : 'border-gray-200 bg-white'} dark:bg-gray-800 dark:border-gray-600`}>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-sm font-medium">{field.label}</label>
+              <div className="flex gap-1">
+                <Button size="sm" variant="ghost" onClick={() => onSelectField(field)}>
+                  <Settings className="w-4 h-4" />
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => onRemoveField(field.Id)}>
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+            <input 
+              type="text" 
+              placeholder="Saisir du texte..."
+              className="w-full p-2 border border-gray-300 rounded text-sm"
+              disabled
+            />
+          </div>
+        );
+      case 'TEXTAREA':
+        return (
+          <div key={field.Id} className={`p-4 border rounded-lg ${isSelected ? 'border-blue-400 bg-blue-50' : 'border-gray-200 bg-white'} dark:bg-gray-800 dark:border-gray-600`}>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-sm font-medium">{field.label}</label>
+              <div className="flex gap-1">
+                <Button size="sm" variant="ghost" onClick={() => onSelectField(field)}>
+                  <Settings className="w-4 h-4" />
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => onRemoveField(field.Id)}>
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+            <textarea 
+              placeholder="Saisir du texte multiligne..."
+              className="w-full p-2 border border-gray-300 rounded text-sm"
+              rows={3}
+              disabled
+            />
+          </div>
+        );
+      case 'DIALOG':
+        return (
+          <div key={field.Id} className={`p-4 border rounded-lg ${isSelected ? 'border-blue-400 bg-blue-50' : 'border-purple-200 bg-purple-50'} dark:bg-purple-900/20 dark:border-purple-700`}>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-purple-700">Boîte de dialogue: {field.label}</span>
+              <div className="flex gap-1">
+                <Button size="sm" variant="ghost" onClick={() => onSelectField(field)}>
+                  <Settings className="w-4 h-4" />
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => onRemoveField(field.Id)}>
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+            <div className="bg-purple-100 dark:bg-purple-800 p-2 rounded text-xs">
+              Fenêtre modale avec contenu
+            </div>
+          </div>
+        );
+      case 'FILEUPLOAD':
+        return (
+          <div key={field.Id} className={`p-4 border rounded-lg ${isSelected ? 'border-blue-400 bg-blue-50' : 'border-gray-200 bg-white'} dark:bg-gray-800 dark:border-gray-600`}>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-sm font-medium">{field.label}</label>
+              <div className="flex gap-1">
+                <Button size="sm" variant="ghost" onClick={() => onSelectField(field)}>
+                  <Settings className="w-4 h-4" />
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => onRemoveField(field.Id)}>
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+            <div className="border-2 border-dashed border-gray-300 rounded p-3 text-center text-sm text-gray-500">
+              📁 Cliquer pour télécharger un fichier
+            </div>
+          </div>
+        );
       case 'DATEPICKER':
       case 'DATEPKR':
         return <DatePickerField key={field.Id} {...commonProps} />;
@@ -139,25 +240,28 @@ export default function FormCanvas({
         return <GroupField key={field.Id} {...commonProps} />;
       case 'ACTION':
         return (
-          <div key={field.Id} className="p-4 border border-blue-200 rounded-lg bg-blue-50 dark:bg-blue-900/20 dark:border-blue-700">
+          <div key={field.Id} className={`p-4 border rounded-lg ${isSelected ? 'border-blue-400 bg-blue-50' : 'border-blue-200 bg-blue-50'} dark:bg-blue-900/20 dark:border-blue-700`}>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium">Action: {field.label}</span>
+              <div className="flex gap-1">
+                <Button size="sm" variant="ghost" onClick={() => onSelectField(field)}>
+                  <Settings className="w-4 h-4" />
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => onRemoveField(field.Id)}>
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
             <Button size="sm" className="w-full">
               {field.Value || field.label}
             </Button>
-          </div>
-        );
-      case 'VALIDATION':
-        return (
-          <div key={field.Id} className="p-4 border border-purple-200 rounded-lg bg-purple-50 dark:bg-purple-900/20 dark:border-purple-700">
-            <p className="text-sm text-purple-700 dark:text-purple-300">
-              Validation: {field.label}
-            </p>
           </div>
         );
       default:
         return (
           <div key={field.Id} className="p-4 border border-orange-200 rounded-lg bg-orange-50 dark:bg-orange-900/20 dark:border-orange-700">
             <p className="text-sm text-orange-700 dark:text-orange-300">
-              Champ personnalisé: {field.type}
+              Type non supporté: {field.type}
             </p>
           </div>
         );
