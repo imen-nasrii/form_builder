@@ -11,7 +11,12 @@ import {
   Radio, 
   FolderOpen,
   Play,
-  AlertTriangle
+  AlertTriangle,
+  Grid3X3,
+  MessageSquare,
+  Type,
+  FileText,
+  Upload
 } from "lucide-react";
 import type { FormField } from "@/lib/form-types";
 
@@ -72,6 +77,7 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
   const [expandedSections, setExpandedSections] = useState({
     input: true,
     selection: true,
+    data: true,
     special: true
   });
 
@@ -84,6 +90,68 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
 
   const inputComponents = [
     {
+      type: "TEXT",
+      icon: <Type className="w-5 h-5 text-white" />,
+      label: "Champ texte",
+      description: "TEXT",
+      color: "bg-green-500"
+    },
+    {
+      type: "TEXTAREA",
+      icon: <FileText className="w-5 h-5 text-white" />,
+      label: "Zone de texte",
+      description: "TEXTAREA", 
+      color: "bg-green-600"
+    },
+    {
+      type: "DATEPICKER",
+      icon: <Calendar className="w-5 h-5 text-white" />,
+      label: "Sélecteur de date",
+      description: "DATEPICKER",
+      color: "bg-purple-500"
+    },
+    {
+      type: "FILEUPLOAD",
+      icon: <Upload className="w-5 h-5 text-white" />,
+      label: "Téléchargement de fichier",
+      description: "FILEUPLOAD",
+      color: "bg-indigo-500"
+    }
+  ];
+
+  const selectionComponents = [
+    {
+      type: "SELECT",
+      icon: <ChevronDown className="w-5 h-5 text-white" />,
+      label: "Sélectionnez la liste déroulante",
+      description: "SELECT",
+      color: "bg-orange-500"
+    },
+    {
+      type: "CHECKBOX",
+      icon: <CheckSquare className="w-5 h-5 text-white" />,
+      label: "Case à cocher",
+      description: "CHECKBOX",
+      color: "bg-cyan-500"
+    },
+    {
+      type: "RADIOGRP",
+      icon: <Radio className="w-5 h-5 text-white" />,
+      label: "Groupe de radio",
+      description: "RADIOGRP",
+      color: "bg-pink-500"
+    }
+  ];
+
+  const dataComponents = [
+    {
+      type: "GRID",
+      icon: <Grid3X3 className="w-5 h-5 text-white" />,
+      label: "Grille de données",
+      description: "GRID",
+      color: "bg-blue-600"
+    },
+    {
       type: "GRIDLKP",
       icon: <Table className="w-5 h-5 text-white" />,
       label: "Recherche de grille",
@@ -95,47 +163,23 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
       icon: <List className="w-5 h-5 text-white" />,
       label: "Recherche de liste",
       description: "LSTLKP",
-      color: "bg-green-500"
-    },
-    {
-      type: "DATEPICKER",
-      icon: <Calendar className="w-5 h-5 text-white" />,
-      label: "Sélecteur de date",
-      description: "SÉLECTEUR DE DATE",
-      color: "bg-purple-500"
-    }
-  ];
-
-  const selectionComponents = [
-    {
-      type: "SELECT",
-      icon: <ChevronDown className="w-5 h-5 text-white" />,
-      label: "Sélectionnez la liste déroulante",
-      description: "SÉLECTIONNER",
-      color: "bg-indigo-500"
-    },
-    {
-      type: "CHECKBOX",
-      icon: <CheckSquare className="w-5 h-5 text-white" />,
-      label: "Case à cocher",
-      description: "CASE À COCHER",
       color: "bg-teal-500"
-    },
-    {
-      type: "RADIOGRP",
-      icon: <Radio className="w-5 h-5 text-white" />,
-      label: "Groupe de radio",
-      description: "GROUPE RADIO",
-      color: "bg-orange-500"
     }
   ];
 
   const specialComponents = [
     {
+      type: "DIALOG",
+      icon: <MessageSquare className="w-5 h-5 text-white" />,
+      label: "Boîte de dialogue",
+      description: "DIALOG",
+      color: "bg-purple-600"
+    },
+    {
       type: "GROUP",
       icon: <FolderOpen className="w-5 h-5 text-white" />,
       label: "Groupe de champs",
-      description: "GROUPE",
+      description: "GROUP",
       color: "bg-gray-500"
     },
     {
@@ -144,13 +188,6 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
       label: "Bouton d'action",
       description: "ACTION",
       color: "bg-red-500"
-    },
-    {
-      type: "VALIDATION",
-      icon: <AlertTriangle className="w-5 h-5 text-white" />,
-      label: "Règle de validation",
-      description: "VALIDATION",
-      color: "bg-yellow-500"
     }
   ];
 
@@ -209,6 +246,37 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
         {expandedSections.selection && (
           <div className="space-y-3 mt-3">
             {selectionComponents.map((component, index) => (
+              <DraggableComponent
+                key={index}
+                type={component.type}
+                icon={component.icon}
+                label={component.label}
+                description={component.description}
+                color={component.color}
+                onAddField={onAddField}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Data Controls Section */}
+      <div>
+        <div 
+          className="flex items-center justify-between cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 p-3 rounded-lg transition-colors"
+          onClick={() => toggleSection('data')}
+        >
+          <h3 className="text-sm font-semibold text-black dark:text-white">
+            CONTRÔLES DE DONNÉES
+          </h3>
+          {expandedSections.data ? 
+            <ChevronDown className="w-5 h-5 text-blue-500" /> : 
+            <ChevronRight className="w-5 h-5 text-blue-500" />
+          }
+        </div>
+        {expandedSections.data && (
+          <div className="space-y-3 mt-3">
+            {dataComponents.map((component, index) => (
               <DraggableComponent
                 key={index}
                 type={component.type}
