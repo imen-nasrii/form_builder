@@ -80,28 +80,43 @@ export default function PropertiesPanel({
 
   if (!selectedField) {
     return (
-      <div className="w-80 bg-white border-l border-slate-200 h-screen overflow-y-auto">
-        <div className="p-4">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center py-8">
-                <div className="w-16 h-16 bg-slate-100 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <MousePointer className="w-8 h-8 text-slate-400" />
-                </div>
-                <p className="text-sm text-slate-500">
-                  Select a component to edit its properties
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+      <div className="h-full flex items-center justify-center bg-gray-50 dark:bg-gray-900 border-l">
+        <div className="text-center text-gray-500 p-6">
+          <MousePointer className="w-12 h-12 mx-auto mb-4 opacity-50" />
+          <p className="text-lg font-medium">Aucun composant sélectionné</p>
+          <p className="text-sm">Cliquez sur un composant dans le canvas pour voir ses propriétés</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-80 bg-white border-l border-slate-200 h-screen overflow-y-auto">
-      <div className="p-4">
+    <div className="h-full bg-white dark:bg-gray-900 border-l overflow-y-auto">
+      <div className="p-4 border-b bg-gray-50 dark:bg-gray-800">
+        <div className="flex items-center gap-2">
+          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+            {selectedField.type}
+          </Badge>
+          <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+            {selectedField.label || selectedField.Id || 'Composant'}
+          </h3>
+        </div>
+      </div>
+
+      <div className="p-4 space-y-4">
+        {/* Component Configurator */}
+        <Collapsible open={expandedSections.configurator} onOpenChange={() => toggleSection('configurator')}>
+          <CollapsibleTrigger className="flex items-center justify-between w-full p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 border border-blue-200 dark:border-blue-800">
+            <span className="font-medium text-blue-900 dark:text-blue-100">Configuration {selectedField.type}</span>
+            {expandedSections.configurator ? <ChevronDown className="w-4 h-4 text-blue-600" /> : <ChevronRight className="w-4 h-4 text-blue-600" />}
+          </CollapsibleTrigger>
+          <CollapsibleContent className="pt-3">
+            <UniversalConfigurator 
+              field={selectedField} 
+              onUpdate={updateField} 
+            />
+          </CollapsibleContent>
+        </Collapsible>
         <Card>
           <CardHeader>
             <CardTitle className="text-sm font-semibold uppercase tracking-wider flex items-center justify-between">
