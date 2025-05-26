@@ -117,6 +117,17 @@ export function setupAuth(app: Express) {
     }
   });
 
+  app.get("/api/logout", (req: Request, res: Response) => {
+    req.session.destroy((err) => {
+      if (err) {
+        console.error("Logout error:", err);
+        return res.status(500).json({ message: "Logout failed" });
+      }
+      res.clearCookie('connect.sid');
+      res.json({ message: "Logged out successfully" });
+    });
+  });
+
   app.post("/api/logout", (req: Request, res: Response) => {
     req.session.destroy((err) => {
       if (err) {

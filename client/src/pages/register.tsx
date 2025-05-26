@@ -180,10 +180,8 @@ export default function Register() {
             <span className="text-gray-600 dark:text-gray-400">
               Déjà un compte ?{" "}
             </span>
-            <Link href="/login">
-              <a className="text-blue-600 hover:text-blue-500 font-medium">
-                Se connecter
-              </a>
+            <Link href="/login" className="text-blue-600 hover:text-blue-500 font-medium">
+              Se connecter
             </Link>
           </div>
         </CardContent>
