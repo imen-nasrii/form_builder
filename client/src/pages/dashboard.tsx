@@ -176,7 +176,7 @@ export default function Dashboard() {
                         <Button variant="outline" className="flex-1 border-blue-300 text-blue-700 hover:bg-blue-100" onClick={() => {
                           window.location.href = `/form-builder?template=${template.id}`;
                         }}>
-                          Utiliser ce template
+                          Use this template
                         </Button>
                       </div>
                     </div>

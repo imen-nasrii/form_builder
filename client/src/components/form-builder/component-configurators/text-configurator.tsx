@@ -25,7 +25,7 @@ export default function TextConfigurator({ field, onUpdate }: TextConfiguratorPr
           {/* Basic Properties */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>ID du composant</Label>
+              <Label>Component ID</Label>
               <Input
                 value={field.Id || ""}
                 onChange={(e) => onUpdate({ Id: e.target.value })}
