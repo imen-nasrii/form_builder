@@ -51,6 +51,13 @@ export default function FormCanvas({
 
       // Add component-specific default properties
       switch (item.type) {
+        case 'GRID':
+          newField.RecordActions = ["Edit", "Copy", "Delete"];
+          newField.ColumnDefinitions = [];
+          newField.Endpoint = "";
+          newField.Entity = "";
+          newField.EntityKeyField = "";
+          break;
         case 'GRIDLKP':
           newField.KeyColumn = "";
           newField.ItemInfo = {
@@ -75,6 +82,28 @@ export default function FormCanvas({
             ColumnsDefinition: []
           };
           break;
+        case 'TEXT':
+          newField.DataField = "";
+          newField.Value = "";
+          newField.Outlined = true;
+          break;
+        case 'TEXTAREA':
+          newField.DataField = "";
+          newField.Value = "";
+          newField.Rows = 3;
+          newField.Outlined = true;
+          break;
+        case 'DIALOG':
+          newField.isGroup = true;
+          newField.Entity = "";
+          newField.VisibleWhen = "";
+          newField.ChildFields = [];
+          break;
+        case 'FILEUPLOAD':
+          newField.Value = "";
+          newField.AcceptedTypes = "";
+          newField.MaxSize = "";
+          break;
         case 'SELECT':
           newField.OptionValues = {};
           newField.Outlined = true;
@@ -97,6 +126,7 @@ export default function FormCanvas({
           break;
         case 'ACTION':
           newField.Value = "Action";
+          newField.MethodToInvoke = "";
           break;
         case 'VALIDATION':
           newField.Validations = [];
