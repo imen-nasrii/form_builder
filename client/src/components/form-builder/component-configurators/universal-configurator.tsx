@@ -102,7 +102,7 @@ export default function UniversalConfigurator({ field, onUpdate }: UniversalConf
           <CardHeader className="pb-3">
             <CardTitle className="text-sm flex items-center gap-2">
               {getIcon()}
-              Propriétés SELECT
+              SELECT Properties
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -302,7 +302,7 @@ export default function UniversalConfigurator({ field, onUpdate }: UniversalConf
         <CardHeader className="pb-3">
           <CardTitle className="text-sm flex items-center gap-2">
             {getIcon()}
-            Propriétés {field.type}
+            {field.type} Properties
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
