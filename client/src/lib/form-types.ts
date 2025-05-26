@@ -1,20 +1,65 @@
 import { ValidationOperators, FieldTypes, ComponentTypes } from "@shared/schema";
 
-// Base field interface matching the JSON structure from the provided data
+// Base field interface with comprehensive form properties
 export interface FormField {
   Id: string;
   label: string;
   type: keyof typeof ComponentTypes;
+  
+  // Layout & Appearance Properties
   Inline?: boolean;
   Width?: string;
+  Height?: string;
   Spacing?: string;
+  Margin?: string;
+  Padding?: string;
+  BorderRadius?: string;
+  BackgroundColor?: string;
+  TextColor?: string;
+  BorderColor?: string;
+  BorderWidth?: string;
+  FontSize?: string;
+  FontWeight?: string;
+  TextAlign?: 'left' | 'center' | 'right';
+  
+  // Form Behavior Properties
   required?: boolean;
+  disabled?: boolean;
+  readonly?: boolean;
+  hidden?: boolean;
+  placeholder?: string;
+  tooltip?: string;
+  helpText?: string;
+  
+  // Styling & Visual Properties
   Outlined?: boolean;
-  UserIntKey?: boolean;
-  CheckboxValue?: boolean;
+  filled?: boolean;
+  variant?: 'default' | 'outlined' | 'filled' | 'standard';
+  size?: 'small' | 'medium' | 'large';
+  elevation?: number;
+  shadow?: boolean;
+  
+  // Value Properties
   Value?: any;
   value?: any;
+  defaultValue?: any;
+  minValue?: number;
+  maxValue?: number;
+  UserIntKey?: boolean;
+  CheckboxValue?: boolean;
+  
+  // Group Properties
   isGroup?: boolean;
+  collapsible?: boolean;
+  collapsed?: boolean;
+  groupStyle?: 'card' | 'fieldset' | 'section';
+  
+  // Animation Properties
+  animation?: {
+    type?: 'fade' | 'slide' | 'bounce' | 'none';
+    duration?: number;
+    delay?: number;
+  };
   
   // Lookup specific properties
   KeyColumn?: string;
@@ -54,23 +99,114 @@ export interface FormField {
     onSubmit?: string;
   };
   
-  // TEXTAREA specific
+  // TEXT & TEXTAREA specific properties
   Rows?: number;
+  Columns?: number;
+  maxLength?: number;
+  minLength?: number;
+  pattern?: string;
+  multiline?: boolean;
+  autoResize?: boolean;
+  clearable?: boolean;
   
-  // ACTION specific
-  MethodToInvoke?: string;
+  // DATE & DATEPICKER specific properties
+  dateFormat?: string;
+  minDate?: string;
+  maxDate?: string;
+  disabledDates?: string[];
+  showTime?: boolean;
+  timeFormat?: string;
+  locale?: string;
   
-  // Select/Radio specific properties
+  // NUMBER & NUMERIC specific properties
+  step?: number;
+  precision?: number;
+  showSpinButtons?: boolean;
+  currency?: string;
+  currencyDisplay?: 'symbol' | 'code' | 'name';
+  
+  // SELECT & DROPDOWN specific properties
   OptionValues?: Record<string, string>;
+  multiple?: boolean;
+  searchable?: boolean;
+  clearable_select?: boolean;
+  loading?: boolean;
+  noOptionsText?: string;
   
-  // Group specific properties
+  // CHECKBOX & RADIO specific properties
+  checkboxGroup?: boolean;
+  radioDirection?: 'horizontal' | 'vertical';
+  checkboxStyle?: 'default' | 'switch' | 'button';
+  
+  // BUTTON & ACTION specific properties
+  MethodToInvoke?: string;
+  buttonType?: 'button' | 'submit' | 'reset';
+  buttonVariant?: 'primary' | 'secondary' | 'danger' | 'success' | 'warning';
+  icon?: string;
+  iconPosition?: 'left' | 'right';
+  fullWidth?: boolean;
+  loading_button?: boolean;
+  
+  // FILE UPLOAD specific properties
+  AcceptedTypes?: string[];
+  MaxSize?: number;
+  multiple_files?: boolean;
+  dragDrop?: boolean;
+  showPreview?: boolean;
+  maxFiles?: number;
+  
+  // GRID & TABLE specific properties
+  sortable?: boolean;
+  filterable?: boolean;
+  pagination?: boolean;
+  pageSize?: number;
+  selectable?: boolean;
+  striped?: boolean;
+  bordered?: boolean;
+  compact?: boolean;
+  
+  // GROUP & CONTAINER specific properties
   ChildFields?: FormField[];
+  groupLayout?: 'vertical' | 'horizontal' | 'grid';
+  columnsCount?: number;
+  
+  // TABS specific properties
+  tabPosition?: 'top' | 'bottom' | 'left' | 'right';
+  tabVariant?: 'default' | 'pills' | 'underline';
+  
+  // DIALOG & MODAL specific properties
+  modalSize?: 'small' | 'medium' | 'large' | 'fullscreen';
+  backdrop?: boolean;
+  closable?: boolean;
+  
+  // PROGRESS & LOADING specific properties
+  progressType?: 'linear' | 'circular';
+  progressValue?: number;
+  indeterminate?: boolean;
+  
+  // Responsive properties
+  responsive?: {
+    xs?: Partial<FormField>;
+    sm?: Partial<FormField>;
+    md?: Partial<FormField>;
+    lg?: Partial<FormField>;
+    xl?: Partial<FormField>;
+  };
+  
+  // Accessibility properties
+  accessibility?: {
+    ariaLabel?: string;
+    ariaDescribedBy?: string;
+    tabIndex?: number;
+    role?: string;
+  };
   
   // Validation properties
   Validations?: ValidationRule[];
   
   // Conditional logic properties
   EnabledWhen?: ConditionExpression;
+  VisibleWhen?: ConditionExpression;
 }
 
 export interface ColumnDefinition {
