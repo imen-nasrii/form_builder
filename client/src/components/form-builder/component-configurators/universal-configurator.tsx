@@ -8,17 +8,12 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Trash2, Plus, Settings, CheckSquare, List, Calendar, Type, Upload, Radio } from "lucide-react";
 import GridConfigurator from "./grid-configurator";
-import GRIDLKPConfigurator from "./gridlkp-configurator";
-import LSTLKPConfigurator from "./lstlkp-configurator";
+import GridLkpConfigurator from "./gridlkp-configurator";
 import DatePickerConfigurator from "./datepicker-configurator";
 import TextConfigurator from "./text-configurator";
-import TextAreaConfigurator from "./textarea-configurator";
-import ActionConfigurator from "./action-configurator";
-import DialogConfigurator from "./dialog-configurator";
+import TextareaConfigurator from "./textarea-configurator";
 import SelectConfigurator from "./select-configurator";
 import CheckboxConfigurator from "./checkbox-configurator";
-import RadiogrpConfigurator from "./radiogrp-configurator";
-import FileuploadConfigurator from "./fileupload-configurator";
 import type { FormField } from "@/lib/form-types";
 
 interface UniversalConfiguratorProps {
