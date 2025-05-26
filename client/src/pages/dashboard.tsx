@@ -149,7 +149,7 @@ export default function Dashboard() {
         {/* Templates Section */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-slate-900">🎯 Templates de formulaires</h2>
+            <h2 className="text-xl font-semibold text-slate-900">🎯 Form Templates</h2>
             <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
               {templates.length} templates
             </Badge>
@@ -187,8 +187,8 @@ export default function Dashboard() {
           ) : (
             <div className="text-center py-8 bg-blue-50 rounded-lg border border-blue-200">
               <FileCheck className="h-12 w-12 text-blue-400 mx-auto mb-3" />
-              <p className="text-blue-600 font-medium">Aucun template disponible</p>
-              <p className="text-blue-500 text-sm">Les templates vous permettent de commencer rapidement avec des formulaires pré-configurés</p>
+              <p className="text-blue-600 font-medium">No templates available</p>
+              <p className="text-blue-500 text-sm">Templates help you get started quickly with pre-configured forms</p>
             </div>
           )}
         </div>
@@ -196,9 +196,9 @@ export default function Dashboard() {
         {/* Custom Forms Section */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-slate-900">✏️ Mes formulaires personnalisés</h2>
+            <h2 className="text-xl font-semibold text-slate-900">✏️ My Custom Forms</h2>
             <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-              {forms.length} formulaires
+              {forms.length} forms
             </Badge>
           </div>
           
