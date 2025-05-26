@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { Dialog } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 
 interface DialogConfiguratorProps {
   field: FormField;
