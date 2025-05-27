@@ -25,6 +25,17 @@ export interface FormField {
   IsGroup?: boolean;
   isGroup?: boolean; // Keep both for compatibility
   
+  // GROUP Properties - for container components
+  Children?: FormField[]; // Composants enfants dans le groupe
+  children?: FormField[]; // Keep both for compatibility
+  GroupLayout?: 'horizontal' | 'vertical' | 'grid';
+  GroupStyle?: {
+    border?: boolean;
+    background?: string;
+    padding?: string;
+    borderRadius?: string;
+  };
+  
   // Data Binding Properties
   DataField?: string;
   EnabledWhen?: any;
