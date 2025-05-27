@@ -131,15 +131,29 @@ export default function FormBuilderClean() {
       console.log("Loading form data:", form);
       console.log("Fields from DB:", form.fields);
       
-      setFormData({
-        menuId: form.menuId || "",
-        label: form.label || "",
-        formWidth: form.formWidth || "700px",
-        layout: form.layout || "PROCESS",
-        fields: form.fields ? JSON.parse(form.fields as string) : [],
-        actions: form.actions ? JSON.parse(form.actions as string) : [],
-        validations: form.validations ? JSON.parse(form.validations as string) : []
-      });
+      try {
+        setFormData({
+          menuId: form.menuId || "",
+          label: form.label || "",
+          formWidth: form.formWidth || "700px",
+          layout: form.layout || "PROCESS",
+          fields: Array.isArray(form.fields) ? form.fields : (form.fields ? JSON.parse(form.fields as string) : []),
+          actions: Array.isArray(form.actions) ? form.actions : (form.actions ? JSON.parse(form.actions as string) : []),
+          validations: Array.isArray(form.validations) ? form.validations : (form.validations ? JSON.parse(form.validations as string) : [])
+        });
+      } catch (error) {
+        console.error("Error parsing form data:", error);
+        // Si erreur de parsing, utiliser les données directement si elles sont déjà des tableaux
+        setFormData({
+          menuId: form.menuId || "",
+          label: form.label || "",
+          formWidth: form.formWidth || "700px",
+          layout: form.layout || "PROCESS",
+          fields: Array.isArray(form.fields) ? form.fields : [],
+          actions: Array.isArray(form.actions) ? form.actions : [],
+          validations: Array.isArray(form.validations) ? form.validations : []
+        });
+      }
     }
   }, [formResponse]);
 
