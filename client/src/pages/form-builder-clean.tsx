@@ -127,6 +127,9 @@ export default function FormBuilderClean() {
 
   useEffect(() => {
     if (form) {
+      console.log("Loading form data:", form);
+      console.log("Fields from DB:", form.fields);
+      
       setFormData({
         menuId: form.menuId || "",
         label: form.label || "",
