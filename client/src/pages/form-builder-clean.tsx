@@ -13,6 +13,7 @@ import FormCanvas from "@/components/form-builder/form-canvas";
 import UniversalConfigurator from "@/components/form-builder/component-configurators/universal-configurator";
 import AddComponentDialog from "@/components/form-builder/add-component-dialog";
 import ComponentConfigManager from "@/components/form-builder/component-config-manager";
+import { GroupContainer } from "@/components/form-builder/group-container";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { 
@@ -559,7 +560,7 @@ export default function FormBuilderClean() {
                                     field.Type === 'FILEUPLOAD' ? 'bg-indigo-500' :
                                     field.Type === 'ACTION' ? 'bg-orange-600' :
                                     field.Type === 'DIALOG' ? 'bg-purple-600' :
-                                    field.Type === 'GROUP' ? 'bg-gray-600' : 'bg-gray-500'
+                                    field.Type === 'GROUP' ? 'bg-emerald-600' : 'bg-gray-500'
                                   }`} />
                                   <span className="font-medium">{field.Label || field.Id}</span>
                                   <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
