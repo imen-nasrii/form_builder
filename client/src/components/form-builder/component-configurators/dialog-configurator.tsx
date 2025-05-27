@@ -18,8 +18,8 @@ export default function DialogConfigurator({ field, onUpdate }: DialogConfigurat
       <Card className="border-purple-200 dark:border-purple-700">
         <CardHeader className="pb-3">
           <CardTitle className="text-sm flex items-center gap-2">
-            <Dialog className="w-3 h-3 text-purple-500" />
-            DIALOG Properties
+            <MessageSquare className="w-3 h-3 text-purple-500" />
+            Propriétés de DIALOG
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
