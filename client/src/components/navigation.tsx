@@ -145,12 +145,14 @@ export default function Navigation() {
               <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-black"></div>
             </div>
             
-            <a 
-              href="/api/logout" 
-              className="text-sm text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors"
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => window.location.href = '/api/logout'}
+              className="text-sm text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors h-8"
             >
-              Logout
-            </a>
+              Déconnexion
+            </Button>
           </div>
         </div>
       </div>
