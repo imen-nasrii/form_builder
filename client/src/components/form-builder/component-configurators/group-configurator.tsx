@@ -11,7 +11,7 @@ interface GroupConfiguratorProps {
   onUpdate: (updates: Partial<FormField>) => void;
 }
 
-export const GroupConfigurator: React.FC<GroupConfiguratorProps> = ({ field, onUpdate }) => {
+const GroupConfigurator: React.FC<GroupConfiguratorProps> = ({ field, onUpdate }) => {
   const groupStyle = field.GroupStyle || {};
 
   return (
@@ -161,3 +161,5 @@ export const GroupConfigurator: React.FC<GroupConfiguratorProps> = ({ field, onU
     </div>
   );
 };
+
+export default GroupConfigurator;
