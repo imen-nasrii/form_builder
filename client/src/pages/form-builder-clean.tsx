@@ -427,6 +427,27 @@ export default function FormBuilderClean() {
                 )}
               </div>
 
+              {/* GROUP Container - Composant spécial */}
+              <div className="mb-4">
+                <button
+                  onClick={() => toggleSection('groupContainers')}
+                  className="flex items-center justify-between w-full p-2 text-left text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                >
+                  <span>📦 Group Containers</span>
+                  {expandedSections.groupContainers ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                </button>
+                {expandedSections.groupContainers && (
+                  <div className="mt-2 space-y-2">
+                    {groupComponents.map(component => (
+                      <DraggableComponent key={component.type} component={component} />
+                    ))}
+                    <div className="text-xs text-gray-500 p-2 bg-blue-50 dark:bg-blue-900/20 rounded">
+                      💡 Glissez d'autres composants dans le Group Container pour les organiser ensemble
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* Solution 1: Composants Personnalisés */}
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
