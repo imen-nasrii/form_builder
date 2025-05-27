@@ -120,13 +120,14 @@ export default function FormBuilderClean() {
   };
 
   // Load form data
-  const { data: form } = useQuery<Form>({
+  const { data: formResponse } = useQuery<Form[]>({
     queryKey: ["/api/forms", formId],
     enabled: !!formId,
   });
 
   useEffect(() => {
-    if (form) {
+    if (formResponse && Array.isArray(formResponse) && formResponse.length > 0) {
+      const form = formResponse[0]; // Prendre le premier formulaire du tableau
       console.log("Loading form data:", form);
       console.log("Fields from DB:", form.fields);
       
@@ -140,7 +141,7 @@ export default function FormBuilderClean() {
         validations: form.validations ? JSON.parse(form.validations as string) : []
       });
     }
-  }, [form]);
+  }, [formResponse]);
 
   const addField = (type: string) => {
     const newField: FormField = {
