@@ -2,10 +2,17 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogFooter, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogTrigger 
+} from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Grid3X3, Type, Square, Calendar, List, Upload, Radio, MessageSquare, Folder, Play, FileText } from "lucide-react";
-import { ComponentTypes } from "@/lib/form-types";
 
 interface AddComponentDialogProps {
   onAddComponent: (componentType: string, icon: string, label: string) => void;
@@ -90,17 +97,11 @@ export default function AddComponentDialog({ onAddComponent }: AddComponentDialo
                 <SelectValue placeholder="Choose an icon" />
               </SelectTrigger>
               <SelectContent>
-                {availableIcons.map((icon) => {
-                  const IconComponent = icon.icon;
-                  return (
-                    <SelectItem key={icon.name} value={icon.name}>
-                      <div className="flex items-center gap-2">
-                        <IconComponent className="w-4 h-4" />
-                        {icon.label}
-                      </div>
-                    </SelectItem>
-                  );
-                })}
+                {availableIcons.map((icon) => (
+                  <SelectItem key={icon.name} value={icon.name}>
+                    {icon.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
