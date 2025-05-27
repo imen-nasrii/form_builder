@@ -59,7 +59,8 @@ export default function FormBuilderClean() {
     inputControls: true,
     layoutComponents: false,
     lookupComponents: true,
-    actionValidation: true
+    actionValidation: true,
+    groupContainers: true
   });
 
   // État pour les composants personnalisés (Solution 1)
@@ -169,7 +170,19 @@ export default function FormBuilderClean() {
       Required: false,
       Inline: false,
       Outlined: false,
-      Value: ""
+      Value: "",
+      // Propriétés spéciales pour GROUP
+      ...(type === 'GROUP' && {
+        IsGroup: true,
+        Children: [],
+        GroupLayout: 'vertical',
+        GroupStyle: {
+          border: true,
+          background: 'transparent',
+          padding: '16px',
+          borderRadius: '8px'
+        }
+      })
     };
     
     setFormData(prev => ({
@@ -177,6 +190,22 @@ export default function FormBuilderClean() {
       fields: [...prev.fields, newField]
     }));
     setSelectedField(newField);
+  };
+
+  // Fonction pour ajouter un composant à un groupe
+  const addFieldToGroup = (groupId: string, field: FormField) => {
+    setFormData(prev => ({
+      ...prev,
+      fields: prev.fields.map(f => 
+        f.Id === groupId 
+          ? { 
+              ...f, 
+              Children: [...(f.Children || []), field],
+              children: [...(f.children || []), field]
+            }
+          : f
+      )
+    }));
   };
 
   const updateField = (fieldId: string, updates: Partial<FormField>) => {
@@ -262,7 +291,11 @@ export default function FormBuilderClean() {
     { type: 'DIALOG', icon: Settings, label: 'Dialog', color: 'text-purple-600' },
     { type: 'ACTION', icon: Settings, label: 'Action', color: 'text-orange-600' },
     { type: 'FILEUPLOAD', icon: UploadIcon, label: 'File Upload', color: 'text-indigo-500' },
-    { type: 'GROUP', icon: Settings, label: 'Group', color: 'text-gray-600' },
+  ];
+
+  // Composant GROUP spécial avec fonctionnalité drag & drop
+  const groupComponents = [
+    { type: 'GROUP', icon: Settings, label: '📦 Group Container', color: 'text-emerald-600' },
   ];
 
   // Draggable component

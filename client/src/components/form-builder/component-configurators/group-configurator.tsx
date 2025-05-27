@@ -1,104 +1,163 @@
-import { FormField } from "@/lib/form-types";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Separator } from "@/components/ui/separator";
-import { Folder } from "lucide-react";
+import React from 'react';
+import { FormField } from '@/lib/form-types';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface GroupConfiguratorProps {
   field: FormField;
   onUpdate: (updates: Partial<FormField>) => void;
 }
 
-export default function GroupConfigurator({ field, onUpdate }: GroupConfiguratorProps) {
+export const GroupConfigurator: React.FC<GroupConfiguratorProps> = ({ field, onUpdate }) => {
+  const groupStyle = field.GroupStyle || {};
+
   return (
-    <div className="space-y-4">
-      <Card className="border-blue-200 dark:border-blue-700">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm flex items-center gap-2">
-            <Folder className="w-3 h-3 text-blue-500" />
-            GROUP Properties
-          </CardTitle>
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm">Configuration Groupe</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Component ID & Label */}
-          <div className="space-y-3">
-            <div>
-              <Label className="text-xs text-gray-600">Component ID</Label>
-              <Input
-                value={field.Id || ""}
-                onChange={(e) => onUpdate({ Id: e.target.value })}
-                placeholder="TPROCAGAINST, AccrueTypeGroup, RPTOPTS"
-                className="h-8 text-sm"
-              />
-            </div>
-            <div>
-              <Label className="text-xs text-gray-600">Label</Label>
-              <Input
-                value={field.Label || ""}
-                onChange={(e) => onUpdate({ Label: e.target.value })}
-                placeholder="Group Label"
-                className="h-8 text-sm"
-              />
-            </div>
+          <div>
+            <Label htmlFor="group-label">Titre du Groupe</Label>
+            <Input
+              id="group-label"
+              value={field.Label || field.label || ''}
+              onChange={(e) => onUpdate({ Label: e.target.value, label: e.target.value })}
+              placeholder="Nom du groupe"
+            />
           </div>
 
-          <Separator />
+          <div>
+            <Label htmlFor="group-layout">Disposition</Label>
+            <Select
+              value={field.GroupLayout || 'vertical'}
+              onValueChange={(value) => onUpdate({ GroupLayout: value as any })}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="vertical">Vertical (un par ligne)</SelectItem>
+                <SelectItem value="horizontal">Horizontal (côte à côte)</SelectItem>
+                <SelectItem value="grid">Grille (2 colonnes)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-          {/* GROUP Specific Properties */}
-          <div className="space-y-3">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="isGroup"
-                checked={field.IsGroup || field.isGroup || false}
-                onCheckedChange={(checked) => onUpdate({ IsGroup: !!checked, isGroup: !!checked })}
-              />
-              <Label htmlFor="isGroup" className="text-xs">IsGroup</Label>
-            </div>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="group-required"
+              checked={field.Required || field.required || false}
+              onCheckedChange={(checked) => onUpdate({ Required: checked, required: checked })}
+            />
+            <Label htmlFor="group-required">Groupe requis</Label>
+          </div>
+        </CardContent>
+      </Card>
 
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <Label className="text-xs text-gray-600">Spacing</Label>
-                <Input
-                  value={field.Spacing || ""}
-                  onChange={(e) => onUpdate({ Spacing: e.target.value })}
-                  placeholder="10px"
-                  className="h-8 text-sm"
-                />
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="inline"
-                  checked={field.Inline || false}
-                  onCheckedChange={(checked) => onUpdate({ Inline: !!checked })}
-                />
-                <Label htmlFor="inline" className="text-xs">Inline</Label>
-              </div>
-            </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm">Style du Groupe</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="group-border"
+              checked={groupStyle.border || false}
+              onCheckedChange={(checked) => onUpdate({ 
+                GroupStyle: { ...groupStyle, border: checked }
+              })}
+            />
+            <Label htmlFor="group-border">Afficher bordure</Label>
+          </div>
 
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="required"
-                checked={field.Required || false}
-                onCheckedChange={(checked) => onUpdate({ Required: !!checked })}
-              />
-              <Label htmlFor="required" className="text-xs">Required</Label>
-            </div>
+          <div>
+            <Label htmlFor="group-background">Couleur de fond</Label>
+            <Select
+              value={groupStyle.background || 'transparent'}
+              onValueChange={(value) => onUpdate({ 
+                GroupStyle: { ...groupStyle, background: value }
+              })}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="transparent">Transparent</SelectItem>
+                <SelectItem value="#f8f9fa">Gris clair</SelectItem>
+                <SelectItem value="#e3f2fd">Bleu clair</SelectItem>
+                <SelectItem value="#f3e5f5">Violet clair</SelectItem>
+                <SelectItem value="#e8f5e8">Vert clair</SelectItem>
+                <SelectItem value="#fff3e0">Orange clair</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-            <div>
-              <Label className="text-xs text-gray-600">ChildFields</Label>
-              <Input
-                value={field.ChildFields || ""}
-                onChange={(e) => onUpdate({ ChildFields: e.target.value })}
-                placeholder="AccrueType, Spool, Report"
-                className="h-8 text-sm"
-              />
-              <p className="text-xs text-gray-500 mt-1">Child components in group (comma-separated)</p>
-            </div>
+          <div>
+            <Label htmlFor="group-padding">Espacement interne</Label>
+            <Select
+              value={groupStyle.padding || '16px'}
+              onValueChange={(value) => onUpdate({ 
+                GroupStyle: { ...groupStyle, padding: value }
+              })}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="8px">Petit (8px)</SelectItem>
+                <SelectItem value="16px">Moyen (16px)</SelectItem>
+                <SelectItem value="24px">Grand (24px)</SelectItem>
+                <SelectItem value="32px">Très grand (32px)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label htmlFor="group-radius">Arrondi des coins</Label>
+            <Select
+              value={groupStyle.borderRadius || '8px'}
+              onValueChange={(value) => onUpdate({ 
+                GroupStyle: { ...groupStyle, borderRadius: value }
+              })}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="0px">Aucun</SelectItem>
+                <SelectItem value="4px">Petit</SelectItem>
+                <SelectItem value="8px">Moyen</SelectItem>
+                <SelectItem value="12px">Grand</SelectItem>
+                <SelectItem value="16px">Très grand</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm">Informations</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-sm text-gray-600 dark:text-gray-400 space-y-2">
+            <p>
+              <strong>Composants dans le groupe:</strong> {(field.Children || field.children || []).length}
+            </p>
+            <p className="text-xs">
+              Glissez des composants depuis la palette vers ce groupe pour les organiser ensemble.
+            </p>
+            <p className="text-xs">
+              Les composants dans un groupe seront traités comme une unité lors de la validation.
+            </p>
           </div>
         </CardContent>
       </Card>
     </div>
   );
-}
+};
