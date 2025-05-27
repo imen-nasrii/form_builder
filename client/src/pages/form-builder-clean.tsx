@@ -186,23 +186,15 @@ export default function FormBuilderClean() {
 
   const saveForm = useMutation({
     mutationFn: async () => {
-      const formDefinition = {
-        MenuID: formData.menuId,
-        Label: formData.label,
-        FormWidth: formData.formWidth,
-        Layout: formData.layout,
-        Fields: formData.fields,
-        Actions: formData.actions,
-        Validations: formData.validations
-      };
-
       if (formId) {
         return apiRequest("PUT", `/api/forms/${formId}`, {
           menuId: formData.menuId,
           label: formData.label,
           formWidth: formData.formWidth,
           layout: formData.layout,
-          definition: JSON.stringify(formDefinition)
+          fields: JSON.stringify(formData.fields),
+          actions: JSON.stringify(formData.actions),
+          validations: JSON.stringify(formData.validations)
         });
       } else {
         return apiRequest("POST", "/api/forms", {
@@ -210,7 +202,9 @@ export default function FormBuilderClean() {
           label: formData.label,
           formWidth: formData.formWidth,
           layout: formData.layout,
-          definition: JSON.stringify(formDefinition)
+          fields: JSON.stringify(formData.fields),
+          actions: JSON.stringify(formData.actions),
+          validations: JSON.stringify(formData.validations)
         });
       }
     },
