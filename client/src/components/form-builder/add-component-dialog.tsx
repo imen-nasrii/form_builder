@@ -97,11 +97,17 @@ export default function AddComponentDialog({ onAddComponent }: AddComponentDialo
                 <SelectValue placeholder="Choose an icon" />
               </SelectTrigger>
               <SelectContent>
-                {availableIcons.map((icon) => (
-                  <SelectItem key={icon.name} value={icon.name}>
-                    {icon.label}
-                  </SelectItem>
-                ))}
+                <SelectItem value="Grid3X3">📊 Grille</SelectItem>
+                <SelectItem value="Type">📝 Texte</SelectItem>
+                <SelectItem value="Square">☑️ Case à cocher</SelectItem>
+                <SelectItem value="Calendar">📅 Date</SelectItem>
+                <SelectItem value="List">📋 Liste</SelectItem>
+                <SelectItem value="Upload">📤 Télécharger</SelectItem>
+                <SelectItem value="Radio">🔘 Radio</SelectItem>
+                <SelectItem value="MessageSquare">💬 Dialogue</SelectItem>
+                <SelectItem value="Folder">📁 Groupe</SelectItem>
+                <SelectItem value="Play">▶️ Action</SelectItem>
+                <SelectItem value="FileText">📄 Document</SelectItem>
               </SelectContent>
             </Select>
           </div>
