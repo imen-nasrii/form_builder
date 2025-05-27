@@ -145,12 +145,33 @@ export default function Navigation() {
               <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-black"></div>
             </div>
             
-            <a
-              href="/api/logout"
-              className="text-sm text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors px-3 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 inline-block"
+            <button
+              onClick={() => {
+                // Méthode 1: POST fetch
+                fetch('/api/logout', { 
+                  method: 'POST',
+                  credentials: 'include',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  }
+                })
+                .then(response => {
+                  if (response.ok) {
+                    window.location.href = '/';
+                  } else {
+                    // Méthode 2: GET direct si POST échoue
+                    window.location.href = '/api/logout';
+                  }
+                })
+                .catch(() => {
+                  // Méthode 3: Redirection forcée en cas d'erreur
+                  window.location.href = '/api/logout';
+                });
+              }}
+              className="text-sm text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors px-3 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
             >
               Déconnexion
-            </a>
+            </button>
           </div>
         </div>
       </div>
