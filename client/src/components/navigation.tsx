@@ -147,14 +147,7 @@ export default function Navigation() {
             
             <button
               onClick={() => {
-                fetch('/api/logout', { 
-                  method: 'POST',
-                  credentials: 'include'
-                }).then(() => {
-                  window.location.href = '/';
-                }).catch(() => {
-                  window.location.href = '/api/logout';
-                });
+                window.location.href = '/api/logout';
               }}
               className="text-sm text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors px-3 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
             >
