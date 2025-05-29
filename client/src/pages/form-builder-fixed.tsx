@@ -254,6 +254,305 @@ function PropertiesPanel({ field, onUpdate }: {
   field: FormField; 
   onUpdate: (updates: Partial<FormField>) => void;
 }) {
+  const renderTypeSpecificProperties = () => {
+    switch (field.Type) {
+      case 'TEXTAREA':
+        return (
+          <div className="space-y-3">
+            <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">Textarea Properties</h4>
+            
+            <div>
+              <Label htmlFor="field-placeholder">Placeholder</Label>
+              <Input
+                id="field-placeholder"
+                value={field.Value}
+                onChange={(e) => onUpdate({ Value: e.target.value })}
+                placeholder="Tapez votre texte ici..."
+                className="text-sm"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="field-rows">Rows</Label>
+              <Input
+                id="field-rows"
+                value={field.Value || "3"}
+                onChange={(e) => onUpdate({ Value: e.target.value })}
+                placeholder="3"
+                className="text-sm"
+                type="number"
+                min="2"
+                max="10"
+              />
+            </div>
+          </div>
+        );
+
+      case 'SELECT':
+        return (
+          <div className="space-y-3">
+            <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">Select Properties</h4>
+            
+            <div>
+              <Label htmlFor="field-options">Options</Label>
+              <Textarea
+                id="field-options"
+                value={field.Value}
+                onChange={(e) => onUpdate({ Value: e.target.value })}
+                placeholder="Option1,Option2,Option3"
+                className="text-sm"
+                rows={4}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="field-multiple">Type</Label>
+              <Input
+                id="field-multiple"
+                value={field.Value || "single"}
+                onChange={(e) => onUpdate({ Value: e.target.value })}
+                placeholder="single ou multiple"
+                className="text-sm"
+              />
+            </div>
+          </div>
+        );
+
+      case 'GRIDLKP':
+        return (
+          <div className="space-y-3">
+            <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">Grid Lookup Properties</h4>
+            
+            <div>
+              <Label htmlFor="field-source">Source Table</Label>
+              <Input
+                id="field-source"
+                value={field.Entity}
+                onChange={(e) => onUpdate({ Entity: e.target.value })}
+                placeholder="Table ou vue source"
+                className="text-sm"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="field-columns">Display Columns</Label>
+              <Textarea
+                id="field-columns"
+                value={field.Value}
+                onChange={(e) => onUpdate({ Value: e.target.value })}
+                placeholder="Col1,Col2,Col3"
+                className="text-sm"
+                rows={2}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="field-filter">Filter Expression</Label>
+              <Input
+                id="field-filter"
+                value={field.Value}
+                onChange={(e) => onUpdate({ Value: e.target.value })}
+                placeholder="WHERE condition"
+                className="text-sm"
+              />
+            </div>
+          </div>
+        );
+
+      case 'LSTLKP':
+        return (
+          <div className="space-y-3">
+            <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">List Lookup Properties</h4>
+            
+            <div>
+              <Label htmlFor="field-lookup-table">Lookup Table</Label>
+              <Input
+                id="field-lookup-table"
+                value={field.Entity}
+                onChange={(e) => onUpdate({ Entity: e.target.value })}
+                placeholder="LookupTable"
+                className="text-sm"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="field-display-field">Display Field</Label>
+              <Input
+                id="field-display-field"
+                value={field.Value}
+                onChange={(e) => onUpdate({ Value: e.target.value })}
+                placeholder="DisplayColumn"
+                className="text-sm"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="field-value-field">Value Field</Label>
+              <Input
+                id="field-value-field"
+                value={field.DataField}
+                onChange={(e) => onUpdate({ DataField: e.target.value })}
+                placeholder="ValueColumn"
+                className="text-sm"
+              />
+            </div>
+          </div>
+        );
+
+      case 'DATEPICKER':
+        return (
+          <div className="space-y-3">
+            <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">Date Picker Properties</h4>
+            
+            <div>
+              <Label htmlFor="field-format">Date Format</Label>
+              <Input
+                id="field-format"
+                value={field.Value || "dd/MM/yyyy"}
+                onChange={(e) => onUpdate({ Value: e.target.value })}
+                placeholder="dd/MM/yyyy"
+                className="text-sm"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="field-minDate">Min Date</Label>
+              <Input
+                id="field-minDate"
+                value={field.Value}
+                onChange={(e) => onUpdate({ Value: e.target.value })}
+                placeholder="01/01/2020"
+                className="text-sm"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="field-maxDate">Max Date</Label>
+              <Input
+                id="field-maxDate"
+                value={field.Value}
+                onChange={(e) => onUpdate({ Value: e.target.value })}
+                placeholder="31/12/2030"
+                className="text-sm"
+              />
+            </div>
+          </div>
+        );
+
+      case 'ACTION':
+        return (
+          <div className="space-y-3">
+            <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">Action Properties</h4>
+            
+            <div>
+              <Label htmlFor="field-actionType">Action Type</Label>
+              <Input
+                id="field-actionType"
+                value={field.Value || "submit"}
+                onChange={(e) => onUpdate({ Value: e.target.value })}
+                placeholder="submit, reset, cancel, custom"
+                className="text-sm"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="field-url">URL/Endpoint</Label>
+              <Input
+                id="field-url"
+                value={field.Value}
+                onChange={(e) => onUpdate({ Value: e.target.value })}
+                placeholder="/api/submit"
+                className="text-sm"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="field-method">HTTP Method</Label>
+              <Input
+                id="field-method"
+                value={field.Value || "POST"}
+                onChange={(e) => onUpdate({ Value: e.target.value })}
+                placeholder="GET, POST, PUT, DELETE"
+                className="text-sm"
+              />
+            </div>
+          </div>
+        );
+
+      case 'WARNING':
+        return (
+          <div className="space-y-3">
+            <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">Warning Properties</h4>
+            
+            <div>
+              <Label htmlFor="field-message">Message</Label>
+              <Textarea
+                id="field-message"
+                value={field.Value}
+                onChange={(e) => onUpdate({ Value: e.target.value })}
+                placeholder="Message d'avertissement"
+                className="text-sm"
+                rows={3}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="field-severity">Severity</Label>
+              <Input
+                id="field-severity"
+                value={field.Value || "warning"}
+                onChange={(e) => onUpdate({ Value: e.target.value })}
+                placeholder="info, warning, error, success"
+                className="text-sm"
+              />
+            </div>
+          </div>
+        );
+
+      case 'GROUP':
+        return (
+          <div className="space-y-3">
+            <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">Group Properties</h4>
+            
+            <div>
+              <Label htmlFor="field-groupTitle">Group Title</Label>
+              <Input
+                id="field-groupTitle"
+                value={field.Label}
+                onChange={(e) => onUpdate({ Label: e.target.value })}
+                placeholder="Titre du groupe"
+                className="text-sm"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="field-collapsible">Behavior</Label>
+              <Input
+                id="field-collapsible"
+                value={field.Value || "static"}
+                onChange={(e) => onUpdate({ Value: e.target.value })}
+                placeholder="static, collapsible, accordion"
+                className="text-sm"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="field-childCount">Child Fields Count</Label>
+              <Input
+                id="field-childCount"
+                value={(field.ChildFields || []).length.toString()}
+                readOnly
+                className="text-sm bg-gray-100"
+              />
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   return (
     <Card className="h-full">
       <CardHeader>
@@ -304,16 +603,9 @@ function PropertiesPanel({ field, onUpdate }: {
               />
             </div>
 
-            <div>
-              <Label htmlFor="field-value">Default Value</Label>
-              <Input
-                id="field-value"
-                value={field.Value}
-                onChange={(e) => onUpdate({ Value: e.target.value })}
-                placeholder="Valeur par défaut"
-                className="text-sm"
-              />
-            </div>
+            <Separator className="my-4" />
+            
+            {renderTypeSpecificProperties()}
           </TabsContent>
 
           <TabsContent value="layout" className="space-y-4">
@@ -370,6 +662,41 @@ function PropertiesPanel({ field, onUpdate }: {
                 className="rounded"
               />
               <Label htmlFor="field-required">Required</Label>
+            </div>
+
+            <div>
+              <Label htmlFor="field-minLength">Min Length</Label>
+              <Input
+                id="field-minLength"
+                value={field.Value}
+                onChange={(e) => onUpdate({ Value: e.target.value })}
+                placeholder="0"
+                className="text-sm"
+                type="number"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="field-maxLength">Max Length</Label>
+              <Input
+                id="field-maxLength"
+                value={field.Value}
+                onChange={(e) => onUpdate({ Value: e.target.value })}
+                placeholder="255"
+                className="text-sm"
+                type="number"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="field-pattern">Pattern (Regex)</Label>
+              <Input
+                id="field-pattern"
+                value={field.Value}
+                onChange={(e) => onUpdate({ Value: e.target.value })}
+                placeholder="^[a-zA-Z0-9]+$"
+                className="text-sm"
+              />
             </div>
           </TabsContent>
         </Tabs>
@@ -563,17 +890,37 @@ export default function FormBuilderFixed() {
         </div>
 
         <div className="w-80 bg-white border-l overflow-y-auto">
-          {selectedField ? (
-            <PropertiesPanel
-              field={selectedField}
-              onUpdate={(updates) => updateFieldInFormData(selectedField.Id, updates)}
-            />
-          ) : (
-            <div className="p-6 text-center text-gray-500">
-              <Settings className="w-12 h-12 mx-auto mb-4 opacity-50" />
-              <p>Sélectionnez un composant pour voir ses propriétés</p>
-            </div>
-          )}
+          <Tabs defaultValue="properties" className="h-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="properties">Propriétés</TabsTrigger>
+              <TabsTrigger value="json">JSON</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="properties" className="h-full">
+              {selectedField ? (
+                <PropertiesPanel
+                  field={selectedField}
+                  onUpdate={(updates) => updateFieldInFormData(selectedField.Id, updates)}
+                />
+              ) : (
+                <div className="p-6 text-center text-gray-500">
+                  <Settings className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>Sélectionnez un composant pour voir ses propriétés</p>
+                </div>
+              )}
+            </TabsContent>
+            
+            <TabsContent value="json" className="h-full p-4">
+              <div className="space-y-4">
+                <h3 className="font-semibold text-gray-900">Schema JSON</h3>
+                <Textarea
+                  value={JSON.stringify(formData, null, 2)}
+                  readOnly
+                  className="h-96 text-xs font-mono"
+                />
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>
