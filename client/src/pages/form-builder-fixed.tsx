@@ -792,6 +792,7 @@ function PropertiesPanel({ field, onUpdate }: {
 export default function FormBuilderFixed() {
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
+    id: null as number | null,
     menuId: `FORM_${Date.now()}`,
     label: 'Mon Formulaire',
     formWidth: '700px',
@@ -822,6 +823,9 @@ export default function FormBuilderFixed() {
       const savedBackup = localStorage.getItem('formBuilder_backup');
       if (savedBackup) {
         const backup = JSON.parse(savedBackup);
+        if (backup.id) {
+          setFormData(prev => ({ ...prev, id: backup.id }));
+        }
         if (backup.fields && backup.fields.length > 0) {
           setFormData(prev => ({ ...prev, fields: backup.fields }));
         }
@@ -1007,7 +1011,8 @@ export default function FormBuilderFixed() {
   const resetForm = () => {
     if (confirm('Êtes-vous sûr de vouloir réinitialiser le formulaire ? Toutes les modifications seront perdues.')) {
       setFormData({
-        menuId: 'FORM001',
+        id: null,
+        menuId: `FORM_${Date.now()}`,
         label: 'Mon Formulaire',
         formWidth: '700px',
         layout: 'PROCESS',
@@ -1031,8 +1036,11 @@ export default function FormBuilderFixed() {
         })
       };
 
-      const response = await fetch('/api/forms', {
-        method: 'POST',
+      const url = formData.id ? `/api/forms/${formData.id}` : '/api/forms';
+      const method = formData.id ? 'PATCH' : 'POST';
+
+      const response = await fetch(url, {
+        method: method,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -1045,11 +1053,18 @@ export default function FormBuilderFixed() {
 
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (savedForm) => {
+      // Update the form ID if it was a new form
+      if (!formData.id && savedForm.id) {
+        setFormData(prev => ({ ...prev, id: savedForm.id }));
+      }
+      
       alert('Formulaire sauvegardé avec succès !');
       queryClient.invalidateQueries({ queryKey: ['/api/forms'] });
+      
       // Also save to localStorage as backup
       localStorage.setItem('formBuilder_backup', JSON.stringify({
+        id: savedForm.id,
         fields: formData.fields,
         customComponents: customComponents
       }));
