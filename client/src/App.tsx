@@ -11,6 +11,7 @@ import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import FormBuilder from "@/pages/form-builder";
 import FormBuilderDragDrop from "@/pages/form-builder-drag-drop";
+import SimpleFormBuilder from "@/pages/form-builder-simple";
 import ComponentsOverview from "@/pages/components-overview";
 import DFMToJSONBotStable from "@/components/ai-bot/dfm-to-json-bot-stable";
 import AdminPage from "@/pages/admin";
@@ -42,8 +43,9 @@ function Router() {
       ) : (
         <>
           <Route path="/" component={Dashboard} />
-          <Route path="/form-builder" component={FormBuilderDragDrop} />
+          <Route path="/form-builder" component={SimpleFormBuilder} />
           <Route path="/form-builder/:formId" component={FormBuilderDragDrop} />
+          <Route path="/form-builder-advanced" component={FormBuilderDragDrop} />
           <Route path="/dashboard" component={Dashboard} />
           <Route path="/components" component={ComponentsOverview} />
           <Route path="/ai-bot" component={DFMToJSONBotStable} />
