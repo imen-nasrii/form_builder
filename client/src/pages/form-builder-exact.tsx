@@ -237,9 +237,15 @@ function SortableField({
   const getFieldIcon = () => {
     switch (field.Type) {
       case 'WARNING': return <AlertTriangle className="w-4 h-4 text-yellow-600" />;
-      case 'ACTION': return <Zap className="w-4 h-4 text-red-600" />;
+      case 'ACTION': return <MousePointer className="w-4 h-4 text-red-600" />;
       case 'GRIDLKP': return <Grid3x3 className="w-4 h-4 text-blue-600" />;
       case 'LSTLKP': return <List className="w-4 h-4 text-green-600" />;
+      case 'GROUP': return <Square className="w-4 h-4 text-purple-600" />;
+      case 'TEXT': return <Type className="w-4 h-4 text-blue-600" />;
+      case 'TEXTAREA': return <Menu className="w-4 h-4 text-blue-600" />;
+      case 'SELECT': return <ChevronDown className="w-4 h-4 text-blue-600" />;
+      case 'CHECKBOX': return <CheckSquare className="w-4 h-4 text-blue-600" />;
+      case 'DATEPICKER': return <Calendar className="w-4 h-4 text-blue-600" />;
       default: return <Square className="w-4 h-4 text-gray-600" />;
     }
   };
@@ -250,9 +256,27 @@ function SortableField({
       case 'ACTION': return 'bg-red-50 border-red-200';
       case 'GRIDLKP': return 'bg-blue-50 border-blue-200';
       case 'LSTLKP': return 'bg-green-50 border-green-200';
+      case 'GROUP': return 'bg-purple-50 border-purple-200';
       default: return 'bg-gray-50 border-gray-200';
     }
   };
+
+  // Si c'est un GROUP, utiliser un composant spécialisé
+  if (field.Type === 'GROUP') {
+    return (
+      <GroupField
+        field={field}
+        isSelected={isSelected}
+        onSelect={onSelect}
+        onUpdate={onUpdate}
+        onRemove={onRemove}
+        listeners={listeners}
+        attributes={attributes}
+        nodeRef={setNodeRef}
+        style={style}
+      />
+    );
+  }
 
   return (
     <div
@@ -273,11 +297,11 @@ function SortableField({
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <AlertTriangle className="w-4 h-4 text-yellow-600" />
+              {getFieldIcon()}
               <span className="font-medium text-sm">{field.Type}</span>
             </div>
-            <div className="text-xs text-yellow-600 bg-yellow-100 px-2 py-1 rounded mt-1">
-              {field.Label || 'Warning Message'}
+            <div className="text-xs bg-gray-100 px-2 py-1 rounded mt-1">
+              {field.Label || `${field.Type} Field`}
             </div>
           </div>
         </div>
@@ -293,6 +317,178 @@ function SortableField({
           <Trash2 className="w-3 h-3" />
         </Button>
       </div>
+    </div>
+  );
+}
+
+// Composant GROUP avec drag & drop interne
+function GroupField({
+  field,
+  isSelected,
+  onSelect,
+  onUpdate,
+  onRemove,
+  listeners,
+  attributes,
+  nodeRef,
+  style
+}: {
+  field: FormField;
+  isSelected: boolean;
+  onSelect: () => void;
+  onUpdate: (updates: Partial<FormField>) => void;
+  onRemove: () => void;
+  listeners?: any;
+  attributes?: any;
+  nodeRef?: any;
+  style?: any;
+}) {
+  const [isExpanded, setIsExpanded] = useState(true);
+
+  // Zone droppable pour le groupe
+  const { setNodeRef: setDropRef, isOver } = useDroppable({
+    id: `group-${field.Id}`,
+  });
+
+  const addChildField = (componentType: string) => {
+    const newChildField: FormField = {
+      Id: `${field.Id}_child_${Date.now()}`,
+      Type: componentType,
+      Label: `${componentType} in Group`,
+      DataField: "",
+      Entity: "",
+      Width: "",
+      Spacing: "",
+      Required: false,
+      Inline: false,
+      Outlined: false,
+      Value: ""
+    };
+
+    const updatedChildFields = [...(field.ChildFields || []), newChildField];
+    onUpdate({ ChildFields: updatedChildFields });
+  };
+
+  const removeChildField = (childFieldId: string) => {
+    const updatedChildFields = (field.ChildFields || []).filter(
+      child => child.Id !== childFieldId
+    );
+    onUpdate({ ChildFields: updatedChildFields });
+  };
+
+  const updateChildField = (childFieldId: string, updates: Partial<FormField>) => {
+    const updatedChildFields = (field.ChildFields || []).map(child =>
+      child.Id === childFieldId ? { ...child, ...updates } : child
+    );
+    onUpdate({ ChildFields: updatedChildFields });
+  };
+
+  return (
+    <div
+      ref={nodeRef}
+      style={style}
+      onClick={onSelect}
+      className={`p-4 border-2 border-dashed rounded-lg cursor-pointer transition-all ${
+        isSelected
+          ? 'border-blue-500 bg-blue-50'
+          : 'bg-purple-50 border-purple-200 hover:border-purple-300'
+      }`}
+    >
+      {/* Header du groupe */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center space-x-3">
+          <div {...listeners} {...attributes} className="cursor-grab active:cursor-grabbing">
+            <Square className="w-4 h-4 text-purple-600" />
+          </div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsExpanded(!isExpanded);
+            }}
+            className="flex items-center space-x-2"
+          >
+            {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+            <span className="font-medium text-sm">GROUP</span>
+          </button>
+          <div className="text-xs bg-purple-100 px-2 py-1 rounded">
+            {(field.ChildFields || []).length} items
+          </div>
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove();
+          }}
+          className="p-1 h-6 w-6 text-gray-400 hover:text-red-500"
+        >
+          <Trash2 className="w-3 h-3" />
+        </Button>
+      </div>
+
+      {/* Contenu du groupe */}
+      {isExpanded && (
+        <div 
+          ref={setDropRef}
+          className={`min-h-24 p-4 border-2 border-dashed rounded transition-colors ${
+            isOver 
+              ? 'border-blue-500 bg-blue-50' 
+              : 'border-gray-200 bg-gray-50'
+          }`}
+        >
+          {(field.ChildFields || []).length === 0 ? (
+            <div className="text-center py-8 text-gray-400">
+              <Square className="w-8 h-8 mx-auto mb-2 opacity-50" />
+              <p className="text-sm">Drop components here</p>
+            </div>
+          ) : (
+            <SortableContext 
+              items={(field.ChildFields || []).map(child => child.Id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-2">
+                {(field.ChildFields || []).map((childField) => (
+                  <div
+                    key={childField.Id}
+                    className="p-3 bg-white border border-gray-200 rounded shadow-sm"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <div className={`w-3 h-3 rounded-full ${
+                          childField.Type === 'TEXT' ? 'bg-blue-500' :
+                          childField.Type === 'SELECT' ? 'bg-orange-500' :
+                          childField.Type === 'CHECKBOX' ? 'bg-cyan-500' :
+                          childField.Type === 'WARNING' ? 'bg-yellow-500' :
+                          'bg-gray-500'
+                        }`} />
+                        <span className="text-sm font-medium">
+                          {childField.Label || childField.Id}
+                        </span>
+                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                          {childField.Type}
+                        </span>
+                      </div>
+                      
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeChildField(childField.Id);
+                        }}
+                        className="p-1 h-6 w-6 text-red-500 hover:text-red-700"
+                      >
+                        <X className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </SortableContext>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -407,8 +603,8 @@ export default function FormBuilderExact() {
     
     if (!over) return;
     
-    // Si on drag un composant de la palette vers la zone principale
-    if (active.data.current?.type === 'component' && over.id === 'form-canvas') {
+    // Si on drag un composant de la palette
+    if (active.data.current?.type === 'component') {
       const componentType = active.data.current.componentType;
       const newField: FormField = {
         Id: `${componentType.toLowerCase()}-${Date.now()}`,
@@ -421,14 +617,35 @@ export default function FormBuilderExact() {
         Required: false,
         Inline: false,
         Outlined: false,
-        Value: ""
+        Value: "",
+        ChildFields: []
       };
 
-      setFormData(prev => ({
-        ...prev,
-        fields: [...prev.fields, newField]
-      }));
-      setSelectedField(newField);
+      // Si on dépose dans la zone principale
+      if (over.id === 'form-canvas') {
+        setFormData(prev => ({
+          ...prev,
+          fields: [...prev.fields, newField]
+        }));
+        setSelectedField(newField);
+      }
+      // Si on dépose dans un groupe
+      else if (over.id && over.id.toString().startsWith('group-')) {
+        const groupId = over.id.toString().replace('group-', '');
+        setFormData(prev => ({
+          ...prev,
+          fields: prev.fields.map(field => {
+            if (field.Id === groupId) {
+              return {
+                ...field,
+                ChildFields: [...(field.ChildFields || []), newField]
+              };
+            }
+            return field;
+          })
+        }));
+        setSelectedField(newField);
+      }
     }
   };
 
