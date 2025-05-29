@@ -1007,9 +1007,9 @@ export default function FormBuilderFixed() {
     setCustomComponents(prev => prev.filter(comp => comp.id !== componentId));
   };
 
-  // Reset form function
-  const resetForm = () => {
-    if (confirm('Êtes-vous sûr de vouloir réinitialiser le formulaire ? Toutes les modifications seront perdues.')) {
+  // Create new form function
+  const createNewForm = () => {
+    if (confirm('Êtes-vous sûr de vouloir créer un nouveau formulaire ? Les modifications non sauvegardées seront perdues.')) {
       setFormData({
         id: null,
         menuId: `FORM_${Date.now()}`,
@@ -1018,6 +1018,19 @@ export default function FormBuilderFixed() {
         layout: 'PROCESS',
         fields: []
       });
+      setSelectedField(null);
+      setCustomComponents([]);
+      localStorage.removeItem('formBuilder_backup');
+    }
+  };
+
+  // Reset form function (clear fields only)
+  const resetForm = () => {
+    if (confirm('Êtes-vous sûr de vouloir vider le formulaire ? Tous les champs seront supprimés.')) {
+      setFormData(prev => ({
+        ...prev,
+        fields: []
+      }));
       setSelectedField(null);
     }
   };
@@ -1324,11 +1337,20 @@ export default function FormBuilderFixed() {
             <Button 
               variant="outline" 
               size="sm" 
+              onClick={createNewForm}
+              className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Nouveau
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
               onClick={resetForm}
               className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
             >
               <RotateCcw className="w-4 h-4 mr-2" />
-              Reset
+              Vider
             </Button>
             <Button 
               size="sm" 
