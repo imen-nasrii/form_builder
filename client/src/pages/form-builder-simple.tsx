@@ -203,21 +203,41 @@ export default function FormBuilderSimple() {
 
   // Fonction pour ajouter un composant à un groupe
   const addFieldToGroup = (groupId: string, field: FormField) => {
-    setFormData(prev => ({
-      ...prev,
-      fields: prev.fields.map(f => 
-        f.Id === groupId 
-          ? { 
+    try {
+      setFormData(prev => {
+        const updatedFields = prev.fields.map(f => {
+          if (f.Id === groupId) {
+            const currentChildren = f.Children || f.children || [];
+            return { 
               ...f, 
-              Children: [...(f.Children || []), field],
-              children: [...(f.children || []), field]
-            }
-          : f
-      )
-    }));
-    
-    // Sélectionner le nouveau champ ajouté au groupe
-    setSelectedField(field);
+              Children: [...currentChildren, field],
+              children: [...currentChildren, field]
+            };
+          }
+          return f;
+        });
+        
+        return {
+          ...prev,
+          fields: updatedFields
+        };
+      });
+      
+      // Sélectionner le nouveau champ ajouté au groupe
+      setSelectedField(field);
+      
+      toast({
+        title: "Composant ajouté",
+        description: `${field.Type} ajouté au groupe avec succès`,
+      });
+    } catch (error) {
+      console.error('Erreur lors de l\'ajout du composant au groupe:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'ajouter le composant au groupe",
+        variant: "destructive",
+      });
+    }
   };
 
   const updateField = (fieldId: string, updates: Partial<FormField>) => {
