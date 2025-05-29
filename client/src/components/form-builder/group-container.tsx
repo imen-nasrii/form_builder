@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { useDrop } from 'react-dnd';
 import { FormField } from '@/lib/form-types';
 import { Settings, Trash2 } from 'lucide-react';
@@ -20,28 +20,26 @@ export const GroupContainer: React.FC<GroupContainerProps> = ({
   onAddFieldToGroup,
   isSelected
 }) => {
-  const handleDrop = useCallback((item: { type: string }) => {
-    // Créer un nouveau champ pour le groupe
-    const newField: FormField = {
-      Id: `field_${Date.now()}`,
-      Type: item.type as any,
-      Label: `New ${item.type}`,
-      DataField: "",
-      Entity: "",
-      Width: "",
-      Spacing: "",
-      Required: false,
-      Inline: false,
-      Outlined: false,
-      Value: ""
-    };
-    
-    onAddFieldToGroup(field.Id, newField);
-  }, [field.Id, onAddFieldToGroup]);
-
   const [{ isOver, canDrop }, drop] = useDrop({
     accept: 'component',
-    drop: handleDrop,
+    drop: (item: { type: string }) => {
+      // Créer un nouveau champ pour le groupe
+      const newField: FormField = {
+        Id: `field_${Date.now()}`,
+        Type: item.type as any,
+        Label: `New ${item.type}`,
+        DataField: "",
+        Entity: "",
+        Width: "",
+        Spacing: "",
+        Required: false,
+        Inline: false,
+        Outlined: false,
+        Value: ""
+      };
+      
+      onAddFieldToGroup(field.Id, newField);
+    },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
       canDrop: monitor.canDrop(),
@@ -75,17 +73,9 @@ export const GroupContainer: React.FC<GroupContainerProps> = ({
     borderRadius: field.GroupStyle?.borderRadius || '8px',
   };
 
-  const dropRef = React.useRef<HTMLDivElement>(null);
-  
-  React.useEffect(() => {
-    if (dropRef.current) {
-      drop(dropRef.current);
-    }
-  }, [drop]);
-
   return (
     <div
-      ref={dropRef}
+      ref={drop}
       className={dropZoneClass}
       style={containerStyle}
       onClick={(e) => {
@@ -134,28 +124,12 @@ export const GroupContainer: React.FC<GroupContainerProps> = ({
               }}
             >
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium">
-                    {child.Label || child.label || `${child.Type || child.type}`}
-                  </span>
-                  <span className="text-xs text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
-                    {child.Type || child.type}
-                  </span>
-                </div>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    // Supprimer l'enfant du groupe
-                    const updatedChildren = children.filter(c => c.Id !== child.Id);
-                    onUpdateField(field.Id, { 
-                      Children: updatedChildren,
-                      children: updatedChildren 
-                    });
-                  }}
-                  className="text-red-500 hover:text-red-700 p-1"
-                >
-                  <Trash2 className="w-3 h-3" />
-                </button>
+                <span className="text-sm font-medium">
+                  {child.Label || child.label || `${child.Type || child.type}`}
+                </span>
+                <span className="text-xs text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+                  {child.Type || child.type}
+                </span>
               </div>
               {child.DataField && (
                 <p className="text-xs text-gray-500 mt-1">
