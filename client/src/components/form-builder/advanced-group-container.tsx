@@ -198,22 +198,23 @@ export const AdvancedGroupContainer: React.FC<AdvancedGroupContainerProps> = ({
           </div>
           
           <div className="flex items-center gap-2">
-            {/* Sélecteur de layout */}
-            <Select value={field.GroupLayout || 'vertical'} onValueChange={updateLayout}>
-              <SelectTrigger className="w-32 h-8">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {layouts.map(layout => (
-                  <SelectItem key={layout.value} value={layout.value}>
-                    <div className="flex items-center gap-2">
-                      <layout.icon className="w-4 h-4" />
-                      {layout.label}
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {/* Boutons de layout */}
+            <div className="flex border rounded-md">
+              {layouts.map(layout => (
+                <Button
+                  key={layout.value}
+                  size="sm"
+                  variant={field.GroupLayout === layout.value || (!field.GroupLayout && layout.value === 'vertical') ? "default" : "ghost"}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    updateLayout(layout.value);
+                  }}
+                  className="h-8 px-2 rounded-none first:rounded-l-md last:rounded-r-md"
+                >
+                  <layout.icon className="w-4 h-4" />
+                </Button>
+              ))}
+            </div>
             
             <Button
               size="sm"
