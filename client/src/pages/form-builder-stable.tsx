@@ -46,6 +46,8 @@ import {
 
 import type { Form } from "@shared/schema";
 import { FormField } from "@/lib/drag-drop-clean";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
 
 // Composant draggable pour la palette
 function DraggableComponent({ componentType, label, icon: Icon, color }: {
@@ -287,6 +289,532 @@ function GroupField({
   );
 }
 
+// Composant PropertiesPanel pour toutes les propriétés
+function PropertiesPanel({ field, onUpdate }: { 
+  field: FormField; 
+  onUpdate: (updates: Partial<FormField>) => void;
+}) {
+  return (
+    <div className="space-y-4">
+      {/* Propriétés communes */}
+      <div className="space-y-3">
+        <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">General Properties</h4>
+        
+        <div>
+          <Label htmlFor="field-id">ID</Label>
+          <Input
+            id="field-id"
+            value={field.Id}
+            onChange={(e) => onUpdate({ Id: e.target.value })}
+            className="text-sm"
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="field-type">Type</Label>
+          <Input 
+            id="field-type" 
+            value={field.Type} 
+            disabled 
+            className="text-sm bg-gray-50"
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="field-label">Label</Label>
+          <Input
+            id="field-label"
+            value={field.Label}
+            onChange={(e) => onUpdate({ Label: e.target.value })}
+            className="text-sm"
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="field-datafield">Data Field</Label>
+          <Input
+            id="field-datafield"
+            value={field.DataField}
+            onChange={(e) => onUpdate({ DataField: e.target.value })}
+            placeholder="Nom du champ de données"
+            className="text-sm"
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="field-entity">Entity</Label>
+          <Input
+            id="field-entity"
+            value={field.Entity}
+            onChange={(e) => onUpdate({ Entity: e.target.value })}
+            placeholder="Entité liée"
+            className="text-sm"
+          />
+        </div>
+      </div>
+
+      {/* Propriétés de mise en page */}
+      <div className="space-y-3">
+        <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">Layout Properties</h4>
+        
+        <div>
+          <Label htmlFor="field-width">Width</Label>
+          <Select 
+            value={field.Width} 
+            onValueChange={(value) => onUpdate({ Width: value })}
+          >
+            <SelectTrigger className="text-sm">
+              <SelectValue placeholder="Select width" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">Auto</SelectItem>
+              <SelectItem value="25%">25%</SelectItem>
+              <SelectItem value="33%">33%</SelectItem>
+              <SelectItem value="50%">50%</SelectItem>
+              <SelectItem value="66%">66%</SelectItem>
+              <SelectItem value="75%">75%</SelectItem>
+              <SelectItem value="100%">100%</SelectItem>
+              <SelectItem value="200px">200px</SelectItem>
+              <SelectItem value="300px">300px</SelectItem>
+              <SelectItem value="400px">400px</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <Label htmlFor="field-spacing">Spacing</Label>
+          <Select 
+            value={field.Spacing} 
+            onValueChange={(value) => onUpdate({ Spacing: value })}
+          >
+            <SelectTrigger className="text-sm">
+              <SelectValue placeholder="Select spacing" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">None</SelectItem>
+              <SelectItem value="sm">Small</SelectItem>
+              <SelectItem value="md">Medium</SelectItem>
+              <SelectItem value="lg">Large</SelectItem>
+              <SelectItem value="xl">Extra Large</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="field-inline"
+            checked={field.Inline}
+            onCheckedChange={(checked) => onUpdate({ Inline: checked })}
+          />
+          <Label htmlFor="field-inline" className="text-sm">Inline</Label>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="field-outlined"
+            checked={field.Outlined}
+            onCheckedChange={(checked) => onUpdate({ Outlined: checked })}
+          />
+          <Label htmlFor="field-outlined" className="text-sm">Outlined</Label>
+        </div>
+      </div>
+
+      {/* Propriétés de validation */}
+      <div className="space-y-3">
+        <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">Validation Properties</h4>
+        
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="field-required"
+            checked={field.Required}
+            onCheckedChange={(checked) => onUpdate({ Required: checked })}
+          />
+          <Label htmlFor="field-required" className="text-sm">Required</Label>
+        </div>
+      </div>
+
+      {/* Propriétés spécifiques par type */}
+      {renderTypeSpecificProperties(field, onUpdate)}
+    </div>
+  );
+}
+
+// Propriétés spécifiques selon le type de champ
+function renderTypeSpecificProperties(field: FormField, onUpdate: (updates: Partial<FormField>) => void) {
+  switch (field.Type) {
+    case 'TEXT':
+      return (
+        <div className="space-y-3">
+          <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">Text Properties</h4>
+          
+          <div>
+            <Label htmlFor="field-value">Default Value</Label>
+            <Input
+              id="field-value"
+              value={field.Value}
+              onChange={(e) => onUpdate({ Value: e.target.value })}
+              placeholder="Valeur par défaut"
+              className="text-sm"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="field-placeholder">Placeholder</Label>
+            <Input
+              id="field-placeholder"
+              value={field.Value}
+              onChange={(e) => onUpdate({ Value: e.target.value })}
+              placeholder="Texte d'aide"
+              className="text-sm"
+            />
+          </div>
+        </div>
+      );
+
+    case 'TEXTAREA':
+      return (
+        <div className="space-y-3">
+          <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">Textarea Properties</h4>
+          
+          <div>
+            <Label htmlFor="field-value">Default Value</Label>
+            <Textarea
+              id="field-value"
+              value={field.Value}
+              onChange={(e) => onUpdate({ Value: e.target.value })}
+              placeholder="Valeur par défaut"
+              className="text-sm"
+              rows={3}
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="field-rows">Rows</Label>
+            <Select 
+              value={field.Value} 
+              onValueChange={(value) => onUpdate({ Value: value })}
+            >
+              <SelectTrigger className="text-sm">
+                <SelectValue placeholder="Number of rows" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="2">2</SelectItem>
+                <SelectItem value="3">3</SelectItem>
+                <SelectItem value="4">4</SelectItem>
+                <SelectItem value="5">5</SelectItem>
+                <SelectItem value="6">6</SelectItem>
+                <SelectItem value="8">8</SelectItem>
+                <SelectItem value="10">10</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      );
+
+    case 'SELECT':
+      return (
+        <div className="space-y-3">
+          <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">Select Properties</h4>
+          
+          <div>
+            <Label htmlFor="field-options">Options (une par ligne)</Label>
+            <Textarea
+              id="field-options"
+              value={field.Value}
+              onChange={(e) => onUpdate({ Value: e.target.value })}
+              placeholder="Option 1&#10;Option 2&#10;Option 3"
+              className="text-sm"
+              rows={4}
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="field-multiple">Type</Label>
+            <Select 
+              value={field.Value} 
+              onValueChange={(value) => onUpdate({ Value: value })}
+            >
+              <SelectTrigger className="text-sm">
+                <SelectValue placeholder="Select type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="single">Single Selection</SelectItem>
+                <SelectItem value="multiple">Multiple Selection</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      );
+
+    case 'GRIDLKP':
+      return (
+        <div className="space-y-3">
+          <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">Grid Lookup Properties</h4>
+          
+          <div>
+            <Label htmlFor="field-source">Data Source</Label>
+            <Input
+              id="field-source"
+              value={field.Entity}
+              onChange={(e) => onUpdate({ Entity: e.target.value })}
+              placeholder="Table ou vue source"
+              className="text-sm"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="field-columns">Display Columns</Label>
+            <Textarea
+              id="field-columns"
+              value={field.Value}
+              onChange={(e) => onUpdate({ Value: e.target.value })}
+              placeholder="Col1,Col2,Col3"
+              className="text-sm"
+              rows={2}
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="field-filter">Filter Expression</Label>
+            <Input
+              id="field-filter"
+              value={field.Value}
+              onChange={(e) => onUpdate({ Value: e.target.value })}
+              placeholder="WHERE condition"
+              className="text-sm"
+            />
+          </div>
+        </div>
+      );
+
+    case 'LSTLKP':
+      return (
+        <div className="space-y-3">
+          <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">List Lookup Properties</h4>
+          
+          <div>
+            <Label htmlFor="field-source">Data Source</Label>
+            <Input
+              id="field-source"
+              value={field.Entity}
+              onChange={(e) => onUpdate({ Entity: e.target.value })}
+              placeholder="Table ou vue source"
+              className="text-sm"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="field-display">Display Field</Label>
+            <Input
+              id="field-display"
+              value={field.Value}
+              onChange={(e) => onUpdate({ Value: e.target.value })}
+              placeholder="Champ à afficher"
+              className="text-sm"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="field-valueField">Value Field</Label>
+            <Input
+              id="field-valueField"
+              value={field.DataField}
+              onChange={(e) => onUpdate({ DataField: e.target.value })}
+              placeholder="Champ de valeur"
+              className="text-sm"
+            />
+          </div>
+        </div>
+      );
+
+    case 'DATEPICKER':
+      return (
+        <div className="space-y-3">
+          <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">Date Picker Properties</h4>
+          
+          <div>
+            <Label htmlFor="field-format">Date Format</Label>
+            <Select 
+              value={field.Value} 
+              onValueChange={(value) => onUpdate({ Value: value })}
+            >
+              <SelectTrigger className="text-sm">
+                <SelectValue placeholder="Select format" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="dd/MM/yyyy">DD/MM/YYYY</SelectItem>
+                <SelectItem value="MM/dd/yyyy">MM/DD/YYYY</SelectItem>
+                <SelectItem value="yyyy-MM-dd">YYYY-MM-DD</SelectItem>
+                <SelectItem value="dd-MM-yyyy">DD-MM-YYYY</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label htmlFor="field-minDate">Min Date</Label>
+            <Input
+              id="field-minDate"
+              type="date"
+              value={field.Value}
+              onChange={(e) => onUpdate({ Value: e.target.value })}
+              className="text-sm"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="field-maxDate">Max Date</Label>
+            <Input
+              id="field-maxDate"
+              type="date"
+              value={field.Value}
+              onChange={(e) => onUpdate({ Value: e.target.value })}
+              className="text-sm"
+            />
+          </div>
+        </div>
+      );
+
+    case 'ACTION':
+      return (
+        <div className="space-y-3">
+          <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">Action Properties</h4>
+          
+          <div>
+            <Label htmlFor="field-actionType">Action Type</Label>
+            <Select 
+              value={field.Value} 
+              onValueChange={(value) => onUpdate({ Value: value })}
+            >
+              <SelectTrigger className="text-sm">
+                <SelectValue placeholder="Select action" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="submit">Submit</SelectItem>
+                <SelectItem value="reset">Reset</SelectItem>
+                <SelectItem value="cancel">Cancel</SelectItem>
+                <SelectItem value="custom">Custom</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label htmlFor="field-url">URL/Endpoint</Label>
+            <Input
+              id="field-url"
+              value={field.Value}
+              onChange={(e) => onUpdate({ Value: e.target.value })}
+              placeholder="URL de destination"
+              className="text-sm"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="field-method">HTTP Method</Label>
+            <Select 
+              value={field.Value} 
+              onValueChange={(value) => onUpdate({ Value: value })}
+            >
+              <SelectTrigger className="text-sm">
+                <SelectValue placeholder="Select method" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="GET">GET</SelectItem>
+                <SelectItem value="POST">POST</SelectItem>
+                <SelectItem value="PUT">PUT</SelectItem>
+                <SelectItem value="DELETE">DELETE</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      );
+
+    case 'WARNING':
+      return (
+        <div className="space-y-3">
+          <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">Warning Properties</h4>
+          
+          <div>
+            <Label htmlFor="field-message">Warning Message</Label>
+            <Textarea
+              id="field-message"
+              value={field.Value}
+              onChange={(e) => onUpdate({ Value: e.target.value })}
+              placeholder="Message d'avertissement"
+              className="text-sm"
+              rows={3}
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="field-severity">Severity</Label>
+            <Select 
+              value={field.Value} 
+              onValueChange={(value) => onUpdate({ Value: value })}
+            >
+              <SelectTrigger className="text-sm">
+                <SelectValue placeholder="Select severity" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="info">Info</SelectItem>
+                <SelectItem value="warning">Warning</SelectItem>
+                <SelectItem value="error">Error</SelectItem>
+                <SelectItem value="success">Success</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      );
+
+    case 'GROUP':
+      return (
+        <div className="space-y-3">
+          <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">Group Properties</h4>
+          
+          <div>
+            <Label htmlFor="field-title">Group Title</Label>
+            <Input
+              id="field-title"
+              value={field.Label}
+              onChange={(e) => onUpdate({ Label: e.target.value })}
+              placeholder="Titre du groupe"
+              className="text-sm"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="field-collapsible">Behavior</Label>
+            <Select 
+              value={field.Value} 
+              onValueChange={(value) => onUpdate({ Value: value })}
+            >
+              <SelectTrigger className="text-sm">
+                <SelectValue placeholder="Select behavior" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="static">Static</SelectItem>
+                <SelectItem value="collapsible">Collapsible</SelectItem>
+                <SelectItem value="accordion">Accordion</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label htmlFor="field-childCount">Child Fields Count</Label>
+            <Input
+              id="field-childCount"
+              value={(field.ChildFields || []).length.toString()}
+              disabled
+              className="text-sm bg-gray-50"
+            />
+          </div>
+        </div>
+      );
+
+    default:
+      return null;
+  }
+}
+
 export default function FormBuilderStable() {
   const params = useParams();
   const formId = params.formId ? parseInt(params.formId) : null;
@@ -337,7 +865,7 @@ export default function FormBuilderStable() {
 
   // Synchroniser les données du formulaire
   useEffect(() => {
-    if (form && 'definition' in form) {
+    if (form && typeof form === 'object' && form !== null && 'definition' in form) {
       const definition = typeof form.definition === 'string' 
         ? JSON.parse(form.definition) 
         : form.definition;
@@ -416,6 +944,29 @@ export default function FormBuilderStable() {
     if (selectedField?.Id === fieldId) {
       setSelectedField(null);
     }
+  };
+
+  // Fonction pour mettre à jour un champ dans formData
+  const updateFieldInFormData = (fieldId: string, updates: Partial<FormField>) => {
+    const updateFieldRecursive = (fields: FormField[]): FormField[] => {
+      return fields.map(field => {
+        if (field.Id === fieldId) {
+          return { ...field, ...updates };
+        }
+        if (field.ChildFields && field.ChildFields.length > 0) {
+          return {
+            ...field,
+            ChildFields: updateFieldRecursive(field.ChildFields)
+          };
+        }
+        return field;
+      });
+    };
+
+    setFormData(prev => ({
+      ...prev,
+      fields: updateFieldRecursive(prev.fields)
+    }));
   };
 
   // Mutation pour sauvegarder
@@ -560,32 +1111,17 @@ export default function FormBuilderStable() {
         </div>
 
         {/* Panneau des propriétés */}
-        <div className="w-80 bg-white border-l border-gray-200 p-4">
+        <div className="w-80 bg-white border-l border-gray-200 p-4 overflow-y-auto">
           <h3 className="text-lg font-semibold mb-4">Properties</h3>
           {selectedField ? (
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="field-label">Label</Label>
-                <Input
-                  id="field-label"
-                  value={selectedField.Label}
-                  onChange={(e) => {
-                    const updatedField = { ...selectedField, Label: e.target.value };
-                    setSelectedField(updatedField);
-                    setFormData(prev => ({
-                      ...prev,
-                      fields: prev.fields.map(f => 
-                        f.Id === selectedField.Id ? updatedField : f
-                      )
-                    }));
-                  }}
-                />
-              </div>
-              <div>
-                <Label htmlFor="field-type">Type</Label>
-                <Input id="field-type" value={selectedField.Type} disabled />
-              </div>
-            </div>
+            <PropertiesPanel 
+              field={selectedField} 
+              onUpdate={(updates) => {
+                const updatedField = { ...selectedField, ...updates };
+                setSelectedField(updatedField);
+                updateFieldInFormData(selectedField.Id, updates);
+              }}
+            />
           ) : (
             <p className="text-gray-500">Select a field to edit its properties</p>
           )}
