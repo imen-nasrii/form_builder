@@ -18,6 +18,7 @@ import {
   useSensor,
   useSensors,
   closestCenter,
+  useDroppable,
 } from '@dnd-kit/core';
 import {
   SortableContext,
@@ -131,6 +132,60 @@ function SidebarSection({
         <div className="mt-2 space-y-2">
           {children}
         </div>
+      )}
+    </div>
+  );
+}
+
+// Composant droppable pour le canvas
+function DroppableCanvas({
+  formData,
+  selectedField,
+  setSelectedField,
+  updateField,
+  removeField
+}: {
+  formData: any;
+  selectedField: FormField | null;
+  setSelectedField: (field: FormField) => void;
+  updateField: (fieldId: string, updates: Partial<FormField>) => void;
+  removeField: (fieldId: string) => void;
+}) {
+  const { setNodeRef, isOver } = useDroppable({
+    id: 'form-canvas',
+  });
+
+  return (
+    <div 
+      ref={setNodeRef}
+      className={`bg-white rounded-lg border-2 border-dashed min-h-96 p-8 transition-colors ${
+        isOver ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
+      }`}
+    >
+      {formData.fields.length === 0 ? (
+        <div className="text-center py-16 text-gray-400">
+          <div className="text-4xl mb-4">📝</div>
+          <p className="text-lg">Drag components here to build your form</p>
+          <p className="text-sm mt-2">Components will appear in this area</p>
+        </div>
+      ) : (
+        <SortableContext 
+          items={formData.fields.map((field: FormField) => field.Id)}
+          strategy={verticalListSortingStrategy}
+        >
+          <div className="space-y-4">
+            {formData.fields.map((field: FormField) => (
+              <SortableField
+                key={field.Id}
+                field={field}
+                isSelected={selectedField?.Id === field.Id}
+                onSelect={() => setSelectedField(field)}
+                onUpdate={(updates) => updateField(field.Id, updates)}
+                onRemove={() => removeField(field.Id)}
+              />
+            ))}
+          </div>
+        </SortableContext>
       )}
     </div>
   );
@@ -508,36 +563,7 @@ export default function FormBuilderExact() {
             {/* Canvas */}
             <div className="flex-1 p-6 overflow-y-auto">
               <div className="max-w-4xl mx-auto">
-                <div 
-                  id="form-canvas"
-                  className="bg-white rounded-lg border-2 border-dashed border-gray-300 min-h-96 p-8"
-                >
-                  {formData.fields.length === 0 ? (
-                    <div className="text-center py-16 text-gray-400">
-                      <div className="text-4xl mb-4">📝</div>
-                      <p className="text-lg">Drag components here to build your form</p>
-                      <p className="text-sm mt-2">Components will appear in this area</p>
-                    </div>
-                  ) : (
-                    <SortableContext 
-                      items={formData.fields.map(field => field.Id)}
-                      strategy={verticalListSortingStrategy}
-                    >
-                      <div className="space-y-4">
-                        {formData.fields.map((field) => (
-                          <SortableField
-                            key={field.Id}
-                            field={field}
-                            isSelected={selectedField?.Id === field.Id}
-                            onSelect={() => setSelectedField(field)}
-                            onUpdate={(updates) => updateField(field.Id, updates)}
-                            onRemove={() => removeField(field.Id)}
-                          />
-                        ))}
-                      </div>
-                    </SortableContext>
-                  )}
-                </div>
+                <DroppableCanvas formData={formData} selectedField={selectedField} setSelectedField={setSelectedField} updateField={updateField} removeField={removeField} />
               </div>
             </div>
           </div>
