@@ -367,7 +367,7 @@ function PropertiesPanel({ field, onUpdate }: {
               <SelectValue placeholder="Select width" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Auto</SelectItem>
+              <SelectItem value="auto">Auto</SelectItem>
               <SelectItem value="25%">25%</SelectItem>
               <SelectItem value="33%">33%</SelectItem>
               <SelectItem value="50%">50%</SelectItem>
@@ -391,7 +391,7 @@ function PropertiesPanel({ field, onUpdate }: {
               <SelectValue placeholder="Select spacing" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">None</SelectItem>
+              <SelectItem value="none">None</SelectItem>
               <SelectItem value="sm">Small</SelectItem>
               <SelectItem value="md">Medium</SelectItem>
               <SelectItem value="lg">Large</SelectItem>
