@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useDrop } from "react-dnd";
 import { Settings, X, Plus, FolderOpen } from "lucide-react";
-import { createDefaultField } from "@/lib/drag-drop";
 import type { GroupFieldProps, FormField } from "@/lib/form-types";
 
 export default function GroupField({
@@ -36,7 +34,19 @@ export default function GroupField({
   };
 
   const handleAddChildField = (componentType: string) => {
-    const newField = createDefaultField(componentType as any);
+    const newField: FormField = {
+      Id: `group_field_${Date.now()}`,
+      Type: componentType as any,
+      Label: `${componentType} in Group`,
+      DataField: "",
+      Entity: "",
+      Width: "",
+      Spacing: "",
+      Required: false,
+      Inline: false,
+      Outlined: false,
+      Value: ""
+    };
     const updatedChildFields = [...(field.ChildFields || []), newField];
     onUpdate({ ChildFields: updatedChildFields });
   };
