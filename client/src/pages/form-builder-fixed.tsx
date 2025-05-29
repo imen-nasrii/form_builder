@@ -34,7 +34,10 @@ import {
   ArrowRight,
   ArrowDown,
   Mail,
-  Share
+  Share,
+  Plus,
+  Code,
+  Package
 } from 'lucide-react';
 
 interface FormField {
@@ -744,14 +747,27 @@ export default function FormBuilderFixed() {
   const [showHelp, setShowHelp] = useState(false);
   const [collaboratorEmail, setCollaboratorEmail] = useState('');
   const [collaborators, setCollaborators] = useState<string[]>([]);
+  const [customComponents, setCustomComponents] = useState<any[]>([]);
+  const [newComponentConfig, setNewComponentConfig] = useState({
+    name: '',
+    label: '',
+    icon: 'Square',
+    color: 'gray',
+    properties: ''
+  });
+  const [showAddComponent, setShowAddComponent] = useState(false);
   const formBuilderRef = useRef<HTMLDivElement>(null);
 
   const createDefaultField = (componentType: string): FormField => {
     const timestamp = Date.now();
+    
+    // Check if it's a custom component
+    const customComponent = customComponents.find(comp => comp.id === componentType);
+    
     return {
       Id: `${componentType}_${timestamp}`,
       Type: componentType,
-      Label: `${ComponentTypes[componentType as keyof typeof ComponentTypes]?.label || componentType}`,
+      Label: customComponent ? customComponent.label : (ComponentTypes[componentType as keyof typeof ComponentTypes]?.label || componentType),
       DataField: `field_${timestamp}`,
       Entity: 'TableName',
       Width: '100%',
@@ -759,7 +775,7 @@ export default function FormBuilderFixed() {
       Required: false,
       Inline: false,
       Outlined: false,
-      Value: '',
+      Value: customComponent ? JSON.stringify(customComponent.properties) : '',
       ChildFields: componentType === 'GROUP' ? [] : undefined
     };
   };
@@ -850,6 +866,48 @@ export default function FormBuilderFixed() {
     setCollaborators(collaborators.filter(c => c !== email));
   };
 
+  // Method 1: JSON Configuration for External Components
+  const addComponentFromJSON = (jsonConfig: string) => {
+    try {
+      const config = JSON.parse(jsonConfig);
+      const newComponent = {
+        id: config.name.toUpperCase(),
+        name: config.name,
+        label: config.label,
+        icon: config.icon || 'Square',
+        color: config.color || 'gray',
+        properties: config.properties || {},
+        isCustom: true
+      };
+      setCustomComponents(prev => [...prev, newComponent]);
+    } catch (error) {
+      console.error('Invalid JSON configuration:', error);
+    }
+  };
+
+  // Method 2: Form-based Component Creator
+  const addComponentFromForm = () => {
+    if (!newComponentConfig.name || !newComponentConfig.label) return;
+    
+    const newComponent = {
+      id: newComponentConfig.name.toUpperCase(),
+      name: newComponentConfig.name,
+      label: newComponentConfig.label,
+      icon: newComponentConfig.icon,
+      color: newComponentConfig.color,
+      properties: newComponentConfig.properties ? JSON.parse(newComponentConfig.properties) : {},
+      isCustom: true
+    };
+    
+    setCustomComponents(prev => [...prev, newComponent]);
+    setNewComponentConfig({ name: '', label: '', icon: 'Square', color: 'gray', properties: '' });
+    setShowAddComponent(false);
+  };
+
+  const removeCustomComponent = (componentId: string) => {
+    setCustomComponents(prev => prev.filter(comp => comp.id !== componentId));
+  };
+
   const toggleFullScreen = () => {
     setIsFullScreen(!isFullScreen);
     if (!isFullScreen) {
@@ -897,6 +955,153 @@ export default function FormBuilderFixed() {
             >
               <HelpCircle className="w-4 h-4" />
             </Button>
+
+            {/* Add External Components */}
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Composants Externes
+                </Button>
+              </DialogTrigger>
+              <DialogContent className={`max-w-2xl ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
+                <DialogHeader>
+                  <DialogTitle className={isDarkMode ? 'text-white' : ''}>Ajouter des Composants Externes</DialogTitle>
+                </DialogHeader>
+                <Tabs defaultValue="json" className="w-full">
+                  <TabsList className={`grid w-full grid-cols-2 ${isDarkMode ? 'bg-gray-700' : ''}`}>
+                    <TabsTrigger value="json" className={isDarkMode ? 'data-[state=active]:bg-gray-600 text-gray-300' : ''}>
+                      <Code className="w-4 h-4 mr-2" />
+                      Configuration JSON
+                    </TabsTrigger>
+                    <TabsTrigger value="form" className={isDarkMode ? 'data-[state=active]:bg-gray-600 text-gray-300' : ''}>
+                      <Package className="w-4 h-4 mr-2" />
+                      Créateur Visuel
+                    </TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="json" className="space-y-4">
+                    <div>
+                      <Label className={isDarkMode ? 'text-gray-300' : ''}>Configuration JSON du composant:</Label>
+                      <Textarea
+                        placeholder={`{
+  "name": "customInput",
+  "label": "Input Personnalisé",
+  "icon": "Type",
+  "color": "blue",
+  "properties": {
+    "placeholder": "Texte par défaut",
+    "validation": "required",
+    "maxLength": 255
+  }
+}`}
+                        className={`h-48 text-xs font-mono ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
+                        onChange={(e) => {
+                          try {
+                            addComponentFromJSON(e.target.value);
+                          } catch (error) {
+                            // User is still typing, ignore errors
+                          }
+                        }}
+                      />
+                    </div>
+                    <Button onClick={() => {
+                      const textarea = document.querySelector('textarea');
+                      if (textarea?.value) {
+                        addComponentFromJSON(textarea.value);
+                        textarea.value = '';
+                      }
+                    }}>
+                      <Code className="w-4 h-4 mr-2" />
+                      Ajouter depuis JSON
+                    </Button>
+                  </TabsContent>
+                  
+                  <TabsContent value="form" className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label className={isDarkMode ? 'text-gray-300' : ''}>Nom du composant</Label>
+                        <Input
+                          placeholder="customButton"
+                          value={newComponentConfig.name}
+                          onChange={(e) => setNewComponentConfig(prev => ({ ...prev, name: e.target.value }))}
+                          className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                        />
+                      </div>
+                      <div>
+                        <Label className={isDarkMode ? 'text-gray-300' : ''}>Label d'affichage</Label>
+                        <Input
+                          placeholder="Bouton Personnalisé"
+                          value={newComponentConfig.label}
+                          onChange={(e) => setNewComponentConfig(prev => ({ ...prev, label: e.target.value }))}
+                          className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                        />
+                      </div>
+                      <div>
+                        <Label className={isDarkMode ? 'text-gray-300' : ''}>Icône</Label>
+                        <Input
+                          placeholder="Square"
+                          value={newComponentConfig.icon}
+                          onChange={(e) => setNewComponentConfig(prev => ({ ...prev, icon: e.target.value }))}
+                          className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                        />
+                      </div>
+                      <div>
+                        <Label className={isDarkMode ? 'text-gray-300' : ''}>Couleur</Label>
+                        <Input
+                          placeholder="blue"
+                          value={newComponentConfig.color}
+                          onChange={(e) => setNewComponentConfig(prev => ({ ...prev, color: e.target.value }))}
+                          className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <Label className={isDarkMode ? 'text-gray-300' : ''}>Propriétés (JSON)</Label>
+                      <Textarea
+                        placeholder='{"placeholder": "Valeur par défaut", "required": true}'
+                        value={newComponentConfig.properties}
+                        onChange={(e) => setNewComponentConfig(prev => ({ ...prev, properties: e.target.value }))}
+                        className={`h-24 text-xs font-mono ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
+                      />
+                    </div>
+                    <Button onClick={addComponentFromForm}>
+                      <Package className="w-4 h-4 mr-2" />
+                      Créer le Composant
+                    </Button>
+                  </TabsContent>
+                </Tabs>
+                
+                {customComponents.length > 0 && (
+                  <div className="mt-6">
+                    <h4 className={`font-medium mb-3 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Composants Personnalisés:</h4>
+                    <div className="space-y-2 max-h-32 overflow-y-auto">
+                      {customComponents.map((component, index) => (
+                        <div key={index} className={`flex items-center justify-between p-2 rounded border ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50'}`}>
+                          <div className="flex items-center space-x-2">
+                            <div className={`w-3 h-3 rounded-full bg-${component.color}-500`} />
+                            <span className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{component.label}</span>
+                            <span className={`text-xs px-2 py-1 rounded ${isDarkMode ? 'text-gray-300 bg-gray-800' : 'text-gray-500 bg-gray-200'}`}>{component.name}</span>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeCustomComponent(component.id)}
+                            className={`p-1 h-6 w-6 ${isDarkMode ? 'text-gray-400 hover:text-red-400' : 'text-gray-400 hover:text-red-500'}`}
+                          >
+                            <X className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </DialogContent>
+            </Dialog>
 
             {/* Collaboration */}
             <Dialog>
@@ -994,7 +1199,7 @@ export default function FormBuilderFixed() {
       <div className="flex h-[calc(100vh-80px)]">
         <div className={`w-80 border-r overflow-y-auto ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
           <div className="p-4">
-            <h3 className={`font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Composants</h3>
+            <h3 className={`font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Composants Standards</h3>
             <div className="grid grid-cols-1 gap-2">
               {Object.entries(ComponentTypes).map(([type, config]) => (
                 <DraggableComponent
@@ -1006,6 +1211,45 @@ export default function FormBuilderFixed() {
                 />
               ))}
             </div>
+            
+            {customComponents.length > 0 && (
+              <>
+                <Separator className="my-4" />
+                <h3 className={`font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Composants Personnalisés</h3>
+                <div className="grid grid-cols-1 gap-2">
+                  {customComponents.map((component) => (
+                    <div
+                      key={component.id}
+                      draggable
+                      onDragStart={(e) => {
+                        e.dataTransfer.setData('componentType', component.id);
+                      }}
+                      className={`p-3 border-2 border-dashed rounded-lg cursor-move transition-all hover:shadow-md ${
+                        isDarkMode 
+                          ? `bg-${component.color}-900/20 border-${component.color}-600 hover:border-${component.color}-500`
+                          : `bg-${component.color}-50 border-${component.color}-200 hover:border-${component.color}-400`
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <div className={`w-4 h-4 rounded bg-${component.color}-600 flex items-center justify-center`}>
+                            <Package className="w-3 h-3 text-white" />
+                          </div>
+                          <span className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                            {component.label}
+                          </span>
+                        </div>
+                        <span className={`text-xs px-2 py-1 rounded ${
+                          isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-600'
+                        }`}>
+                          CUSTOM
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         </div>
 
