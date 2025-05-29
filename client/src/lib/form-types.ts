@@ -41,7 +41,6 @@ export interface FormField {
   // Data Binding Properties
   DataField?: string;
   EnabledWhen?: any;
-  Validations?: any;
   
   // Entity & Key Properties (from PDF)
   Entity?: string;
@@ -107,7 +106,7 @@ export interface FormField {
   ChildFields?: FormField[];
   
   // Validation Properties (from PDF)
-  Validations?: ValidationRule[];
+  ValidationRules?: ValidationRule[];
 }
 
 export interface ColumnDefinition {
