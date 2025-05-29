@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -792,7 +792,7 @@ function PropertiesPanel({ field, onUpdate }: {
 export default function FormBuilderFixed() {
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
-    menuId: 'FORM001',
+    menuId: `FORM_${Date.now()}`,
     label: 'Mon Formulaire',
     formWidth: '700px',
     layout: 'PROCESS',
@@ -815,6 +815,24 @@ export default function FormBuilderFixed() {
   });
   const [showAddComponent, setShowAddComponent] = useState(false);
   const formBuilderRef = useRef<HTMLDivElement>(null);
+
+  // Load saved form data and custom components from localStorage on startup
+  useEffect(() => {
+    try {
+      const savedBackup = localStorage.getItem('formBuilder_backup');
+      if (savedBackup) {
+        const backup = JSON.parse(savedBackup);
+        if (backup.fields && backup.fields.length > 0) {
+          setFormData(prev => ({ ...prev, fields: backup.fields }));
+        }
+        if (backup.customComponents && backup.customComponents.length > 0) {
+          setCustomComponents(backup.customComponents);
+        }
+      }
+    } catch (error) {
+      console.log('No valid backup found');
+    }
+  }, []);
 
   const createDefaultField = (componentType: string): FormField => {
     const timestamp = Date.now();
