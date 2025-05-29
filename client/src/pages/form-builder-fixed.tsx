@@ -56,19 +56,74 @@ interface FormField {
   ChildFields?: FormField[];
 }
 
-const ComponentTypes = {
-  TEXT: { icon: Type, label: 'Text Input', color: 'blue' },
-  TEXTAREA: { icon: AlignLeft, label: 'Text Area', color: 'green' },
-  SELECT: { icon: List, label: 'Select', color: 'orange' },
-  CHECKBOX: { icon: CheckSquare, label: 'Checkbox', color: 'cyan' },
-  DATEPICKER: { icon: Calendar, label: 'Date Picker', color: 'purple' },
-  FILEUPLOAD: { icon: Upload, label: 'File Upload', color: 'pink' },
-  GRIDLKP: { icon: Table, label: 'Grid Lookup', color: 'indigo' },
-  LSTLKP: { icon: Search, label: 'List Lookup', color: 'teal' },
-  GROUP: { icon: Square, label: 'Group', color: 'violet' },
-  ACTION: { icon: Play, label: 'Action Button', color: 'red' },
-  WARNING: { icon: AlertTriangle, label: 'Warning', color: 'yellow' }
+const ComponentCategories = {
+  text: {
+    name: 'Saisie et texte',
+    icon: Type,
+    color: 'blue',
+    components: {
+      TEXT: { icon: Type, label: 'Saisie de texte', color: 'blue' },
+      TEXTAREA: { icon: AlignLeft, label: 'Zone de texte', color: 'green' }
+    }
+  },
+  selection: {
+    name: 'Sélection',
+    icon: List,
+    color: 'orange',
+    components: {
+      SELECT: { icon: List, label: 'Sélectionner', color: 'orange' },
+      CHECKBOX: { icon: CheckSquare, label: 'Case à cocher', color: 'cyan' },
+      RADIOGRP: { icon: CheckSquare, label: 'Groupe radio', color: 'purple' }
+    }
+  },
+  datetime: {
+    name: 'Date et temps',
+    icon: Calendar,
+    color: 'purple',
+    components: {
+      DATEPICKER: { icon: Calendar, label: 'Sélecteur de date', color: 'purple' }
+    }
+  },
+  file: {
+    name: 'Fichiers',
+    icon: Upload,
+    color: 'red',
+    components: {
+      FILEUPLOAD: { icon: Upload, label: 'Téléchargement de fichiers', color: 'pink' }
+    }
+  },
+  lookup: {
+    name: 'Recherche',
+    icon: Search,
+    color: 'indigo',
+    components: {
+      GRIDLKP: { icon: Table, label: 'Recherche de grille', color: 'indigo' },
+      LSTLKP: { icon: Search, label: 'Recherche de liste', color: 'teal' }
+    }
+  },
+  layout: {
+    name: 'Mise en page',
+    icon: Square,
+    color: 'gray',
+    components: {
+      GROUP: { icon: Square, label: 'Groupe', color: 'violet' }
+    }
+  },
+  actions: {
+    name: 'Actions',
+    icon: Play,
+    color: 'red',
+    components: {
+      ACTION: { icon: Play, label: "Bouton d'action", color: 'red' },
+      WARNING: { icon: AlertTriangle, label: 'Avertissement', color: 'yellow' }
+    }
+  }
 };
+
+// Flatten for compatibility
+const ComponentTypes = Object.values(ComponentCategories).reduce((acc, category) => {
+  return { ...acc, ...category.components };
+}, {} as Record<string, { icon: any; label: string; color: string }>);
 
 function DraggableComponent({ componentType, label, icon: Icon, color }: {
   componentType: string;
@@ -1262,15 +1317,25 @@ export default function FormBuilderFixed() {
         <div className={`w-80 border-r overflow-y-auto ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
           <div className="p-4">
             <h3 className={`font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Composants Standards</h3>
-            <div className="grid grid-cols-1 gap-2">
-              {Object.entries(ComponentTypes).map(([type, config]) => (
-                <DraggableComponent
-                  key={type}
-                  componentType={type}
-                  label={config.label}
-                  icon={config.icon}
-                  color={config.color}
-                />
+            <div className="space-y-4">
+              {Object.entries(ComponentCategories).map(([categoryKey, category]) => (
+                <div key={categoryKey} className="space-y-2">
+                  <div className={`flex items-center space-x-2 text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    <category.icon className="w-4 h-4" />
+                    <span>{category.name}</span>
+                  </div>
+                  <div className="pl-6 space-y-1">
+                    {Object.entries(category.components).map(([type, config]) => (
+                      <DraggableComponent
+                        key={type}
+                        componentType={type}
+                        label={(config as any).label}
+                        icon={(config as any).icon}
+                        color={(config as any).color}
+                      />
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
             
