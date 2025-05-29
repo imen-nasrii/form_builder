@@ -1,0 +1,678 @@
+import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useParams } from "wouter";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  closestCenter,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
+import { 
+  ChevronDown,
+  ChevronRight,
+  Trash2,
+  User,
+  Home,
+  LogOut,
+  Grid3x3,
+  List,
+  Square,
+  Diamond,
+  AlertTriangle,
+  Zap
+} from "lucide-react";
+
+// Interface pour les champs du formulaire
+interface FormField {
+  Id: string;
+  Type: string;
+  Label: string;
+  DataField: string;
+  Entity: string;
+  Width: string;
+  Spacing: string;
+  Required: boolean;
+  Inline: boolean;
+  Outlined: boolean;
+  Value: string;
+  ChildFields?: FormField[];
+}
+
+// Composant draggable pour la sidebar
+function DraggableComponent({ 
+  type, 
+  label, 
+  icon: Icon,
+  color = "blue" 
+}: { 
+  type: string; 
+  label: string; 
+  icon: any;
+  color?: string;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    isDragging,
+  } = useSortable({
+    id: `component-${type}`,
+    data: {
+      type: 'component',
+      componentType: type,
+    },
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className="flex flex-col items-center p-3 bg-white border border-gray-200 rounded-lg cursor-grab hover:shadow-md transition-all duration-200 active:cursor-grabbing group"
+    >
+      <div className={`p-3 rounded-lg bg-${color}-50 group-hover:bg-${color}-100 transition-colors`}>
+        <Icon className={`w-6 h-6 text-${color}-600`} />
+      </div>
+      <span className="text-xs font-medium text-gray-700 mt-2 text-center leading-tight">
+        {label}
+      </span>
+    </div>
+  );
+}
+
+// Composant pour les sections repliables de la sidebar
+function SidebarSection({ 
+  title, 
+  children, 
+  defaultExpanded = true 
+}: { 
+  title: string; 
+  children: React.ReactNode; 
+  defaultExpanded?: boolean;
+}) {
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+
+  return (
+    <div className="mb-4">
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full flex items-center justify-between p-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded"
+      >
+        <span>{title}</span>
+        {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+      </button>
+      {isExpanded && (
+        <div className="mt-2 space-y-2">
+          {children}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Composant sortable pour les champs dans le canvas
+function SortableField({ 
+  field, 
+  isSelected, 
+  onSelect, 
+  onUpdate, 
+  onRemove 
+}: {
+  field: FormField;
+  isSelected: boolean;
+  onSelect: () => void;
+  onUpdate: (updates: Partial<FormField>) => void;
+  onRemove: () => void;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: field.Id,
+    data: {
+      type: 'field',
+      field,
+    },
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  const getFieldIcon = () => {
+    switch (field.Type) {
+      case 'WARNING': return <AlertTriangle className="w-4 h-4 text-yellow-600" />;
+      case 'ACTION': return <Zap className="w-4 h-4 text-red-600" />;
+      case 'GRIDLKP': return <Grid3x3 className="w-4 h-4 text-blue-600" />;
+      case 'LSTLKP': return <List className="w-4 h-4 text-green-600" />;
+      default: return <Square className="w-4 h-4 text-gray-600" />;
+    }
+  };
+
+  const getFieldColor = () => {
+    switch (field.Type) {
+      case 'WARNING': return 'bg-yellow-50 border-yellow-200';
+      case 'ACTION': return 'bg-red-50 border-red-200';
+      case 'GRIDLKP': return 'bg-blue-50 border-blue-200';
+      case 'LSTLKP': return 'bg-green-50 border-green-200';
+      default: return 'bg-gray-50 border-gray-200';
+    }
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      onClick={onSelect}
+      className={`p-4 border-2 border-dashed rounded-lg cursor-pointer transition-all ${
+        isSelected
+          ? 'border-blue-500 bg-blue-50'
+          : getFieldColor() + ' hover:border-gray-300'
+      }`}
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <div {...listeners} className="cursor-grab active:cursor-grabbing">
+            {getFieldIcon()}
+          </div>
+          <div>
+            <div className="flex items-center space-x-2">
+              <AlertTriangle className="w-4 h-4 text-yellow-600" />
+              <span className="font-medium text-sm">{field.Type}</span>
+            </div>
+            <div className="text-xs text-yellow-600 bg-yellow-100 px-2 py-1 rounded mt-1">
+              {field.Label || 'Warning Message'}
+            </div>
+          </div>
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove();
+          }}
+          className="p-1 h-6 w-6 text-gray-400 hover:text-red-500"
+        >
+          <Trash2 className="w-3 h-3" />
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+export default function FormBuilderExact() {
+  const params = useParams();
+  const formId = params.formId ? parseInt(params.formId) : null;
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  
+  const [formData, setFormData] = useState({
+    menuId: "CustomerReg",
+    label: "Customer Registration",
+    formWidth: "800px",
+    layout: "PROCESS",
+    fields: [] as FormField[],
+    actions: [] as any[],
+    validations: [] as any[]
+  });
+  
+  const [selectedField, setSelectedField] = useState<FormField | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [jsonView, setJsonView] = useState<'JSON' | 'Validation'>('JSON');
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
+
+  // Composants organisés par catégories comme dans l'image
+  const componentCategories = {
+    "Input Controls": [
+      { type: 'TEXT', label: 'Text', icon: Square, color: 'blue' },
+      { type: 'TEXTAREA', label: 'Textarea', icon: Square, color: 'blue' },
+      { type: 'SELECT', label: 'Select', icon: Square, color: 'blue' },
+      { type: 'CHECKBOX', label: 'Checkbox', icon: Square, color: 'blue' },
+      { type: 'RADIOGRP', label: 'Radio', icon: Square, color: 'blue' },
+      { type: 'DATEPICKER', label: 'Date', icon: Square, color: 'blue' },
+      { type: 'FILEUPLOAD', label: 'File', icon: Square, color: 'blue' }
+    ],
+    "Layout Components": [
+      { type: 'GROUP', label: 'Group', icon: Square, color: 'purple' },
+      { type: 'PANEL', label: 'Panel', icon: Square, color: 'purple' }
+    ],
+    "Lookup Components": [
+      { type: 'GRIDLKP', label: 'Grid Lookup', icon: Grid3x3, color: 'orange' },
+      { type: 'LSTLKP', label: 'List Lookup', icon: List, color: 'green' }
+    ],
+    "Action & Validation": [
+      { type: 'ACTION', label: 'Action', icon: Zap, color: 'red' },
+      { type: 'ERROR', label: 'Error', icon: Diamond, color: 'red' },
+      { type: 'WARNING', label: 'Warning', icon: AlertTriangle, color: 'yellow' }
+    ]
+  };
+
+  // Charger les données du formulaire
+  const { data: form, isLoading: formLoading } = useQuery({
+    queryKey: ['/api/forms', formId],
+    enabled: !!formId,
+  });
+
+  // Mutation pour sauvegarder
+  const saveForm = useMutation({
+    mutationFn: async () => {
+      const payload = {
+        menuId: formData.menuId,
+        label: formData.label,
+        formWidth: formData.formWidth,
+        layout: formData.layout,
+        definition: formData
+      };
+
+      if (formId) {
+        return await apiRequest(`/api/forms/${formId}`, 'PUT', payload);
+      } else {
+        return await apiRequest('/api/forms', 'POST', payload);
+      }
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Form saved successfully"
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/forms'] });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to save form",
+        variant: "destructive"
+      });
+    }
+  });
+
+  // Charger les données du formulaire
+  useEffect(() => {
+    if (form && (form as any).definition) {
+      setFormData((form as any).definition);
+    }
+  }, [form]);
+
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    setActiveId(null);
+    
+    if (!over) return;
+    
+    // Si on drag un composant de la palette vers la zone principale
+    if (active.data.current?.type === 'component' && over.id === 'form-canvas') {
+      const componentType = active.data.current.componentType;
+      const newField: FormField = {
+        Id: `${componentType.toLowerCase()}-${Date.now()}`,
+        Type: componentType,
+        Label: componentType === 'WARNING' ? 'Warning Message' : `${componentType} Field`,
+        DataField: "",
+        Entity: "",
+        Width: "",
+        Spacing: "",
+        Required: false,
+        Inline: false,
+        Outlined: false,
+        Value: ""
+      };
+
+      setFormData(prev => ({
+        ...prev,
+        fields: [...prev.fields, newField]
+      }));
+      setSelectedField(newField);
+    }
+  };
+
+  // Fonction pour mettre à jour un champ
+  const updateField = (fieldId: string, updates: Partial<FormField>) => {
+    setFormData(prev => ({
+      ...prev,
+      fields: prev.fields.map(field =>
+        field.Id === fieldId ? { ...field, ...updates } : field
+      )
+    }));
+    
+    if (selectedField?.Id === fieldId) {
+      setSelectedField(prev => prev ? { ...prev, ...updates } : null);
+    }
+  };
+
+  // Fonction pour supprimer un champ
+  const removeField = (fieldId: string) => {
+    setFormData(prev => ({
+      ...prev,
+      fields: prev.fields.filter(field => field.Id !== fieldId)
+    }));
+    if (selectedField?.Id === fieldId) {
+      setSelectedField(null);
+    }
+  };
+
+  if (formLoading) {
+    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+  }
+
+  const generatedJson = {
+    MenuID: formData.menuId,
+    FormWidth: formData.formWidth,
+    Layout: formData.layout,
+    Label: formData.label,
+    Field: formData.fields.map(field => ({
+      Id: field.Id,
+      Type: field.Type,
+      Label: field.Label,
+      DataField: field.DataField,
+      Entity: field.Entity,
+      Width: field.Width,
+      Spacing: field.Spacing,
+      Required: field.Required,
+      Inline: field.Inline,
+      Outlined: field.Outlined,
+      Value: field.Value
+    })),
+    Actions: formData.actions,
+    Validations: formData.validations
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
+        {/* Header - exact comme l'image */}
+        <div className="bg-white border-b border-gray-200 px-6 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-2">
+                <div className="w-6 h-6 bg-blue-600 rounded flex items-center justify-center">
+                  <span className="text-white text-xs font-bold">FB</span>
+                </div>
+                <span className="text-lg font-semibold text-blue-600">FormBuilder</span>
+              </div>
+              <nav className="flex items-center space-x-6">
+                <a href="#" className="text-gray-700 hover:text-blue-600">Dashboard</a>
+              </nav>
+            </div>
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-gray-600">Welcome, imen</span>
+              <Button variant="outline" size="sm">
+                <LogOut className="w-4 h-4 mr-2" />
+                Logout
+              </Button>
+              <Button 
+                onClick={() => saveForm.mutate()}
+                disabled={saveForm.isPending}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                Save Form
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex h-[calc(100vh-65px)]">
+          {/* Left Sidebar - Components comme dans l'image */}
+          <div className="w-64 bg-gray-50 border-r border-gray-200 overflow-y-auto">
+            <div className="p-4">
+              <div className="flex items-center space-x-2 mb-4">
+                <div className="w-4 h-4 bg-blue-600 rounded" />
+                <span className="font-medium text-blue-600">Components</span>
+              </div>
+
+              {/* Categories de composants comme dans l'image */}
+              {Object.entries(componentCategories).map(([category, components]) => (
+                <SidebarSection key={category} title={category}>
+                  <SortableContext 
+                    items={components.map(c => `component-${c.type}`)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <div className="grid grid-cols-2 gap-2">
+                      {components.map(component => (
+                        <DraggableComponent
+                          key={component.type}
+                          type={component.type}
+                          label={component.label}
+                          icon={component.icon}
+                          color={component.color}
+                        />
+                      ))}
+                    </div>
+                  </SortableContext>
+                </SidebarSection>
+              ))}
+            </div>
+          </div>
+
+          {/* Main Content */}
+          <div className="flex-1 flex flex-col">
+            {/* Form Builder Header */}
+            <div className="bg-white border-b border-gray-200 px-6 py-4">
+              <div className="flex items-center justify-between">
+                <h1 className="text-lg font-medium text-gray-900">Form Builder</h1>
+                <div className="flex space-x-2">
+                  <Button variant="outline" size="sm">Import</Button>
+                  <Button variant="outline" size="sm">Export</Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Canvas */}
+            <div className="flex-1 p-6 overflow-y-auto">
+              <div className="max-w-4xl mx-auto">
+                <div 
+                  id="form-canvas"
+                  className="bg-white rounded-lg border-2 border-dashed border-gray-300 min-h-96 p-8"
+                >
+                  {formData.fields.length === 0 ? (
+                    <div className="text-center py-16 text-gray-400">
+                      <div className="text-4xl mb-4">📝</div>
+                      <p className="text-lg">Drag components here to build your form</p>
+                      <p className="text-sm mt-2">Components will appear in this area</p>
+                    </div>
+                  ) : (
+                    <SortableContext 
+                      items={formData.fields.map(field => field.Id)}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      <div className="space-y-4">
+                        {formData.fields.map((field) => (
+                          <SortableField
+                            key={field.Id}
+                            field={field}
+                            isSelected={selectedField?.Id === field.Id}
+                            onSelect={() => setSelectedField(field)}
+                            onUpdate={(updates) => updateField(field.Id, updates)}
+                            onRemove={() => removeField(field.Id)}
+                          />
+                        ))}
+                      </div>
+                    </SortableContext>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Sidebar - Properties exactement comme l'image */}
+          <div className="w-80 bg-white border-l border-gray-200 overflow-y-auto">
+            <div className="p-4">
+              {selectedField ? (
+                <>
+                  <h2 className="text-lg font-medium text-gray-900 mb-4">
+                    Properties: {selectedField.Type}
+                  </h2>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="fieldLabel" className="text-sm font-medium">Label</Label>
+                      <Input
+                        id="fieldLabel"
+                        value={selectedField.Label || ''}
+                        onChange={(e) => updateField(selectedField.Id, { Label: e.target.value })}
+                        className="mt-1"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="fieldType" className="text-sm font-medium">Type</Label>
+                      <Select 
+                        value={selectedField.Type} 
+                        onValueChange={(value) => updateField(selectedField.Id, { Type: value })}
+                      >
+                        <SelectTrigger className="mt-1">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="WARNING">Warning</SelectItem>
+                          <SelectItem value="ERROR">Error</SelectItem>
+                          <SelectItem value="ACTION">Action</SelectItem>
+                          <SelectItem value="TEXT">Text</SelectItem>
+                          <SelectItem value="GRIDLKP">Grid Lookup</SelectItem>
+                          <SelectItem value="LSTLKP">List Lookup</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="conditionExpression" className="text-sm font-medium">Condition Expression</Label>
+                      <Textarea
+                        id="conditionExpression"
+                        value={`{
+  "logicalOperator": "AND",
+  "conditions": []
+}`}
+                        className="mt-1 font-mono text-xs"
+                        rows={4}
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="componentId" className="text-sm font-medium">Component ID</Label>
+                      <Input
+                        id="componentId"
+                        value={selectedField.Id}
+                        onChange={(e) => updateField(selectedField.Id, { Id: e.target.value })}
+                        className="mt-1"
+                      />
+                    </div>
+
+                    <div>
+                      <button className="flex items-center text-sm text-gray-700 hover:text-gray-900">
+                        <ChevronRight className="w-4 h-4 mr-1" />
+                        Advanced JSON
+                      </button>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <p>Select a component to configure</p>
+                </div>
+              )}
+
+              {/* JSON Preview Section - exactement comme l'image */}
+              <div className="border-t border-gray-200 pt-6 mt-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-medium text-gray-900">JSON Preview</h3>
+                  <div className="flex space-x-2">
+                    <Button variant="outline" size="sm">Validate</Button>
+                    <Button variant="outline" size="sm">Copy</Button>
+                  </div>
+                </div>
+
+                <div className="flex space-x-1 mb-3">
+                  <button
+                    onClick={() => setJsonView('JSON')}
+                    className={`px-3 py-1 text-sm rounded ${
+                      jsonView === 'JSON' 
+                        ? 'bg-blue-600 text-white' 
+                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`}
+                  >
+                    JSON
+                  </button>
+                  <button
+                    onClick={() => setJsonView('Validation')}
+                    className={`px-3 py-1 text-sm rounded ${
+                      jsonView === 'Validation' 
+                        ? 'bg-blue-600 text-white' 
+                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`}
+                  >
+                    Validation
+                  </button>
+                </div>
+
+                <div className="bg-gray-900 text-gray-100 p-3 rounded text-xs font-mono max-h-96 overflow-y-auto">
+                  <pre>{JSON.stringify(generatedJson, null, 2)}</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <DragOverlay>
+          {activeId ? (
+            <div className="p-3 bg-white border border-gray-300 rounded-lg shadow-lg">
+              <span className="text-sm font-medium">
+                {activeId.startsWith('component-') ? 
+                  activeId.replace('component-', '') :
+                  formData.fields.find(f => f.Id === activeId)?.Label || activeId
+                }
+              </span>
+            </div>
+          ) : null}
+        </DragOverlay>
+      </DndContext>
+    </div>
+  );
+}
