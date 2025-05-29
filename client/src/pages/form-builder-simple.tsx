@@ -13,6 +13,7 @@ import UniversalConfigurator from "@/components/form-builder/component-configura
 import AddComponentDialog from "@/components/form-builder/add-component-dialog";
 import ComponentConfigManager from "@/components/form-builder/component-config-manager";
 import { StableGroupContainer } from "@/components/form-builder/stable-group-container";
+import { DraggableComponent } from "@/components/form-builder/draggable-component";
 import { 
   Save, 
   Download, 
@@ -299,16 +300,15 @@ export default function FormBuilderSimple() {
     { type: 'GROUP', icon: Settings, label: '📦 Group Container', color: 'text-emerald-600' },
   ];
 
-  // Simple clickable component (sans drag & drop)
-  const ClickableComponent = ({ component }: { component: any }) => {
+  // Composant avec drag & drop fonctionnel
+  const DraggableFormComponent = ({ component }: { component: any }) => {
     return (
-      <button
+      <DraggableComponent
+        type={component.type}
+        label={component.label}
+        icon={<component.icon className={`w-4 h-4 ${component.color}`} />}
         onClick={() => addField(component.type)}
-        className="flex items-center space-x-2 w-full p-2 text-left text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer transition-colors"
-      >
-        <component.icon className={`w-4 h-4 ${component.color}`} />
-        <span>{component.label}</span>
-      </button>
+      />
     );
   };
 
@@ -354,7 +354,7 @@ export default function FormBuilderSimple() {
               {expandedSections.inputControls && (
                 <div className="mt-2 space-y-2">
                   {componentTypes.map(component => (
-                    <ClickableComponent key={component.type} component={component} />
+                    <DraggableFormComponent key={component.type} component={component} />
                   ))}
                 </div>
               )}
@@ -372,7 +372,7 @@ export default function FormBuilderSimple() {
               {expandedSections.lookupComponents && (
                 <div className="mt-2 space-y-2">
                   {lookupComponents.map(component => (
-                    <ClickableComponent key={component.type} component={component} />
+                    <DraggableFormComponent key={component.type} component={component} />
                   ))}
                 </div>
               )}
@@ -390,7 +390,7 @@ export default function FormBuilderSimple() {
               {expandedSections.actionValidation && (
                 <div className="mt-2 space-y-2">
                   {actionComponents.map(component => (
-                    <ClickableComponent key={component.type} component={component} />
+                    <DraggableFormComponent key={component.type} component={component} />
                   ))}
                 </div>
               )}
@@ -408,7 +408,7 @@ export default function FormBuilderSimple() {
               {expandedSections.groupComponents && (
                 <div className="mt-2 space-y-2">
                   {groupComponents.map(component => (
-                    <ClickableComponent key={component.type} component={component} />
+                    <DraggableFormComponent key={component.type} component={component} />
                   ))}
                 </div>
               )}
@@ -426,7 +426,7 @@ export default function FormBuilderSimple() {
               {expandedSections.customComponents && (
                 <div className="mt-2 space-y-2">
                   {customComponents.map(component => (
-                    <ClickableComponent key={component.type} component={component} />
+                    <DraggableFormComponent key={component.type} component={component} />
                   ))}
                   <Button
                     onClick={() => setShowAddDialog(true)}
