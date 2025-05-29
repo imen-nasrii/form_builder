@@ -1,9 +1,9 @@
-import React, { useCallback } from 'react';
-import { useDrop } from 'react-dnd';
+import React from 'react';
 import { FormField } from '@/lib/form-types';
-import { Settings, Trash2 } from 'lucide-react';
+import { Settings, Trash2, Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
-interface GroupContainerProps {
+interface SimpleGroupContainerProps {
   field: FormField;
   onUpdateField: (fieldId: string, updates: Partial<FormField>) => void;
   onRemoveField: (fieldId: string) => void;
@@ -12,7 +12,7 @@ interface GroupContainerProps {
   isSelected: boolean;
 }
 
-export const GroupContainer: React.FC<GroupContainerProps> = ({
+export const SimpleGroupContainer: React.FC<SimpleGroupContainerProps> = ({
   field,
   onUpdateField,
   onRemoveField,
@@ -20,34 +20,6 @@ export const GroupContainer: React.FC<GroupContainerProps> = ({
   onAddFieldToGroup,
   isSelected
 }) => {
-  const handleDrop = useCallback((item: { type: string }) => {
-    // Créer un nouveau champ pour le groupe
-    const newField: FormField = {
-      Id: `field_${Date.now()}`,
-      Type: item.type as any,
-      Label: `New ${item.type}`,
-      DataField: "",
-      Entity: "",
-      Width: "",
-      Spacing: "",
-      Required: false,
-      Inline: false,
-      Outlined: false,
-      Value: ""
-    };
-    
-    onAddFieldToGroup(field.Id, newField);
-  }, [field.Id, onAddFieldToGroup]);
-
-  const [{ isOver, canDrop }, drop] = useDrop({
-    accept: 'component',
-    drop: handleDrop,
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-      canDrop: monitor.canDrop(),
-    }),
-  });
-
   const children = field.Children || field.children || [];
   const layout = field.GroupLayout || 'vertical';
 
@@ -62,11 +34,11 @@ export const GroupContainer: React.FC<GroupContainerProps> = ({
     }
   };
 
-  const dropZoneClass = `
-    min-h-32 p-4 border-2 border-dashed rounded-lg transition-all
-    ${isOver && canDrop ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-300 dark:border-gray-600'}
-    ${isSelected ? 'ring-2 ring-blue-500' : ''}
-    ${field.GroupStyle?.border ? 'border-solid' : ''}
+  const containerClass = `
+    min-h-32 p-4 border-2 rounded-lg transition-all
+    ${isSelected ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-300 dark:border-gray-600'}
+    ${field.GroupStyle?.border ? 'border-solid' : 'border-dashed'}
+    hover:border-gray-400 dark:hover:border-gray-500
   `;
 
   const containerStyle = {
@@ -75,18 +47,27 @@ export const GroupContainer: React.FC<GroupContainerProps> = ({
     borderRadius: field.GroupStyle?.borderRadius || '8px',
   };
 
-  const dropRef = React.useRef<HTMLDivElement>(null);
-  
-  React.useEffect(() => {
-    if (dropRef.current) {
-      drop(dropRef.current);
-    }
-  }, [drop]);
+  const addSimpleComponent = (type: string) => {
+    const newField: FormField = {
+      Id: `field_${Date.now()}`,
+      Type: type as any,
+      Label: `New ${type}`,
+      DataField: "",
+      Entity: "",
+      Width: "",
+      Spacing: "",
+      Required: false,
+      Inline: false,
+      Outlined: false,
+      Value: ""
+    };
+    
+    onAddFieldToGroup(field.Id, newField);
+  };
 
   return (
     <div
-      ref={dropRef}
-      className={dropZoneClass}
+      className={containerClass}
       style={containerStyle}
       onClick={(e) => {
         e.stopPropagation();
@@ -104,15 +85,40 @@ export const GroupContainer: React.FC<GroupContainerProps> = ({
             ({children.length} {children.length === 1 ? 'composant' : 'composants'})
           </span>
         </div>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onRemoveField(field.Id);
-          }}
-          className="text-red-500 hover:text-red-700 p-1"
-        >
-          <Trash2 className="w-4 h-4" />
-        </button>
+        <div className="flex items-center gap-2">
+          {/* Boutons d'ajout rapide */}
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={(e) => {
+              e.stopPropagation();
+              addSimpleComponent('TEXT');
+            }}
+            className="h-6 px-2 text-xs"
+          >
+            + Text
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={(e) => {
+              e.stopPropagation();
+              addSimpleComponent('SELECT');
+            }}
+            className="h-6 px-2 text-xs"
+          >
+            + Select
+          </Button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemoveField(field.Id);
+            }}
+            className="text-red-500 hover:text-red-700 p-1"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
       {/* Zone de contenu */}
@@ -120,14 +126,14 @@ export const GroupContainer: React.FC<GroupContainerProps> = ({
         {children.length === 0 ? (
           <div className="text-center py-8 text-gray-500 dark:text-gray-400">
             <Settings className="w-8 h-8 mx-auto mb-2 opacity-50" />
-            <p className="text-sm">Glissez des composants ici</p>
-            <p className="text-xs">pour les organiser en groupe</p>
+            <p className="text-sm mb-2">Aucun composant dans ce groupe</p>
+            <p className="text-xs mb-3">Utilisez les boutons ci-dessus pour ajouter des composants</p>
           </div>
         ) : (
           children.map((child) => (
             <div
               key={child.Id}
-              className="p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-sm"
+              className="p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-sm hover:shadow-md transition-shadow"
               onClick={(e) => {
                 e.stopPropagation();
                 onSelectField(child);
@@ -166,15 +172,6 @@ export const GroupContainer: React.FC<GroupContainerProps> = ({
           ))
         )}
       </div>
-
-      {/* Indicateur de zone de drop */}
-      {isOver && canDrop && (
-        <div className="absolute inset-0 bg-blue-500/10 border-2 border-blue-500 border-dashed rounded-lg flex items-center justify-center">
-          <div className="bg-blue-500 text-white px-3 py-1 rounded text-sm font-medium">
-            Déposez ici pour ajouter au groupe
-          </div>
-        </div>
-      )}
     </div>
   );
 };
