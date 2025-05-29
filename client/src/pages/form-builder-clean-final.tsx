@@ -241,17 +241,22 @@ export default function FormBuilderCleanFinal() {
   
   const [selectedField, setSelectedField] = useState<FormField | null>(null);
 
-  // Composants disponibles
+  // Composants disponibles - TOUS les types comme dans l'original
   const componentTypes = [
     { type: 'TEXT', label: 'Text Input', color: 'green' },
     { type: 'TEXTAREA', label: 'Textarea', color: 'blue' },
     { type: 'SELECT', label: 'Select', color: 'orange' },
     { type: 'CHECKBOX', label: 'Checkbox', color: 'cyan' },
+    { type: 'RADIOGRP', label: 'Radio Group', color: 'purple' },
     { type: 'DATEPICKER', label: 'Date Picker', color: 'pink' },
+    { type: 'FILEUPLOAD', label: 'File Upload', color: 'indigo' },
     { type: 'GRIDLKP', label: 'Grid Lookup', color: 'blue' },
     { type: 'LSTLKP', label: 'List Lookup', color: 'green' },
     { type: 'GROUP', label: 'Group Container', color: 'emerald' },
-    { type: 'ACTION', label: 'Action Button', color: 'red' }
+    { type: 'ACTION', label: 'Action Button', color: 'red' },
+    { type: 'SUBMIT', label: 'Submit Button', color: 'blue' },
+    { type: 'RESET', label: 'Reset Button', color: 'gray' },
+    { type: 'CANCEL', label: 'Cancel Button', color: 'red' }
   ];
 
   // Charger les données du formulaire
@@ -507,7 +512,7 @@ export default function FormBuilderCleanFinal() {
           </div>
         </div>
 
-        {/* Right Sidebar - Properties */}
+        {/* Right Sidebar - Properties & JSON */}
         <div className="w-80 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 overflow-y-auto">
           <div className="p-4">
             <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
@@ -534,6 +539,24 @@ export default function FormBuilderCleanFinal() {
                     className="mt-1"
                   />
                 </div>
+                <div>
+                  <Label htmlFor="fieldEntity" className="text-sm">Entity</Label>
+                  <Input
+                    id="fieldEntity"
+                    value={selectedField.Entity || ''}
+                    onChange={(e) => updateField(selectedField.Id, { Entity: e.target.value })}
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="fieldWidth" className="text-sm">Width</Label>
+                  <Input
+                    id="fieldWidth"
+                    value={selectedField.Width || ''}
+                    onChange={(e) => updateField(selectedField.Id, { Width: e.target.value })}
+                    className="mt-1"
+                  />
+                </div>
                 <div className="flex items-center space-x-2">
                   <input
                     type="checkbox"
@@ -543,6 +566,15 @@ export default function FormBuilderCleanFinal() {
                   />
                   <Label htmlFor="fieldRequired" className="text-sm">Required</Label>
                 </div>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="fieldInline"
+                    checked={selectedField.Inline || false}
+                    onChange={(e) => updateField(selectedField.Id, { Inline: e.target.checked })}
+                  />
+                  <Label htmlFor="fieldInline" className="text-sm">Inline</Label>
+                </div>
               </div>
             ) : (
               <div className="text-center py-8 text-gray-500 dark:text-gray-400">
@@ -550,6 +582,74 @@ export default function FormBuilderCleanFinal() {
                 <p>Select a component to configure</p>
               </div>
             )}
+
+            {/* JSON OUTPUT - LE VOICI ! */}
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-6">
+              <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-3 flex items-center">
+                <FileText className="w-4 h-4 mr-2" />
+                JSON Output
+              </h3>
+              <div className="bg-gray-100 dark:bg-gray-900 rounded p-3 max-h-96 overflow-y-auto">
+                <pre className="text-xs text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
+{JSON.stringify({
+  MenuID: formData.menuId,
+  FormWidth: formData.formWidth,
+  Layout: formData.layout,
+  Label: formData.label,
+  Field: formData.fields.map(field => ({
+    Id: field.Id,
+    Type: field.Type,
+    Label: field.Label,
+    DataField: field.DataField,
+    Entity: field.Entity,
+    Width: field.Width,
+    Spacing: field.Spacing,
+    Required: field.Required,
+    Inline: field.Inline,
+    Outlined: field.Outlined,
+    Value: field.Value,
+    ...(field.ChildFields && field.ChildFields.length > 0 ? {
+      Children: field.ChildFields.map(child => ({
+        Id: child.Id,
+        Type: child.Type,
+        Label: child.Label,
+        DataField: child.DataField,
+        Entity: child.Entity,
+        Width: child.Width,
+        Required: child.Required,
+        Value: child.Value
+      }))
+    } : {})
+  })),
+  Actions: formData.actions,
+  Validations: formData.validations
+}, null, 2)}
+                </pre>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const jsonOutput = JSON.stringify({
+                    MenuID: formData.menuId,
+                    FormWidth: formData.formWidth,
+                    Layout: formData.layout,
+                    Label: formData.label,
+                    Field: formData.fields,
+                    Actions: formData.actions,
+                    Validations: formData.validations
+                  }, null, 2);
+                  navigator.clipboard.writeText(jsonOutput);
+                  toast({
+                    title: "Copied!",
+                    description: "JSON copied to clipboard"
+                  });
+                }}
+                className="w-full mt-2"
+              >
+                Copy JSON
+              </Button>
+            </div>
           </div>
         </div>
       </div>
