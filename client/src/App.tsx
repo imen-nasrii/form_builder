@@ -10,7 +10,7 @@ import Register from "@/pages/register";
 import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import FormBuilder from "@/pages/form-builder";
-import FormBuilderClean from "@/pages/form-builder-clean";
+import FormBuilderClean from "@/pages/form-builder-clean-fixed";
 import ComponentsOverview from "@/pages/components-overview";
 import DFMToJSONBotStable from "@/components/ai-bot/dfm-to-json-bot-stable";
 import AdminPage from "@/pages/admin";

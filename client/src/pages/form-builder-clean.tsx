@@ -439,8 +439,8 @@ export default function FormBuilderClean() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        {/* Header */}
-        <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+      {/* Header */}
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
@@ -454,16 +454,16 @@ export default function FormBuilderClean() {
               <Button variant="outline" size="sm">Logout</Button>
             </div>
           </div>
-        </div>
+      </div>
 
-        <div className="flex h-[calc(100vh-80px)]">
-          {/* Left Sidebar - Components */}
-          <div className="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-y-auto">
-            <div className="p-4">
-              <div className="flex items-center space-x-2 mb-4">
-                <Settings className="w-5 h-5 text-blue-600" />
-                <span className="font-medium text-gray-900 dark:text-white">Components</span>
-              </div>
+      <div className="flex h-[calc(100vh-80px)]">
+        {/* Left Sidebar - Components */}
+        <div className="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-y-auto">
+          <div className="p-4">
+            <div className="flex items-center space-x-2 mb-4">
+              <Settings className="w-5 h-5 text-blue-600" />
+              <span className="font-medium text-gray-900 dark:text-white">Components</span>
+            </div>
 
               {/* Input Controls */}
               <div className="mb-4">
