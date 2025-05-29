@@ -870,6 +870,11 @@ export default function FormBuilderFixed() {
   const addComponentFromJSON = (jsonConfig: string) => {
     try {
       const config = JSON.parse(jsonConfig);
+      if (!config.name || !config.label) {
+        alert('Le nom et le label sont requis dans la configuration JSON');
+        return;
+      }
+      
       const newComponent = {
         id: config.name.toUpperCase(),
         name: config.name,
@@ -879,9 +884,18 @@ export default function FormBuilderFixed() {
         properties: config.properties || {},
         isCustom: true
       };
+      
+      // Check if component already exists
+      if (customComponents.some(comp => comp.id === newComponent.id)) {
+        alert('Un composant avec ce nom existe déjà');
+        return;
+      }
+      
       setCustomComponents(prev => [...prev, newComponent]);
+      alert('Composant ajouté avec succès !');
     } catch (error) {
       console.error('Invalid JSON configuration:', error);
+      alert('Configuration JSON invalide. Vérifiez la syntaxe.');
     }
   };
 
@@ -889,19 +903,24 @@ export default function FormBuilderFixed() {
   const addComponentFromForm = () => {
     if (!newComponentConfig.name || !newComponentConfig.label) return;
     
-    const newComponent = {
-      id: newComponentConfig.name.toUpperCase(),
-      name: newComponentConfig.name,
-      label: newComponentConfig.label,
-      icon: newComponentConfig.icon,
-      color: newComponentConfig.color,
-      properties: newComponentConfig.properties ? JSON.parse(newComponentConfig.properties) : {},
-      isCustom: true
-    };
-    
-    setCustomComponents(prev => [...prev, newComponent]);
-    setNewComponentConfig({ name: '', label: '', icon: 'Square', color: 'gray', properties: '' });
-    setShowAddComponent(false);
+    try {
+      const newComponent = {
+        id: newComponentConfig.name.toUpperCase(),
+        name: newComponentConfig.name,
+        label: newComponentConfig.label,
+        icon: newComponentConfig.icon,
+        color: newComponentConfig.color,
+        properties: newComponentConfig.properties ? JSON.parse(newComponentConfig.properties) : {},
+        isCustom: true
+      };
+      
+      setCustomComponents(prev => [...prev, newComponent]);
+      setNewComponentConfig({ name: '', label: '', icon: 'Square', color: 'gray', properties: '' });
+      setShowAddComponent(false);
+    } catch (error) {
+      console.error('Invalid JSON in properties:', error);
+      alert('Format JSON invalide dans les propriétés');
+    }
   };
 
   const removeCustomComponent = (componentId: string) => {
@@ -988,6 +1007,7 @@ export default function FormBuilderFixed() {
                     <div>
                       <Label className={isDarkMode ? 'text-gray-300' : ''}>Configuration JSON du composant:</Label>
                       <Textarea
+                        data-json-input
                         placeholder={`{
   "name": "customInput",
   "label": "Input Personnalisé",
@@ -1000,17 +1020,10 @@ export default function FormBuilderFixed() {
   }
 }`}
                         className={`h-48 text-xs font-mono ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
-                        onChange={(e) => {
-                          try {
-                            addComponentFromJSON(e.target.value);
-                          } catch (error) {
-                            // User is still typing, ignore errors
-                          }
-                        }}
                       />
                     </div>
                     <Button onClick={() => {
-                      const textarea = document.querySelector('textarea');
+                      const textarea = document.querySelector('[data-json-input]') as HTMLTextAreaElement;
                       if (textarea?.value) {
                         addComponentFromJSON(textarea.value);
                         textarea.value = '';
