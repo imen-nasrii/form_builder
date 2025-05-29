@@ -10,7 +10,7 @@ import Register from "@/pages/register";
 import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import FormBuilderExact from "@/pages/form-builder-exact";
-import FormBuilderStable from "@/pages/form-builder-stable";
+import FormBuilderFixed from "@/pages/form-builder-fixed";
 import ComponentsOverview from "@/pages/components-overview";
 import DFMToJSONBotStable from "@/components/ai-bot/dfm-to-json-bot-stable";
 import AdminPage from "@/pages/admin";
@@ -42,8 +42,8 @@ function Router() {
       ) : (
         <>
           <Route path="/" component={Dashboard} />
-          <Route path="/form-builder" component={FormBuilderStable} />
-          <Route path="/form-builder/:formId" component={FormBuilderStable} />
+          <Route path="/form-builder" component={FormBuilderFixed} />
+          <Route path="/form-builder/:formId" component={FormBuilderFixed} />
           <Route path="/dashboard" component={Dashboard} />
           <Route path="/components" component={ComponentsOverview} />
           <Route path="/ai-bot" component={DFMToJSONBotStable} />
