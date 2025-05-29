@@ -789,6 +789,194 @@ function PropertiesPanel({ field, onUpdate }: {
   );
 }
 
+// JSON Validator Component
+function JsonValidator({ formData, customComponents, isDarkMode }: {
+  formData: any;
+  customComponents: any[];
+  isDarkMode: boolean;
+}) {
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [warnings, setWarnings] = useState<string[]>([]);
+
+  const validateForm = (data: any) => {
+    const errors: string[] = [];
+    const warns: string[] = [];
+
+    // Validation du MenuID
+    if (!data.menuId || data.menuId.trim() === '') {
+      errors.push('MenuID est requis');
+    } else if (!/^[A-Z0-9_]+$/.test(data.menuId)) {
+      errors.push('MenuID doit contenir uniquement des lettres majuscules, chiffres et underscores');
+    }
+
+    // Validation du Label
+    if (!data.label || data.label.trim() === '') {
+      errors.push('Label du formulaire est requis');
+    }
+
+    // Validation de la largeur
+    if (!data.formWidth || !data.formWidth.match(/^\d+(px|%|em|rem)$/)) {
+      errors.push('FormWidth doit être une valeur CSS valide (ex: 700px, 100%)');
+    }
+
+    // Validation des champs
+    if (!data.fields || !Array.isArray(data.fields)) {
+      errors.push('Le formulaire doit contenir un tableau de champs');
+    } else {
+      data.fields.forEach((field: any, index: number) => {
+        const fieldPrefix = `Champ ${index + 1}`;
+
+        // Validation des propriétés obligatoires
+        if (!field.Id) errors.push(`${fieldPrefix}: ID est requis`);
+        if (!field.Type) errors.push(`${fieldPrefix}: Type est requis`);
+        if (!field.Label) errors.push(`${fieldPrefix}: Label est requis`);
+        if (!field.DataField) errors.push(`${fieldPrefix}: DataField est requis`);
+
+        // Validation des types de composants
+        const validTypes = [...Object.keys(ComponentTypes), ...customComponents.map(c => c.id)];
+        if (field.Type && !validTypes.includes(field.Type)) {
+          errors.push(`${fieldPrefix}: Type "${field.Type}" n'est pas valide`);
+        }
+
+        // Validation des IDs uniques
+        const duplicateIds = data.fields.filter((f: any) => f.Id === field.Id);
+        if (duplicateIds.length > 1) {
+          errors.push(`${fieldPrefix}: ID "${field.Id}" est dupliqué`);
+        }
+
+        // Validation des DataFields uniques
+        const duplicateDataFields = data.fields.filter((f: any) => f.DataField === field.DataField);
+        if (duplicateDataFields.length > 1) {
+          warns.push(`${fieldPrefix}: DataField "${field.DataField}" est dupliqué`);
+        }
+
+        // Validation spécifique par type
+        if (field.Type === 'GROUP' && field.ChildFields && field.ChildFields.length === 0) {
+          warns.push(`${fieldPrefix}: Groupe vide (aucun champ enfant)`);
+        }
+
+        if (field.Type === 'SELECT' && !field.Value) {
+          warns.push(`${fieldPrefix}: SELECT sans options définies`);
+        }
+
+        // Validation des propriétés requises
+        if (field.Required && typeof field.Required !== 'boolean') {
+          errors.push(`${fieldPrefix}: Required doit être true ou false`);
+        }
+
+        if (field.Width && !field.Width.match(/^\d+(px|%|em|rem)$/)) {
+          errors.push(`${fieldPrefix}: Width doit être une valeur CSS valide`);
+        }
+      });
+    }
+
+    return { errors, warns };
+  };
+
+  useEffect(() => {
+    const { errors, warns } = validateForm(formData);
+    setValidationErrors(errors);
+    setWarnings(warns);
+  }, [formData, customComponents]);
+
+  const jsonString = JSON.stringify(formData, null, 2);
+  const isValid = validationErrors.length === 0;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+          Schema JSON avec Validation
+        </h3>
+        <div className="flex items-center space-x-2">
+          <div className={`w-3 h-3 rounded-full ${isValid ? 'bg-green-500' : 'bg-red-500'}`}></div>
+          <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            {isValid ? 'Valide' : `${validationErrors.length} erreur(s)`}
+          </span>
+        </div>
+      </div>
+
+      {/* Erreurs de validation */}
+      {validationErrors.length > 0 && (
+        <div className={`p-4 rounded-lg border ${isDarkMode ? 'bg-red-900/20 border-red-600' : 'bg-red-50 border-red-200'}`}>
+          <h4 className={`font-medium mb-2 flex items-center ${isDarkMode ? 'text-red-300' : 'text-red-800'}`}>
+            <AlertTriangle className="w-4 h-4 mr-2" />
+            Erreurs de validation
+          </h4>
+          <ul className="space-y-1">
+            {validationErrors.map((error, index) => (
+              <li key={index} className={`text-sm ${isDarkMode ? 'text-red-300' : 'text-red-700'}`}>
+                • {error}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Avertissements */}
+      {warnings.length > 0 && (
+        <div className={`p-4 rounded-lg border ${isDarkMode ? 'bg-yellow-900/20 border-yellow-600' : 'bg-yellow-50 border-yellow-200'}`}>
+          <h4 className={`font-medium mb-2 flex items-center ${isDarkMode ? 'text-yellow-300' : 'text-yellow-800'}`}>
+            <AlertTriangle className="w-4 h-4 mr-2" />
+            Avertissements
+          </h4>
+          <ul className="space-y-1">
+            {warnings.map((warning, index) => (
+              <li key={index} className={`text-sm ${isDarkMode ? 'text-yellow-300' : 'text-yellow-700'}`}>
+                • {warning}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* JSON Display */}
+      <div className="relative">
+        <Textarea
+          value={jsonString}
+          readOnly
+          className={`h-96 text-xs font-mono ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-300' : ''}`}
+        />
+        <div className={`absolute top-2 right-2 px-2 py-1 rounded text-xs ${
+          isValid 
+            ? (isDarkMode ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-800')
+            : (isDarkMode ? 'bg-red-900 text-red-300' : 'bg-red-100 text-red-800')
+        }`}>
+          {jsonString.split('\n').length} lignes
+        </div>
+      </div>
+
+      {/* Statistiques */}
+      <div className={`grid grid-cols-3 gap-4 p-4 rounded-lg ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
+        <div className="text-center">
+          <div className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+            {formData.fields?.length || 0}
+          </div>
+          <div className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            Champs
+          </div>
+        </div>
+        <div className="text-center">
+          <div className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+            {customComponents.length}
+          </div>
+          <div className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            Composants personnalisés
+          </div>
+        </div>
+        <div className="text-center">
+          <div className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+            {Math.round(jsonString.length / 1024 * 100) / 100}
+          </div>
+          <div className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            KB
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function FormBuilderFixed() {
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
@@ -1525,14 +1713,7 @@ export default function FormBuilderFixed() {
             </TabsContent>
             
             <TabsContent value="json" className="h-full p-4">
-              <div className="space-y-4">
-                <h3 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Schema JSON</h3>
-                <Textarea
-                  value={JSON.stringify(formData, null, 2)}
-                  readOnly
-                  className={`h-96 text-xs font-mono ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-300' : ''}`}
-                />
-              </div>
+              <JsonValidator formData={formData} customComponents={customComponents} isDarkMode={isDarkMode} />
             </TabsContent>
           </Tabs>
         </div>
