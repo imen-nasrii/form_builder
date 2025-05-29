@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDrop } from 'react-dnd';
 import { FormField } from '@/lib/form-types';
-import { Settings, Trash2 } from 'lucide-react';
+import { Settings, Trash2, Plus } from 'lucide-react';
 
 interface GroupContainerProps {
   field: FormField;
@@ -20,16 +20,15 @@ export const GroupContainer: React.FC<GroupContainerProps> = ({
   onAddFieldToGroup,
   isSelected
 }) => {
-  const [{ isOver, canDrop }, drop] = useDrop({
+  const [{ isOver, canDrop }, drop] = useDrop(() => ({
     accept: 'component',
     drop: (item: { type: string }, monitor) => {
-      if (monitor.didDrop()) return; // Éviter les drops multiples
+      if (monitor.didDrop()) return;
       
-      // Créer un nouveau champ pour le groupe
       const newField: FormField = {
-        Id: `field_${Date.now()}`,
+        Id: `group_field_${Date.now()}`,
         Type: item.type as any,
-        Label: `New ${item.type}`,
+        Label: `${item.type} in Group`,
         DataField: "",
         Entity: "",
         Width: "",
@@ -40,14 +39,13 @@ export const GroupContainer: React.FC<GroupContainerProps> = ({
         Value: ""
       };
       
-      console.log('Dropping component in group:', item.type, 'to group:', field.Id);
       onAddFieldToGroup(field.Id, newField);
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
       canDrop: monitor.canDrop(),
     }),
-  });
+  }), [field.Id, onAddFieldToGroup]);
 
   const children = field.Children || field.children || [];
   const layout = field.GroupLayout || 'vertical';
@@ -144,12 +142,11 @@ export const GroupContainer: React.FC<GroupContainerProps> = ({
         )}
       </div>
 
-      {/* Indicateur de zone de drop */}
+      {/* Indicateur de zone de drop - simplifié */}
       {isOver && canDrop && (
-        <div className="absolute inset-0 bg-blue-500/10 border-2 border-blue-500 border-dashed rounded-lg flex items-center justify-center">
-          <div className="bg-blue-500 text-white px-3 py-1 rounded text-sm font-medium">
-            Déposez ici pour ajouter au groupe
-          </div>
+        <div className="border-2 border-blue-500 border-dashed bg-blue-50 dark:bg-blue-900/20 p-2 rounded text-center">
+          <Plus className="w-6 h-6 mx-auto text-blue-500 mb-1" />
+          <p className="text-sm text-blue-600 font-medium">Ajouter au groupe</p>
         </div>
       )}
     </div>

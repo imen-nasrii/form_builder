@@ -410,8 +410,10 @@ export default function FormBuilderClean() {
   const DropZone = ({ children }: { children: React.ReactNode }) => {
     const [{ isOver }, drop] = useDrop({
       accept: 'component',
-      drop: (item: { type: string }) => {
-        addField(item.type);
+      drop: (item: { type: string }, monitor) => {
+        if (!monitor.didDrop()) {
+          addField(item.type);
+        }
       },
       collect: (monitor) => ({
         isOver: monitor.isOver(),
