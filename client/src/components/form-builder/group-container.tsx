@@ -22,7 +22,9 @@ export const GroupContainer: React.FC<GroupContainerProps> = ({
 }) => {
   const [{ isOver, canDrop }, drop] = useDrop({
     accept: 'component',
-    drop: (item: { type: string }) => {
+    drop: (item: { type: string }, monitor) => {
+      if (monitor.didDrop()) return; // Éviter les drops multiples
+      
       // Créer un nouveau champ pour le groupe
       const newField: FormField = {
         Id: `field_${Date.now()}`,
@@ -38,6 +40,7 @@ export const GroupContainer: React.FC<GroupContainerProps> = ({
         Value: ""
       };
       
+      console.log('Dropping component in group:', item.type, 'to group:', field.Id);
       onAddFieldToGroup(field.Id, newField);
     },
     collect: (monitor) => ({
