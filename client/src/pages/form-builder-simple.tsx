@@ -14,7 +14,7 @@ import { apiRequest } from "@/lib/queryClient";
 import UniversalConfigurator from "@/components/form-builder/component-configurators/universal-configurator";
 import AddComponentDialog from "@/components/form-builder/add-component-dialog";
 import ComponentConfigManager from "@/components/form-builder/component-config-manager";
-import { StableGroupContainer } from "@/components/form-builder/stable-group-container";
+import { AdvancedGroupContainer } from "@/components/form-builder/advanced-group-container";
 import { DraggableComponent } from "@/components/form-builder/draggable-component";
 import { 
   Save, 
@@ -519,7 +519,7 @@ export default function FormBuilderSimple() {
                     <div className="space-y-4">
                       {formData.fields.map((field) => 
                         field.Type === 'GROUP' ? (
-                          <StableGroupContainer
+                          <AdvancedGroupContainer
                             key={field.Id}
                             field={field}
                             onUpdateField={updateField}
