@@ -13,9 +13,8 @@ import FormCanvas from "@/components/form-builder/form-canvas";
 import UniversalConfigurator from "@/components/form-builder/component-configurators/universal-configurator";
 import AddComponentDialog from "@/components/form-builder/add-component-dialog";
 import ComponentConfigManager from "@/components/form-builder/component-config-manager";
-import { GroupContainer } from "@/components/form-builder/group-container";
-import { DndProvider, useDrag, useDrop } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
+import { SimpleGroupContainer } from "@/components/form-builder/simple-group-container";
+
 import { 
   Save, 
   Download, 
@@ -382,23 +381,19 @@ export default function FormBuilderClean() {
     { type: 'GROUP', icon: Settings, label: '📦 Group Container', color: 'text-emerald-600' },
   ];
 
-  // Draggable component
+  // Draggable component - utilise HTML5 drag & drop natif
   const DraggableComponent = ({ component }: { component: any }) => {
-    const [{ isDragging }, drag] = useDrag({
-      type: 'component',
-      item: { type: component.type },
-      collect: (monitor) => ({
-        isDragging: monitor.isDragging(),
-      }),
-    });
+    const handleDragStart = (e: React.DragEvent) => {
+      e.dataTransfer.setData('text/plain', component.type);
+      e.dataTransfer.effectAllowed = 'copy';
+    };
 
     return (
       <button
-        ref={drag}
+        draggable
+        onDragStart={handleDragStart}
         onClick={() => addField(component.type)}
-        className={`flex items-center space-x-2 w-full p-2 text-left text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-move ${
-          isDragging ? 'opacity-50' : ''
-        }`}
+        className="flex items-center space-x-2 w-full p-2 text-left text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-move transition-opacity hover:opacity-75"
       >
         <component.icon className={`w-4 h-4 ${component.color}`} />
         <span>{component.label}</span>
@@ -406,24 +401,36 @@ export default function FormBuilderClean() {
     );
   };
 
-  // Drop zone for canvas
+  // Drop zone for canvas - utilise HTML5 drag & drop natif
   const DropZone = ({ children }: { children: React.ReactNode }) => {
-    const [{ isOver }, drop] = useDrop({
-      accept: 'component',
-      drop: (item: { type: string }, monitor) => {
-        if (!monitor.didDrop()) {
-          addField(item.type);
-        }
-      },
-      collect: (monitor) => ({
-        isOver: monitor.isOver(),
-      }),
-    });
+    const [isOver, setIsOver] = useState(false);
+
+    const handleDragOver = (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsOver(true);
+    };
+
+    const handleDragLeave = (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsOver(false);
+    };
+
+    const handleDrop = (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsOver(false);
+      
+      const componentType = e.dataTransfer.getData('text/plain');
+      if (componentType) {
+        addField(componentType);
+      }
+    };
 
     return (
       <div
-        ref={drop}
-        className={`min-h-96 ${isOver ? 'bg-blue-50 border-blue-300' : ''}`}
+        className={`min-h-96 transition-colors ${isOver ? 'bg-blue-50 border-blue-300' : ''}`}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
       >
         {children}
       </div>
@@ -431,8 +438,7 @@ export default function FormBuilderClean() {
   };
 
   return (
-    <DndProvider backend={HTML5Backend}>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         {/* Header */}
         <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
           <div className="flex items-center justify-between">
@@ -629,7 +635,7 @@ export default function FormBuilderClean() {
                         <div className="space-y-4">
                           {formData.fields.map((field) => 
                             field.Type === 'GROUP' ? (
-                              <GroupContainer
+                              <SimpleGroupContainer
                                 key={field.Id}
                                 field={field}
                                 onUpdateField={updateField}
@@ -804,6 +810,6 @@ export default function FormBuilderClean() {
           </div>
         </div>
       </div>
-    </DndProvider>
+    </div>
   );
 }
