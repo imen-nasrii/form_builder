@@ -244,8 +244,7 @@ function GroupField({
             e.preventDefault();
             const componentType = e.dataTransfer.getData('componentType');
             if (componentType) {
-              // Ajouter l'élément au groupe
-              console.log(`Ajout de ${componentType} au groupe ${field.Id}`);
+              addField(componentType, field.Id);
             }
           }}
           className="min-h-24 p-4 border-2 border-dashed rounded transition-colors border-gray-200 bg-gray-50 hover:border-blue-500 hover:bg-blue-50"
