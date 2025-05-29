@@ -42,7 +42,7 @@ function Router() {
       ) : (
         <>
           <Route path="/" component={Dashboard} />
-          <Route path="/form-builder" component={FormBuilderExact} />
+          <Route path="/form-builder" component={FormBuilderStable} />
           <Route path="/form-builder/:formId" component={FormBuilderStable} />
           <Route path="/dashboard" component={Dashboard} />
           <Route path="/components" component={ComponentsOverview} />
