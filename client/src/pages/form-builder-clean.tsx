@@ -14,8 +14,9 @@ import UniversalConfigurator from "@/components/form-builder/component-configura
 import AddComponentDialog from "@/components/form-builder/add-component-dialog";
 import ComponentConfigManager from "@/components/form-builder/component-config-manager";
 import { SimpleGroupContainer } from "@/components/form-builder/simple-group-container";
-import { DndProvider, useDrag, useDrop } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
+// Temporairement désactivé React DND pour éviter les erreurs removeChild
+// import { DndProvider, useDrag, useDrop } from "react-dnd";
+// import { HTML5Backend } from "react-dnd-html5-backend";
 import { 
   Save, 
   Download, 
@@ -310,23 +311,12 @@ export default function FormBuilderClean() {
     { type: 'GROUP', icon: Settings, label: '📦 Group Container', color: 'text-emerald-600' },
   ];
 
-  // Draggable component
-  const DraggableComponent = ({ component }: { component: any }) => {
-    const [{ isDragging }, drag] = useDrag({
-      type: 'component',
-      item: { type: component.type },
-      collect: (monitor) => ({
-        isDragging: monitor.isDragging(),
-      }),
-    });
-
+  // Simple clickable component (sans drag & drop)
+  const ClickableComponent = ({ component }: { component: any }) => {
     return (
       <button
-        ref={drag}
         onClick={() => addField(component.type)}
-        className={`flex items-center space-x-2 w-full p-2 text-left text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-move ${
-          isDragging ? 'opacity-50' : ''
-        }`}
+        className="flex items-center space-x-2 w-full p-2 text-left text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer transition-colors"
       >
         <component.icon className={`w-4 h-4 ${component.color}`} />
         <span>{component.label}</span>
@@ -334,30 +324,19 @@ export default function FormBuilderClean() {
     );
   };
 
-  // Drop zone for canvas
-  const DropZone = ({ children }: { children: React.ReactNode }) => {
-    const [{ isOver }, drop] = useDrop({
-      accept: 'component',
-      drop: (item: { type: string }) => {
-        addField(item.type);
-      },
-      collect: (monitor) => ({
-        isOver: monitor.isOver(),
-      }),
-    });
-
+  // Simple container zone (sans drop functionality)
+  const SimpleZone = ({ children }: { children: React.ReactNode }) => {
     return (
-      <div
-        ref={drop}
-        className={`min-h-96 ${isOver ? 'bg-blue-50 border-blue-300' : ''}`}
-      >
+      <div className="min-h-96">
         {children}
       </div>
     );
   };
 
   return (
-    <DndProvider backend={HTML5Backend}>
+    // DndProvider temporairement désactivé pour éviter les erreurs removeChild
+    // <DndProvider backend={HTML5Backend}>
+    <div>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         {/* Header */}
         <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
@@ -723,6 +702,6 @@ export default function FormBuilderClean() {
           </div>
         </div>
       </div>
-    </DndProvider>
+    </div>
   );
 }
