@@ -24,6 +24,8 @@ export interface FormField {
   value?: any; // Keep both for compatibility
   IsGroup?: boolean;
   isGroup?: boolean; // Keep both for compatibility
+  IsCustom?: boolean; // For custom components added via dialog
+  CustomType?: string; // The original type name for custom components
   
   // GROUP Properties - for container components
   Children?: FormField[]; // Composants enfants dans le groupe

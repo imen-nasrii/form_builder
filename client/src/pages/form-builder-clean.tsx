@@ -220,6 +220,78 @@ export default function FormBuilderClean() {
     setSelectedField(field);
   };
 
+  // Fonctions d'import/export
+  const handleExport = () => {
+    const exportData = {
+      MenuID: formData.menuId,
+      Label: formData.label,
+      FormWidth: formData.formWidth,
+      Layout: formData.layout,
+      Fields: formData.fields,
+      Actions: formData.actions,
+      Validations: formData.validations,
+      CustomComponents: customComponents
+    };
+
+    const jsonString = JSON.stringify(exportData, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${formData.menuId || 'form'}_schema.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    toast({
+      title: "Export terminé",
+      description: "Le fichier JSON du formulaire a été téléchargé",
+    });
+  };
+
+  const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const jsonData = JSON.parse(e.target?.result as string);
+        setFormData({
+          menuId: jsonData.MenuID || "",
+          label: jsonData.Label || "",
+          formWidth: jsonData.FormWidth || "700px",
+          layout: jsonData.Layout || "PROCESS",
+          fields: jsonData.Fields || [],
+          actions: jsonData.Actions || [],
+          validations: jsonData.Validations || []
+        });
+        
+        // Importer les composants personnalisés s'ils existent
+        if (jsonData.CustomComponents && Array.isArray(jsonData.CustomComponents)) {
+          setCustomComponents(jsonData.CustomComponents);
+        }
+        
+        toast({
+          title: "Import réussi",
+          description: "Les données du formulaire ont été chargées depuis le fichier JSON",
+        });
+      } catch (error) {
+        toast({
+          title: "Échec de l'import",
+          description: "Format JSON invalide",
+          variant: "destructive",
+        });
+      }
+    };
+    reader.readAsText(file);
+    
+    // Reset file input
+    event.target.value = '';
+  };
+
   const updateField = (fieldId: string, updates: Partial<FormField>) => {
     setFormData(prev => ({
       ...prev,
@@ -491,11 +563,18 @@ export default function FormBuilderClean() {
                 <div className="flex items-center space-x-4">
                   <h1 className="text-lg font-medium text-gray-900 dark:text-white">Form Builder</h1>
                   <div className="flex space-x-2">
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" onClick={() => document.getElementById('import-file')?.click()}>
                       <Upload className="w-4 h-4 mr-2" />
                       Import
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <input
+                      id="import-file"
+                      type="file"
+                      accept=".json"
+                      style={{ display: 'none' }}
+                      onChange={handleImport}
+                    />
+                    <Button variant="outline" size="sm" onClick={handleExport}>
                       <Download className="w-4 h-4 mr-2" />
                       Export
                     </Button>
