@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -789,6 +790,7 @@ function PropertiesPanel({ field, onUpdate }: {
 }
 
 export default function FormBuilderFixed() {
+  const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
     menuId: 'FORM001',
     label: 'Mon Formulaire',
@@ -997,9 +999,9 @@ export default function FormBuilderFixed() {
     }
   };
 
-  // Save form function
-  const saveForm = () => {
-    try {
+  // Save form mutation
+  const saveFormMutation = useMutation({
+    mutationFn: async () => {
       const formToSave = {
         menuId: formData.menuId,
         label: formData.label,
@@ -1011,18 +1013,38 @@ export default function FormBuilderFixed() {
         })
       };
 
-      // Here you would typically send to your API
-      console.log('Saving form:', formToSave);
-      
-      // For now, we'll show success message
+      const response = await fetch('/api/forms', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formToSave),
+      });
+
+      if (!response.ok) {
+        throw new Error('Erreur lors de la sauvegarde');
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
       alert('Formulaire sauvegardé avec succès !');
-      
-      // You can also save to localStorage as backup
-      localStorage.setItem('formBuilder_backup', JSON.stringify(formToSave));
-    } catch (error) {
+      queryClient.invalidateQueries({ queryKey: ['/api/forms'] });
+      // Also save to localStorage as backup
+      localStorage.setItem('formBuilder_backup', JSON.stringify({
+        fields: formData.fields,
+        customComponents: customComponents
+      }));
+    },
+    onError: (error) => {
       console.error('Error saving form:', error);
       alert('Erreur lors de la sauvegarde du formulaire');
     }
+  });
+
+  // Save form function
+  const saveForm = () => {
+    saveFormMutation.mutate();
   };
 
   const toggleFullScreen = () => {
@@ -1275,9 +1297,13 @@ export default function FormBuilderFixed() {
               <RotateCcw className="w-4 h-4 mr-2" />
               Reset
             </Button>
-            <Button size="sm" onClick={saveForm}>
+            <Button 
+              size="sm" 
+              onClick={saveForm}
+              disabled={saveFormMutation.isPending}
+            >
               <Save className="w-4 h-4 mr-2" />
-              Sauvegarder
+              {saveFormMutation.isPending ? 'Sauvegarde...' : 'Sauvegarder'}
             </Button>
           </div>
         </div>
