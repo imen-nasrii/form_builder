@@ -60,9 +60,12 @@ export default function FormBuilderDragDrop() {
   // Types de composants
   const componentTypes = [
     { type: 'TEXT', icon: Type, label: '📝 Text Input', color: 'text-blue-500' },
+    { type: 'TEXTAREA', icon: FileText, label: '📄 Text Area', color: 'text-green-500' },
     { type: 'SELECT', icon: List, label: '📋 Select', color: 'text-purple-500' },
     { type: 'CHECKBOX', icon: Square, label: '☑️ Checkbox', color: 'text-orange-500' },
+    { type: 'RADIOGRP', icon: Square, label: '🔘 Radio Group', color: 'text-pink-500' },
     { type: 'DATEPICKER', icon: Calendar, label: '📅 Date Picker', color: 'text-indigo-500' },
+    { type: 'FILEUPLOAD', icon: Plus, label: '📤 File Upload', color: 'text-red-500' },
   ];
 
   const groupComponents = [
@@ -72,6 +75,11 @@ export default function FormBuilderDragDrop() {
   const lookupComponents = [
     { type: 'GRIDLKP', icon: Grid3X3, label: '🔍 Grid Lookup', color: 'text-cyan-500' },
     { type: 'LSTLKP', icon: List, label: '📜 List Lookup', color: 'text-teal-500' },
+  ];
+
+  const actionComponents = [
+    { type: 'ACTION', icon: Plus, label: '⚡ Action Button', color: 'text-yellow-600' },
+    { type: 'DIALOG', icon: Settings, label: '💬 Dialog', color: 'text-purple-600' },
   ];
 
   const { data: formResponse } = useQuery<Form>({
@@ -327,6 +335,24 @@ export default function FormBuilderDragDrop() {
                 {expandedSections.lookupComponents && (
                   <div className="mt-2 space-y-2">
                     {lookupComponents.map(component => (
+                      <DraggableFormComponent key={component.type} component={component} />
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Action & Validation */}
+              <div className="mb-4">
+                <button
+                  onClick={() => toggleSection('actionValidation')}
+                  className="flex items-center justify-between w-full p-2 text-left text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                >
+                  <span>Action et validation</span>
+                  {expandedSections.actionValidation ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                </button>
+                {expandedSections.actionValidation && (
+                  <div className="mt-2 space-y-2">
+                    {actionComponents.map(component => (
                       <DraggableFormComponent key={component.type} component={component} />
                     ))}
                   </div>
