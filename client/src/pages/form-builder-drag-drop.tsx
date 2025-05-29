@@ -83,7 +83,11 @@ export default function FormBuilderDragDrop() {
     mutationFn: async (data: any) => {
       const url = formId ? `/api/forms/${formId}` : "/api/forms";
       const method = formId ? "PUT" : "POST";
-      return apiRequest(url, { method, body: data });
+      return await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      }).then(res => res.json());
     },
     onSuccess: () => {
       toast({
@@ -119,8 +123,8 @@ export default function FormBuilderDragDrop() {
         formWidth: formResponse.formWidth || "700px",
         layout: formResponse.layout || "PROCESS",
         fields: parsedFields,
-        actions: formResponse.actions || [],
-        validations: formResponse.validations || []
+        actions: (formResponse.actions && Array.isArray(formResponse.actions)) ? formResponse.actions : [],
+        validations: (formResponse.validations && Array.isArray(formResponse.validations)) ? formResponse.validations : []
       });
     }
   }, [formResponse]);
