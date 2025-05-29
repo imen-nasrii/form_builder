@@ -977,6 +977,188 @@ function JsonValidator({ formData, customComponents, isDarkMode }: {
   );
 }
 
+// Tutorial System Component
+function TutorialDialog({ isOpen, onClose, step, onNextStep, onPrevStep, totalSteps, isDarkMode }: {
+  isOpen: boolean;
+  onClose: () => void;
+  step: number;
+  onNextStep: () => void;
+  onPrevStep: () => void;
+  totalSteps: number;
+  isDarkMode: boolean;
+}) {
+  const tutorialSteps = [
+    {
+      title: "Bienvenue dans le Form Builder",
+      content: "Ce tutoriel vous guidera à travers toutes les fonctionnalités du générateur de formulaires. Vous apprendrez à créer des formulaires complexes avec validation en temps réel.",
+      highlight: null,
+      action: "Commençons!"
+    },
+    {
+      title: "Palette de composants",
+      content: "À gauche, vous trouvez la palette de composants organisée par catégories : Saisie, Sélection, Date, Fichiers, etc. Glissez-déposez les composants dans la zone de construction.",
+      highlight: "palette",
+      action: "Glissez un composant TEXT"
+    },
+    {
+      title: "Zone de construction",
+      content: "Au centre se trouve la zone de construction où vous assemblez votre formulaire. Les composants peuvent être réorganisés par glisser-déposer.",
+      highlight: "builder",
+      action: "Déposez votre composant ici"
+    },
+    {
+      title: "Panneau de propriétés",
+      content: "À droite, le panneau de propriétés vous permet de configurer chaque composant sélectionné : label, validation, style, etc.",
+      highlight: "properties",
+      action: "Cliquez sur un composant"
+    },
+    {
+      title: "Validateur JSON",
+      content: "L'onglet JSON affiche le schéma généré en temps réel avec validation automatique. Les erreurs et avertissements sont mis en évidence.",
+      highlight: "json",
+      action: "Consultez la validation"
+    },
+    {
+      title: "Composants personnalisés",
+      content: "Vous pouvez créer vos propres composants via l'icône '+'. Utilisez JSON ou le créateur visuel pour définir des composants réutilisables.",
+      highlight: "custom",
+      action: "Créez un composant"
+    },
+    {
+      title: "Sauvegarde et collaboration",
+      content: "Utilisez les boutons Nouveau/Vider/Sauvegarder pour gérer vos formulaires. Invitez des collaborateurs pour travailler ensemble en temps réel.",
+      highlight: "actions",
+      action: "Sauvegardez votre travail"
+    }
+  ];
+
+  const currentStep = tutorialSteps[step];
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className={`max-w-2xl ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
+        <DialogHeader>
+          <div className="flex items-center justify-between">
+            <DialogTitle className={`text-xl ${isDarkMode ? 'text-white' : ''}`}>
+              {currentStep.title}
+            </DialogTitle>
+            <div className={`text-sm px-3 py-1 rounded-full ${isDarkMode ? 'bg-blue-900 text-blue-300' : 'bg-blue-100 text-blue-800'}`}>
+              {step + 1} / {totalSteps}
+            </div>
+          </div>
+        </DialogHeader>
+        
+        <div className="space-y-6">
+          <div className={`text-base leading-relaxed ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+            {currentStep.content}
+          </div>
+
+          {currentStep.highlight && (
+            <div className={`p-4 rounded-lg border-l-4 ${isDarkMode ? 'bg-blue-900/20 border-blue-600' : 'bg-blue-50 border-blue-400'}`}>
+              <div className={`flex items-center space-x-2 ${isDarkMode ? 'text-blue-300' : 'text-blue-800'}`}>
+                <ArrowRight className="w-4 h-4" />
+                <span className="font-medium">{currentStep.action}</span>
+              </div>
+            </div>
+          )}
+
+          <div className="flex items-center justify-between pt-4">
+            <Button
+              variant="outline"
+              onClick={onPrevStep}
+              disabled={step === 0}
+              className={isDarkMode ? 'border-gray-600 text-gray-300' : ''}
+            >
+              Précédent
+            </Button>
+
+            <div className="flex space-x-1">
+              {Array.from({ length: totalSteps }, (_, i) => (
+                <div
+                  key={i}
+                  className={`w-2 h-2 rounded-full ${
+                    i === step 
+                      ? (isDarkMode ? 'bg-blue-400' : 'bg-blue-600')
+                      : (isDarkMode ? 'bg-gray-600' : 'bg-gray-300')
+                  }`}
+                />
+              ))}
+            </div>
+
+            {step === totalSteps - 1 ? (
+              <Button onClick={onClose}>
+                Terminer
+              </Button>
+            ) : (
+              <Button onClick={onNextStep}>
+                Suivant
+              </Button>
+            )}
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// Quick Tips Component
+function QuickTips({ isDarkMode }: { isDarkMode: boolean }) {
+  const [showTips, setShowTips] = useState(false);
+
+  const tips = [
+    {
+      title: "Raccourcis clavier",
+      content: "Ctrl+S pour sauvegarder, Ctrl+Z pour annuler, Ctrl+D pour dupliquer un composant"
+    },
+    {
+      title: "Groupes de composants", 
+      content: "Glissez des composants dans un GROUP pour les organiser visuellement"
+    },
+    {
+      title: "Validation avancée",
+      content: "Utilisez l'onglet JSON pour voir les erreurs de validation en temps réel"
+    },
+    {
+      title: "Composants personnalisés",
+      content: "Créez vos propres composants réutilisables avec des propriétés spécifiques"
+    },
+    {
+      title: "Mode sombre",
+      content: "Basculez entre mode clair et sombre pour votre confort visuel"
+    }
+  ];
+
+  return (
+    <Dialog open={showTips} onOpenChange={setShowTips}>
+      <DialogTrigger asChild>
+        <Button variant="ghost" size="sm" className={isDarkMode ? 'text-gray-300' : ''}>
+          <HelpCircle className="w-4 h-4 mr-2" />
+          Astuces
+        </Button>
+      </DialogTrigger>
+      <DialogContent className={`max-w-lg ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
+        <DialogHeader>
+          <DialogTitle className={isDarkMode ? 'text-white' : ''}>
+            Astuces rapides
+          </DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          {tips.map((tip, index) => (
+            <div key={index} className={`p-3 rounded-lg border ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'}`}>
+              <h4 className={`font-medium mb-1 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                {tip.title}
+              </h4>
+              <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                {tip.content}
+              </p>
+            </div>
+          ))}
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export default function FormBuilderFixed() {
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
@@ -1003,6 +1185,8 @@ export default function FormBuilderFixed() {
     properties: ''
   });
   const [showAddComponent, setShowAddComponent] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [tutorialStep, setTutorialStep] = useState(0);
   const formBuilderRef = useRef<HTMLDivElement>(null);
 
   // Load saved form data and custom components from localStorage on startup
@@ -1281,6 +1465,29 @@ export default function FormBuilderFixed() {
     saveFormMutation.mutate();
   };
 
+  // Tutorial functions
+  const startTutorial = () => {
+    setTutorialStep(0);
+    setShowTutorial(true);
+  };
+
+  const nextTutorialStep = () => {
+    if (tutorialStep < 6) {
+      setTutorialStep(tutorialStep + 1);
+    }
+  };
+
+  const prevTutorialStep = () => {
+    if (tutorialStep > 0) {
+      setTutorialStep(tutorialStep - 1);
+    }
+  };
+
+  const closeTutorial = () => {
+    setShowTutorial(false);
+    setTutorialStep(0);
+  };
+
   const toggleFullScreen = () => {
     setIsFullScreen(!isFullScreen);
     if (!isFullScreen) {
@@ -1323,11 +1530,14 @@ export default function FormBuilderFixed() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setShowHelp(!showHelp)}
+              onClick={startTutorial}
               className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
             >
-              <HelpCircle className="w-4 h-4" />
+              <HelpCircle className="w-4 h-4 mr-2" />
+              Tutoriel
             </Button>
+
+            <QuickTips isDarkMode={isDarkMode} />
 
             {/* Add External Components */}
             <Dialog>
@@ -1551,35 +1761,16 @@ export default function FormBuilderFixed() {
           </div>
         </div>
 
-        {/* Help Overlay */}
-        {showHelp && (
-          <div className={`mt-4 p-4 rounded-lg border ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-blue-50 border-blue-200'}`}>
-            <div className="flex items-start space-x-3">
-              <HelpCircle className={`w-5 h-5 mt-0.5 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
-              <div className="space-y-3">
-                <h3 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-blue-900'}`}>Guide d'utilisation</h3>
-                <div className="space-y-2 text-sm">
-                  <div className={`flex items-center space-x-2 ${isDarkMode ? 'text-gray-300' : 'text-blue-800'}`}>
-                    <ArrowRight className="w-4 h-4" />
-                    <span>Glissez les composants de la palette vers la zone de construction</span>
-                  </div>
-                  <div className={`flex items-center space-x-2 ${isDarkMode ? 'text-gray-300' : 'text-blue-800'}`}>
-                    <ArrowRight className="w-4 h-4" />
-                    <span>Cliquez sur un composant pour accéder à ses propriétés</span>
-                  </div>
-                  <div className={`flex items-center space-x-2 ${isDarkMode ? 'text-gray-300' : 'text-blue-800'}`}>
-                    <ArrowRight className="w-4 h-4" />
-                    <span>Glissez des éléments dans les groupes pour les organiser</span>
-                  </div>
-                  <div className={`flex items-center space-x-2 ${isDarkMode ? 'text-gray-300' : 'text-blue-800'}`}>
-                    <ArrowRight className="w-4 h-4" />
-                    <span>Utilisez l'onglet JSON pour voir le schéma généré</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Tutorial Dialog */}
+        <TutorialDialog
+          isOpen={showTutorial}
+          onClose={closeTutorial}
+          step={tutorialStep}
+          onNextStep={nextTutorialStep}
+          onPrevStep={prevTutorialStep}
+          totalSteps={7}
+          isDarkMode={isDarkMode}
+        />
       </div>
 
       <div className="flex h-[calc(100vh-80px)]">
