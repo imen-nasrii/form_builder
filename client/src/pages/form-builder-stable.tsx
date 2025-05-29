@@ -360,7 +360,7 @@ function PropertiesPanel({ field, onUpdate }: {
         <div>
           <Label htmlFor="field-width">Width</Label>
           <Select 
-            value={field.Width} 
+            value={field.Width || ""} 
             onValueChange={(value) => onUpdate({ Width: value })}
           >
             <SelectTrigger className="text-sm">
@@ -384,7 +384,7 @@ function PropertiesPanel({ field, onUpdate }: {
         <div>
           <Label htmlFor="field-spacing">Spacing</Label>
           <Select 
-            value={field.Spacing} 
+            value={field.Spacing || ""} 
             onValueChange={(value) => onUpdate({ Spacing: value })}
           >
             <SelectTrigger className="text-sm">
@@ -491,7 +491,7 @@ function renderTypeSpecificProperties(field: FormField, onUpdate: (updates: Part
           <div>
             <Label htmlFor="field-rows">Rows</Label>
             <Select 
-              value={field.Value} 
+              value={field.Value || "3"} 
               onValueChange={(value) => onUpdate({ Value: value })}
             >
               <SelectTrigger className="text-sm">
@@ -531,7 +531,7 @@ function renderTypeSpecificProperties(field: FormField, onUpdate: (updates: Part
           <div>
             <Label htmlFor="field-multiple">Type</Label>
             <Select 
-              value={field.Value} 
+              value={field.Value || "single"} 
               onValueChange={(value) => onUpdate({ Value: value })}
             >
               <SelectTrigger className="text-sm">
@@ -635,7 +635,7 @@ function renderTypeSpecificProperties(field: FormField, onUpdate: (updates: Part
           <div>
             <Label htmlFor="field-format">Date Format</Label>
             <Select 
-              value={field.Value} 
+              value={field.Value || "dd/MM/yyyy"} 
               onValueChange={(value) => onUpdate({ Value: value })}
             >
               <SelectTrigger className="text-sm">
@@ -682,7 +682,7 @@ function renderTypeSpecificProperties(field: FormField, onUpdate: (updates: Part
           <div>
             <Label htmlFor="field-actionType">Action Type</Label>
             <Select 
-              value={field.Value} 
+              value={field.Value || "submit"} 
               onValueChange={(value) => onUpdate({ Value: value })}
             >
               <SelectTrigger className="text-sm">
@@ -711,7 +711,7 @@ function renderTypeSpecificProperties(field: FormField, onUpdate: (updates: Part
           <div>
             <Label htmlFor="field-method">HTTP Method</Label>
             <Select 
-              value={field.Value} 
+              value={field.Value || "POST"} 
               onValueChange={(value) => onUpdate({ Value: value })}
             >
               <SelectTrigger className="text-sm">
@@ -748,7 +748,7 @@ function renderTypeSpecificProperties(field: FormField, onUpdate: (updates: Part
           <div>
             <Label htmlFor="field-severity">Severity</Label>
             <Select 
-              value={field.Value} 
+              value={field.Value || "warning"} 
               onValueChange={(value) => onUpdate({ Value: value })}
             >
               <SelectTrigger className="text-sm">
@@ -784,7 +784,7 @@ function renderTypeSpecificProperties(field: FormField, onUpdate: (updates: Part
           <div>
             <Label htmlFor="field-collapsible">Behavior</Label>
             <Select 
-              value={field.Value} 
+              value={field.Value || "static"} 
               onValueChange={(value) => onUpdate({ Value: value })}
             >
               <SelectTrigger className="text-sm">
