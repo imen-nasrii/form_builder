@@ -42,7 +42,7 @@ export default function FormBuilderClean() {
   const queryClient = useQueryClient();
 
   // États principaux
-  const [formData, setFormData] = useState<FormDefinition>({
+  const [formData, setFormData] = useState({
     menuId: "",
     label: "",
     formWidth: "700px",
