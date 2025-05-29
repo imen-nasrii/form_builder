@@ -37,7 +37,8 @@ import {
   Share,
   Plus,
   Code,
-  Package
+  Package,
+  Save
 } from 'lucide-react';
 
 interface FormField {
@@ -927,6 +928,48 @@ export default function FormBuilderFixed() {
     setCustomComponents(prev => prev.filter(comp => comp.id !== componentId));
   };
 
+  // Reset form function
+  const resetForm = () => {
+    if (confirm('Êtes-vous sûr de vouloir réinitialiser le formulaire ? Toutes les modifications seront perdues.')) {
+      setFormData({
+        menuId: 'FORM001',
+        label: 'Mon Formulaire',
+        formWidth: '700px',
+        layout: 'PROCESS',
+        fields: []
+      });
+      setSelectedField(null);
+    }
+  };
+
+  // Save form function
+  const saveForm = () => {
+    try {
+      const formToSave = {
+        menuId: formData.menuId,
+        label: formData.label,
+        formWidth: formData.formWidth,
+        layout: formData.layout,
+        formDefinition: JSON.stringify({
+          fields: formData.fields,
+          customComponents: customComponents
+        })
+      };
+
+      // Here you would typically send to your API
+      console.log('Saving form:', formToSave);
+      
+      // For now, we'll show success message
+      alert('Formulaire sauvegardé avec succès !');
+      
+      // You can also save to localStorage as backup
+      localStorage.setItem('formBuilder_backup', JSON.stringify(formToSave));
+    } catch (error) {
+      console.error('Error saving form:', error);
+      alert('Erreur lors de la sauvegarde du formulaire');
+    }
+  };
+
   const toggleFullScreen = () => {
     setIsFullScreen(!isFullScreen);
     if (!isFullScreen) {
@@ -1168,11 +1211,17 @@ export default function FormBuilderFixed() {
               </DialogContent>
             </Dialog>
 
-            <Button variant="outline" size="sm" className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={resetForm}
+              className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
+            >
               <RotateCcw className="w-4 h-4 mr-2" />
               Reset
             </Button>
-            <Button size="sm">
+            <Button size="sm" onClick={saveForm}>
+              <Save className="w-4 h-4 mr-2" />
               Sauvegarder
             </Button>
           </div>
