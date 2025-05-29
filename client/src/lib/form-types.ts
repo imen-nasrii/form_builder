@@ -36,10 +36,6 @@ export interface FormField {
     borderRadius?: string;
   };
   
-  // Custom Component Properties
-  IsCustom?: boolean; // Marque les composants personnalisés
-  CustomType?: string; // Type du composant personnalisé
-  
   // Data Binding Properties
   DataField?: string;
   EnabledWhen?: any;
