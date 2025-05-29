@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { 
   Type, 
   AlignLeft, 
@@ -23,7 +24,17 @@ import {
   Trash2,
   Settings,
   ChevronDown,
-  ChevronRight
+  ChevronRight,
+  Moon,
+  Sun,
+  Users,
+  Maximize,
+  Minimize,
+  HelpCircle,
+  ArrowRight,
+  ArrowDown,
+  Mail,
+  Share
 } from 'lucide-react';
 
 interface FormField {
@@ -82,13 +93,15 @@ function FieldComponent({
   onSelect, 
   onRemove, 
   isSelected,
-  addField 
+  addField,
+  isDarkMode 
 }: { 
   field: FormField; 
   onSelect: () => void;
   onRemove: () => void;
   isSelected: boolean;
   addField: (type: string, groupId?: string) => void;
+  isDarkMode: boolean;
 }) {
   const [isExpanded, setIsExpanded] = useState(true);
   
@@ -102,6 +115,7 @@ function FieldComponent({
         addField={addField}
         isExpanded={isExpanded}
         setIsExpanded={setIsExpanded}
+        isDarkMode={isDarkMode}
       />
     );
   }
@@ -115,16 +129,16 @@ function FieldComponent({
       onClick={onSelect}
       className={`p-3 border rounded-lg cursor-pointer transition-all ${
         isSelected
-          ? 'border-blue-500 bg-blue-50'
-          : 'border-gray-200 hover:border-gray-300 bg-white'
+          ? `border-blue-500 ${isDarkMode ? 'bg-blue-900/50' : 'bg-blue-50'}`
+          : `${isDarkMode ? 'border-gray-600 hover:border-gray-500 bg-gray-700' : 'border-gray-200 hover:border-gray-300 bg-white'}`
       }`}
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <Icon className={`w-4 h-4 text-${color}-600`} />
           <div>
-            <div className="font-medium text-sm">{field.Label || field.Id}</div>
-            <div className="text-xs text-gray-500">{field.Type}</div>
+            <div className={`font-medium text-sm ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{field.Label || field.Id}</div>
+            <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{field.Type}</div>
           </div>
         </div>
         <Button
@@ -134,7 +148,7 @@ function FieldComponent({
             e.stopPropagation();
             onRemove();
           }}
-          className="p-1 h-6 w-6 text-gray-400 hover:text-red-500"
+          className={`p-1 h-6 w-6 ${isDarkMode ? 'text-gray-400 hover:text-red-400' : 'text-gray-400 hover:text-red-500'}`}
         >
           <Trash2 className="w-3 h-3" />
         </Button>
@@ -150,7 +164,8 @@ function GroupField({
   isSelected,
   addField,
   isExpanded,
-  setIsExpanded
+  setIsExpanded,
+  isDarkMode
 }: {
   field: FormField;
   onSelect: () => void;
@@ -159,19 +174,20 @@ function GroupField({
   addField: (type: string, groupId?: string) => void;
   isExpanded: boolean;
   setIsExpanded: (expanded: boolean) => void;
+  isDarkMode: boolean;
 }) {
   return (
     <div
       onClick={onSelect}
       className={`p-4 border-2 border-dashed rounded-lg cursor-pointer transition-all ${
         isSelected
-          ? 'border-blue-500 bg-blue-50'
-          : 'bg-purple-50 border-purple-200 hover:border-purple-300'
+          ? `border-blue-500 ${isDarkMode ? 'bg-blue-900/50' : 'bg-blue-50'}`
+          : `${isDarkMode ? 'bg-purple-900/20 border-purple-600 hover:border-purple-500' : 'bg-purple-50 border-purple-200 hover:border-purple-300'}`
       }`}
     >
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center space-x-3">
-          <Square className="w-4 h-4 text-purple-600" />
+          <Square className={`w-4 h-4 ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`} />
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -179,10 +195,10 @@ function GroupField({
             }}
             className="flex items-center space-x-2"
           >
-            {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-            <span className="font-medium text-sm">GROUP</span>
+            {isExpanded ? <ChevronDown className={`w-4 h-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`} /> : <ChevronRight className={`w-4 h-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`} />}
+            <span className={`font-medium text-sm ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>GROUP</span>
           </button>
-          <div className="text-xs bg-purple-100 px-2 py-1 rounded">
+          <div className={`text-xs px-2 py-1 rounded ${isDarkMode ? 'bg-purple-800 text-purple-200' : 'bg-purple-100 text-purple-800'}`}>
             {(field.ChildFields || []).length} items
           </div>
         </div>
@@ -193,7 +209,7 @@ function GroupField({
             e.stopPropagation();
             onRemove();
           }}
-          className="p-1 h-6 w-6 text-gray-400 hover:text-red-500"
+          className={`p-1 h-6 w-6 ${isDarkMode ? 'text-gray-400 hover:text-red-400' : 'text-gray-400 hover:text-red-500'}`}
         >
           <Trash2 className="w-3 h-3" />
         </Button>
@@ -209,10 +225,14 @@ function GroupField({
               addField(componentType, field.Id);
             }
           }}
-          className="min-h-24 p-4 border-2 border-dashed rounded transition-colors border-gray-200 bg-gray-50 hover:border-blue-500 hover:bg-blue-50"
+          className={`min-h-24 p-4 border-2 border-dashed rounded transition-colors ${
+            isDarkMode 
+              ? 'border-gray-600 bg-gray-700 hover:border-blue-500 hover:bg-blue-900/20' 
+              : 'border-gray-200 bg-gray-50 hover:border-blue-500 hover:bg-blue-50'
+          }`}
         >
           {(field.ChildFields || []).length === 0 ? (
-            <div className="text-center py-8 text-gray-400">
+            <div className={`text-center py-8 ${isDarkMode ? 'text-gray-400' : 'text-gray-400'}`}>
               <Square className="w-8 h-8 mx-auto mb-2 opacity-50" />
               <p className="text-sm">Glissez des composants ici</p>
             </div>
@@ -221,7 +241,9 @@ function GroupField({
               {(field.ChildFields || []).map((childField) => (
                 <div
                   key={childField.Id}
-                  className="p-3 bg-white border border-gray-200 rounded shadow-sm"
+                  className={`p-3 border rounded shadow-sm ${
+                    isDarkMode ? 'bg-gray-600 border-gray-500' : 'bg-white border-gray-200'
+                  }`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
@@ -232,10 +254,12 @@ function GroupField({
                         childField.Type === 'WARNING' ? 'bg-yellow-500' :
                         'bg-gray-500'
                       }`} />
-                      <span className="text-sm font-medium">
+                      <span className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                         {childField.Label || childField.Id}
                       </span>
-                      <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                      <span className={`text-xs px-2 py-1 rounded ${
+                        isDarkMode ? 'text-gray-300 bg-gray-700' : 'text-gray-500 bg-gray-100'
+                      }`}>
                         {childField.Type}
                       </span>
                     </div>
@@ -715,6 +739,11 @@ export default function FormBuilderFixed() {
   });
 
   const [selectedField, setSelectedField] = useState<FormField | null>(null);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
+  const [collaboratorEmail, setCollaboratorEmail] = useState('');
+  const [collaborators, setCollaborators] = useState<string[]>([]);
   const formBuilderRef = useRef<HTMLDivElement>(null);
 
   const createDefaultField = (componentType: string): FormField => {
@@ -810,16 +839,118 @@ export default function FormBuilderFixed() {
     }
   };
 
+  const addCollaborator = () => {
+    if (collaboratorEmail && !collaborators.includes(collaboratorEmail)) {
+      setCollaborators([...collaborators, collaboratorEmail]);
+      setCollaboratorEmail('');
+    }
+  };
+
+  const removeCollaborator = (email: string) => {
+    setCollaborators(collaborators.filter(c => c !== email));
+  };
+
+  const toggleFullScreen = () => {
+    setIsFullScreen(!isFullScreen);
+    if (!isFullScreen) {
+      document.documentElement.requestFullscreen?.();
+    } else {
+      document.exitFullscreen?.();
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="border-b bg-white px-6 py-4">
+    <div className={`min-h-screen transition-colors ${isDarkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
+      <div className={`border-b px-6 py-4 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Form Builder</h1>
-            <p className="text-sm text-gray-600">Créez et configurez vos formulaires</p>
+            <h1 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Form Builder</h1>
+            <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Créez et configurez vos formulaires</p>
           </div>
           <div className="flex items-center space-x-3">
-            <Button variant="outline" size="sm">
+            {/* Theme Toggle */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
+            >
+              {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </Button>
+
+            {/* Fullscreen Toggle */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={toggleFullScreen}
+              className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
+            >
+              {isFullScreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
+            </Button>
+
+            {/* Help */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowHelp(!showHelp)}
+              className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
+            >
+              <HelpCircle className="w-4 h-4" />
+            </Button>
+
+            {/* Collaboration */}
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
+                >
+                  <Users className="w-4 h-4 mr-2" />
+                  Collaborer ({collaborators.length})
+                </Button>
+              </DialogTrigger>
+              <DialogContent className={isDarkMode ? 'bg-gray-800 border-gray-700' : ''}>
+                <DialogHeader>
+                  <DialogTitle className={isDarkMode ? 'text-white' : ''}>Gestion des Collaborateurs</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div className="flex space-x-2">
+                    <Input
+                      placeholder="Email du collaborateur"
+                      value={collaboratorEmail}
+                      onChange={(e) => setCollaboratorEmail(e.target.value)}
+                      className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                    />
+                    <Button onClick={addCollaborator} size="sm">
+                      <Mail className="w-4 h-4 mr-2" />
+                      Inviter
+                    </Button>
+                  </div>
+                  
+                  {collaborators.length > 0 && (
+                    <div className="space-y-2">
+                      <h4 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Collaborateurs actifs:</h4>
+                      {collaborators.map((email, index) => (
+                        <div key={index} className={`flex items-center justify-between p-2 rounded border ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50'}`}>
+                          <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{email}</span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeCollaborator(email)}
+                            className={`p-1 h-6 w-6 ${isDarkMode ? 'text-gray-400 hover:text-red-400' : 'text-gray-400 hover:text-red-500'}`}
+                          >
+                            <X className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            <Button variant="outline" size="sm" className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}>
               <RotateCcw className="w-4 h-4 mr-2" />
               Reset
             </Button>
@@ -828,12 +959,42 @@ export default function FormBuilderFixed() {
             </Button>
           </div>
         </div>
+
+        {/* Help Overlay */}
+        {showHelp && (
+          <div className={`mt-4 p-4 rounded-lg border ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-blue-50 border-blue-200'}`}>
+            <div className="flex items-start space-x-3">
+              <HelpCircle className={`w-5 h-5 mt-0.5 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
+              <div className="space-y-3">
+                <h3 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-blue-900'}`}>Guide d'utilisation</h3>
+                <div className="space-y-2 text-sm">
+                  <div className={`flex items-center space-x-2 ${isDarkMode ? 'text-gray-300' : 'text-blue-800'}`}>
+                    <ArrowRight className="w-4 h-4" />
+                    <span>Glissez les composants de la palette vers la zone de construction</span>
+                  </div>
+                  <div className={`flex items-center space-x-2 ${isDarkMode ? 'text-gray-300' : 'text-blue-800'}`}>
+                    <ArrowRight className="w-4 h-4" />
+                    <span>Cliquez sur un composant pour accéder à ses propriétés</span>
+                  </div>
+                  <div className={`flex items-center space-x-2 ${isDarkMode ? 'text-gray-300' : 'text-blue-800'}`}>
+                    <ArrowRight className="w-4 h-4" />
+                    <span>Glissez des éléments dans les groupes pour les organiser</span>
+                  </div>
+                  <div className={`flex items-center space-x-2 ${isDarkMode ? 'text-gray-300' : 'text-blue-800'}`}>
+                    <ArrowRight className="w-4 h-4" />
+                    <span>Utilisez l'onglet JSON pour voir le schéma généré</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="flex h-[calc(100vh-80px)]">
-        <div className="w-80 bg-white border-r overflow-y-auto">
+        <div className={`w-80 border-r overflow-y-auto ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
           <div className="p-4">
-            <h3 className="font-semibold text-gray-900 mb-4">Composants</h3>
+            <h3 className={`font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Composants</h3>
             <div className="grid grid-cols-1 gap-2">
               {Object.entries(ComponentTypes).map(([type, config]) => (
                 <DraggableComponent
@@ -849,9 +1010,9 @@ export default function FormBuilderFixed() {
         </div>
 
         <div className="flex-1 p-6">
-          <div className="bg-white rounded-lg border h-full">
-            <div className="p-4 border-b">
-              <h3 className="font-semibold text-gray-900">Zone de construction</h3>
+          <div className={`rounded-lg border h-full ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
+            <div className={`p-4 border-b ${isDarkMode ? 'border-gray-700' : ''}`}>
+              <h3 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Zone de construction</h3>
             </div>
             <div 
               ref={formBuilderRef}
@@ -866,7 +1027,7 @@ export default function FormBuilderFixed() {
               }}
             >
               {formData.fields.length === 0 ? (
-                <div className="text-center py-16 text-gray-400 border-2 border-dashed rounded-lg">
+                <div className={`text-center py-16 border-2 border-dashed rounded-lg ${isDarkMode ? 'text-gray-400 border-gray-600' : 'text-gray-400 border-gray-300'}`}>
                   <Type className="w-12 h-12 mx-auto mb-4 opacity-50" />
                   <p className="text-lg font-medium mb-2">Commencez à construire</p>
                   <p className="text-sm">Glissez des composants ici pour créer votre formulaire</p>
@@ -881,6 +1042,7 @@ export default function FormBuilderFixed() {
                       onRemove={() => removeField(field.Id)}
                       isSelected={selectedField?.Id === field.Id}
                       addField={addField}
+                      isDarkMode={isDarkMode}
                     />
                   ))}
                 </div>
@@ -889,11 +1051,11 @@ export default function FormBuilderFixed() {
           </div>
         </div>
 
-        <div className="w-80 bg-white border-l overflow-y-auto">
+        <div className={`w-80 border-l overflow-y-auto ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
           <Tabs defaultValue="properties" className="h-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="properties">Propriétés</TabsTrigger>
-              <TabsTrigger value="json">JSON</TabsTrigger>
+            <TabsList className={`grid w-full grid-cols-2 ${isDarkMode ? 'bg-gray-700' : ''}`}>
+              <TabsTrigger value="properties" className={isDarkMode ? 'data-[state=active]:bg-gray-600 text-gray-300' : ''}>Propriétés</TabsTrigger>
+              <TabsTrigger value="json" className={isDarkMode ? 'data-[state=active]:bg-gray-600 text-gray-300' : ''}>JSON</TabsTrigger>
             </TabsList>
             
             <TabsContent value="properties" className="h-full">
@@ -903,7 +1065,7 @@ export default function FormBuilderFixed() {
                   onUpdate={(updates) => updateFieldInFormData(selectedField.Id, updates)}
                 />
               ) : (
-                <div className="p-6 text-center text-gray-500">
+                <div className={`p-6 text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                   <Settings className="w-12 h-12 mx-auto mb-4 opacity-50" />
                   <p>Sélectionnez un composant pour voir ses propriétés</p>
                 </div>
@@ -912,11 +1074,11 @@ export default function FormBuilderFixed() {
             
             <TabsContent value="json" className="h-full p-4">
               <div className="space-y-4">
-                <h3 className="font-semibold text-gray-900">Schema JSON</h3>
+                <h3 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Schema JSON</h3>
                 <Textarea
                   value={JSON.stringify(formData, null, 2)}
                   readOnly
-                  className="h-96 text-xs font-mono"
+                  className={`h-96 text-xs font-mono ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-300' : ''}`}
                 />
               </div>
             </TabsContent>
