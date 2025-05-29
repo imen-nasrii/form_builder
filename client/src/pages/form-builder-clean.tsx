@@ -160,10 +160,13 @@ export default function FormBuilderClean() {
   }, [formResponse]);
 
   const addField = (type: string) => {
+    // Vérifier si c'est un composant personnalisé
+    const isCustomComponent = customComponents.some(comp => comp.type === type);
+    
     const newField: FormField = {
       Id: `field_${Date.now()}`,
       Type: type as any,
-      Label: `New ${type}`,
+      Label: isCustomComponent ? customComponents.find(comp => comp.type === type)?.label || `New ${type}` : `New ${type}`,
       DataField: "",
       Entity: "",
       Width: "",
@@ -183,6 +186,11 @@ export default function FormBuilderClean() {
           padding: '16px',
           borderRadius: '8px'
         }
+      }),
+      // Marquer les composants personnalisés
+      ...(isCustomComponent && {
+        IsCustom: true,
+        CustomType: type
       })
     };
     
@@ -207,6 +215,9 @@ export default function FormBuilderClean() {
           : f
       )
     }));
+    
+    // Sélectionner le nouveau champ ajouté au groupe
+    setSelectedField(field);
   };
 
   const updateField = (fieldId: string, updates: Partial<FormField>) => {
@@ -535,16 +546,27 @@ export default function FormBuilderClean() {
                       ) : (
                         /* Render form fields */
                         <div className="space-y-4">
-                          {formData.fields.map((field) => (
-                            <div
-                              key={field.Id}
-                              onClick={() => setSelectedField(field)}
-                              className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-                                selectedField?.Id === field.Id
-                                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                                  : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
-                              }`}
-                            >
+                          {formData.fields.map((field) => 
+                            field.Type === 'GROUP' ? (
+                              <GroupContainer
+                                key={field.Id}
+                                field={field}
+                                onUpdateField={updateField}
+                                onRemoveField={removeField}
+                                onSelectField={setSelectedField}
+                                onAddFieldToGroup={addFieldToGroup}
+                                isSelected={selectedField?.Id === field.Id}
+                              />
+                            ) : (
+                              <div
+                                key={field.Id}
+                                onClick={() => setSelectedField(field)}
+                                className={`p-4 border rounded-lg cursor-pointer transition-colors ${
+                                  selectedField?.Id === field.Id
+                                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
+                                }`}
+                              >
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center space-x-2">
                                   <div className={`w-3 h-3 rounded-full ${
@@ -560,7 +582,8 @@ export default function FormBuilderClean() {
                                     field.Type === 'FILEUPLOAD' ? 'bg-indigo-500' :
                                     field.Type === 'ACTION' ? 'bg-orange-600' :
                                     field.Type === 'DIALOG' ? 'bg-purple-600' :
-                                    field.Type === 'GROUP' ? 'bg-emerald-600' : 'bg-gray-500'
+                                    field.Type === 'GROUP' ? 'bg-emerald-600' :
+                                    field.IsCustom ? 'bg-yellow-500' : 'bg-gray-500'
                                   }`} />
                                   <span className="font-medium">{field.Label || field.Id}</span>
                                   <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
@@ -588,8 +611,9 @@ export default function FormBuilderClean() {
                                   Entity: {field.Entity}
                                 </div>
                               )}
-                            </div>
-                          ))}
+                              </div>
+                            )
+                          )}
                         </div>
                       )}
                     </div>
