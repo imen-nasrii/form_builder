@@ -350,35 +350,9 @@ function GroupField({
     id: `group-${field.Id}`,
   });
 
-  const addChildField = (componentType: string) => {
-    const newChildField: FormField = {
-      Id: `${field.Id}_child_${Date.now()}`,
-      Type: componentType,
-      Label: `${componentType} in Group`,
-      DataField: "",
-      Entity: "",
-      Width: "",
-      Spacing: "",
-      Required: false,
-      Inline: false,
-      Outlined: false,
-      Value: ""
-    };
-
-    const updatedChildFields = [...(field.ChildFields || []), newChildField];
-    onUpdate({ ChildFields: updatedChildFields });
-  };
-
   const removeChildField = (childFieldId: string) => {
     const updatedChildFields = (field.ChildFields || []).filter(
       child => child.Id !== childFieldId
-    );
-    onUpdate({ ChildFields: updatedChildFields });
-  };
-
-  const updateChildField = (childFieldId: string, updates: Partial<FormField>) => {
-    const updatedChildFields = (field.ChildFields || []).map(child =>
-      child.Id === childFieldId ? { ...child, ...updates } : child
     );
     onUpdate({ ChildFields: updatedChildFields });
   };
@@ -440,52 +414,47 @@ function GroupField({
           {(field.ChildFields || []).length === 0 ? (
             <div className="text-center py-8 text-gray-400">
               <Square className="w-8 h-8 mx-auto mb-2 opacity-50" />
-              <p className="text-sm">Drop components here</p>
+              <p className="text-sm">Glissez des composants ici</p>
             </div>
           ) : (
-            <SortableContext 
-              items={(field.ChildFields || []).map(child => child.Id)}
-              strategy={verticalListSortingStrategy}
-            >
-              <div className="space-y-2">
-                {(field.ChildFields || []).map((childField) => (
-                  <div
-                    key={childField.Id}
-                    className="p-3 bg-white border border-gray-200 rounded shadow-sm"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <div className={`w-3 h-3 rounded-full ${
-                          childField.Type === 'TEXT' ? 'bg-blue-500' :
-                          childField.Type === 'SELECT' ? 'bg-orange-500' :
-                          childField.Type === 'CHECKBOX' ? 'bg-cyan-500' :
-                          childField.Type === 'WARNING' ? 'bg-yellow-500' :
-                          'bg-gray-500'
-                        }`} />
-                        <span className="text-sm font-medium">
-                          {childField.Label || childField.Id}
-                        </span>
-                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                          {childField.Type}
-                        </span>
-                      </div>
-                      
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          removeChildField(childField.Id);
-                        }}
-                        className="p-1 h-6 w-6 text-red-500 hover:text-red-700"
-                      >
-                        <X className="w-3 h-3" />
-                      </Button>
+            <div className="space-y-2">
+              {(field.ChildFields || []).map((childField) => (
+                <div
+                  key={childField.Id}
+                  className="p-3 bg-white border border-gray-200 rounded shadow-sm"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <div className={`w-3 h-3 rounded-full ${
+                        childField.Type === 'TEXT' ? 'bg-blue-500' :
+                        childField.Type === 'SELECT' ? 'bg-orange-500' :
+                        childField.Type === 'CHECKBOX' ? 'bg-cyan-500' :
+                        childField.Type === 'WARNING' ? 'bg-yellow-500' :
+                        'bg-gray-500'
+                      }`} />
+                      <span className="text-sm font-medium">
+                        {childField.Label || childField.Id}
+                      </span>
+                      <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                        {childField.Type}
+                      </span>
                     </div>
+                    
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeChildField(childField.Id);
+                      }}
+                      className="p-1 h-6 w-6 text-red-500 hover:text-red-700"
+                    >
+                      <X className="w-3 h-3" />
+                    </Button>
                   </div>
-                ))}
-              </div>
-            </SortableContext>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       )}
