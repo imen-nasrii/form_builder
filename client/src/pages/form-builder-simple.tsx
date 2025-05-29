@@ -16,6 +16,7 @@ import AddComponentDialog from "@/components/form-builder/add-component-dialog";
 import ComponentConfigManager from "@/components/form-builder/component-config-manager";
 import { AdvancedGroupContainer } from "@/components/form-builder/advanced-group-container";
 import { DraggableComponent } from "@/components/form-builder/draggable-component";
+import { MainDropZone } from "@/components/form-builder/main-drop-zone";
 import { 
   Save, 
   Download, 
@@ -510,13 +511,7 @@ export default function FormBuilderSimple() {
 
                 {/* Form Fields */}
                 <div className="min-h-96 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4">
-                  {formData.fields.length === 0 ? (
-                    <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-                      <Plus className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                      <p>Cliquez sur les composants du panneau de gauche pour commencer à construire votre formulaire</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
+                  <MainDropZone onDrop={addField} hasFields={formData.fields.length > 0}>
                       {formData.fields.map((field) => 
                         field.Type === 'GROUP' ? (
                           <AdvancedGroupContainer
@@ -580,8 +575,7 @@ export default function FormBuilderSimple() {
                           </div>
                         )
                       )}
-                    </div>
-                  )}
+                  </MainDropZone>
                 </div>
               </div>
             </div>
