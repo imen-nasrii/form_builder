@@ -1,0 +1,129 @@
+chunk-RPCDYKBN.js?v=c401f604:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+chunk-RPCDYKBN.js?v=c401f604:16670 Uncaught NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node.
+    at removeChildFromContainer (chunk-RPCDYKBN.js?v=c401f604:8462:23)
+    at commitDeletionEffectsOnFiber (chunk-RPCDYKBN.js?v=c401f604:17508:21)
+    at recursivelyTraverseDeletionEffects (chunk-RPCDYKBN.js?v=c401f604:17486:13)
+    at commitDeletionEffectsOnFiber (chunk-RPCDYKBN.js?v=c401f604:17534:17)
+    at commitDeletionEffects (chunk-RPCDYKBN.js?v=c401f604:17477:13)
+    at recursivelyTraverseMutationEffects (chunk-RPCDYKBN.js?v=c401f604:17674:17)
+    at commitMutationEffectsOnFiber (chunk-RPCDYKBN.js?v=c401f604:17699:15)
+    at recursivelyTraverseMutationEffects (chunk-RPCDYKBN.js?v=c401f604:17685:15)
+    at commitMutationEffectsOnFiber (chunk-RPCDYKBN.js?v=c401f604:17737:15)
+    at recursivelyTraverseMutationEffects (chunk-RPCDYKBN.js?v=c401f604:17685:15)
+chunk-RPCDYKBN.js?v=c401f604:16670 Uncaught NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node.
+    at removeChildFromContainer (chunk-RPCDYKBN.js?v=c401f604:8462:23)
+    at commitDeletionEffectsOnFiber (chunk-RPCDYKBN.js?v=c401f604:17508:21)
+    at recursivelyTraverseDeletionEffects (chunk-RPCDYKBN.js?v=c401f604:17486:13)
+    at commitDeletionEffectsOnFiber (chunk-RPCDYKBN.js?v=c401f604:17534:17)
+    at recursivelyTraverseDeletionEffects (chunk-RPCDYKBN.js?v=c401f604:17486:13)
+    at commitDeletionEffectsOnFiber (chunk-RPCDYKBN.js?v=c401f604:17577:15)
+    at recursivelyTraverseDeletionEffects (chunk-RPCDYKBN.js?v=c401f604:17486:13)
+    at commitDeletionEffectsOnFiber (chunk-RPCDYKBN.js?v=c401f604:17503:17)
+    at recursivelyTraverseDeletionEffects (chunk-RPCDYKBN.js?v=c401f604:17486:13)
+    at commitDeletionEffectsOnFiber (chunk-RPCDYKBN.js?v=c401f604:17577:15)
+chunk-RPCDYKBN.js?v=c401f604:14032 The above error occurred in the <Portal> component:
+
+    at https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-select.js?v=c401f604:949:13
+    at div
+    at https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=c401f604:42:13
+    at https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=c401f604:79:13
+    at https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=c401f604:56:13
+    at https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-LTGFKZV6.js?v=c401f604:51:15
+    at Provider (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFYO4PQK.js?v=c401f604:38:15)
+    at https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-select.js?v=c401f604:842:7
+    at _c11 (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/src/components/ui/select.tsx:208:13)
+    at div
+    at https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=c401f604:42:13
+    at https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=c401f604:79:13
+    at https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=c401f604:56:13
+    at https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-LTGFKZV6.js?v=c401f604:39:15
+    at https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-select.js?v=c401f604:753:13
+    at div
+    at https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=c401f604:79:13
+    at https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=c401f604:56:13
+    at https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-LTGFKZV6.js?v=c401f604:39:15
+    at Provider (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFYO4PQK.js?v=c401f604:38:15)
+    at https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-select.js?v=c401f604:296:58
+    at https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=c401f604:79:13
+    at https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=c401f604:56:13
+    at https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=c401f604:42:13
+    at https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-BGWTN5Y5.js?v=c401f604:258:22
+    at SelectPortal
+    at _c7 (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/src/components/ui/select.tsx:123:12)
+    at Provider (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFYO4PQK.js?v=c401f604:38:15)
+    at Provider (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFYO4PQK.js?v=c401f604:38:15)
+    at CollectionProvider (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-LTGFKZV6.js?v=c401f604:29:13)
+    at Provider (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFYO4PQK.js?v=c401f604:38:15)
+    at Provider (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFYO4PQK.js?v=c401f604:38:15)
+    at Popper (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6USCIXAQ.js?v=c401f604:1919:11)
+    at Select (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-select.js?v=c401f604:84:5)
+    at div
+    at div
+    at _c9 (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/src/components/ui/card.tsx:114:12)
+    at div
+    at _c (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at GroupConfigurator (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/src/components/form-builder/component-configurators/group-configurator.tsx:22:30)
+    at UniversalConfigurator (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/src/components/form-builder/component-configurators/universal-configurator.tsx:38:49)
+    at div
+    at div
+    at https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=c401f604:42:13
+    at https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-scroll-area.js?v=c401f604:112:13
+    at div
+    at https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=c401f604:42:13
+    at Provider (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFYO4PQK.js?v=c401f604:38:15)
+    at https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-scroll-area.js?v=c401f604:50:7
+    at _c (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/src/components/ui/scroll-area.tsx:21:11)
+    at div
+    at div
+    at div
+    at div
+    at div
+    at DndProvider2 (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-dnd.js?v=c401f604:1505:9)
+    at FormBuilderSimple (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/src/pages/form-builder-simple.tsx:52:18)
+    at Route (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=c401f604:323:16)
+    at Switch (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=c401f604:379:17)
+    at Router (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/src/App.tsx?v=BRtUQJw6NM5AGTEOnfgHs:35:42)
+    at Provider (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFYO4PQK.js?v=c401f604:38:15)
+    at TooltipProvider (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=c401f604:61:5)
+    at QueryClientProvider (https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=c401f604:2805:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-RPCDYKBN.js?v=c401f604:14032
+chunk-RPCDYKBN.js?v=c401f604:9129 Uncaught NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node.
+    at removeChildFromContainer (chunk-RPCDYKBN.js?v=c401f604:8462:23)
+    at commitDeletionEffectsOnFiber (chunk-RPCDYKBN.js?v=c401f604:17508:21)
+    at recursivelyTraverseDeletionEffects (chunk-RPCDYKBN.js?v=c401f604:17486:13)
+    at commitDeletionEffectsOnFiber (chunk-RPCDYKBN.js?v=c401f604:17534:17)
+    at commitDeletionEffects (chunk-RPCDYKBN.js?v=c401f604:17477:13)
+    at recursivelyTraverseMutationEffects (chunk-RPCDYKBN.js?v=c401f604:17674:17)
+    at commitMutationEffectsOnFiber (chunk-RPCDYKBN.js?v=c401f604:17699:15)
+    at recursivelyTraverseMutationEffects (chunk-RPCDYKBN.js?v=c401f604:17685:15)
+    at commitMutationEffectsOnFiber (chunk-RPCDYKBN.js?v=c401f604:17737:15)
+    at recursivelyTraverseMutationEffects (chunk-RPCDYKBN.js?v=c401f604:17685:15)
+chunk-RPCDYKBN.js?v=c401f604:14032 The above error occurred in the <App> component:
+
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-RPCDYKBN.js?v=c401f604:14032
+chunk-RPCDYKBN.js?v=c401f604:9129 Uncaught NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node.
+    at removeChildFromContainer (chunk-RPCDYKBN.js?v=c401f604:8462:23)
+    at commitDeletionEffectsOnFiber (chunk-RPCDYKBN.js?v=c401f604:17508:21)
+    at recursivelyTraverseDeletionEffects (chunk-RPCDYKBN.js?v=c401f604:17486:13)
+    at commitDeletionEffectsOnFiber (chunk-RPCDYKBN.js?v=c401f604:17534:17)
+    at recursivelyTraverseDeletionEffects (chunk-RPCDYKBN.js?v=c401f604:17486:13)
+    at commitDeletionEffectsOnFiber (chunk-RPCDYKBN.js?v=c401f604:17577:15)
+    at recursivelyTraverseDeletionEffects (chunk-RPCDYKBN.js?v=c401f604:17486:13)
+    at commitDeletionEffectsOnFiber (chunk-RPCDYKBN.js?v=c401f604:17503:17)
+    at recursivelyTraverseDeletionEffects (chunk-RPCDYKBN.js?v=c401f604:17486:13)
+    at commitDeletionEffectsOnFiber (chunk-RPCDYKBN.js?v=c401f604:17577:15)
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.
