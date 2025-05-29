@@ -13,7 +13,7 @@ import FormCanvas from "@/components/form-builder/form-canvas";
 import UniversalConfigurator from "@/components/form-builder/component-configurators/universal-configurator";
 import AddComponentDialog from "@/components/form-builder/add-component-dialog";
 import ComponentConfigManager from "@/components/form-builder/component-config-manager";
-import { SimpleGroupContainer } from "@/components/form-builder/simple-group-container";
+import SimpleGroupField from "@/components/form-builder/simple-group-field";
 
 import { 
   Save, 
@@ -635,14 +635,13 @@ export default function FormBuilderClean() {
                         <div className="space-y-4">
                           {formData.fields.map((field) => 
                             field.Type === 'GROUP' ? (
-                              <SimpleGroupContainer
+                              <SimpleGroupField
                                 key={field.Id}
                                 field={field}
-                                onUpdateField={updateField}
-                                onRemoveField={removeField}
-                                onSelectField={setSelectedField}
-                                onAddFieldToGroup={addFieldToGroup}
                                 isSelected={selectedField?.Id === field.Id}
+                                onSelect={() => setSelectedField(field)}
+                                onUpdate={(updates) => updateField(field.Id, updates)}
+                                onRemove={() => removeField(field.Id)}
                               />
                             ) : (
                               <div
