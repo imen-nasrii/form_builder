@@ -4,12 +4,9 @@ import { useParams } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import UniversalConfigurator from "@/components/form-builder/component-configurators/universal-configurator";
 import CleanGroupField from "@/components/form-builder/clean-group-field";
 
 import { 
@@ -22,22 +19,11 @@ import {
   ChevronRight,
   Trash2,
   Plus,
-  Grid3X3,
-  List,
-  Calendar,
-  Type,
-  CheckSquare,
-  Square,
-  Circle,
-  Users,
-  Upload as UploadIcon,
-  AlertTriangle,
   X
 } from "lucide-react";
-import type { Form } from "@shared/schema";
 import type { FormField } from "@/lib/form-types";
 
-export default function FormBuilderSimple() {
+export default function FormBuilderFinal() {
   const params = useParams();
   const formId = params.formId ? parseInt(params.formId) : null;
   const { toast } = useToast();
@@ -95,14 +81,16 @@ export default function FormBuilderSimple() {
       };
 
       if (formId) {
-        return apiRequest(`/api/forms/${formId}`, {
+        return await apiRequest(`/api/forms/${formId}`, {
           method: 'PUT',
-          body: payload
+          body: JSON.stringify(payload),
+          headers: { 'Content-Type': 'application/json' }
         });
       } else {
-        return apiRequest('/api/forms', {
+        return await apiRequest('/api/forms', {
           method: 'POST',
-          body: payload
+          body: JSON.stringify(payload),
+          headers: { 'Content-Type': 'application/json' }
         });
       }
     },
@@ -124,7 +112,7 @@ export default function FormBuilderSimple() {
 
   // Charger les données du formulaire
   useEffect(() => {
-    if (form?.definition) {
+    if (form && form.definition) {
       setFormData(form.definition);
     }
   }, [form]);
@@ -449,10 +437,53 @@ export default function FormBuilderSimple() {
             </h2>
             
             {selectedField ? (
-              <UniversalConfigurator
-                field={selectedField}
-                onUpdate={(updates) => updateField(selectedField.Id, updates)}
-              />
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="fieldLabel" className="text-sm">Label</Label>
+                  <Input
+                    id="fieldLabel"
+                    value={selectedField.Label || ''}
+                    onChange={(e) => updateField(selectedField.Id, { Label: e.target.value })}
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="fieldDataField" className="text-sm">Data Field</Label>
+                  <Input
+                    id="fieldDataField"
+                    value={selectedField.DataField || ''}
+                    onChange={(e) => updateField(selectedField.Id, { DataField: e.target.value })}
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="fieldEntity" className="text-sm">Entity</Label>
+                  <Input
+                    id="fieldEntity"
+                    value={selectedField.Entity || ''}
+                    onChange={(e) => updateField(selectedField.Id, { Entity: e.target.value })}
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="fieldWidth" className="text-sm">Width</Label>
+                  <Input
+                    id="fieldWidth"
+                    value={selectedField.Width || ''}
+                    onChange={(e) => updateField(selectedField.Id, { Width: e.target.value })}
+                    className="mt-1"
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="fieldRequired"
+                    checked={selectedField.Required || false}
+                    onChange={(e) => updateField(selectedField.Id, { Required: e.target.checked })}
+                  />
+                  <Label htmlFor="fieldRequired" className="text-sm">Required</Label>
+                </div>
+              </div>
             ) : (
               <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                 <Settings className="w-12 h-12 mx-auto mb-4 opacity-50" />
