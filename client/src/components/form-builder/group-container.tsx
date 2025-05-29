@@ -124,12 +124,28 @@ export const GroupContainer: React.FC<GroupContainerProps> = ({
               }}
             >
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">
-                  {child.Label || child.label || `${child.Type || child.type}`}
-                </span>
-                <span className="text-xs text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
-                  {child.Type || child.type}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium">
+                    {child.Label || child.label || `${child.Type || child.type}`}
+                  </span>
+                  <span className="text-xs text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+                    {child.Type || child.type}
+                  </span>
+                </div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // Supprimer l'enfant du groupe
+                    const updatedChildren = children.filter(c => c.Id !== child.Id);
+                    onUpdateField(field.Id, { 
+                      Children: updatedChildren,
+                      children: updatedChildren 
+                    });
+                  }}
+                  className="text-red-500 hover:text-red-700 p-1"
+                >
+                  <Trash2 className="w-3 h-3" />
+                </button>
               </div>
               {child.DataField && (
                 <p className="text-xs text-gray-500 mt-1">
