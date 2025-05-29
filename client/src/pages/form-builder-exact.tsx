@@ -39,7 +39,15 @@ import {
   Square,
   Diamond,
   AlertTriangle,
-  Zap
+  Zap,
+  Type,
+  Calendar,
+  CheckSquare,
+  Circle,
+  Upload,
+  Menu,
+  MousePointer,
+  X
 } from "lucide-react";
 
 // Interface pour les champs du formulaire
@@ -320,13 +328,13 @@ export default function FormBuilderExact() {
   // Composants organisés par catégories comme dans l'image
   const componentCategories = {
     "Input Controls": [
-      { type: 'TEXT', label: 'Text', icon: Square, color: 'blue' },
-      { type: 'TEXTAREA', label: 'Textarea', icon: Square, color: 'blue' },
-      { type: 'SELECT', label: 'Select', icon: Square, color: 'blue' },
-      { type: 'CHECKBOX', label: 'Checkbox', icon: Square, color: 'blue' },
-      { type: 'RADIOGRP', label: 'Radio', icon: Square, color: 'blue' },
-      { type: 'DATEPICKER', label: 'Date', icon: Square, color: 'blue' },
-      { type: 'FILEUPLOAD', label: 'File', icon: Square, color: 'blue' }
+      { type: 'TEXT', label: 'Text', icon: Type, color: 'blue' },
+      { type: 'TEXTAREA', label: 'Textarea', icon: Menu, color: 'blue' },
+      { type: 'SELECT', label: 'Select', icon: ChevronDown, color: 'blue' },
+      { type: 'CHECKBOX', label: 'Checkbox', icon: CheckSquare, color: 'blue' },
+      { type: 'RADIOGRP', label: 'Radio', icon: Circle, color: 'blue' },
+      { type: 'DATEPICKER', label: 'Date', icon: Calendar, color: 'blue' },
+      { type: 'FILEUPLOAD', label: 'File', icon: Upload, color: 'blue' }
     ],
     "Layout Components": [
       { type: 'GROUP', label: 'Group', icon: Square, color: 'purple' },
@@ -337,8 +345,8 @@ export default function FormBuilderExact() {
       { type: 'LSTLKP', label: 'List Lookup', icon: List, color: 'green' }
     ],
     "Action & Validation": [
-      { type: 'ACTION', label: 'Action', icon: Zap, color: 'red' },
-      { type: 'ERROR', label: 'Error', icon: Diamond, color: 'red' },
+      { type: 'ACTION', label: 'Action', icon: MousePointer, color: 'red' },
+      { type: 'ERROR', label: 'Error', icon: X, color: 'red' },
       { type: 'WARNING', label: 'Warning', icon: AlertTriangle, color: 'yellow' }
     ]
   };
