@@ -9,10 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import FormCanvas from "@/components/form-builder/form-canvas";
 import UniversalConfigurator from "@/components/form-builder/component-configurators/universal-configurator";
-import AddComponentDialog from "@/components/form-builder/add-component-dialog";
-import ComponentConfigManager from "@/components/form-builder/component-config-manager";
 import SimpleGroupField from "@/components/form-builder/simple-group-field";
 
 import { 
@@ -477,7 +474,15 @@ export default function FormBuilderClean() {
                 {expandedSections.inputControls && (
                   <div className="mt-2 space-y-2">
                     {componentTypes.map(component => (
-                      <DraggableComponent key={component.type} component={component} />
+                      <Button
+                        key={component.type}
+                        variant="outline"
+                        size="sm"
+                        onClick={() => addField(component.type)}
+                        className="w-full justify-start text-xs h-8"
+                      >
+                        <span className="ml-2">{component.label}</span>
+                      </Button>
                     ))}
                   </div>
                 )}
@@ -602,8 +607,7 @@ export default function FormBuilderClean() {
             {/* Form Canvas */}
             <div className="flex-1 p-6 overflow-y-auto">
               <div className="max-w-4xl mx-auto">
-                <DropZone>
-                  <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 min-h-96">
+                <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 min-h-96">
                     <div className="border-b border-gray-200 dark:border-gray-700 p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
@@ -704,7 +708,7 @@ export default function FormBuilderClean() {
                       )}
                     </div>
                   </div>
-                </DropZone>
+                </div>
               </div>
             </div>
           </div>
