@@ -81,17 +81,9 @@ export default function FormBuilderFinal() {
       };
 
       if (formId) {
-        return await apiRequest(`/api/forms/${formId}`, {
-          method: 'PUT',
-          body: JSON.stringify(payload),
-          headers: { 'Content-Type': 'application/json' }
-        });
+        return await apiRequest(`/api/forms/${formId}`, 'PUT', payload);
       } else {
-        return await apiRequest('/api/forms', {
-          method: 'POST',
-          body: JSON.stringify(payload),
-          headers: { 'Content-Type': 'application/json' }
-        });
+        return await apiRequest('/api/forms', 'POST', payload);
       }
     },
     onSuccess: () => {
@@ -112,8 +104,8 @@ export default function FormBuilderFinal() {
 
   // Charger les données du formulaire
   useEffect(() => {
-    if (form && form.definition) {
-      setFormData(form.definition);
+    if (form && (form as any).definition) {
+      setFormData((form as any).definition);
     }
   }, [form]);
 
