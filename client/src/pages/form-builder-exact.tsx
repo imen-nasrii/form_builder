@@ -649,13 +649,26 @@ export default function FormBuilderExact() {
     }
   };
 
-  // Fonction pour mettre à jour un champ
+  // Fonction pour mettre à jour un champ (y compris dans les groupes)
   const updateField = (fieldId: string, updates: Partial<FormField>) => {
+    const updateFieldRecursive = (fields: FormField[]): FormField[] => {
+      return fields.map(field => {
+        if (field.Id === fieldId) {
+          return { ...field, ...updates };
+        }
+        if (field.ChildFields && field.ChildFields.length > 0) {
+          return {
+            ...field,
+            ChildFields: updateFieldRecursive(field.ChildFields)
+          };
+        }
+        return field;
+      });
+    };
+
     setFormData(prev => ({
       ...prev,
-      fields: prev.fields.map(field =>
-        field.Id === fieldId ? { ...field, ...updates } : field
-      )
+      fields: updateFieldRecursive(prev.fields)
     }));
     
     if (selectedField?.Id === fieldId) {
@@ -663,12 +676,25 @@ export default function FormBuilderExact() {
     }
   };
 
-  // Fonction pour supprimer un champ
+  // Fonction pour supprimer un champ (y compris dans les groupes)
   const removeField = (fieldId: string) => {
+    const removeFieldRecursive = (fields: FormField[]): FormField[] => {
+      return fields.filter(field => field.Id !== fieldId).map(field => {
+        if (field.ChildFields && field.ChildFields.length > 0) {
+          return {
+            ...field,
+            ChildFields: removeFieldRecursive(field.ChildFields)
+          };
+        }
+        return field;
+      });
+    };
+
     setFormData(prev => ({
       ...prev,
-      fields: prev.fields.filter(field => field.Id !== fieldId)
+      fields: removeFieldRecursive(prev.fields)
     }));
+    
     if (selectedField?.Id === fieldId) {
       setSelectedField(null);
     }
