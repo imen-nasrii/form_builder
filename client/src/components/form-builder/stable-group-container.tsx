@@ -56,14 +56,14 @@ export const StableGroupContainer: React.FC<StableGroupContainerProps> = ({
     }
   }, [field.Id, onAddFieldToGroup]);
 
-  const [{ isOver, canDrop }, drop] = useDrop({
+  const [{ isOver, canDrop }, drop] = useDrop(() => ({
     accept: 'component',
     drop: handleDrop,
     collect: (monitor) => ({
       isOver: monitor.isOver(),
       canDrop: monitor.canDrop(),
     }),
-  });
+  }), [handleDrop]);
 
   const containerClass = `
     relative border-2 border-dashed rounded-lg p-4 min-h-[120px] transition-all
