@@ -13,7 +13,7 @@ import FormCanvas from "@/components/form-builder/form-canvas";
 import UniversalConfigurator from "@/components/form-builder/component-configurators/universal-configurator";
 import AddComponentDialog from "@/components/form-builder/add-component-dialog";
 import ComponentConfigManager from "@/components/form-builder/component-config-manager";
-import { GroupContainer } from "@/components/form-builder/group-container";
+import { SimpleGroupContainer } from "@/components/form-builder/simple-group-container";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { 
@@ -548,7 +548,7 @@ export default function FormBuilderClean() {
                         <div className="space-y-4">
                           {formData.fields.map((field) => 
                             field.Type === 'GROUP' ? (
-                              <GroupContainer
+                              <SimpleGroupContainer
                                 key={field.Id}
                                 field={field}
                                 onUpdateField={updateField}
