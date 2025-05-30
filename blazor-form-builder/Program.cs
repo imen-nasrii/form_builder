@@ -1,8 +1,7 @@
 using FormBuilderApp.Data;
 using FormBuilderApp.Services;
-using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
-using Blazored.LocalStorage;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,17 +12,14 @@ builder.Services.AddServerSideBlazor();
 // Add MudBlazor services
 builder.Services.AddMudServices();
 
-// Add LocalStorage
-builder.Services.AddBlazoredLocalStorage();
-
 // Add Entity Framework
-builder.Services.AddDbContext<FormBuilderContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add application services
 builder.Services.AddScoped<IFormService, FormService>();
-builder.Services.AddScoped<IComponentService, ComponentService>();
 builder.Services.AddScoped<IValidationService, ValidationService>();
+builder.Services.AddScoped<IComponentService, ComponentService>();
 
 var app = builder.Build();
 
@@ -42,5 +38,12 @@ app.UseRouting();
 app.MapRazorPages();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
+
+// Ensure database is created
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    context.Database.EnsureCreated();
+}
 
 app.Run();

@@ -1,0 +1,151 @@
+html, body {
+    font-family: 'Roboto', sans-serif;
+}
+
+#blazor-error-ui {
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}
+
+.field-item {
+    border: 2px solid transparent;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 8px 0;
+    background: #fafafa;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.field-item:hover {
+    background: #f0f0f0;
+    border-color: #e0e0e0;
+}
+
+.field-item.selected {
+    border-color: #1976d2;
+    background: #e3f2fd;
+}
+
+.component-palette {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.component-item {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin: 4px 0;
+    background: white;
+    cursor: grab;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.component-item:hover {
+    background: #f5f5f5;
+    border-color: #bdbdbd;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.component-item:active {
+    cursor: grabbing;
+}
+
+.drop-zone {
+    min-height: 400px;
+    border: 2px dashed #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    background: #fafafa;
+    transition: all 0.2s ease;
+}
+
+.drop-zone.drag-over {
+    border-color: #1976d2;
+    background: #e3f2fd;
+}
+
+.drop-zone.can-drop {
+    border-color: #4caf50;
+    background: #e8f5e8;
+}
+
+.drop-zone.cannot-drop {
+    border-color: #f44336;
+    background: #ffebee;
+}
+
+.properties-panel {
+    background: white;
+    border-left: 1px solid #e0e0e0;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.json-viewer {
+    background: #2d2d2d;
+    color: #ffffff;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.4;
+    padding: 16px;
+    border-radius: 4px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.validation-error {
+    color: #f44336;
+    font-weight: 500;
+}
+
+.validation-warning {
+    color: #ff9800;
+    font-weight: 500;
+}
+
+.validation-success {
+    color: #4caf50;
+    font-weight: 500;
+}
+
+.font-family-monospace {
+    font-family: 'Courier New', monospace !important;
+}
+
+.tutorial-highlight {
+    position: relative;
+    z-index: 1000;
+    box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.3);
+    border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+    .component-palette {
+        max-height: 40vh;
+    }
+    
+    .properties-panel {
+        height: auto;
+        border-left: none;
+        border-top: 1px solid #e0e0e0;
+    }
+}
