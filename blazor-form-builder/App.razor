@@ -1,0 +1,13 @@
+@using blazor_form_builder.Client.Shared
+
+<Router AppAssembly="@typeof(App).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+    </Found>
+    <NotFound>
+        <PageTitle>Non trouvé</PageTitle>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <p role="alert">Désolé, il n'y a rien à cette adresse.</p>
+        </LayoutView>
+    </NotFound>
+</Router>
