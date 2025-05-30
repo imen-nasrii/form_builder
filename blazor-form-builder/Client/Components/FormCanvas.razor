@@ -1,0 +1,81 @@
+@using blazor_form_builder.Client.Models
+@using blazor_form_builder.Client.Services
+@using MudBlazor
+@inject IComponentService ComponentService
+
+<MudPaper Class="pa-4 drop-zone @GetDropZoneClass()" 
+          @ondrop="OnDrop" 
+          @ondragover="OnDragOver" 
+          @ondragenter="OnDragEnter" 
+          @ondragleave="OnDragLeave">
+    
+    @if (!FormFields.Any())
+    {
+        <div class="text-center pa-8">
+            <MudIcon Icon="@Icons.Material.Filled.Add" Size="Size.Large" Color="Color.Secondary" Class="mb-4" />
+            <MudText Typo="Typo.h6" Color="Color.Secondary">Zone de construction</MudText>
+            <MudText Typo="Typo.body2" Color="Color.Secondary">
+                Glissez-déposez des composants ici pour créer votre formulaire
+            </MudText>
+        </div>
+    }
+    else
+    {
+        @foreach (var field in FormFields)
+        {
+            <FieldRenderer Field="@field" 
+                          OnFieldClick="@OnFieldSelected" 
+                          OnFieldDelete="@OnFieldDeleted" 
+                          IsSelected="@(SelectedField?.Id == field.Id)" />
+        }
+    }
+</MudPaper>
+
+@code {
+    [Parameter] public List<FormField> FormFields { get; set; } = new();
+    [Parameter] public FormField? SelectedField { get; set; }
+    [Parameter] public string? DraggedComponentType { get; set; }
+    [Parameter] public EventCallback<FormField> OnFieldSelected { get; set; }
+    [Parameter] public EventCallback<FormField> OnFieldDeleted { get; set; }
+    [Parameter] public EventCallback<string> OnComponentDropped { get; set; }
+
+    private bool isDragOver = false;
+
+    private async Task OnDrop(DragEventArgs e)
+    {
+        isDragOver = false;
+        
+        if (!string.IsNullOrEmpty(DraggedComponentType))
+        {
+            await OnComponentDropped.InvokeAsync(DraggedComponentType);
+        }
+        
+        StateHasChanged();
+    }
+
+    private void OnDragOver(DragEventArgs e)
+    {
+        e.DataTransfer.DropEffect = "copy";
+    }
+
+    private void OnDragEnter(DragEventArgs e)
+    {
+        isDragOver = true;
+        StateHasChanged();
+    }
+
+    private void OnDragLeave(DragEventArgs e)
+    {
+        isDragOver = false;
+        StateHasChanged();
+    }
+
+    private string GetDropZoneClass()
+    {
+        if (isDragOver && !string.IsNullOrEmpty(DraggedComponentType))
+        {
+            return "drag-over can-drop";
+        }
+        return string.Empty;
+    }
+}
