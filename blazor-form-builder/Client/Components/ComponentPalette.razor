@@ -1,0 +1,142 @@
+@using blazor_form_builder.Client.Models
+@using blazor_form_builder.Client.Services
+@using MudBlazor
+@inject IComponentService ComponentService
+
+<MudPaper Class="pa-4 component-palette">
+    <div class="d-flex align-center justify-space-between mb-4">
+        <MudText Typo="Typo.h6">Composants</MudText>
+        <MudButton Variant="Variant.Outlined" 
+                  Size="Size.Small" 
+                  StartIcon="@Icons.Material.Filled.Add"
+                  OnClick="OpenAddComponentDialog">
+            Ajouter
+        </MudButton>
+    </div>
+
+    @foreach (var category in componentCategories)
+    {
+        <MudExpansionPanels Class="mb-2">
+            <MudExpansionPanel IsInitiallyExpanded="true">
+                <TitleContent>
+                    <div class="d-flex align-center">
+                        <MudIcon Icon="@category.Icon" Class="mr-2" />
+                        <MudText Typo="Typo.subtitle1">@category.Name</MudText>
+                    </div>
+                </TitleContent>
+                <ChildContent>
+                    @foreach (var component in category.Components)
+                    {
+                        <div class="component-item"
+                             draggable="true"
+                             @ondragstart="@((e) => OnDragStart(e, component.Type))"
+                             @ondragend="OnDragEnd">
+                            <MudIcon Icon="@component.Icon" 
+                                    Color="@GetMudColor(component.Color)" 
+                                    Class="mr-2" />
+                            <div class="flex-grow-1">
+                                <MudText Typo="Typo.body2" Class="font-weight-bold">@component.Label</MudText>
+                                <MudText Typo="Typo.caption" Color="Color.Secondary">@component.Description</MudText>
+                            </div>
+                        </div>
+                    }
+                </ChildContent>
+            </MudExpansionPanel>
+        </MudExpansionPanels>
+    }
+
+    @if (customComponents.Any())
+    {
+        <MudExpansionPanels Class="mb-2">
+            <MudExpansionPanel IsInitiallyExpanded="true">
+                <TitleContent>
+                    <div class="d-flex align-center">
+                        <MudIcon Icon="@Icons.Material.Filled.Extension" Class="mr-2" />
+                        <MudText Typo="Typo.subtitle1">Composants personnalisés</MudText>
+                    </div>
+                </TitleContent>
+                <ChildContent>
+                    @foreach (var component in customComponents)
+                    {
+                        <div class="component-item d-flex align-center justify-space-between"
+                             draggable="true"
+                             @ondragstart="@((e) => OnDragStart(e, component.Id))"
+                             @ondragend="OnDragEnd">
+                            <div class="d-flex align-center flex-grow-1">
+                                <MudIcon Icon="@component.Icon" 
+                                        Color="@GetMudColor(component.Color)" 
+                                        Class="mr-2" />
+                                <div>
+                                    <MudText Typo="Typo.body2" Class="font-weight-bold">@component.Label</MudText>
+                                    <MudText Typo="Typo.caption" Color="Color.Secondary">Personnalisé</MudText>
+                                </div>
+                            </div>
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete" 
+                                          Size="Size.Small" 
+                                          Color="Color.Error"
+                                          OnClick="@(() => RemoveCustomComponent(component.Id))" />
+                        </div>
+                    }
+                </ChildContent>
+            </MudExpansionPanel>
+        </MudExpansionPanels>
+    }
+</MudPaper>
+
+@code {
+    [Parameter] public EventCallback<string> OnComponentDragStart { get; set; }
+    [Parameter] public EventCallback OnComponentDragEnd { get; set; }
+    [Parameter] public EventCallback OnAddComponentRequested { get; set; }
+
+    private List<ComponentCategory> componentCategories = new();
+    private List<CustomComponent> customComponents = new();
+
+    protected override void OnInitialized()
+    {
+        componentCategories = ComponentService.GetComponentCategories();
+        customComponents = ComponentService.GetCustomComponents();
+    }
+
+    private async Task OnDragStart(DragEventArgs e, string componentType)
+    {
+        await OnComponentDragStart.InvokeAsync(componentType);
+    }
+
+    private async Task OnDragEnd(DragEventArgs e)
+    {
+        await OnComponentDragEnd.InvokeAsync();
+    }
+
+    private async Task OpenAddComponentDialog()
+    {
+        await OnAddComponentRequested.InvokeAsync();
+    }
+
+    private void RemoveCustomComponent(string componentId)
+    {
+        ComponentService.RemoveCustomComponent(componentId);
+        customComponents = ComponentService.GetCustomComponents();
+        StateHasChanged();
+    }
+
+    private Color GetMudColor(string colorName)
+    {
+        return colorName switch
+        {
+            "primary" => Color.Primary,
+            "secondary" => Color.Secondary,
+            "success" => Color.Success,
+            "info" => Color.Info,
+            "warning" => Color.Warning,
+            "error" => Color.Error,
+            "dark" => Color.Dark,
+            _ => Color.Default
+        };
+    }
+
+    public void RefreshCustomComponents()
+    {
+        customComponents = ComponentService.GetCustomComponents();
+        StateHasChanged();
+    }
+}

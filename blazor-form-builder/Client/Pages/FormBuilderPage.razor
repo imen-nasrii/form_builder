@@ -1,0 +1,249 @@
+@page "/form-builder"
+@using blazor_form_builder.Client.Models
+@using blazor_form_builder.Client.Services
+@using blazor_form_builder.Client.Components
+@using MudBlazor
+@inject IFormService FormService
+@inject IValidationService ValidationService
+@inject IComponentService ComponentService
+@inject ISnackbar Snackbar
+@inject IJSRuntime JSRuntime
+
+<MudContainer MaxWidth="MaxWidth.False" Class="pa-0">
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" />
+        <MudSpacer />
+        <MudText Typo="Typo.h6">Form Builder</MudText>
+        <MudSpacer />
+        
+        <MudButton Variant="Variant.Outlined" 
+                  StartIcon="@Icons.Material.Filled.Help"
+                  Color="Color.Info"
+                  OnClick="ShowTutorial"
+                  Class="mr-2">
+            Tutoriel
+        </MudButton>
+        
+        <MudButton Variant="Variant.Outlined" 
+                  StartIcon="@Icons.Material.Filled.Clear"
+                  OnClick="ClearForm"
+                  Class="mr-2">
+            Vider
+        </MudButton>
+        
+        <MudButton Variant="Variant.Filled" 
+                  StartIcon="@Icons.Material.Filled.Save"
+                  Color="Color.Primary"
+                  OnClick="SaveForm"
+                  Disabled="@isSaving">
+            @if (isSaving)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" />
+                <span class="ml-2">Sauvegarde...</span>
+            }
+            else
+            {
+                <span>Sauvegarder</span>
+            }
+        </MudButton>
+    </MudAppBar>
+
+    <MudGrid Class="ma-0" Style="height: calc(100vh - 64px);">
+        <!-- Palette de composants -->
+        <MudItem xs="12" md="3" Class="pa-2" Style="height: 100%; overflow-y: auto;">
+            <ComponentPalette OnComponentDragStart="OnComponentDragStart"
+                            OnComponentDragEnd="OnComponentDragEnd"
+                            OnAddComponentRequested="ShowAddComponentDialog" 
+                            @ref="componentPalette" />
+        </MudItem>
+
+        <!-- Zone de construction -->
+        <MudItem xs="12" md="6" Class="pa-2" Style="height: 100%; overflow-y: auto;">
+            <MudTabs Elevation="0" Rounded="true" ApplyEffectsToContainer="true">
+                <MudTabPanel Text="Constructeur" Icon="@Icons.Material.Filled.Build">
+                    <FormCanvas FormFields="@currentForm.Fields"
+                              SelectedField="@selectedField"
+                              DraggedComponentType="@draggedComponentType"
+                              OnFieldSelected="OnFieldSelected"
+                              OnFieldDeleted="OnFieldDeleted"
+                              OnComponentDropped="OnComponentDropped" />
+                </MudTabPanel>
+                
+                <MudTabPanel Text="JSON" Icon="@Icons.Material.Filled.Code">
+                    <JsonValidator FormData="@currentForm" 
+                                 CustomComponents="@customComponents" />
+                </MudTabPanel>
+            </MudTabs>
+        </MudItem>
+
+        <!-- Panneau de propriétés -->
+        <MudItem xs="12" md="3" Class="pa-2 properties-panel" Style="height: 100%; overflow-y: auto;">
+            @if (selectedField != null)
+            {
+                <PropertiesPanel Field="@selectedField" 
+                               OnFieldUpdated="OnFieldUpdated" />
+            }
+            else
+            {
+                <MudPaper Class="pa-4 text-center">
+                    <MudIcon Icon="@Icons.Material.Filled.Settings" Size="Size.Large" Color="Color.Secondary" Class="mb-4" />
+                    <MudText Typo="Typo.h6" Color="Color.Secondary">Propriétés</MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Secondary">
+                        Sélectionnez un composant pour voir ses propriétés
+                    </MudText>
+                </MudPaper>
+            }
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+<!-- Dialogs -->
+<AddComponentDialog IsOpen="@showAddComponentDialog" 
+                   IsOpenChanged="@((open) => showAddComponentDialog = open)"
+                   OnComponentAdded="OnCustomComponentAdded" />
+
+<TutorialDialog IsOpen="@showTutorial" 
+               IsOpenChanged="@((open) => showTutorial = open)" />
+
+@code {
+    private FormDefinition currentForm = new();
+    private FormField? selectedField;
+    private string? draggedComponentType;
+    private List<CustomComponent> customComponents = new();
+    private bool showAddComponentDialog = false;
+    private bool showTutorial = false;
+    private bool isSaving = false;
+    private ComponentPalette? componentPalette;
+
+    protected override void OnInitialized()
+    {
+        currentForm = new FormDefinition
+        {
+            MenuId = $"FORM_{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}",
+            Label = "Nouveau formulaire",
+            FormWidth = "700px",
+            Layout = "PROCESS",
+            Fields = new List<FormField>()
+        };
+        
+        customComponents = ComponentService.GetCustomComponents();
+    }
+
+    private void OnComponentDragStart(string componentType)
+    {
+        draggedComponentType = componentType;
+    }
+
+    private void OnComponentDragEnd()
+    {
+        draggedComponentType = null;
+    }
+
+    private void OnComponentDropped(string componentType)
+    {
+        var newField = ComponentService.CreateDefaultField(componentType);
+        currentForm.Fields.Add(newField);
+        selectedField = newField;
+        draggedComponentType = null;
+        StateHasChanged();
+    }
+
+    private void OnFieldSelected(FormField field)
+    {
+        selectedField = field;
+        StateHasChanged();
+    }
+
+    private void OnFieldDeleted(FormField field)
+    {
+        currentForm.Fields.Remove(field);
+        if (selectedField?.Id == field.Id)
+        {
+            selectedField = null;
+        }
+        StateHasChanged();
+    }
+
+    private void OnFieldUpdated(FormField updatedField)
+    {
+        // Le champ est déjà une référence, donc les modifications sont automatiquement appliquées
+        StateHasChanged();
+        Snackbar.Add("Propriétés mises à jour", Severity.Success);
+    }
+
+    private void ShowAddComponentDialog()
+    {
+        showAddComponentDialog = true;
+    }
+
+    private void OnCustomComponentAdded(CustomComponent component)
+    {
+        ComponentService.AddCustomComponent(component);
+        customComponents = ComponentService.GetCustomComponents();
+        componentPalette?.RefreshCustomComponents();
+        Snackbar.Add($"Composant '{component.Label}' ajouté avec succès", Severity.Success);
+    }
+
+    private void ShowTutorial()
+    {
+        showTutorial = true;
+    }
+
+    private async Task ClearForm()
+    {
+        currentForm = new FormDefinition
+        {
+            MenuId = $"FORM_{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}",
+            Label = "Nouveau formulaire",
+            FormWidth = "700px",
+            Layout = "PROCESS",
+            Fields = new List<FormField>()
+        };
+        selectedField = null;
+        StateHasChanged();
+        Snackbar.Add("Formulaire vidé", Severity.Info);
+    }
+
+    private async Task SaveForm()
+    {
+        isSaving = true;
+        StateHasChanged();
+
+        try
+        {
+            var validationErrors = ValidationService.ValidateForm(currentForm, customComponents);
+            var hasErrors = validationErrors.Any(e => e.Severity == ValidationSeverity.Error);
+
+            if (hasErrors)
+            {
+                Snackbar.Add($"Impossible de sauvegarder : {validationErrors.Count(e => e.Severity == ValidationSeverity.Error)} erreur(s) détectée(s)", Severity.Error);
+                return;
+            }
+
+            // Check if form exists by MenuId
+            var existingForm = await FormService.GetFormByMenuIdAsync(currentForm.MenuId);
+            
+            if (existingForm != null)
+            {
+                // Update existing form
+                await FormService.UpdateFormAsync(existingForm.Id, currentForm);
+                Snackbar.Add("Formulaire mis à jour avec succès", Severity.Success);
+            }
+            else
+            {
+                // Create new form
+                await FormService.CreateFormAsync(currentForm);
+                Snackbar.Add("Formulaire sauvegardé avec succès", Severity.Success);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Erreur lors de la sauvegarde : {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            isSaving = false;
+            StateHasChanged();
+        }
+    }
+}
