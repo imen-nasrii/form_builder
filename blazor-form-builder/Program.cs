@@ -1,5 +1,4 @@
-using FormBuilderApp.Data;
-using FormBuilderApp.Services;
+using blazor_form_builder.Client.Services;
 using MudBlazor.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,12 +11,13 @@ builder.Services.AddServerSideBlazor();
 // Add MudBlazor services
 builder.Services.AddMudServices();
 
-// Add Entity Framework
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Add HttpClient for API calls
+builder.Services.AddHttpClient<IFormService, FormService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:5000/");
+});
 
 // Add application services
-builder.Services.AddScoped<IFormService, FormService>();
 builder.Services.AddScoped<IValidationService, ValidationService>();
 builder.Services.AddScoped<IComponentService, ComponentService>();
 
@@ -38,12 +38,5 @@ app.UseRouting();
 app.MapRazorPages();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
-
-// Ensure database is created
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    context.Database.EnsureCreated();
-}
 
 app.Run();
