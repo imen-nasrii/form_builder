@@ -1,0 +1,415 @@
+@page "/form-builder"
+@using FormBuilderApp.Models
+@using FormBuilderApp.Services
+@using MudBlazor
+@using Newtonsoft.Json
+@inject IFormService FormService
+@inject IComponentService ComponentService
+@inject IValidationService ValidationService
+@inject ISnackbar Snackbar
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Form Builder</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="mt-4">
+    <MudPaper Class="pa-4 mb-4">
+        <MudGrid AlignItems="Center">
+            <MudItem xs="12" md="6">
+                <MudTextField @bind-Value="formData.MenuId" Label="Menu ID" Variant="Variant.Outlined" />
+                <MudTextField @bind-Value="formData.Label" Label="Label du formulaire" Variant="Variant.Outlined" Class="mt-2" />
+            </MudItem>
+            <MudItem xs="12" md="6" Class="text-right">
+                <MudButtonGroup>
+                    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Add" OnClick="CreateNewForm">
+                        Nouveau
+                    </MudButton>
+                    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Clear" OnClick="ClearForm">
+                        Vider
+                    </MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" 
+                               OnClick="SaveForm" Disabled="@isSaving">
+                        @if (isSaving)
+                        {
+                            <MudProgressCircular Size="Size.Small" Indeterminate="true" />
+                            <span class="ml-2">Sauvegarde...</span>
+                        }
+                        else
+                        {
+                            <span>Sauvegarder</span>
+                        }
+                    </MudButton>
+                </MudButtonGroup>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+
+    <MudGrid>
+        <!-- Component Palette -->
+        <MudItem xs="12" lg="3">
+            <MudPaper Class="pa-4" Style="height: 80vh; overflow-y: auto;">
+                <MudText Typo="Typo.h6" Class="mb-4">Composants</MudText>
+                
+                @foreach (var category in componentCategories)
+                {
+                    <MudExpansionPanels Elevation="0" Class="mb-2">
+                        <MudExpansionPanel Text="@category.Key">
+                            <div class="d-flex flex-column gap-2">
+                                @foreach (var component in category.Value)
+                                {
+                                    <MudPaper Class="pa-2 cursor-pointer hover-effect" 
+                                             @ondragstart="@(() => OnDragStart(component.Key))"
+                                             draggable="true">
+                                        <div class="d-flex align-center">
+                                            <MudIcon Icon="@component.Value.Icon" Color="@GetMudColor(component.Value.Color)" />
+                                            <MudText Class="ml-2" Typo="Typo.body2">@component.Value.Label</MudText>
+                                        </div>
+                                    </MudPaper>
+                                }
+                            </div>
+                        </MudExpansionPanel>
+                    </MudExpansionPanels>
+                }
+
+                @if (customComponents.Any())
+                {
+                    <MudDivider Class="my-4" />
+                    <MudText Typo="Typo.subtitle2" Class="mb-2">Composants personnalisés</MudText>
+                    @foreach (var component in customComponents)
+                    {
+                        <MudPaper Class="pa-2 cursor-pointer hover-effect mb-2" 
+                                 @ondragstart="@(() => OnDragStart(component.Id))"
+                                 draggable="true">
+                            <div class="d-flex align-center justify-space-between">
+                                <div class="d-flex align-center">
+                                    <MudIcon Icon="@Icons.Material.Filled.Extension" Color="Color.Secondary" />
+                                    <MudText Class="ml-2" Typo="Typo.body2">@component.Label</MudText>
+                                </div>
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" 
+                                             Color="Color.Error" OnClick="@(() => DeleteCustomComponent(component.Id))" />
+                            </div>
+                        </MudPaper>
+                    }
+                }
+
+                <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Add" 
+                          FullWidth="true" Class="mt-4" OnClick="@(() => showAddComponentDialog = true)">
+                    Ajouter composant
+                </MudButton>
+            </MudPaper>
+        </MudItem>
+
+        <!-- Form Builder Area -->
+        <MudItem xs="12" lg="6">
+            <MudPaper Class="pa-4" Style="height: 80vh; overflow-y: auto;">
+                <MudText Typo="Typo.h6" Class="mb-4">Zone de construction</MudText>
+                
+                <div class="drop-zone pa-4" 
+                     @ondrop="@OnDrop" 
+                     @ondragover="@OnDragOver" 
+                     @ondragenter="@OnDragEnter"
+                     style="min-height: 400px; border: 2px dashed #ccc; border-radius: 8px;">
+                    
+                    @if (!formData.Fields.Any())
+                    {
+                        <div class="text-center pa-8">
+                            <MudIcon Icon="@Icons.Material.Filled.DragIndicator" Size="Size.Large" Color="Color.Default" />
+                            <MudText Typo="Typo.h6" Color="Color.Default" Class="mt-2">
+                                Glissez des composants ici
+                            </MudText>
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var field in formData.Fields)
+                        {
+                            <FieldRenderer Field="@field" 
+                                         OnFieldClick="@SelectField" 
+                                         OnFieldDelete="@DeleteField"
+                                         IsSelected="@(selectedField?.Id == field.Id)" />
+                        }
+                    }
+                </div>
+            </MudPaper>
+        </MudItem>
+
+        <!-- Properties Panel -->
+        <MudItem xs="12" lg="3">
+            <MudTabs Elevation="0" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-4">
+                <MudTabPanel Text="Propriétés" Icon="@Icons.Material.Filled.Settings">
+                    @if (selectedField != null)
+                    {
+                        <PropertiesPanel Field="@selectedField" OnFieldUpdated="@OnFieldUpdated" />
+                    }
+                    else
+                    {
+                        <div class="text-center pa-4">
+                            <MudIcon Icon="@Icons.Material.Filled.Settings" Size="Size.Large" Color="Color.Default" />
+                            <MudText Typo="Typo.body1" Color="Color.Default" Class="mt-2">
+                                Sélectionnez un composant pour voir ses propriétés
+                            </MudText>
+                        </div>
+                    }
+                </MudTabPanel>
+                
+                <MudTabPanel Text="JSON" Icon="@Icons.Material.Filled.Code">
+                    <JsonValidator FormData="@formData" CustomComponents="@customComponents" />
+                </MudTabPanel>
+            </MudTabs>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+<!-- Add Component Dialog -->
+<AddComponentDialog @bind-IsOpen="showAddComponentDialog" OnComponentAdded="@OnCustomComponentAdded" />
+
+<!-- Tutorial Dialog -->
+<TutorialDialog @bind-IsOpen="showTutorial" />
+
+<!-- Floating Action Buttons -->
+<MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Help" 
+       Style="position: fixed; bottom: 20px; right: 20px;" 
+       OnClick="@(() => showTutorial = true)" />
+
+<style>
+    .hover-effect:hover {
+        background-color: var(--mud-palette-action-hover) !important;
+    }
+    
+    .drop-zone.drag-over {
+        border-color: var(--mud-palette-primary) !important;
+        background-color: var(--mud-palette-primary-lighten) !important;
+    }
+    
+    .field-item {
+        border: 2px solid transparent;
+        border-radius: 4px;
+        padding: 8px;
+        margin: 4px 0;
+        cursor: pointer;
+    }
+    
+    .field-item.selected {
+        border-color: var(--mud-palette-primary) !important;
+        background-color: var(--mud-palette-primary-lighten) !important;
+    }
+    
+    .field-item:hover {
+        border-color: var(--mud-palette-primary-darken) !important;
+    }
+</style>
+
+@code {
+    private FormDefinition formData = new();
+    private List<CustomComponent> customComponents = new();
+    private FormField? selectedField;
+    private bool isSaving = false;
+    private bool showAddComponentDialog = false;
+    private bool showTutorial = false;
+    private string draggedComponentType = string.Empty;
+
+    private readonly Dictionary<string, Dictionary<string, ComponentConfig>> componentCategories = new()
+    {
+        {
+            "Saisie et texte", new Dictionary<string, ComponentConfig>
+            {
+                { "TEXT", new ComponentConfig { Icon = Icons.Material.Filled.TextFields, Label = "Saisie de texte", Color = "primary" } },
+                { "TEXTAREA", new ComponentConfig { Icon = Icons.Material.Filled.Notes, Label = "Zone de texte", Color = "secondary" } }
+            }
+        },
+        {
+            "Sélection", new Dictionary<string, ComponentConfig>
+            {
+                { "SELECT", new ComponentConfig { Icon = Icons.Material.Filled.ArrowDropDown, Label = "Sélectionner", Color = "warning" } },
+                { "CHECKBOX", new ComponentConfig { Icon = Icons.Material.Filled.CheckBox, Label = "Case à cocher", Color = "info" } },
+                { "RADIOGRP", new ComponentConfig { Icon = Icons.Material.Filled.RadioButtonChecked, Label = "Groupe radio", Color = "success" } }
+            }
+        },
+        {
+            "Date et temps", new Dictionary<string, ComponentConfig>
+            {
+                { "DATEPICKER", new ComponentConfig { Icon = Icons.Material.Filled.DateRange, Label = "Sélecteur de date", Color = "secondary" } }
+            }
+        },
+        {
+            "Fichiers", new Dictionary<string, ComponentConfig>
+            {
+                { "FILEUPLOAD", new ComponentConfig { Icon = Icons.Material.Filled.CloudUpload, Label = "Téléchargement de fichiers", Color = "error" } }
+            }
+        },
+        {
+            "Recherche", new Dictionary<string, ComponentConfig>
+            {
+                { "GRIDLKP", new ComponentConfig { Icon = Icons.Material.Filled.GridView, Label = "Recherche de grille", Color = "primary" } },
+                { "LSTLKP", new ComponentConfig { Icon = Icons.Material.Filled.Search, Label = "Recherche de liste", Color = "info" } }
+            }
+        },
+        {
+            "Mise en page", new Dictionary<string, ComponentConfig>
+            {
+                { "GROUP", new ComponentConfig { Icon = Icons.Material.Filled.Folder, Label = "Groupe", Color = "dark" } }
+            }
+        },
+        {
+            "Actions", new Dictionary<string, ComponentConfig>
+            {
+                { "ACTION", new ComponentConfig { Icon = Icons.Material.Filled.PlayArrow, Label = "Bouton d'action", Color = "error" } }
+            }
+        }
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        customComponents = await ComponentService.GetCustomComponentsAsync();
+        await LoadBackupIfExists();
+    }
+
+    private async Task LoadBackupIfExists()
+    {
+        try
+        {
+            // Try to load from localStorage backup
+            var backup = await JSRuntime.InvokeAsync<string?>("localStorage.getItem", "formBuilder_backup");
+            if (!string.IsNullOrEmpty(backup))
+            {
+                var backupData = JsonConvert.DeserializeObject<dynamic>(backup);
+                if (backupData?.fields != null)
+                {
+                    formData.Fields = JsonConvert.DeserializeObject<List<FormField>>(backupData.fields.ToString()) ?? new List<FormField>();
+                }
+                if (backupData?.id != null)
+                {
+                    formData.Id = (int)backupData.id;
+                }
+            }
+        }
+        catch
+        {
+            // Ignore backup loading errors
+        }
+    }
+
+    private void OnDragStart(string componentType)
+    {
+        draggedComponentType = componentType;
+    }
+
+    private void OnDragOver(DragEventArgs e)
+    {
+        e.DataTransfer.DropEffect = "copy";
+    }
+
+    private void OnDragEnter(DragEventArgs e)
+    {
+        // Add visual feedback
+    }
+
+    private void OnDrop(DragEventArgs e)
+    {
+        if (!string.IsNullOrEmpty(draggedComponentType))
+        {
+            var newField = ComponentService.CreateDefaultField(draggedComponentType);
+            formData.Fields.Add(newField);
+            draggedComponentType = string.Empty;
+            StateHasChanged();
+        }
+    }
+
+    private void SelectField(FormField field)
+    {
+        selectedField = field;
+    }
+
+    private void DeleteField(FormField field)
+    {
+        formData.Fields.Remove(field);
+        if (selectedField?.Id == field.Id)
+        {
+            selectedField = null;
+        }
+    }
+
+    private void OnFieldUpdated(FormField updatedField)
+    {
+        var index = formData.Fields.FindIndex(f => f.Id == updatedField.Id);
+        if (index >= 0)
+        {
+            formData.Fields[index] = updatedField;
+        }
+    }
+
+    private async Task SaveForm()
+    {
+        try
+        {
+            isSaving = true;
+            
+            if (formData.Id.HasValue)
+            {
+                await FormService.UpdateFormAsync(formData);
+            }
+            else
+            {
+                var savedForm = await FormService.CreateFormAsync(formData);
+                formData.Id = savedForm.Id;
+            }
+            
+            Snackbar.Add("Formulaire sauvegardé avec succès!", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Erreur lors de la sauvegarde: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private void CreateNewForm()
+    {
+        formData = new FormDefinition
+        {
+            MenuId = $"FORM_{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}",
+            Label = "Mon Formulaire",
+            FormWidth = "700px",
+            Layout = "PROCESS"
+        };
+        selectedField = null;
+    }
+
+    private void ClearForm()
+    {
+        formData.Fields.Clear();
+        selectedField = null;
+    }
+
+    private async Task OnCustomComponentAdded(CustomComponent component)
+    {
+        await ComponentService.CreateCustomComponentAsync(component);
+        customComponents = await ComponentService.GetCustomComponentsAsync();
+        showAddComponentDialog = false;
+        Snackbar.Add("Composant personnalisé ajouté!", Severity.Success);
+    }
+
+    private async Task DeleteCustomComponent(string componentId)
+    {
+        await ComponentService.DeleteCustomComponentAsync(componentId);
+        customComponents = await ComponentService.GetCustomComponentsAsync();
+        Snackbar.Add("Composant supprimé", Severity.Info);
+    }
+
+    private Color GetMudColor(string colorName)
+    {
+        return colorName.ToLower() switch
+        {
+            "primary" => Color.Primary,
+            "secondary" => Color.Secondary,
+            "success" => Color.Success,
+            "info" => Color.Info,
+            "warning" => Color.Warning,
+            "error" => Color.Error,
+            "dark" => Color.Dark,
+            _ => Color.Default
+        };
+    }
+}

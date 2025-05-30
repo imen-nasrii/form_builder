@@ -1,0 +1,147 @@
+@using MudBlazor
+
+<MudDialog IsOpen="IsOpen" MaxWidth="MaxWidth.Medium">
+    <DialogContent>
+        <div class="d-flex align-center justify-space-between mb-4">
+            <MudText Typo="Typo.h5">@currentStep.Title</MudText>
+            <MudChip Size="Size.Small" Color="Color.Primary">
+                @(step + 1) / @totalSteps
+            </MudChip>
+        </div>
+        
+        <MudText Typo="Typo.body1" Class="mb-4">
+            @currentStep.Content
+        </MudText>
+
+        @if (!string.IsNullOrEmpty(currentStep.Action))
+        {
+            <MudAlert Severity="Severity.Info" Class="mb-4">
+                <div class="d-flex align-center">
+                    <MudIcon Icon="@Icons.Material.Filled.ArrowForward" Class="mr-2" />
+                    <strong>@currentStep.Action</strong>
+                </div>
+            </MudAlert>
+        }
+
+        <div class="d-flex align-center justify-space-between">
+            <MudButton Variant="Variant.Outlined" 
+                      OnClick="PrevStep" 
+                      Disabled="@(step == 0)">
+                Précédent
+            </MudButton>
+
+            <div class="d-flex">
+                @for (int i = 0; i < totalSteps; i++)
+                {
+                    <MudIcon Icon="@Icons.Material.Filled.Circle" 
+                            Color="@(i == step ? Color.Primary : Color.Default)" 
+                            Size="Size.Small" 
+                            Class="mx-1" />
+                }
+            </div>
+
+            @if (step == totalSteps - 1)
+            {
+                <MudButton Variant="Variant.Filled" 
+                          Color="Color.Primary" 
+                          OnClick="CloseTutorial">
+                    Terminer
+                </MudButton>
+            }
+            else
+            {
+                <MudButton Variant="Variant.Filled" 
+                          Color="Color.Primary" 
+                          OnClick="NextStep">
+                    Suivant
+                </MudButton>
+            }
+        </div>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [Parameter] public bool IsOpen { get; set; }
+    [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
+    
+    private int step = 0;
+    private readonly int totalSteps = 7;
+
+    private readonly TutorialStep[] tutorialSteps = new[]
+    {
+        new TutorialStep
+        {
+            Title = "Bienvenue dans le Form Builder",
+            Content = "Ce tutoriel vous guidera à travers toutes les fonctionnalités du générateur de formulaires. Vous apprendrez à créer des formulaires complexes avec validation en temps réel.",
+            Action = "Commençons!"
+        },
+        new TutorialStep
+        {
+            Title = "Palette de composants",
+            Content = "À gauche, vous trouvez la palette de composants organisée par catégories : Saisie, Sélection, Date, Fichiers, etc. Glissez-déposez les composants dans la zone de construction.",
+            Action = "Glissez un composant TEXT"
+        },
+        new TutorialStep
+        {
+            Title = "Zone de construction",
+            Content = "Au centre se trouve la zone de construction où vous assemblez votre formulaire. Les composants peuvent être réorganisés par glisser-déposer.",
+            Action = "Déposez votre composant ici"
+        },
+        new TutorialStep
+        {
+            Title = "Panneau de propriétés",
+            Content = "À droite, le panneau de propriétés vous permet de configurer chaque composant sélectionné : label, validation, style, etc.",
+            Action = "Cliquez sur un composant"
+        },
+        new TutorialStep
+        {
+            Title = "Validateur JSON",
+            Content = "L'onglet JSON affiche le schéma généré en temps réel avec validation automatique. Les erreurs et avertissements sont mis en évidence.",
+            Action = "Consultez la validation"
+        },
+        new TutorialStep
+        {
+            Title = "Composants personnalisés",
+            Content = "Vous pouvez créer vos propres composants via le bouton 'Ajouter composant'. Utilisez JSON ou le créateur visuel pour définir des composants réutilisables.",
+            Action = "Créez un composant"
+        },
+        new TutorialStep
+        {
+            Title = "Sauvegarde et collaboration",
+            Content = "Utilisez les boutons Nouveau/Vider/Sauvegarder pour gérer vos formulaires. Le système sauvegarde automatiquement votre travail.",
+            Action = "Sauvegardez votre travail"
+        }
+    };
+
+    private TutorialStep currentStep => tutorialSteps[step];
+
+    private void NextStep()
+    {
+        if (step < totalSteps - 1)
+        {
+            step++;
+        }
+    }
+
+    private void PrevStep()
+    {
+        if (step > 0)
+        {
+            step--;
+        }
+    }
+
+    private async Task CloseTutorial()
+    {
+        step = 0;
+        IsOpen = false;
+        await IsOpenChanged.InvokeAsync(IsOpen);
+    }
+
+    private class TutorialStep
+    {
+        public string Title { get; set; } = string.Empty;
+        public string Content { get; set; } = string.Empty;
+        public string Action { get; set; } = string.Empty;
+    }
+}

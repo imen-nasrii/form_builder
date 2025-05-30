@@ -1,0 +1,121 @@
+@using FormBuilderApp.Models
+@using FormBuilderApp.Services
+@using MudBlazor
+@using Newtonsoft.Json
+@inject IValidationService ValidationService
+
+<MudPaper Class="pa-4">
+    <div class="d-flex align-center justify-space-between mb-4">
+        <MudText Typo="Typo.h6">Schema JSON avec Validation</MudText>
+        <div class="d-flex align-center">
+            <MudIcon Icon="@(isValid ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.Error)" 
+                     Color="@(isValid ? Color.Success : Color.Error)" 
+                     Class="mr-2" />
+            <MudText Typo="Typo.body2" Color="@(isValid ? Color.Success : Color.Error)">
+                @(isValid ? "Valide" : $"{validationErrors.Count} erreur(s)")
+            </MudText>
+        </div>
+    </div>
+
+    @if (validationErrors.Any(e => e.Severity == ValidationSeverity.Error))
+    {
+        <MudAlert Severity="Severity.Error" Class="mb-4">
+            <AlertContent>
+                <MudText Typo="Typo.subtitle2" Class="mb-2">Erreurs de validation</MudText>
+                <ul class="ma-0 pa-0" style="list-style: none;">
+                    @foreach (var error in validationErrors.Where(e => e.Severity == ValidationSeverity.Error))
+                    {
+                        <li>• @error.Message</li>
+                    }
+                </ul>
+            </AlertContent>
+        </MudAlert>
+    }
+
+    @if (validationErrors.Any(e => e.Severity == ValidationSeverity.Warning))
+    {
+        <MudAlert Severity="Severity.Warning" Class="mb-4">
+            <AlertContent>
+                <MudText Typo="Typo.subtitle2" Class="mb-2">Avertissements</MudText>
+                <ul class="ma-0 pa-0" style="list-style: none;">
+                    @foreach (var warning in validationErrors.Where(e => e.Severity == ValidationSeverity.Warning))
+                    {
+                        <li>• @warning.Message</li>
+                    }
+                </ul>
+            </AlertContent>
+        </MudAlert>
+    }
+
+    <div class="position-relative">
+        <MudTextField Value="@jsonString" 
+                     Label="JSON Schema" 
+                     Variant="Variant.Outlined" 
+                     Lines="20" 
+                     ReadOnly="true"
+                     Class="font-family-monospace" />
+        
+        <MudChip Size="Size.Small" 
+                Color="@(isValid ? Color.Success : Color.Error)" 
+                Class="position-absolute"
+                Style="top: 8px; right: 8px;">
+            @jsonString.Split('\n').Length lignes
+        </MudChip>
+    </div>
+
+    <MudGrid Class="mt-4">
+        <MudItem xs="4">
+            <MudPaper Class="pa-4 text-center">
+                <MudText Typo="Typo.h4" Color="Color.Primary">@(FormData.Fields?.Count ?? 0)</MudText>
+                <MudText Typo="Typo.body2">Champs</MudText>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="4">
+            <MudPaper Class="pa-4 text-center">
+                <MudText Typo="Typo.h4" Color="Color.Secondary">@CustomComponents.Count</MudText>
+                <MudText Typo="Typo.body2">Composants personnalisés</MudText>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="4">
+            <MudPaper Class="pa-4 text-center">
+                <MudText Typo="Typo.h4" Color="Color.Info">@(Math.Round(jsonString.Length / 1024.0, 2))</MudText>
+                <MudText Typo="Typo.body2">KB</MudText>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+
+    <div class="d-flex justify-end mt-4">
+        <MudButton Variant="Variant.Outlined" 
+                  StartIcon="@Icons.Material.Filled.ContentCopy" 
+                  OnClick="CopyToClipboard">
+            Copier JSON
+        </MudButton>
+    </div>
+</MudPaper>
+
+@code {
+    [Parameter] public FormDefinition FormData { get; set; } = new();
+    [Parameter] public List<CustomComponent> CustomComponents { get; set; } = new();
+    
+    private List<ValidationError> validationErrors = new();
+    private bool isValid = true;
+    private string jsonString = string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        ValidateAndUpdateJson();
+    }
+
+    private void ValidateAndUpdateJson()
+    {
+        validationErrors = ValidationService.ValidateForm(FormData, CustomComponents);
+        isValid = !validationErrors.Any(e => e.Severity == ValidationSeverity.Error);
+        jsonString = JsonConvert.SerializeObject(FormData, Formatting.Indented);
+    }
+
+    private async Task CopyToClipboard()
+    {
+        await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", jsonString);
+        Snackbar.Add("JSON copié dans le presse-papiers", Severity.Success);
+    }
+}
