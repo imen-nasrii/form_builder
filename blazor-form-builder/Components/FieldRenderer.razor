@@ -1,0 +1,204 @@
+@using FormBuilderApp.Models
+@using MudBlazor
+
+<div class="field-item @(IsSelected ? "selected" : "")" 
+     @onclick="@(() => OnFieldClick.InvokeAsync(Field))"
+     @ondrop="@OnDrop" 
+     @ondragover="@OnDragOver">
+    
+    <div class="d-flex align-center justify-space-between">
+        <div class="d-flex align-center flex-grow-1">
+            <MudIcon Icon="@GetFieldIcon()" Color="@GetFieldColor()" Class="mr-2" />
+            <div class="flex-grow-1">
+                <MudText Typo="Typo.body2" Class="font-weight-bold">@Field.Label</MudText>
+                <MudText Typo="Typo.caption" Color="Color.Secondary">@Field.Type (@Field.DataField)</MudText>
+            </div>
+        </div>
+        
+        <div class="d-flex align-center">
+            @if (Field.Required)
+            {
+                <MudChip Size="Size.Small" Color="Color.Error" Class="mr-2">Requis</MudChip>
+            }
+            <MudIconButton Icon="@Icons.Material.Filled.Delete" 
+                          Size="Size.Small" 
+                          Color="Color.Error" 
+                          OnClick="@(() => OnFieldDelete.InvokeAsync(Field))" />
+        </div>
+    </div>
+
+    @if (Field.Type == "GROUP" && Field.ChildFields != null)
+    {
+        <div class="ml-4 mt-2 pa-2" style="border-left: 2px solid #e0e0e0;">
+            @if (Field.ChildFields.Any())
+            {
+                @foreach (var childField in Field.ChildFields)
+                {
+                    <FieldRenderer Field="@childField" 
+                                  OnFieldClick="@OnFieldClick" 
+                                  OnFieldDelete="@OnFieldDelete" 
+                                  IsSelected="@(IsSelected && Field.Id == childField.Id)" />
+                }
+            }
+            else
+            {
+                <div class="text-center pa-2" style="border: 1px dashed #ccc; border-radius: 4px;">
+                    <MudText Typo="Typo.caption" Color="Color.Secondary">
+                        Glissez des composants dans ce groupe
+                    </MudText>
+                </div>
+            }
+        </div>
+    }
+
+    @RenderFieldPreview()
+</div>
+
+@code {
+    [Parameter] public FormField Field { get; set; } = new();
+    [Parameter] public EventCallback<FormField> OnFieldClick { get; set; }
+    [Parameter] public EventCallback<FormField> OnFieldDelete { get; set; }
+    [Parameter] public bool IsSelected { get; set; }
+
+    private string GetFieldIcon()
+    {
+        return Field.Type switch
+        {
+            "TEXT" => Icons.Material.Filled.TextFields,
+            "TEXTAREA" => Icons.Material.Filled.Notes,
+            "SELECT" => Icons.Material.Filled.ArrowDropDown,
+            "CHECKBOX" => Icons.Material.Filled.CheckBox,
+            "RADIOGRP" => Icons.Material.Filled.RadioButtonChecked,
+            "DATEPICKER" => Icons.Material.Filled.DateRange,
+            "FILEUPLOAD" => Icons.Material.Filled.CloudUpload,
+            "GRIDLKP" => Icons.Material.Filled.GridView,
+            "LSTLKP" => Icons.Material.Filled.Search,
+            "GROUP" => Icons.Material.Filled.Folder,
+            "ACTION" => Icons.Material.Filled.PlayArrow,
+            _ => Icons.Material.Filled.Help
+        };
+    }
+
+    private Color GetFieldColor()
+    {
+        return Field.Type switch
+        {
+            "TEXT" => Color.Primary,
+            "TEXTAREA" => Color.Secondary,
+            "SELECT" => Color.Warning,
+            "CHECKBOX" => Color.Info,
+            "RADIOGRP" => Color.Success,
+            "DATEPICKER" => Color.Secondary,
+            "FILEUPLOAD" => Color.Error,
+            "GRIDLKP" => Color.Primary,
+            "LSTLKP" => Color.Info,
+            "GROUP" => Color.Dark,
+            "ACTION" => Color.Error,
+            _ => Color.Default
+        };
+    }
+
+    private RenderFragment RenderFieldPreview()
+    {
+        return builder =>
+        {
+            builder.OpenElement(0, "div");
+            builder.AddAttribute(1, "class", "mt-2 pa-2");
+            builder.AddAttribute(2, "style", "background-color: #f5f5f5; border-radius: 4px;");
+
+            switch (Field.Type)
+            {
+                case "TEXT":
+                    builder.OpenComponent<MudTextField<string>>(3);
+                    builder.AddAttribute(4, "Label", Field.Label);
+                    builder.AddAttribute(5, "Disabled", true);
+                    builder.AddAttribute(6, "Variant", Variant.Outlined);
+                    builder.AddAttribute(7, "FullWidth", true);
+                    builder.CloseComponent();
+                    break;
+
+                case "TEXTAREA":
+                    builder.OpenComponent<MudTextField<string>>(3);
+                    builder.AddAttribute(4, "Label", Field.Label);
+                    builder.AddAttribute(5, "Lines", 3);
+                    builder.AddAttribute(6, "Disabled", true);
+                    builder.AddAttribute(7, "Variant", Variant.Outlined);
+                    builder.AddAttribute(8, "FullWidth", true);
+                    builder.CloseComponent();
+                    break;
+
+                case "SELECT":
+                    builder.OpenComponent<MudSelect<string>>(3);
+                    builder.AddAttribute(4, "Label", Field.Label);
+                    builder.AddAttribute(5, "Disabled", true);
+                    builder.AddAttribute(6, "Variant", Variant.Outlined);
+                    builder.AddAttribute(7, "FullWidth", true);
+                    builder.CloseComponent();
+                    break;
+
+                case "CHECKBOX":
+                    builder.OpenComponent<MudCheckBox<bool>>(3);
+                    builder.AddAttribute(4, "Label", Field.Label);
+                    builder.AddAttribute(5, "Disabled", true);
+                    builder.CloseComponent();
+                    break;
+
+                case "DATEPICKER":
+                    builder.OpenComponent<MudDatePicker>(3);
+                    builder.AddAttribute(4, "Label", Field.Label);
+                    builder.AddAttribute(5, "Disabled", true);
+                    builder.AddAttribute(6, "Variant", Variant.Outlined);
+                    builder.AddAttribute(7, "FullWidth", true);
+                    builder.CloseComponent();
+                    break;
+
+                case "ACTION":
+                    builder.OpenComponent<MudButton>(3);
+                    builder.AddAttribute(4, "Variant", Variant.Filled);
+                    builder.AddAttribute(5, "Color", Color.Primary);
+                    builder.AddAttribute(6, "Disabled", true);
+                    builder.AddChildContent(7, (RenderFragment)(childBuilder =>
+                    {
+                        childBuilder.AddContent(0, Field.Label);
+                    }));
+                    builder.CloseComponent();
+                    break;
+
+                default:
+                    builder.OpenComponent<MudPaper>(3);
+                    builder.AddAttribute(4, "Class", "pa-2 text-center");
+                    builder.AddChildContent(5, (RenderFragment)(childBuilder =>
+                    {
+                        childBuilder.OpenComponent<MudText>(0);
+                        childBuilder.AddAttribute(1, "Typo", Typo.caption);
+                        childBuilder.AddAttribute(2, "ChildContent", (RenderFragment)(textBuilder =>
+                        {
+                            textBuilder.AddContent(0, $"Aperçu {Field.Type}");
+                        }));
+                        childBuilder.CloseComponent();
+                    }));
+                    builder.CloseComponent();
+                    break;
+            }
+
+            builder.CloseElement();
+        };
+    }
+
+    private void OnDragOver(DragEventArgs e)
+    {
+        if (Field.Type == "GROUP")
+        {
+            e.DataTransfer.DropEffect = "copy";
+        }
+    }
+
+    private void OnDrop(DragEventArgs e)
+    {
+        if (Field.Type == "GROUP")
+        {
+            // Handle dropping components into group
+            // This would be implemented with proper drag/drop state management
+        }
+    }
+}

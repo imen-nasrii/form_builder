@@ -1,0 +1,193 @@
+@using FormBuilderApp.Models
+@using MudBlazor
+
+<MudPaper Class="pa-4">
+    <MudText Typo="Typo.h6" Class="mb-4">Propriétés du composant</MudText>
+    
+    <MudForm @ref="form">
+        <MudGrid>
+            <MudItem xs="12">
+                <MudTextField @bind-Value="Field.Id" 
+                             Label="ID" 
+                             Variant="Variant.Outlined" 
+                             Required="true"
+                             HelperText="Identifiant unique du champ" />
+            </MudItem>
+            
+            <MudItem xs="12">
+                <MudTextField @bind-Value="Field.Label" 
+                             Label="Label" 
+                             Variant="Variant.Outlined" 
+                             Required="true"
+                             HelperText="Texte affiché pour le champ" />
+            </MudItem>
+            
+            <MudItem xs="12">
+                <MudTextField @bind-Value="Field.DataField" 
+                             Label="DataField" 
+                             Variant="Variant.Outlined" 
+                             Required="true"
+                             HelperText="Nom du champ dans la base de données" />
+            </MudItem>
+            
+            <MudItem xs="12">
+                <MudTextField @bind-Value="Field.Entity" 
+                             Label="Entity" 
+                             Variant="Variant.Outlined" 
+                             HelperText="Nom de la table/entité" />
+            </MudItem>
+            
+            <MudItem xs="6">
+                <MudTextField @bind-Value="Field.Width" 
+                             Label="Largeur" 
+                             Variant="Variant.Outlined" 
+                             HelperText="CSS width (ex: 100%, 300px)" />
+            </MudItem>
+            
+            <MudItem xs="6">
+                <MudSelect @bind-Value="Field.Spacing" 
+                          Label="Espacement" 
+                          Variant="Variant.Outlined">
+                    <MudSelectItem Value="@("xs")">Extra Small</MudSelectItem>
+                    <MudSelectItem Value="@("sm")">Small</MudSelectItem>
+                    <MudSelectItem Value="@("md")">Medium</MudSelectItem>
+                    <MudSelectItem Value="@("lg")">Large</MudSelectItem>
+                    <MudSelectItem Value="@("xl")">Extra Large</MudSelectItem>
+                </MudSelect>
+            </MudItem>
+            
+            <MudItem xs="12">
+                <MudCheckBox @bind-Checked="Field.Required" 
+                            Label="Champ requis" 
+                            Color="Color.Primary" />
+            </MudItem>
+            
+            <MudItem xs="6">
+                <MudCheckBox @bind-Checked="Field.Inline" 
+                            Label="Affichage en ligne" 
+                            Color="Color.Primary" />
+            </MudItem>
+            
+            <MudItem xs="6">
+                <MudCheckBox @bind-Checked="Field.Outlined" 
+                            Label="Bordure visible" 
+                            Color="Color.Primary" />
+            </MudItem>
+        </MudGrid>
+
+        @if (ShowTypeSpecificProperties())
+        {
+            <MudDivider Class="my-4" />
+            <MudText Typo="Typo.subtitle1" Class="mb-3">Propriétés spécifiques</MudText>
+            
+            @if (Field.Type == "SELECT" || Field.Type == "RADIOGRP")
+            {
+                <MudTextField @bind-Value="Field.Value" 
+                             Label="Options (JSON)" 
+                             Variant="Variant.Outlined" 
+                             Lines="3"
+                             HelperText="Format: [{'value':'1','text':'Option 1'},{'value':'2','text':'Option 2'}]" />
+            }
+            else if (Field.Type == "TEXT" || Field.Type == "TEXTAREA")
+            {
+                <MudTextField @bind-Value="Field.Value" 
+                             Label="Valeur par défaut" 
+                             Variant="Variant.Outlined" 
+                             HelperText="Valeur initiale du champ" />
+            }
+            else if (Field.Type == "GRIDLKP" || Field.Type == "LSTLKP")
+            {
+                <MudTextField @bind-Value="Field.Value" 
+                             Label="Configuration de recherche (JSON)" 
+                             Variant="Variant.Outlined" 
+                             Lines="5"
+                             HelperText="Configuration des colonnes et filtres" />
+            }
+            else if (Field.Type == "ACTION")
+            {
+                <MudTextField @bind-Value="Field.Value" 
+                             Label="Action/URL" 
+                             Variant="Variant.Outlined" 
+                             HelperText="URL ou nom de l'action à exécuter" />
+            }
+        }
+
+        <MudDivider Class="my-4" />
+        
+        <div class="d-flex justify-end gap-2">
+            <MudButton Variant="Variant.Outlined" 
+                      OnClick="ResetChanges">
+                Annuler
+            </MudButton>
+            <MudButton Variant="Variant.Filled" 
+                      Color="Color.Primary" 
+                      OnClick="ApplyChanges">
+                Appliquer
+            </MudButton>
+        </div>
+    </MudForm>
+</MudPaper>
+
+@code {
+    [Parameter] public FormField Field { get; set; } = new();
+    [Parameter] public EventCallback<FormField> OnFieldUpdated { get; set; }
+    
+    private MudForm form = new();
+    private FormField originalField = new();
+
+    protected override void OnParametersSet()
+    {
+        // Keep a copy of the original field for reset functionality
+        originalField = new FormField
+        {
+            Id = Field.Id,
+            Type = Field.Type,
+            Label = Field.Label,
+            DataField = Field.DataField,
+            Entity = Field.Entity,
+            Width = Field.Width,
+            Spacing = Field.Spacing,
+            Required = Field.Required,
+            Inline = Field.Inline,
+            Outlined = Field.Outlined,
+            Value = Field.Value,
+            ChildFields = Field.ChildFields
+        };
+    }
+
+    private bool ShowTypeSpecificProperties()
+    {
+        return Field.Type switch
+        {
+            "TEXT" or "TEXTAREA" or "SELECT" or "RADIOGRP" or "GRIDLKP" or "LSTLKP" or "ACTION" => true,
+            _ => false
+        };
+    }
+
+    private async Task ApplyChanges()
+    {
+        await form.Validate();
+        if (form.IsValid)
+        {
+            await OnFieldUpdated.InvokeAsync(Field);
+        }
+    }
+
+    private void ResetChanges()
+    {
+        Field.Id = originalField.Id;
+        Field.Type = originalField.Type;
+        Field.Label = originalField.Label;
+        Field.DataField = originalField.DataField;
+        Field.Entity = originalField.Entity;
+        Field.Width = originalField.Width;
+        Field.Spacing = originalField.Spacing;
+        Field.Required = originalField.Required;
+        Field.Inline = originalField.Inline;
+        Field.Outlined = originalField.Outlined;
+        Field.Value = originalField.Value;
+        Field.ChildFields = originalField.ChildFields;
+        
+        StateHasChanged();
+    }
+}
