@@ -2,14 +2,18 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, requireAuth, requireAdmin } from "./auth";
+import { setupEnhancedAuth, requireAuth as requireAuthEnhanced, requireAdmin as requireAdminEnhanced, requireUser } from "./auth-enhanced";
 import { insertFormSchema, insertTemplateSchema } from "@shared/schema";
 import crypto from "crypto";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Auth middleware
+  // Setup enhanced authentication with role-based access
+  setupEnhancedAuth(app);
+  
+  // Also setup Replit auth for compatibility
   await setupAuth(app);
 
-  // Auth routes are now handled in auth.ts
+  // Auth routes are now handled in auth-enhanced.ts
 
   // Get all users (admin only)
   app.get('/api/admin/users', requireAdmin, async (req: any, res) => {
