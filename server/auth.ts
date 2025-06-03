@@ -37,17 +37,17 @@ export function setupAuth(app: Express) {
       const { email, password, firstName, lastName, role = 'user' } = req.body;
 
       if (!email || !password) {
-        return res.status(400).json({ message: "Email et mot de passe requis" });
+        return res.status(400).json({ message: "Email and password required" });
       }
 
       if (password.length < 8) {
-        return res.status(400).json({ message: "Le mot de passe doit contenir au moins 8 caractères" });
+        return res.status(400).json({ message: "Password must be at least 8 characters long" });
       }
 
       // Check if user already exists
       const existingUser = await storage.getUserByEmail(email);
       if (existingUser) {
-        return res.status(400).json({ message: "Un compte avec cet email existe déjà" });
+        return res.status(400).json({ message: "An account with this email already exists" });
       }
 
       // Hash password
@@ -93,25 +93,25 @@ export function setupAuth(app: Express) {
       const { email, password } = req.body;
 
       if (!email || !password) {
-        return res.status(400).json({ message: "Email et mot de passe requis" });
+        return res.status(400).json({ message: "Email and password required" });
       }
 
       // Find user
       const user = await storage.getUserByEmail(email);
       if (!user || !user.isActive) {
-        return res.status(401).json({ message: "Email ou mot de passe incorrect" });
+        return res.status(401).json({ message: "Invalid email or password" });
       }
 
       // Check password
       const isValid = await bcrypt.compare(password, user.password);
       if (!isValid) {
-        return res.status(401).json({ message: "Email ou mot de passe incorrect" });
+        return res.status(401).json({ message: "Invalid email or password" });
       }
 
       // Check email verification for users
       if (user.role === 'user' && !user.emailVerified) {
         return res.status(401).json({ 
-          message: "Veuillez vérifier votre email avant de vous connecter",
+          message: "Please verify your email before logging in",
           requireEmailVerification: true 
         });
       }
