@@ -34,20 +34,24 @@ export function setupAuth(app: Express) {
   // Auth routes
   app.post("/api/register", async (req: Request, res: Response) => {
     try {
-      const { email, password, firstName, lastName } = req.body;
+      const { email, password, firstName, lastName, role = 'user' } = req.body;
 
       if (!email || !password) {
-        return res.status(400).json({ message: "Email and password required" });
+        return res.status(400).json({ message: "Email et mot de passe requis" });
+      }
+
+      if (password.length < 8) {
+        return res.status(400).json({ message: "Le mot de passe doit contenir au moins 8 caractères" });
       }
 
       // Check if user already exists
       const existingUser = await storage.getUserByEmail(email);
       if (existingUser) {
-        return res.status(400).json({ message: "User already exists" });
+        return res.status(400).json({ message: "Un compte avec cet email existe déjà" });
       }
 
       // Hash password
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const hashedPassword = await bcrypt.hash(password, 12);
 
       // Create user
       const user = await storage.createUser({
@@ -57,9 +61,11 @@ export function setupAuth(app: Express) {
         firstName: firstName || null,
         lastName: lastName || null,
         profileImageUrl: null,
-        role: "user", // First user can be made admin manually
+        role: role,
         twoFactorEnabled: false,
         twoFactorSecret: null,
+        emailVerified: role === 'admin' ? true : false,
+        emailVerificationToken: null,
         isActive: true,
       });
 
@@ -85,24 +91,33 @@ export function setupAuth(app: Express) {
       const { email, password } = req.body;
 
       if (!email || !password) {
-        return res.status(400).json({ message: "Email and password required" });
+        return res.status(400).json({ message: "Email et mot de passe requis" });
       }
 
       // Find user
       const user = await storage.getUserByEmail(email);
       if (!user || !user.isActive) {
-        return res.status(401).json({ message: "Invalid credentials" });
+        return res.status(401).json({ message: "Email ou mot de passe incorrect" });
       }
 
       // Check password
       const isValid = await bcrypt.compare(password, user.password);
       if (!isValid) {
-        return res.status(401).json({ message: "Invalid credentials" });
+        return res.status(401).json({ message: "Email ou mot de passe incorrect" });
+      }
+
+      // Check email verification for users
+      if (user.role === 'user' && !user.emailVerified) {
+        return res.status(401).json({ 
+          message: "Veuillez vérifier votre email avant de vous connecter",
+          requireEmailVerification: true 
+        });
       }
 
       // Create session
       (req.session as any).userId = user.id;
       (req.session as any).userRole = user.role;
+      (req.session as any).userEmail = user.email;
 
       res.json({
         id: user.id,
@@ -110,6 +125,8 @@ export function setupAuth(app: Express) {
         firstName: user.firstName,
         lastName: user.lastName,
         role: user.role,
+        emailVerified: user.emailVerified,
+        twoFactorEnabled: user.twoFactorEnabled,
       });
     } catch (error) {
       console.error("Login error:", error);
@@ -157,6 +174,8 @@ export function setupAuth(app: Express) {
         firstName: user.firstName,
         lastName: user.lastName,
         role: user.role,
+        emailVerified: user.emailVerified,
+        twoFactorEnabled: user.twoFactorEnabled,
       });
     } catch (error) {
       console.error("Auth check error:", error);

@@ -7,13 +7,10 @@ import { insertFormSchema, insertTemplateSchema } from "@shared/schema";
 import crypto from "crypto";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Setup enhanced authentication with role-based access
-  setupEnhancedAuth(app);
-  
-  // Also setup Replit auth for compatibility
+  // Setup authentication with role-based access
   await setupAuth(app);
 
-  // Auth routes are now handled in auth-enhanced.ts
+  // Auth routes are now handled in auth.ts
 
   // Get all users (admin only)
   app.get('/api/admin/users', requireAdmin, async (req: any, res) => {
