@@ -22,6 +22,8 @@ import ApiIntegration from "@/pages/api-integration";
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
 
+  console.log('Auth state:', { isAuthenticated, isLoading });
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
@@ -37,27 +39,26 @@ function Router() {
 
   return (
     <Switch>
-      {!isAuthenticated ? (
-        <>
-          <Route path="/register" component={Register} />
-          <Route path="/login" component={Login} />
-          <Route path="/verify-email" component={VerifyEmail} />
-          <Route path="/" component={Landing} />
-        </>
-      ) : (
-        <>
-          <Route path="/" component={Dashboard} />
-          <Route path="/form-builder" component={FormBuilderFixed} />
-          <Route path="/form-builder/:formId" component={FormBuilderFixed} />
-          <Route path="/dashboard" component={Dashboard} />
-          <Route path="/components" component={ComponentsOverview} />
-          <Route path="/ai-bot" component={DFMToJSONBotStable} />
-          <Route path="/admin" component={AdminPage} />
-          <Route path="/admin-panel" component={AdminPanel} />
-          <Route path="/api-integration" component={ApiIntegration} />
-          <Route path="/setup-2fa" component={Setup2FA} />
-        </>
-      )}
+      {/* Public routes */}
+      <Route path="/register" component={Register} />
+      <Route path="/login" component={Login} />
+      <Route path="/verify-email" component={VerifyEmail} />
+      
+      {/* Authenticated routes */}
+      <Route path="/form-builder" component={FormBuilderFixed} />
+      <Route path="/form-builder/:formId" component={FormBuilderFixed} />
+      <Route path="/dashboard" component={Dashboard} />
+      <Route path="/components" component={ComponentsOverview} />
+      <Route path="/ai-bot" component={DFMToJSONBotStable} />
+      <Route path="/admin" component={AdminPage} />
+      <Route path="/admin-panel" component={AdminPanel} />
+      <Route path="/api-integration" component={ApiIntegration} />
+      <Route path="/setup-2fa" component={Setup2FA} />
+      
+      {/* Root route */}
+      <Route path="/" component={isAuthenticated ? Dashboard : Landing} />
+      
+      {/* 404 fallback */}
       <Route component={NotFound} />
     </Switch>
   );
