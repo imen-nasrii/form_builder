@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -17,6 +18,7 @@ const registerSchema = z.object({
   confirmPassword: z.string().min(1, "Confirmation requise"),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
+  role: z.enum(["user", "admin"]).default("user"),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Les mots de passe ne correspondent pas",
   path: ["confirmPassword"],
@@ -37,11 +39,15 @@ export default function Register() {
       confirmPassword: "",
       firstName: "",
       lastName: "",
+      role: "user",
     },
   });
 
   const registerMutation = useMutation({
-    mutationFn: (data: Omit<RegisterForm, 'confirmPassword'>) => apiRequest("POST", "/api/register", data),
+    mutationFn: (data: Omit<RegisterForm, 'confirmPassword'>) => apiRequest("/api/register", {
+      method: "POST",
+      body: JSON.stringify(data)
+    }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       toast({
