@@ -3,6 +3,8 @@ import {
   forms,
   formTemplates,
   twoFactorTokens,
+  emailVerificationTokens,
+  passwordResetTokens,
   type User,
   type UpsertUser,
   type Form,
@@ -11,6 +13,10 @@ import {
   type InsertFormTemplate,
   type TwoFactorToken,
   type InsertTwoFactorToken,
+  type EmailVerificationToken,
+  type InsertEmailVerificationToken,
+  type PasswordResetToken,
+  type InsertPasswordResetToken,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
@@ -25,6 +31,9 @@ export interface IStorage {
   getAllUsers(): Promise<User[]>;
   updateUserRole(userId: string, role: string): Promise<void>;
   enableTwoFactor(userId: string, secret: string): Promise<void>;
+  disableTwoFactor(userId: string): Promise<void>;
+  verifyUserEmail(userId: string): Promise<void>;
+  updateUserPassword(userId: string, hashedPassword: string): Promise<void>;
   
   // Form operations
   getForms(userId: string): Promise<Form[]>;
@@ -44,6 +53,15 @@ export interface IStorage {
   createTwoFactorToken(token: InsertTwoFactorToken): Promise<TwoFactorToken>;
   verifyTwoFactorToken(userId: string, token: string): Promise<boolean>;
   cleanupExpiredTokens(): Promise<void>;
+  
+  // Email verification operations
+  createEmailVerificationToken(token: InsertEmailVerificationToken): Promise<EmailVerificationToken>;
+  verifyEmailToken(token: string): Promise<string | null>;
+  
+  // Password reset operations
+  createPasswordResetToken(token: InsertPasswordResetToken): Promise<PasswordResetToken>;
+  verifyPasswordResetToken(token: string): Promise<string | null>;
+  markPasswordResetTokenUsed(token: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -103,6 +121,38 @@ export class DatabaseStorage implements IStorage {
       .set({ 
         twoFactorEnabled: true, 
         twoFactorSecret: secret,
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, userId));
+  }
+
+  async disableTwoFactor(userId: string): Promise<void> {
+    await db
+      .update(users)
+      .set({ 
+        twoFactorEnabled: false,
+        twoFactorSecret: null,
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, userId));
+  }
+
+  async verifyUserEmail(userId: string): Promise<void> {
+    await db
+      .update(users)
+      .set({ 
+        emailVerified: true,
+        emailVerificationToken: null,
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, userId));
+  }
+
+  async updateUserPassword(userId: string, hashedPassword: string): Promise<void> {
+    await db
+      .update(users)
+      .set({ 
+        password: hashedPassword,
         updatedAt: new Date()
       })
       .where(eq(users.id, userId));
@@ -203,6 +253,53 @@ export class DatabaseStorage implements IStorage {
 
   async cleanupExpiredTokens(): Promise<void> {
     await db.delete(twoFactorTokens).where(eq(twoFactorTokens.expiresAt, new Date()));
+  }
+
+  // Email verification operations
+  async createEmailVerificationToken(token: InsertEmailVerificationToken): Promise<EmailVerificationToken> {
+    const [newToken] = await db.insert(emailVerificationTokens).values(token).returning();
+    return newToken;
+  }
+
+  async verifyEmailToken(token: string): Promise<string | null> {
+    const [tokenRecord] = await db
+      .select()
+      .from(emailVerificationTokens)
+      .where(eq(emailVerificationTokens.token, token));
+
+    if (!tokenRecord || new Date() > tokenRecord.expiresAt) {
+      return null;
+    }
+
+    // Delete used token
+    await db.delete(emailVerificationTokens).where(eq(emailVerificationTokens.id, tokenRecord.id));
+    return tokenRecord.userId;
+  }
+
+  // Password reset operations
+  async createPasswordResetToken(token: InsertPasswordResetToken): Promise<PasswordResetToken> {
+    const [newToken] = await db.insert(passwordResetTokens).values(token).returning();
+    return newToken;
+  }
+
+  async verifyPasswordResetToken(token: string): Promise<string | null> {
+    const [tokenRecord] = await db
+      .select()
+      .from(passwordResetTokens)
+      .where(eq(passwordResetTokens.token, token));
+
+    if (!tokenRecord || tokenRecord.used || new Date() > tokenRecord.expiresAt) {
+      return null;
+    }
+
+    return tokenRecord.userId;
+  }
+
+  async markPasswordResetTokenUsed(token: string): Promise<void> {
+    await db
+      .update(passwordResetTokens)
+      .set({ used: true })
+      .where(eq(passwordResetTokens.token, token));
   }
 }
 
