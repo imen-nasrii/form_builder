@@ -290,10 +290,18 @@ export function setupAuth(app: Express) {
         return res.status(400).json({ message: "2FA already enabled" });
       }
 
-      // For now, return a mock response since we need actual 2FA service
+      // Import 2FA service
+      const { twoFactorService } = await import('./services/twoFactorService');
+      
+      // Generate real 2FA secret and QR code
+      const setup = await twoFactorService.generateSecret(user.email, 'FormCraft Pro');
+      
+      // Store the temporary secret in session for verification
+      (req.session as any).tempTwoFactorSecret = setup.secret;
+
       res.json({
-        qrCode: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
-        manualEntryKey: "JBSWY3DPEHPK3PXP",
+        qrCode: setup.qrCode,
+        manualEntryKey: setup.manualEntryKey,
         message: "Scan QR code with your authenticator app"
       });
     } catch (error) {
@@ -307,6 +315,7 @@ export function setupAuth(app: Express) {
     try {
       const userId = (req.session as any)?.userId;
       const userRole = (req.session as any)?.userRole;
+      const tempSecret = (req.session as any)?.tempTwoFactorSecret;
       const { token } = req.body;
       
       if (!userId || userRole !== 'admin') {
@@ -317,12 +326,28 @@ export function setupAuth(app: Express) {
         return res.status(400).json({ message: "Valid 6-digit code required" });
       }
 
-      // For demo purposes, accept any 6-digit code
       if (!/^\d{6}$/.test(token)) {
         return res.status(400).json({ message: "Invalid verification code" });
       }
 
-      await storage.enableTwoFactor(userId, "demo-secret");
+      if (!tempSecret) {
+        return res.status(400).json({ message: "No 2FA setup session found. Please restart setup." });
+      }
+
+      // Import 2FA service and verify token
+      const { twoFactorService } = await import('./services/twoFactorService');
+      
+      const isValid = twoFactorService.verifyToken(token, tempSecret);
+      if (!isValid) {
+        return res.status(400).json({ message: "Invalid verification code" });
+      }
+
+      // Enable 2FA with the verified secret
+      await storage.enableTwoFactor(userId, tempSecret);
+      
+      // Clear the temporary secret from session
+      delete (req.session as any).tempTwoFactorSecret;
+      
       res.json({ message: "2FA enabled successfully" });
     } catch (error) {
       console.error("Enable 2FA error:", error);
