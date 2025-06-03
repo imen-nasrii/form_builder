@@ -186,7 +186,7 @@ export default function ComponentsOverview() {
                   <div className="text-2xl font-bold text-black dark:text-white">
                     {filteredComponents.filter(c => c.status === 'completed').length}
                   </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">Terminés</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">Completed</div>
                 </div>
               </div>
             </CardContent>
@@ -347,10 +347,10 @@ export default function ComponentsOverview() {
                 <Search className="w-8 h-8 text-gray-400" />
               </div>
               <h3 className="text-lg font-semibold text-black dark:text-white mb-2">
-                Aucun composant trouvé
+                No components found
               </h3>
               <p className="text-gray-600 dark:text-gray-400">
-                Essayez de modifier vos critères de recherche ou créez un nouveau composant.
+                Try modifying your search criteria or create a new component.
               </p>
             </CardContent>
           </Card>

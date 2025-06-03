@@ -802,70 +802,70 @@ function JsonValidator({ formData, customComponents, isDarkMode }: {
     const errors: string[] = [];
     const warns: string[] = [];
 
-    // Validation du MenuID
+    // MenuID validation
     if (!data.menuId || data.menuId.trim() === '') {
-      errors.push('MenuID est requis');
+      errors.push('MenuID is required');
     } else if (!/^[A-Z0-9_]+$/.test(data.menuId)) {
-      errors.push('MenuID doit contenir uniquement des lettres majuscules, chiffres et underscores');
+      errors.push('MenuID must contain only uppercase letters, numbers and underscores');
     }
 
-    // Validation du Label
+    // Label validation
     if (!data.label || data.label.trim() === '') {
-      errors.push('Label du formulaire est requis');
+      errors.push('Form label is required');
     }
 
-    // Validation de la largeur
+    // Width validation
     if (!data.formWidth || !data.formWidth.match(/^\d+(px|%|em|rem)$/)) {
-      errors.push('FormWidth doit être une valeur CSS valide (ex: 700px, 100%)');
+      errors.push('FormWidth must be a valid CSS value (e.g. 700px, 100%)');
     }
 
-    // Validation des champs
+    // Fields validation
     if (!data.fields || !Array.isArray(data.fields)) {
-      errors.push('Le formulaire doit contenir un tableau de champs');
+      errors.push('Form must contain an array of fields');
     } else {
       data.fields.forEach((field: any, index: number) => {
-        const fieldPrefix = `Champ ${index + 1}`;
+        const fieldPrefix = `Field ${index + 1}`;
 
-        // Validation des propriétés obligatoires
-        if (!field.Id) errors.push(`${fieldPrefix}: ID est requis`);
-        if (!field.Type) errors.push(`${fieldPrefix}: Type est requis`);
-        if (!field.Label) errors.push(`${fieldPrefix}: Label est requis`);
-        if (!field.DataField) errors.push(`${fieldPrefix}: DataField est requis`);
+        // Required properties validation
+        if (!field.Id) errors.push(`${fieldPrefix}: ID is required`);
+        if (!field.Type) errors.push(`${fieldPrefix}: Type is required`);
+        if (!field.Label) errors.push(`${fieldPrefix}: Label is required`);
+        if (!field.DataField) errors.push(`${fieldPrefix}: DataField is required`);
 
-        // Validation des types de composants
+        // Component types validation
         const validTypes = [...Object.keys(ComponentTypes), ...customComponents.map(c => c.id)];
         if (field.Type && !validTypes.includes(field.Type)) {
-          errors.push(`${fieldPrefix}: Type "${field.Type}" n'est pas valide`);
+          errors.push(`${fieldPrefix}: Type "${field.Type}" is not valid`);
         }
 
-        // Validation des IDs uniques
+        // Unique IDs validation
         const duplicateIds = data.fields.filter((f: any) => f.Id === field.Id);
         if (duplicateIds.length > 1) {
-          errors.push(`${fieldPrefix}: ID "${field.Id}" est dupliqué`);
+          errors.push(`${fieldPrefix}: ID "${field.Id}" is duplicated`);
         }
 
-        // Validation des DataFields uniques
+        // Unique DataFields validation
         const duplicateDataFields = data.fields.filter((f: any) => f.DataField === field.DataField);
         if (duplicateDataFields.length > 1) {
-          warns.push(`${fieldPrefix}: DataField "${field.DataField}" est dupliqué`);
+          warns.push(`${fieldPrefix}: DataField "${field.DataField}" is duplicated`);
         }
 
-        // Validation spécifique par type
+        // Type-specific validation
         if (field.Type === 'GROUP' && field.ChildFields && field.ChildFields.length === 0) {
-          warns.push(`${fieldPrefix}: Groupe vide (aucun champ enfant)`);
+          warns.push(`${fieldPrefix}: Empty group (no child fields)`);
         }
 
         if (field.Type === 'SELECT' && !field.Value) {
-          warns.push(`${fieldPrefix}: SELECT sans options définies`);
+          warns.push(`${fieldPrefix}: SELECT without defined options`);
         }
 
-        // Validation des propriétés requises
+        // Required properties validation
         if (field.Required && typeof field.Required !== 'boolean') {
-          errors.push(`${fieldPrefix}: Required doit être true ou false`);
+          errors.push(`${fieldPrefix}: Required must be true or false`);
         }
 
         if (field.Width && !field.Width.match(/^\d+(px|%|em|rem)$/)) {
-          errors.push(`${fieldPrefix}: Width doit être une valeur CSS valide`);
+          errors.push(`${fieldPrefix}: Width must be a valid CSS value`);
         }
       });
     }
@@ -896,12 +896,12 @@ function JsonValidator({ formData, customComponents, isDarkMode }: {
         </div>
       </div>
 
-      {/* Erreurs de validation */}
+      {/* Validation Errors */}
       {validationErrors.length > 0 && (
         <div className={`p-4 rounded-lg border ${isDarkMode ? 'bg-red-900/20 border-red-600' : 'bg-red-50 border-red-200'}`}>
           <h4 className={`font-medium mb-2 flex items-center ${isDarkMode ? 'text-red-300' : 'text-red-800'}`}>
             <AlertTriangle className="w-4 h-4 mr-2" />
-            Erreurs de validation
+            Validation Errors
           </h4>
           <ul className="space-y-1">
             {validationErrors.map((error, index) => (
@@ -913,12 +913,12 @@ function JsonValidator({ formData, customComponents, isDarkMode }: {
         </div>
       )}
 
-      {/* Avertissements */}
+      {/* Warnings */}
       {warnings.length > 0 && (
         <div className={`p-4 rounded-lg border ${isDarkMode ? 'bg-yellow-900/20 border-yellow-600' : 'bg-yellow-50 border-yellow-200'}`}>
           <h4 className={`font-medium mb-2 flex items-center ${isDarkMode ? 'text-yellow-300' : 'text-yellow-800'}`}>
             <AlertTriangle className="w-4 h-4 mr-2" />
-            Avertissements
+            Warnings
           </h4>
           <ul className="space-y-1">
             {warnings.map((warning, index) => (
@@ -1628,7 +1628,7 @@ export default function FormBuilderFixed() {
                         />
                       </div>
                       <div>
-                        <Label className={isDarkMode ? 'text-gray-300' : ''}>Couleur</Label>
+                        <Label className={isDarkMode ? 'text-gray-300' : ''}>Color</Label>
                         <Input
                           placeholder="blue"
                           value={newComponentConfig.color}
