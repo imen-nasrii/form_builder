@@ -1638,9 +1638,9 @@ export default function FormBuilderFixed() {
                       </div>
                     </div>
                     <div>
-                      <Label className={isDarkMode ? 'text-gray-300' : ''}>Propriétés (JSON)</Label>
+                      <Label className={isDarkMode ? 'text-gray-300' : ''}>Properties (JSON)</Label>
                       <Textarea
-                        placeholder='{"placeholder": "Valeur par défaut", "required": true}'
+                        placeholder='{"placeholder": "Default value", "required": true}'
                         value={newComponentConfig.properties}
                         onChange={(e) => setNewComponentConfig(prev => ({ ...prev, properties: e.target.value }))}
                         className={`h-24 text-xs font-mono ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
@@ -1648,7 +1648,7 @@ export default function FormBuilderFixed() {
                     </div>
                     <Button onClick={addComponentFromForm}>
                       <Package className="w-4 h-4 mr-2" />
-                      Créer le Composant
+                      Create Component
                     </Button>
                   </TabsContent>
                 </Tabs>

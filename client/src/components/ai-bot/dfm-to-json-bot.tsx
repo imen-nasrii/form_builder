@@ -64,7 +64,7 @@ export default function DFMToJSONBot() {
       }
     });
 
-    // Analyser les composants
+    // Analyze components
     let currentComponent: any = null;
     let componentType = "";
     
@@ -128,7 +128,7 @@ export default function DFMToJSONBot() {
       }
     });
     
-    // Ajouter le dernier composant
+    // Add the last component
     if (currentComponent) {
       components.push(currentComponent);
     }

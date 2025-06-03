@@ -64,11 +64,11 @@ export default function DFMToJSONBotStable() {
       }
     });
 
-    // Analyse des composants avec structure ACCADJ
+    // Component analysis with ACCADJ structure
     let currentComponent: any = null;
     
     lines.forEach((line) => {
-      // Détecter un nouveau composant
+      // Detect a new component
       if (line.includes('object ') && !line.includes(': TForm')) {
         if (currentComponent) {
           components.push(currentComponent);
@@ -78,7 +78,7 @@ export default function DFMToJSONBotStable() {
         const componentName = line.split('object ')[1].split(':')[0].trim();
         const componentType = parts[1]?.trim();
         
-        // Mapper les types Delphi vers notre système
+        // Map Delphi types to our system
         let mappedType = "INPUT";
         let isGroup = false;
         let childFields: any[] = [];
