@@ -138,7 +138,7 @@ export default function ComponentsOverview() {
             Components Overview
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Suivez le progrès de tous les composants créés par votre équipe
+            Track the progress of all components created by your team
           </p>
         </div>
 
@@ -154,7 +154,7 @@ export default function ComponentsOverview() {
                   <div className="text-2xl font-bold text-black dark:text-white">
                     {filteredComponents.filter(c => c.status === 'active').length}
                   </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">Actifs</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">Active</div>
                 </div>
               </div>
             </CardContent>

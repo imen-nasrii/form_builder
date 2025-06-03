@@ -106,8 +106,8 @@ export default function Setup2FA() {
             <Alert className="border-green-200 bg-green-50">
               <Shield className="h-4 w-4" />
               <AlertDescription>
-                L'authentification à deux facteurs est maintenant active. 
-                Vous devrez utiliser votre application d'authentification pour vous connecter.
+                Two-factor authentication is now active. 
+                You will need to use your authenticator app to sign in.
               </AlertDescription>
             </Alert>
             
@@ -116,7 +116,7 @@ export default function Setup2FA() {
                 onClick={() => setLocation('/dashboard')} 
                 className="w-full"
               >
-                Retour au tableau de bord
+                Back to Dashboard
               </Button>
             </div>
           </CardContent>
