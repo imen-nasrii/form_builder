@@ -59,7 +59,7 @@ class EmailService {
     const mailOptions = {
       from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
       to: email,
-      subject: 'Vérification de votre compte FormCraft Pro',
+      subject: 'Verify Your FormCraft Pro Account',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; text-align: center;">
@@ -67,10 +67,10 @@ class EmailService {
           </div>
           
           <div style="padding: 30px; background: #f9f9f9;">
-            <h2 style="color: #333;">Vérifiez votre compte</h2>
+            <h2 style="color: #333;">Verify Your Account</h2>
             <p style="color: #666; line-height: 1.6;">
-              Merci de vous être inscrit sur FormCraft Pro. Pour activer votre compte et commencer à créer des formulaires avancés, 
-              veuillez cliquer sur le bouton ci-dessous :
+              Thank you for signing up for FormCraft Pro. To activate your account and start creating advanced forms, 
+              please click the button below:
             </p>
             
             <div style="text-align: center; margin: 30px 0;">
@@ -82,18 +82,18 @@ class EmailService {
                         border-radius: 5px; 
                         font-weight: bold;
                         display: inline-block;">
-                Vérifier mon compte
+                Verify My Account
               </a>
             </div>
             
             <p style="color: #666; font-size: 14px;">
-              Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :
+              If the button doesn't work, copy and paste this link into your browser:
               <br>
               <a href="${verificationUrl}" style="color: #667eea;">${verificationUrl}</a>
             </p>
             
             <p style="color: #999; font-size: 12px; margin-top: 30px;">
-              Ce lien expirera dans 24 heures. Si vous n'avez pas créé de compte, ignorez cet email.
+              This link will expire in 24 hours. If you didn't create an account, please ignore this email.
             </p>
           </div>
         </div>
@@ -121,7 +121,7 @@ class EmailService {
     const mailOptions = {
       from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
       to: email,
-      subject: 'Réinitialisation de votre mot de passe FormCraft Pro',
+      subject: 'Reset Your FormCraft Pro Password',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; text-align: center;">
@@ -129,10 +129,10 @@ class EmailService {
           </div>
           
           <div style="padding: 30px; background: #f9f9f9;">
-            <h2 style="color: #333;">Réinitialisation de mot de passe</h2>
+            <h2 style="color: #333;">Password Reset</h2>
             <p style="color: #666; line-height: 1.6;">
-              Vous avez demandé la réinitialisation de votre mot de passe. 
-              Cliquez sur le bouton ci-dessous pour créer un nouveau mot de passe :
+              You have requested a password reset. 
+              Click the button below to create a new password:
             </p>
             
             <div style="text-align: center; margin: 30px 0;">
@@ -144,18 +144,18 @@ class EmailService {
                         border-radius: 5px; 
                         font-weight: bold;
                         display: inline-block;">
-                Réinitialiser mon mot de passe
+                Reset My Password
               </a>
             </div>
             
             <p style="color: #666; font-size: 14px;">
-              Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :
+              If the button doesn't work, copy and paste this link into your browser:
               <br>
               <a href="${resetUrl}" style="color: #667eea;">${resetUrl}</a>
             </p>
             
             <p style="color: #999; font-size: 12px; margin-top: 30px;">
-              Ce lien expirera dans 1 heure. Si vous n'avez pas demandé cette réinitialisation, ignorez cet email.
+              This link will expire in 1 hour. If you didn't request this reset, please ignore this email.
             </p>
           </div>
         </div>
