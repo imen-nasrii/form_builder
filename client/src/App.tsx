@@ -14,7 +14,7 @@ import FormBuilderFixed from "@/pages/form-builder-fixed";
 import ComponentsOverview from "@/pages/components-overview";
 import DFMToJSONBotStable from "@/components/ai-bot/dfm-to-json-bot-stable";
 import AdminPage from "@/pages/admin";
-import AdminPanel from "@/pages/admin-panel";
+import AdminPanel from "@/pages/admin-panel-en";
 import Setup2FA from "@/pages/setup-2fa";
 import VerifyEmail from "@/pages/verify-email";
 
