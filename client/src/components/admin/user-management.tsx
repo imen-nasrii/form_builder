@@ -63,14 +63,14 @@ export default function UserManagement() {
       return (
         <Badge className="bg-red-100 text-red-800">
           <Shield className="w-3 h-3 mr-1" />
-          Administrateur
+          Administrator
         </Badge>
       );
     }
     return (
       <Badge className="bg-blue-100 text-blue-800">
         <UserCheck className="w-3 h-3 mr-1" />
-        Utilisateur
+        User
       </Badge>
     );
   };
@@ -83,14 +83,14 @@ export default function UserManagement() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Gestion des utilisateurs</h2>
-          <p className="text-gray-600">Gérer les rôles et permissions des utilisateurs</p>
+          <h2 className="text-2xl font-bold text-gray-900">User Management</h2>
+          <p className="text-gray-600">Manage user roles and permissions</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
-              placeholder="Rechercher des utilisateurs..."
+              placeholder="Search users..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 w-64"
