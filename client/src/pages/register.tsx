@@ -13,14 +13,14 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 
 const registerSchema = z.object({
-  email: z.string().email("Email invalide"),
-  password: z.string().min(6, "Le mot de passe doit contenir au moins 6 caractères"),
-  confirmPassword: z.string().min(1, "Confirmation requise"),
+  email: z.string().email("Invalid email"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  confirmPassword: z.string().min(1, "Confirmation required"),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
   role: z.enum(["user", "admin"]).default("user"),
 }).refine((data) => data.password === data.confirmPassword, {
-  message: "Les mots de passe ne correspondent pas",
+  message: "Passwords don't match",
   path: ["confirmPassword"],
 });
 
@@ -51,8 +51,8 @@ export default function Register() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       toast({
-        title: "Inscription réussie",
-        description: "Votre compte a été créé avec succès.",
+        title: "Registration Successful",
+        description: "Your account has been created successfully.",
       });
       setLocation("/");
     },

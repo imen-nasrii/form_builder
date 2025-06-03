@@ -62,9 +62,9 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Connexion</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">Login</CardTitle>
           <CardDescription className="text-center">
-            Connectez-vous à votre compte
+            Sign in to your account
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -79,7 +79,7 @@ export default function Login() {
                     <FormControl>
                       <Input
                         type="email"
-                        placeholder="votre@email.com"
+                        placeholder="your@email.com"
                         {...field}
                       />
                     </FormControl>
@@ -93,11 +93,11 @@ export default function Login() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Mot de passe</FormLabel>
+                    <FormLabel>Password</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
-                        placeholder="Votre mot de passe"
+                        placeholder="Your password"
                         {...field}
                       />
                     </FormControl>
@@ -111,17 +111,17 @@ export default function Login() {
                 className="w-full"
                 disabled={loginMutation.isPending}
               >
-                {loginMutation.isPending ? "Connexion..." : "Se connecter"}
+                {loginMutation.isPending ? "Logging in..." : "Sign In"}
               </Button>
             </form>
           </Form>
 
           <div className="mt-4 text-center text-sm">
             <span className="text-gray-600 dark:text-gray-400">
-              Pas encore de compte ?{" "}
+              Don't have an account?{" "}
             </span>
             <Link href="/register" className="text-blue-600 hover:text-blue-500 font-medium">
-              S'inscrire
+              Sign up
             </Link>
           </div>
         </CardContent>
