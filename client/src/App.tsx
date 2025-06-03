@@ -14,6 +14,8 @@ import FormBuilderFixed from "@/pages/form-builder-fixed";
 import ComponentsOverview from "@/pages/components-overview";
 import DFMToJSONBotStable from "@/components/ai-bot/dfm-to-json-bot-stable";
 import AdminPage from "@/pages/admin";
+import AdminPanel from "@/pages/admin-panel";
+import Setup2FA from "@/pages/setup-2fa";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -48,6 +50,8 @@ function Router() {
           <Route path="/components" component={ComponentsOverview} />
           <Route path="/ai-bot" component={DFMToJSONBotStable} />
           <Route path="/admin" component={AdminPage} />
+          <Route path="/admin-panel" component={AdminPanel} />
+          <Route path="/setup-2fa" component={Setup2FA} />
         </>
       )}
       <Route component={NotFound} />
