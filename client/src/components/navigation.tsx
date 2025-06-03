@@ -95,15 +95,26 @@ export default function Navigation() {
           </Link>
           
           {user?.role === 'admin' && (
-            <Link href="/admin">
-              <button className={`px-4 py-2 rounded-lg transition-all ${
-                isActive("/admin") 
-                  ? "bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 font-medium" 
-                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
-              }`}>
-                Analytics
-              </button>
-            </Link>
+            <>
+              <Link href="/admin">
+                <button className={`px-4 py-2 rounded-lg transition-all ${
+                  isActive("/admin") 
+                    ? "bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 font-medium" 
+                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+                }`}>
+                  Analytics
+                </button>
+              </Link>
+              <Link href="/admin-panel">
+                <button className={`px-4 py-2 rounded-lg transition-all ${
+                  isActive("/admin-panel") 
+                    ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 font-medium" 
+                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+                }`}>
+                  Gestion Utilisateurs
+                </button>
+              </Link>
+            </>
           )}
         </div>
 
@@ -147,7 +158,6 @@ export default function Navigation() {
             
             <button
               onClick={() => {
-                // Méthode 1: POST fetch
                 fetch('/api/logout', { 
                   method: 'POST',
                   credentials: 'include',
@@ -159,12 +169,10 @@ export default function Navigation() {
                   if (response.ok) {
                     window.location.href = '/';
                   } else {
-                    // Méthode 2: GET direct si POST échoue
                     window.location.href = '/api/logout';
                   }
                 })
                 .catch(() => {
-                  // Méthode 3: Redirection forcée en cas d'erreur
                   window.location.href = '/api/logout';
                 });
               }}

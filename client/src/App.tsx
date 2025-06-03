@@ -16,6 +16,7 @@ import DFMToJSONBotStable from "@/components/ai-bot/dfm-to-json-bot-stable";
 import AdminPage from "@/pages/admin";
 import AdminPanel from "@/pages/admin-panel";
 import Setup2FA from "@/pages/setup-2fa";
+import VerifyEmail from "@/pages/verify-email";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
