@@ -10,6 +10,10 @@ import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { StableSelect, StableSelectItem } from '@/components/ui/stable-select';
 import { Database, Plus, TestTube, ExternalLink, Settings } from 'lucide-react';
+// Simple error checking inline
+const isUnauthorizedError = (error: Error): boolean => {
+  return /^401: .*Unauthorized/.test(error.message);
+};
 
 interface DataSource {
   id: string;
@@ -56,8 +60,14 @@ export default function DataSourceManager() {
     },
   });
 
-  const { data: dataSources = [], isLoading } = useQuery<DataSource[]>({
+  const { data: dataSources = [], isLoading, error } = useQuery<DataSource[]>({
     queryKey: ['/api/data-sources'],
+    retry: (failureCount, error) => {
+      if (isUnauthorizedError(error as Error)) {
+        return false;
+      }
+      return failureCount < 3;
+    },
   });
 
   const createDataSourceMutation = useMutation({
@@ -412,27 +422,49 @@ export default function DataSourceManager() {
               </Alert>
             )}
 
-            <div className="flex gap-2 justify-end">
+            <div className="flex gap-2 justify-between">
               <Button
                 variant="outline"
-                onClick={() => setShowNewDataSource(false)}
+                onClick={() => {
+                  // Pre-fill with a working example
+                  setNewDataSource({
+                    id: 'demo-countries',
+                    name: 'Demo Countries API',
+                    url: 'https://restcountries.com/v3.1/all',
+                    method: 'GET',
+                    authType: 'none',
+                    responseMapping: {
+                      valueField: 'cca2',
+                      labelField: 'name.common',
+                    },
+                  });
+                }}
               >
-                Cancel
+                Load Example
               </Button>
-              <Button
-                variant="outline"
-                onClick={handleTestDataSource}
-                disabled={testDataSourceMutation.isPending}
-              >
-                <TestTube className="w-4 h-4 mr-2" />
-                {testDataSourceMutation.isPending ? 'Testing...' : 'Test'}
-              </Button>
-              <Button
-                onClick={handleCreateDataSource}
-                disabled={createDataSourceMutation.isPending}
-              >
-                {createDataSourceMutation.isPending ? 'Creating...' : 'Create Data Source'}
-              </Button>
+              
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowNewDataSource(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={handleTestDataSource}
+                  disabled={testDataSourceMutation.isPending}
+                >
+                  <TestTube className="w-4 h-4 mr-2" />
+                  {testDataSourceMutation.isPending ? 'Testing...' : 'Test'}
+                </Button>
+                <Button
+                  onClick={handleCreateDataSource}
+                  disabled={createDataSourceMutation.isPending}
+                >
+                  {createDataSourceMutation.isPending ? 'Creating...' : 'Create Data Source'}
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
