@@ -96,10 +96,10 @@ export default function Setup2FA() {
               <CheckCircle className="w-6 h-6 text-green-600" />
             </div>
             <CardTitle className="text-2xl font-bold text-green-700">
-              2FA Activée
+              2FA Enabled
             </CardTitle>
             <CardDescription>
-              Votre compte est maintenant sécurisé
+              Your account is now secure
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

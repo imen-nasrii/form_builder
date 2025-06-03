@@ -59,55 +59,55 @@ interface FormField {
 
 const ComponentCategories = {
   text: {
-    name: 'Saisie et texte',
+    name: 'Text Input',
     icon: Type,
     color: 'blue',
     components: {
-      TEXT: { icon: Type, label: 'Saisie de texte', color: 'blue' },
-      TEXTAREA: { icon: AlignLeft, label: 'Zone de texte', color: 'green' }
+      TEXT: { icon: Type, label: 'Text Input', color: 'blue' },
+      TEXTAREA: { icon: AlignLeft, label: 'Text Area', color: 'green' }
     }
   },
   selection: {
-    name: 'Sélection',
+    name: 'Selection',
     icon: List,
     color: 'orange',
     components: {
-      SELECT: { icon: List, label: 'Sélectionner', color: 'orange' },
-      CHECKBOX: { icon: CheckSquare, label: 'Case à cocher', color: 'cyan' },
-      RADIOGRP: { icon: CheckSquare, label: 'Groupe radio', color: 'purple' }
+      SELECT: { icon: List, label: 'Select', color: 'orange' },
+      CHECKBOX: { icon: CheckSquare, label: 'Checkbox', color: 'cyan' },
+      RADIOGRP: { icon: CheckSquare, label: 'Radio Group', color: 'purple' }
     }
   },
   datetime: {
-    name: 'Date et temps',
+    name: 'Date & Time',
     icon: Calendar,
     color: 'purple',
     components: {
-      DATEPICKER: { icon: Calendar, label: 'Sélecteur de date', color: 'purple' }
+      DATEPICKER: { icon: Calendar, label: 'Date Picker', color: 'purple' }
     }
   },
   file: {
-    name: 'Fichiers',
+    name: 'Files',
     icon: Upload,
     color: 'red',
     components: {
-      FILEUPLOAD: { icon: Upload, label: 'Téléchargement de fichiers', color: 'pink' }
+      FILEUPLOAD: { icon: Upload, label: 'File Upload', color: 'pink' }
     }
   },
   lookup: {
-    name: 'Recherche',
+    name: 'Lookup',
     icon: Search,
     color: 'indigo',
     components: {
-      GRIDLKP: { icon: Table, label: 'Recherche de grille', color: 'indigo' },
-      LSTLKP: { icon: Search, label: 'Recherche de liste', color: 'teal' }
+      GRIDLKP: { icon: Table, label: 'Grid Lookup', color: 'indigo' },
+      LSTLKP: { icon: Search, label: 'List Lookup', color: 'teal' }
     }
   },
   layout: {
-    name: 'Mise en page',
+    name: 'Layout',
     icon: Square,
     color: 'gray',
     components: {
-      GROUP: { icon: Square, label: 'Groupe', color: 'violet' }
+      GROUP: { icon: Square, label: 'Group', color: 'violet' }
     }
   },
   actions: {
@@ -115,8 +115,8 @@ const ComponentCategories = {
     icon: Play,
     color: 'red',
     components: {
-      ACTION: { icon: Play, label: "Bouton d'action", color: 'red' },
-      WARNING: { icon: AlertTriangle, label: 'Avertissement', color: 'yellow' }
+      ACTION: { icon: Play, label: "Action Button", color: 'red' },
+      WARNING: { icon: AlertTriangle, label: 'Warning', color: 'yellow' }
     }
   }
 };
@@ -953,7 +953,7 @@ function JsonValidator({ formData, customComponents, isDarkMode }: {
             {formData.fields?.length || 0}
           </div>
           <div className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-            Champs
+            Fields
           </div>
         </div>
         <div className="text-center">
@@ -961,7 +961,7 @@ function JsonValidator({ formData, customComponents, isDarkMode }: {
             {customComponents.length}
           </div>
           <div className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-            Composants personnalisés
+            Custom Components
           </div>
         </div>
         <div className="text-center">
@@ -989,46 +989,46 @@ function TutorialDialog({ isOpen, onClose, step, onNextStep, onPrevStep, totalSt
 }) {
   const tutorialSteps = [
     {
-      title: "Bienvenue dans le Form Builder",
-      content: "Ce tutoriel vous guidera à travers toutes les fonctionnalités du générateur de formulaires. Vous apprendrez à créer des formulaires complexes avec validation en temps réel.",
+      title: "Welcome to Form Builder",
+      content: "This tutorial will guide you through all the features of the form generator. You'll learn to create complex forms with real-time validation.",
       highlight: null,
-      action: "Commençons!"
+      action: "Let's start!"
     },
     {
-      title: "Palette de composants",
-      content: "À gauche, vous trouvez la palette de composants organisée par catégories : Saisie, Sélection, Date, Fichiers, etc. Glissez-déposez les composants dans la zone de construction.",
+      title: "Component Palette",
+      content: "On the left, you'll find the component palette organized by categories: Input, Selection, Date, Files, etc. Drag and drop components into the construction area.",
       highlight: "palette",
-      action: "Glissez un composant TEXT"
+      action: "Drag a TEXT component"
     },
     {
-      title: "Zone de construction",
-      content: "Au centre se trouve la zone de construction où vous assemblez votre formulaire. Les composants peuvent être réorganisés par glisser-déposer.",
+      title: "Construction Area",
+      content: "In the center is the construction area where you assemble your form. Components can be reorganized by drag and drop.",
       highlight: "builder",
-      action: "Déposez votre composant ici"
+      action: "Drop your component here"
     },
     {
-      title: "Panneau de propriétés",
-      content: "À droite, le panneau de propriétés vous permet de configurer chaque composant sélectionné : label, validation, style, etc.",
+      title: "Properties Panel",
+      content: "On the right, the properties panel allows you to configure each selected component: label, validation, style, etc.",
       highlight: "properties",
-      action: "Cliquez sur un composant"
+      action: "Click on a component"
     },
     {
-      title: "Validateur JSON",
-      content: "L'onglet JSON affiche le schéma généré en temps réel avec validation automatique. Les erreurs et avertissements sont mis en évidence.",
+      title: "JSON Validator",
+      content: "The JSON tab displays the generated schema in real-time with automatic validation. Errors and warnings are highlighted.",
       highlight: "json",
-      action: "Consultez la validation"
+      action: "Check the validation"
     },
     {
-      title: "Composants personnalisés",
-      content: "Vous pouvez créer vos propres composants via l'icône '+'. Utilisez JSON ou le créateur visuel pour définir des composants réutilisables.",
+      title: "Custom Components",
+      content: "You can create your own components via the '+' icon. Use JSON or the visual creator to define reusable components.",
       highlight: "custom",
-      action: "Créez un composant"
+      action: "Create a component"
     },
     {
-      title: "Sauvegarde et collaboration",
-      content: "Utilisez les boutons Nouveau/Vider/Sauvegarder pour gérer vos formulaires. Invitez des collaborateurs pour travailler ensemble en temps réel.",
+      title: "Save and Collaboration",
+      content: "Use the New/Clear/Save buttons to manage your forms. Invite collaborators to work together in real-time.",
       highlight: "actions",
-      action: "Sauvegardez votre travail"
+      action: "Save your work"
     }
   ];
 
@@ -1739,7 +1739,7 @@ export default function FormBuilderFixed() {
               className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
             >
               <Plus className="w-4 h-4 mr-2" />
-              Nouveau
+              New
             </Button>
             <Button 
               variant="outline" 
@@ -1748,7 +1748,7 @@ export default function FormBuilderFixed() {
               className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
             >
               <RotateCcw className="w-4 h-4 mr-2" />
-              Vider
+              Clear
             </Button>
             <Button 
               size="sm" 
@@ -1756,7 +1756,7 @@ export default function FormBuilderFixed() {
               disabled={saveFormMutation.isPending}
             >
               <Save className="w-4 h-4 mr-2" />
-              {saveFormMutation.isPending ? 'Sauvegarde...' : 'Sauvegarder'}
+              {saveFormMutation.isPending ? 'Saving...' : 'Save'}
             </Button>
           </div>
         </div>
