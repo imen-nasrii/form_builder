@@ -54,6 +54,7 @@ function Router() {
           <Route path="/ai-bot" component={DFMToJSONBotStable} />
           <Route path="/admin" component={AdminPage} />
           <Route path="/admin-panel" component={AdminPanel} />
+          <Route path="/api-integration" component={ApiIntegration} />
           <Route path="/setup-2fa" component={Setup2FA} />
         </>
       )}

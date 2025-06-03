@@ -84,6 +84,16 @@ export default function Navigation() {
             </button>
           </Link>
 
+          <Link href="/api-integration">
+            <button className={`px-4 py-2 rounded-lg transition-all ${
+              isActive("/api-integration") 
+                ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 font-medium" 
+                : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+            }`}>
+              API Integration
+            </button>
+          </Link>
+
           <Link href="/ai-bot">
             <button className={`px-4 py-2 rounded-lg transition-all ${
               isActive("/ai-bot") 
