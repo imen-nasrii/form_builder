@@ -13,8 +13,8 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 
 const loginSchema = z.object({
-  email: z.string().email("Email invalide"),
-  password: z.string().min(1, "Mot de passe requis"),
+  email: z.string().email("Invalid email"),
+  password: z.string().min(1, "Password required"),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;
@@ -40,15 +40,15 @@ export default function Login() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       toast({
-        title: "Connexion réussie",
-        description: "Vous êtes maintenant connecté.",
+        title: "Login Successful",
+        description: "You are now logged in.",
       });
       setLocation("/");
     },
     onError: (error: any) => {
       toast({
-        title: "Erreur de connexion",
-        description: error.message || "Identifiants invalides",
+        title: "Login Error",
+        description: error.message || "Invalid credentials",
         variant: "destructive",
       });
     },
