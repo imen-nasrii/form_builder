@@ -36,8 +36,8 @@ export default function VerifyEmail() {
     onSuccess: () => {
       setStatus('success');
       toast({
-        title: "Email vérifié",
-        description: "Votre email a été vérifié avec succès",
+        title: "Email Verified",
+        description: "Your email has been successfully verified",
       });
     },
     onError: (error: Error) => {
@@ -47,7 +47,7 @@ export default function VerifyEmail() {
         setStatus('error');
       }
       toast({
-        title: "Erreur de vérification",
+        title: "Verification Error",
         description: error.message,
         variant: "destructive",
       });
@@ -62,13 +62,13 @@ export default function VerifyEmail() {
     },
     onSuccess: () => {
       toast({
-        title: "Email envoyé",
-        description: "Un nouveau lien de vérification a été envoyé",
+        title: "Email Sent",
+        description: "A new verification link has been sent",
       });
     },
     onError: (error: Error) => {
       toast({
-        title: "Erreur",
+        title: "Error",
         description: error.message,
         variant: "destructive",
       });
@@ -83,9 +83,9 @@ export default function VerifyEmail() {
             <div className="mx-auto w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4 animate-pulse">
               <Mail className="w-6 h-6 text-blue-600" />
             </div>
-            <CardTitle>Vérification en cours...</CardTitle>
+            <CardTitle>Verification in Progress...</CardTitle>
             <CardDescription>
-              Nous vérifions votre email
+              We are verifying your email
             </CardDescription>
           </CardHeader>
         </Card>
@@ -102,18 +102,18 @@ export default function VerifyEmail() {
               <CheckCircle className="w-6 h-6 text-green-600" />
             </div>
             <CardTitle className="text-2xl font-bold text-green-700">
-              Email vérifié
+              Email Verified
             </CardTitle>
             <CardDescription>
-              Votre compte est maintenant activé
+              Your account is now activated
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <Alert className="border-green-200 bg-green-50">
               <CheckCircle className="h-4 w-4" />
               <AlertDescription>
-                Votre email a été vérifié avec succès. Vous pouvez maintenant 
-                accéder à toutes les fonctionnalités de la plateforme.
+                Your email has been successfully verified. You can now 
+                access all platform features.
               </AlertDescription>
             </Alert>
             
@@ -122,14 +122,14 @@ export default function VerifyEmail() {
                 onClick={() => setLocation('/dashboard')} 
                 className="w-full"
               >
-                Accéder au tableau de bord
+                Access Dashboard
               </Button>
               <Button 
                 variant="outline"
                 onClick={() => setLocation('/login')} 
                 className="w-full"
               >
-                Se connecter
+                Sign In
               </Button>
             </div>
           </CardContent>
@@ -146,12 +146,12 @@ export default function VerifyEmail() {
             <AlertCircle className="w-6 h-6 text-red-600" />
           </div>
           <CardTitle className="text-2xl font-bold text-red-700">
-            {status === 'expired' ? 'Lien expiré' : 'Erreur de vérification'}
+            {status === 'expired' ? 'Link Expired' : 'Verification Error'}
           </CardTitle>
           <CardDescription>
             {status === 'expired' 
-              ? 'Le lien de vérification a expiré'
-              : 'Impossible de vérifier votre email'
+              ? 'The verification link has expired'
+              : 'Unable to verify your email'
             }
           </CardDescription>
         </CardHeader>
@@ -160,8 +160,8 @@ export default function VerifyEmail() {
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
               {status === 'expired' 
-                ? 'Ce lien de vérification a expiré. Demandez un nouveau lien.'
-                : 'Le lien de vérification est invalide ou a déjà été utilisé.'
+                ? 'This verification link has expired. Request a new link.'
+                : 'The verification link is invalid or has already been used.'
               }
             </AlertDescription>
           </Alert>
@@ -173,8 +173,8 @@ export default function VerifyEmail() {
               className="w-full"
             >
               {resendVerificationMutation.isPending 
-                ? 'Envoi...' 
-                : 'Renvoyer le lien de vérification'
+                ? 'Sending...' 
+                : 'Resend Verification Link'
               }
             </Button>
             <Button 
@@ -182,7 +182,7 @@ export default function VerifyEmail() {
               onClick={() => setLocation('/login')} 
               className="w-full"
             >
-              Retour à la connexion
+              Back to Login
             </Button>
           </div>
         </CardContent>
