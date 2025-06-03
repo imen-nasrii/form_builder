@@ -1,124 +1,182 @@
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
 
-export interface EmailConfig {
-  host: string;
-  port: number;
-  secure: boolean;
+interface EmailConfig {
+  service?: string;
+  host?: string;
+  port?: number;
+  secure?: boolean;
   auth: {
     user: string;
     pass: string;
   };
 }
 
-export class EmailService {
-  private transporter: nodemailer.Transporter;
+class EmailService {
+  private transporter: nodemailer.Transporter | null = null;
 
   constructor() {
-    // Configuration will be set via environment variables
-    this.transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'localhost',
-      port: parseInt(process.env.SMTP_PORT || '587'),
-      secure: process.env.SMTP_SECURE === 'true',
+    this.initializeTransporter();
+  }
+
+  private initializeTransporter() {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      console.warn('Email service not configured - EMAIL_USER and EMAIL_PASS required');
+      return;
+    }
+
+    const config: EmailConfig = {
+      service: process.env.EMAIL_SERVICE || 'gmail',
       auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
       },
-    });
+    };
+
+    // If custom SMTP settings are provided
+    if (process.env.EMAIL_HOST) {
+      config.host = process.env.EMAIL_HOST;
+      config.port = parseInt(process.env.EMAIL_PORT || '587');
+      config.secure = process.env.EMAIL_SECURE === 'true';
+      delete config.service;
+    }
+
+    try {
+      this.transporter = nodemailer.createTransport(config);
+    } catch (error) {
+      console.error('Failed to initialize email transporter:', error);
+    }
   }
 
-  async sendEmailVerification(email: string, token: string, userName: string): Promise<boolean> {
-    try {
-      const verificationUrl = `${process.env.APP_URL}/verify-email?token=${token}`;
-      
-      const mailOptions = {
-        from: process.env.FROM_EMAIL || 'noreply@formbuilder.com',
-        to: email,
-        subject: 'Vérification de votre compte Form Builder',
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #1976d2;">Bienvenue sur Form Builder</h2>
-            <p>Bonjour ${userName},</p>
-            <p>Merci de vous être inscrit sur Form Builder. Pour activer votre compte, veuillez cliquer sur le lien ci-dessous :</p>
-            <a href="${verificationUrl}" style="display: inline-block; background-color: #1976d2; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; margin: 20px 0;">
-              Vérifier mon email
-            </a>
-            <p>Ce lien expire dans 24 heures.</p>
-            <p>Si vous n'avez pas créé de compte, vous pouvez ignorer cet email.</p>
-            <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
-            <p style="color: #666; font-size: 12px;">Form Builder - Générateur de formulaires</p>
-          </div>
-        `,
-      };
+  async sendVerificationEmail(email: string, token: string): Promise<boolean> {
+    if (!this.transporter) {
+      console.error('Email service not initialized');
+      return false;
+    }
 
+    const verificationUrl = `${process.env.APP_URL || 'http://localhost:5000'}/verify-email?token=${token}`;
+
+    const mailOptions = {
+      from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+      to: email,
+      subject: 'Vérification de votre compte FormCraft Pro',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; text-align: center;">
+            <h1 style="color: white; margin: 0;">FormCraft Pro</h1>
+          </div>
+          
+          <div style="padding: 30px; background: #f9f9f9;">
+            <h2 style="color: #333;">Vérifiez votre compte</h2>
+            <p style="color: #666; line-height: 1.6;">
+              Merci de vous être inscrit sur FormCraft Pro. Pour activer votre compte et commencer à créer des formulaires avancés, 
+              veuillez cliquer sur le bouton ci-dessous :
+            </p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${verificationUrl}" 
+                 style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                        color: white; 
+                        padding: 15px 30px; 
+                        text-decoration: none; 
+                        border-radius: 5px; 
+                        font-weight: bold;
+                        display: inline-block;">
+                Vérifier mon compte
+              </a>
+            </div>
+            
+            <p style="color: #666; font-size: 14px;">
+              Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :
+              <br>
+              <a href="${verificationUrl}" style="color: #667eea;">${verificationUrl}</a>
+            </p>
+            
+            <p style="color: #999; font-size: 12px; margin-top: 30px;">
+              Ce lien expirera dans 24 heures. Si vous n'avez pas créé de compte, ignorez cet email.
+            </p>
+          </div>
+        </div>
+      `,
+    };
+
+    try {
       await this.transporter.sendMail(mailOptions);
+      console.log('Verification email sent to:', email);
       return true;
     } catch (error) {
-      console.error('Erreur envoi email de vérification:', error);
+      console.error('Failed to send verification email:', error);
       return false;
     }
   }
 
-  async sendPasswordReset(email: string, token: string, userName: string): Promise<boolean> {
-    try {
-      const resetUrl = `${process.env.APP_URL}/reset-password?token=${token}`;
-      
-      const mailOptions = {
-        from: process.env.FROM_EMAIL || 'noreply@formbuilder.com',
-        to: email,
-        subject: 'Réinitialisation de votre mot de passe',
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #1976d2;">Réinitialisation de mot de passe</h2>
-            <p>Bonjour ${userName},</p>
-            <p>Vous avez demandé la réinitialisation de votre mot de passe. Cliquez sur le lien ci-dessous pour créer un nouveau mot de passe :</p>
-            <a href="${resetUrl}" style="display: inline-block; background-color: #1976d2; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; margin: 20px 0;">
-              Réinitialiser mon mot de passe
-            </a>
-            <p>Ce lien expire dans 1 heure.</p>
-            <p>Si vous n'avez pas demandé cette réinitialisation, vous pouvez ignorer cet email.</p>
-            <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
-            <p style="color: #666; font-size: 12px;">Form Builder - Générateur de formulaires</p>
-          </div>
-        `,
-      };
+  async sendPasswordResetEmail(email: string, token: string): Promise<boolean> {
+    if (!this.transporter) {
+      console.error('Email service not initialized');
+      return false;
+    }
 
+    const resetUrl = `${process.env.APP_URL || 'http://localhost:5000'}/reset-password?token=${token}`;
+
+    const mailOptions = {
+      from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+      to: email,
+      subject: 'Réinitialisation de votre mot de passe FormCraft Pro',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; text-align: center;">
+            <h1 style="color: white; margin: 0;">FormCraft Pro</h1>
+          </div>
+          
+          <div style="padding: 30px; background: #f9f9f9;">
+            <h2 style="color: #333;">Réinitialisation de mot de passe</h2>
+            <p style="color: #666; line-height: 1.6;">
+              Vous avez demandé la réinitialisation de votre mot de passe. 
+              Cliquez sur le bouton ci-dessous pour créer un nouveau mot de passe :
+            </p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${resetUrl}" 
+                 style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                        color: white; 
+                        padding: 15px 30px; 
+                        text-decoration: none; 
+                        border-radius: 5px; 
+                        font-weight: bold;
+                        display: inline-block;">
+                Réinitialiser mon mot de passe
+              </a>
+            </div>
+            
+            <p style="color: #666; font-size: 14px;">
+              Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :
+              <br>
+              <a href="${resetUrl}" style="color: #667eea;">${resetUrl}</a>
+            </p>
+            
+            <p style="color: #999; font-size: 12px; margin-top: 30px;">
+              Ce lien expirera dans 1 heure. Si vous n'avez pas demandé cette réinitialisation, ignorez cet email.
+            </p>
+          </div>
+        </div>
+      `,
+    };
+
+    try {
       await this.transporter.sendMail(mailOptions);
+      console.log('Password reset email sent to:', email);
       return true;
     } catch (error) {
-      console.error('Erreur envoi email de réinitialisation:', error);
+      console.error('Failed to send password reset email:', error);
       return false;
     }
   }
 
-  async send2FASetupEmail(email: string, userName: string): Promise<boolean> {
-    try {
-      const mailOptions = {
-        from: process.env.FROM_EMAIL || 'noreply@formbuilder.com',
-        to: email,
-        subject: 'Authentification à deux facteurs activée',
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #1976d2;">Authentification à deux facteurs</h2>
-            <p>Bonjour ${userName},</p>
-            <p>L'authentification à deux facteurs a été activée sur votre compte administrateur.</p>
-            <p>Votre compte est maintenant plus sécurisé. Vous devrez utiliser votre application d'authentification pour vous connecter.</p>
-            <p>Si vous n'avez pas activé cette fonctionnalité, contactez immédiatement l'administrateur système.</p>
-            <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
-            <p style="color: #666; font-size: 12px;">Form Builder - Générateur de formulaires</p>
-          </div>
-        `,
-      };
-
-      await this.transporter.sendMail(mailOptions);
-      return true;
-    } catch (error) {
-      console.error('Erreur envoi email 2FA:', error);
-      return false;
-    }
+  generateVerificationToken(): string {
+    return crypto.randomBytes(32).toString('hex');
   }
 
-  generateToken(): string {
+  generatePasswordResetToken(): string {
     return crypto.randomBytes(32).toString('hex');
   }
 }

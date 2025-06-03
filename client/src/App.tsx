@@ -40,6 +40,7 @@ function Router() {
         <>
           <Route path="/register" component={Register} />
           <Route path="/login" component={Login} />
+          <Route path="/verify-email" component={VerifyEmail} />
           <Route path="/" component={Landing} />
         </>
       ) : (

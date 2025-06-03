@@ -1,52 +1,71 @@
 import speakeasy from 'speakeasy';
-import qrcode from 'qrcode';
+import QRCode from 'qrcode';
 
-export interface TwoFactorSetup {
+interface TwoFactorSetup {
   secret: string;
-  qrCodeUrl: string;
+  qrCode: string;
   manualEntryKey: string;
 }
 
-export class TwoFactorService {
-  generateSecret(userEmail: string): TwoFactorSetup {
+class TwoFactorService {
+  /**
+   * Generate a new 2FA secret and QR code for a user
+   */
+  async generateSecret(userEmail: string, serviceName: string = 'FormCraft Pro'): Promise<TwoFactorSetup> {
+    // Generate a secret
     const secret = speakeasy.generateSecret({
       name: userEmail,
-      issuer: 'Form Builder',
+      issuer: serviceName,
       length: 32,
     });
 
+    if (!secret.otpauth_url) {
+      throw new Error('Failed to generate OTP auth URL');
+    }
+
+    // Generate QR code
+    const qrCode = await QRCode.toDataURL(secret.otpauth_url);
+
     return {
       secret: secret.base32,
-      qrCodeUrl: secret.otpauth_url!,
+      qrCode,
       manualEntryKey: secret.base32,
     };
   }
 
-  async generateQRCode(otpauthUrl: string): Promise<string> {
-    try {
-      return await qrcode.toDataURL(otpauthUrl);
-    } catch (error) {
-      console.error('Erreur génération QR code:', error);
-      throw new Error('Impossible de générer le QR code');
-    }
-  }
-
-  verifyToken(token: string, secret: string, window: number = 1): boolean {
+  /**
+   * Verify a TOTP token against a secret
+   */
+  verifyToken(token: string, secret: string): boolean {
     return speakeasy.totp.verify({
-      secret: secret,
+      secret,
       encoding: 'base32',
-      token: token,
-      window: window,
+      token,
+      window: 2, // Allow for time drift
     });
   }
 
-  generateBackupCodes(): string[] {
+  /**
+   * Generate a backup code (for recovery)
+   */
+  generateBackupCodes(count: number = 10): string[] {
     const codes: string[] = [];
-    for (let i = 0; i < 10; i++) {
+    
+    for (let i = 0; i < count; i++) {
+      // Generate 8-character alphanumeric codes
       const code = Math.random().toString(36).substring(2, 10).toUpperCase();
       codes.push(code);
     }
+    
     return codes;
+  }
+
+  /**
+   * Validate backup code format
+   */
+  isValidBackupCode(code: string): boolean {
+    // 8 characters, alphanumeric
+    return /^[A-Z0-9]{8}$/.test(code);
   }
 }
 
