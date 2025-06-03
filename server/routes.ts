@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { setupAuth, requireAuth, requireAdmin } from "./auth";
 import { setupEnhancedAuth, requireAuth as requireAuthEnhanced, requireAdmin as requireAdminEnhanced, requireUser } from "./auth-enhanced";
 import { insertFormSchema, insertTemplateSchema } from "@shared/schema";
+import { apiService, type ApiDataSource } from "./services/apiService";
 import crypto from "crypto";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -351,6 +352,80 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error importing form:", error);
       res.status(500).json({ message: "Failed to import form" });
+    }
+  });
+
+  // External API Data Source Management
+  app.get('/api/data-sources', requireAuth, (req, res) => {
+    try {
+      const dataSources = apiService.getAllDataSources();
+      res.json(dataSources.map(ds => ({
+        id: ds.id,
+        name: ds.name,
+        url: ds.url,
+        method: ds.method,
+      })));
+    } catch (error) {
+      console.error('Error fetching data sources:', error);
+      res.status(500).json({ error: 'Failed to fetch data sources' });
+    }
+  });
+
+  // Fetch data from a specific data source
+  app.get('/api/data-sources/:id/data', requireAuth, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const filters = req.query as Record<string, any>;
+      
+      const result = await apiService.fetchData(id, filters);
+      
+      if (result.success) {
+        res.json({ data: result.data });
+      } else {
+        res.status(400).json({ error: result.error });
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      res.status(500).json({ error: 'Failed to fetch data' });
+    }
+  });
+
+  // Create a new data source configuration
+  app.post('/api/data-sources', requireAuth, (req, res) => {
+    try {
+      const dataSource: ApiDataSource = req.body;
+      
+      // Validate required fields
+      if (!dataSource.id || !dataSource.name || !dataSource.url || !dataSource.responseMapping) {
+        return res.status(400).json({ error: 'Missing required fields' });
+      }
+
+      apiService.registerDataSource(dataSource);
+      res.status(201).json({ message: 'Data source created successfully' });
+    } catch (error) {
+      console.error('Error creating data source:', error);
+      res.status(500).json({ error: 'Failed to create data source' });
+    }
+  });
+
+  // Test a data source configuration
+  app.post('/api/data-sources/test', requireAuth, async (req, res) => {
+    try {
+      const dataSource: ApiDataSource = req.body;
+      const testId = `test-${Date.now()}`;
+      const testDataSource = { ...dataSource, id: testId };
+      
+      apiService.registerDataSource(testDataSource);
+      const result = await apiService.fetchData(testId);
+      
+      res.json({
+        success: result.success,
+        data: result.success ? result.data?.slice(0, 5) : undefined, // Return first 5 items for testing
+        error: result.error,
+      });
+    } catch (error) {
+      console.error('Error testing data source:', error);
+      res.status(500).json({ error: 'Failed to test data source' });
     }
   });
 
