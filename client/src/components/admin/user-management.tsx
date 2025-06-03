@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { StableSelect, StableSelectItem } from "@/components/ui/stable-select";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -30,19 +30,22 @@ export default function UserManagement() {
 
   const updateRoleMutation = useMutation({
     mutationFn: async ({ userId, role }: { userId: string; role: string }) => {
-      await apiRequest("PATCH", `/api/admin/users/${userId}/role`, { role });
+      return apiRequest(`/api/admin/users/${userId}/role`, {
+        method: 'PATCH',
+        body: JSON.stringify({ role }),
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
       toast({
-        title: "Rôle mis à jour avec succès! ✅",
-        description: "Les permissions de l'utilisateur ont été modifiées",
+        title: "Role Updated Successfully!",
+        description: "User permissions have been modified",
       });
     },
     onError: () => {
       toast({
-        title: "Erreur",
-        description: "Impossible de mettre à jour le rôle",
+        title: "Error",
+        description: "Unable to update role",
         variant: "destructive",
       });
     },
@@ -76,7 +79,7 @@ export default function UserManagement() {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('fr-FR');
+    return new Date(dateString).toLocaleDateString('en-US');
   };
 
   return (
@@ -102,7 +105,7 @@ export default function UserManagement() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card className="bg-blue-50 border-blue-200">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm text-blue-800">Total Utilisateurs</CardTitle>
+            <CardTitle className="text-sm text-blue-800">Total Users</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-blue-900">{users.length}</div>
@@ -111,7 +114,7 @@ export default function UserManagement() {
 
         <Card className="bg-red-50 border-red-200">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm text-red-800">Administrateurs</CardTitle>
+            <CardTitle className="text-sm text-red-800">Administrators</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-red-900">
@@ -122,7 +125,7 @@ export default function UserManagement() {
 
         <Card className="bg-green-50 border-green-200">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm text-green-800">Utilisateurs Standard</CardTitle>
+            <CardTitle className="text-sm text-green-800">Standard Users</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-green-900">
@@ -136,7 +139,7 @@ export default function UserManagement() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="w-5 h-5" />
-            Liste des utilisateurs
+            User List
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -158,7 +161,7 @@ export default function UserManagement() {
                     </div>
                     <div className="text-sm text-gray-500">{user.email}</div>
                     <div className="text-xs text-gray-400">
-                      Créé le {formatDate(user.createdAt)}
+                      Created {formatDate(user.createdAt)}
                     </div>
                   </div>
                 </div>
@@ -166,25 +169,20 @@ export default function UserManagement() {
                 <div className="flex items-center space-x-4">
                   {user.twoFactorEnabled && (
                     <Badge variant="outline" className="text-green-600 border-green-300">
-                      2FA Activé
+                      2FA Enabled
                     </Badge>
                   )}
                   
                   {getRoleBadge(user.role)}
 
-                  <Select
+                  <StableSelect
                     value={user.role}
-                    onValueChange={(value) => handleRoleChange(user.id, value)}
-                    disabled={updateRoleMutation.isPending}
+                    onValueChange={(value: string) => handleRoleChange(user.id, value)}
+                    className="w-40"
                   >
-                    <SelectTrigger className="w-40">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="user">Utilisateur</SelectItem>
-                      <SelectItem value="admin">Administrateur</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    <StableSelectItem value="user">User</StableSelectItem>
+                    <StableSelectItem value="admin">Administrator</StableSelectItem>
+                  </StableSelect>
                 </div>
               </div>
             ))}
