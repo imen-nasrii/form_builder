@@ -41,8 +41,8 @@ export default function AdminPanel() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
       toast({
-        title: "Rôle mis à jour",
-        description: "Le rôle de l'utilisateur a été modifié avec succès",
+        title: "Role updated",
+        description: "User role has been successfully updated",
       });
     },
     onError: (error: Error) => {
