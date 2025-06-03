@@ -13,13 +13,13 @@ export default function AdminPage() {
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 bg-primary rounded mx-auto mb-4 animate-pulse"></div>
-          <p>Chargement...</p>
+          <p>Loading...</p>
         </div>
       </div>
     );
   }
 
-  if (!user || user.role !== 'admin') {
+  if (!user || (user as any)?.role !== 'admin') {
     return (
       <div className="min-h-screen bg-slate-50">
         <Navigation />
@@ -28,15 +28,15 @@ export default function AdminPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-red-800">
                 <AlertTriangle className="w-6 h-6" />
-                Accès refusé
+                Access Denied
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-red-700">
-                Vous devez être administrateur pour accéder à cette page.
+                You must be an administrator to access this page.
               </p>
               <p className="text-red-600 text-sm mt-2">
-                Contactez un administrateur pour obtenir les permissions nécessaires.
+                Contact an administrator to obtain the necessary permissions.
               </p>
             </CardContent>
           </Card>
@@ -57,7 +57,7 @@ export default function AdminPage() {
             <h1 className="text-3xl font-bold text-slate-900">Administration</h1>
           </div>
           <p className="text-slate-600">
-            Panneau d'administration pour gérer les utilisateurs et les permissions
+            Administration panel to manage users and permissions
           </p>
         </div>
 
@@ -67,12 +67,12 @@ export default function AdminPage() {
             <CardHeader className="pb-3">
               <CardTitle className="text-sm opacity-90 flex items-center gap-2">
                 <Shield className="w-4 h-4" />
-                Statut Admin
+                Admin Status
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">Actif</div>
-              <div className="text-sm opacity-90">Accès complet</div>
+              <div className="text-2xl font-bold">Active</div>
+              <div className="text-sm opacity-90">Full Access</div>
             </CardContent>
           </Card>
 
@@ -80,12 +80,12 @@ export default function AdminPage() {
             <CardHeader className="pb-3">
               <CardTitle className="text-sm opacity-90 flex items-center gap-2">
                 <Users className="w-4 h-4" />
-                Gestion Utilisateurs
+                User Management
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">Disponible</div>
-              <div className="text-sm opacity-90">Modifier les rôles</div>
+              <div className="text-2xl font-bold">Available</div>
+              <div className="text-sm opacity-90">Modify Roles</div>
             </CardContent>
           </Card>
 
@@ -93,14 +93,14 @@ export default function AdminPage() {
             <CardHeader className="pb-3">
               <CardTitle className="text-sm opacity-90 flex items-center gap-2">
                 <Key className="w-4 h-4" />
-                Sécurité 2FA
+                2FA Security
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {user.twoFactorEnabled ? 'Activé' : 'Disponible'}
+                {(user as any)?.twoFactorEnabled ? 'Enabled' : 'Available'}
               </div>
-              <div className="text-sm opacity-90">Protection avancée</div>
+              <div className="text-sm opacity-90">Advanced Protection</div>
             </CardContent>
           </Card>
         </div>

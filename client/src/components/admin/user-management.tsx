@@ -191,10 +191,10 @@ export default function UserManagement() {
               <div className="text-center py-8">
                 <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  Aucun utilisateur trouvé
+                  No users found
                 </h3>
                 <p className="text-gray-500">
-                  {searchQuery ? "Essayez de modifier votre recherche" : "Aucun utilisateur enregistré"}
+                  {searchQuery ? "Try modifying your search" : "No users registered"}
                 </p>
               </div>
             )}
