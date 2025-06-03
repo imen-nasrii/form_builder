@@ -58,8 +58,8 @@ export default function Register() {
     },
     onError: (error: any) => {
       toast({
-        title: "Erreur d'inscription",
-        description: error.message || "Une erreur est survenue lors de l'inscription",
+        title: "Registration Error",
+        description: error.message || "An error occurred during registration",
         variant: "destructive",
       });
     },
@@ -74,9 +74,9 @@ export default function Register() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Inscription</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">Sign Up</CardTitle>
           <CardDescription className="text-center">
-            Créez votre compte
+            Create your account
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -88,10 +88,10 @@ export default function Register() {
                   name="firstName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Prénom</FormLabel>
+                      <FormLabel>First Name</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Prénom"
+                          placeholder="First Name"
                           {...field}
                         />
                       </FormControl>
@@ -105,10 +105,10 @@ export default function Register() {
                   name="lastName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nom</FormLabel>
+                      <FormLabel>Last Name</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Nom"
+                          placeholder="Last Name"
                           {...field}
                         />
                       </FormControl>
@@ -127,7 +127,7 @@ export default function Register() {
                     <FormControl>
                       <Input
                         type="email"
-                        placeholder="votre@email.com"
+                        placeholder="your@email.com"
                         {...field}
                       />
                     </FormControl>
@@ -141,11 +141,11 @@ export default function Register() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Mot de passe</FormLabel>
+                    <FormLabel>Password</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
-                        placeholder="Mot de passe"
+                        placeholder="Password"
                         {...field}
                       />
                     </FormControl>
@@ -159,11 +159,11 @@ export default function Register() {
                 name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirmer le mot de passe</FormLabel>
+                    <FormLabel>Confirm Password</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
-                        placeholder="Confirmer le mot de passe"
+                        placeholder="Confirm Password"
                         {...field}
                       />
                     </FormControl>
@@ -177,17 +177,17 @@ export default function Register() {
                 className="w-full"
                 disabled={registerMutation.isPending}
               >
-                {registerMutation.isPending ? "Inscription..." : "S'inscrire"}
+                {registerMutation.isPending ? "Signing up..." : "Sign Up"}
               </Button>
             </form>
           </Form>
 
           <div className="mt-4 text-center text-sm">
             <span className="text-gray-600 dark:text-gray-400">
-              Déjà un compte ?{" "}
+              Already have an account?{" "}
             </span>
             <Link href="/login" className="text-blue-600 hover:text-blue-500 font-medium">
-              Se connecter
+              Sign in
             </Link>
           </div>
         </CardContent>
