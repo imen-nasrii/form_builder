@@ -1,178 +1,96 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function Landing() {
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-screen bg-white">
+      {/* Simple Navigation */}
+      <nav className="flex items-center justify-between px-8 py-6 border-b border-gray-100">
+        <h1 className="text-2xl font-bold text-gray-900">FormBuilder Pro</h1>
+        <Link href="/login">
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md">
+            Sign In
+          </Button>
+        </Link>
+      </nav>
+
       {/* Hero Section */}
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-slate-900/[0.04] bg-[size:20px_20px]"></div>
-        <div className="relative">
-          {/* Navigation */}
-          <nav className="flex items-center justify-between p-6 lg:px-8">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                <i className="fas fa-cube text-white text-sm"></i>
-              </div>
-              <h1 className="text-xl font-semibold text-slate-900">FormBuilder Pro</h1>
-            </div>
-            <Link href="/login">
-              <Button className="enterprise-gradient">
-                Se connecter
-              </Button>
-            </Link>
-          </nav>
+      <div className="flex flex-col items-center justify-center px-8 py-32 text-center">
+        <h1 className="text-5xl font-bold text-gray-900 mb-6 max-w-4xl">
+          Enterprise Form Designer
+        </h1>
+        <p className="text-xl text-gray-600 mb-12 max-w-2xl leading-relaxed">
+          Build sophisticated forms with drag-and-drop simplicity. Advanced validation, 
+          conditional logic, and JSON schema generation for enterprise applications.
+        </p>
+        <div className="flex gap-4">
+          <Link href="/register">
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg rounded-md">
+              Get Started
+            </Button>
+          </Link>
+          <Link href="/login">
+            <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-3 text-lg rounded-md">
+              Sign In
+            </Button>
+          </Link>
+        </div>
+      </div>
 
-          {/* Hero Content */}
-          <div className="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8">
-            <div className="mx-auto max-w-2xl text-center">
-              <h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl">
-                Enterprise Form Designer
-              </h1>
-              <p className="mt-6 text-lg leading-8 text-slate-600">
-                Build sophisticated forms with drag-and-drop simplicity. Advanced validation, 
-                conditional logic, and JSON schema generation for enterprise applications.
-              </p>
-              <div className="mt-10 flex items-center justify-center gap-x-6">
-                <Link href="/register">
-                  <Button className="enterprise-gradient text-lg px-8 py-3">
-                    Commencer
-                  </Button>
-                </Link>
-                <Link href="/login">
-                  <Button variant="outline" className="text-lg px-8 py-3">
-                    Se connecter
-                  </Button>
-                </Link>
+      {/* Simple Features Section */}
+      <div className="py-20 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-8 text-center">
+          <h2 className="text-3xl font-bold text-gray-900 mb-16">
+            Everything you need to build enterprise forms
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                </svg>
               </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Drag & Drop Builder</h3>
+              <p className="text-gray-600">Intuitive visual form designer with real-time preview</p>
+            </div>
+            
+            <div className="text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Smart Validation</h3>
+              <p className="text-gray-600">Advanced validation with conditional logic</p>
+            </div>
+            
+            <div className="text-center">
+              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">JSON Export</h3>
+              <p className="text-gray-600">Clean schema generation for modern frameworks</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Features Section */}
-      <div className="py-24 sm:py-32">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-              Everything you need to build enterprise forms
-            </h2>
-            <p className="mt-4 text-lg leading-8 text-slate-600">
-              Professional-grade form builder with advanced features for modern applications.
-            </p>
-          </div>
-
-          <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
-            <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3">
-              <div className="flex flex-col">
-                <Card className="h-full hover:shadow-lg transition-shadow duration-300">
-                  <CardHeader>
-                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                      <i className="fas fa-mouse-pointer text-blue-600 text-xl"></i>
-                    </div>
-                    <CardTitle>Drag & Drop Builder</CardTitle>
-                    <CardDescription>
-                      Intuitive visual form designer with component palette and real-time preview.
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              </div>
-
-              <div className="flex flex-col">
-                <Card className="h-full hover:shadow-lg transition-shadow duration-300">
-                  <CardHeader>
-                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                      <i className="fas fa-shield-alt text-green-600 text-xl"></i>
-                    </div>
-                    <CardTitle>Advanced Security</CardTitle>
-                    <CardDescription>
-                      Role-based access control with two-factor authentication for admin accounts.
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              </div>
-
-              <div className="flex flex-col">
-                <Card className="h-full hover:shadow-lg transition-shadow duration-300">
-                  <CardHeader>
-                    <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-                      <i className="fas fa-code text-purple-600 text-xl"></i>
-                    </div>
-                    <CardTitle>JSON Schema Export</CardTitle>
-                    <CardDescription>
-                      Generate clean, structured JSON compatible with modern frameworks like Blazor.
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              </div>
-
-              <div className="flex flex-col">
-                <Card className="h-full hover:shadow-lg transition-shadow duration-300">
-                  <CardHeader>
-                    <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center mb-4">
-                      <i className="fas fa-check-circle text-amber-600 text-xl"></i>
-                    </div>
-                    <CardTitle>Smart Validation</CardTitle>
-                    <CardDescription>
-                      Comprehensive validation engine with 15+ operators and conditional logic.
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              </div>
-
-              <div className="flex flex-col">
-                <Card className="h-full hover:shadow-lg transition-shadow duration-300">
-                  <CardHeader>
-                    <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
-                      <i className="fas fa-puzzle-piece text-indigo-600 text-xl"></i>
-                    </div>
-                    <CardTitle>Rich Components</CardTitle>
-                    <CardDescription>
-                      Grid lookups, date pickers, radio groups, and complex field types.
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              </div>
-
-              <div className="flex flex-col">
-                <Card className="h-full hover:shadow-lg transition-shadow duration-300">
-                  <CardHeader>
-                    <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
-                      <i className="fas fa-rocket text-red-600 text-xl"></i>
-                    </div>
-                    <CardTitle>Enterprise Ready</CardTitle>
-                    <CardDescription>
-                      Built for scalability with database persistence and audit logging.
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              </div>
-            </dl>
-          </div>
-        </div>
-      </div>
-
-      {/* CTA Section */}
-      <div className="bg-slate-900">
-        <div className="px-6 py-24 sm:px-6 sm:py-32 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              Start building professional forms today.
-            </h2>
-            <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-slate-300">
-              Join thousands of developers who trust FormBuilder Pro for their enterprise applications.
-            </p>
-            <div className="mt-10 flex items-center justify-center gap-x-6">
-              <Link href="/register">
-                <Button className="bg-white text-slate-900 hover:bg-slate-100 text-lg px-8 py-3">
-                  Commencer gratuitement
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
+      {/* Simple Footer */}
+      <div className="bg-white py-16 text-center border-t border-gray-100">
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          Start building professional forms today
+        </h2>
+        <p className="text-lg text-gray-600 mb-8 max-w-xl mx-auto">
+          Join developers who trust FormBuilder Pro for enterprise applications
+        </p>
+        <Link href="/register">
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg rounded-md">
+            Get Started Free
+          </Button>
+        </Link>
       </div>
     </div>
   );
