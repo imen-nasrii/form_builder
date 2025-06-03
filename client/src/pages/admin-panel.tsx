@@ -25,16 +25,16 @@ export default function AdminPanel() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: users, isLoading } = useQuery({
+  const { data: usersData, isLoading } = useQuery({
     queryKey: ['/api/admin/users'],
-    queryFn: () => apiRequest('/api/admin/users') as Promise<User[]>,
   });
+
+  const users = (usersData as User[]) || [];
 
   const updateRoleMutation = useMutation({
     mutationFn: async ({ userId, role }: { userId: string; role: string }) => {
       return apiRequest(`/api/admin/users/${userId}/role`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ role }),
       });
     },
@@ -95,11 +95,11 @@ export default function AdminPanel() {
   }
 
   const stats = {
-    total: users?.length || 0,
-    admins: users?.filter(u => u.role === 'admin').length || 0,
-    users: users?.filter(u => u.role === 'user').length || 0,
-    verified: users?.filter(u => u.emailVerified).length || 0,
-    with2FA: users?.filter(u => u.twoFactorEnabled).length || 0,
+    total: users.length,
+    admins: users.filter((u: User) => u.role === 'admin').length,
+    users: users.filter((u: User) => u.role === 'user').length,
+    verified: users.filter((u: User) => u.emailVerified).length,
+    with2FA: users.filter((u: User) => u.twoFactorEnabled).length,
   };
 
   return (
@@ -185,7 +185,7 @@ export default function AdminPanel() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {users?.map((user) => (
+            {users.map((user: User) => (
               <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
                 <div className="flex-1">
                   <div className="flex items-center space-x-3">
