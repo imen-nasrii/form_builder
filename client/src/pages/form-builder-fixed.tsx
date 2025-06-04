@@ -1191,26 +1191,68 @@ export default function FormBuilderFixed() {
   const [tutorialStep, setTutorialStep] = useState(0);
   const formBuilderRef = useRef<HTMLDivElement>(null);
 
-  // Load saved form data and custom components from localStorage on startup
+  // Load form data from API if formId is provided
+  const { data: existingForm, isLoading: formLoading } = useQuery({
+    queryKey: ['/api/forms', formId],
+    enabled: !!formId,
+  });
+
+  // Type for existing form data
+  interface ExistingFormData {
+    id: number;
+    menuId: string;
+    label: string;
+    formWidth: string;
+    layout: string;
+    fields?: FormField[];
+    formDefinition?: string;
+  }
+
+  // Clear form state when changing forms and load existing form data
   useEffect(() => {
-    try {
-      const savedBackup = localStorage.getItem('formBuilder_backup');
-      if (savedBackup) {
-        const backup = JSON.parse(savedBackup);
-        if (backup.id) {
-          setFormData(prev => ({ ...prev, id: backup.id }));
+    if (formId && existingForm) {
+      // Loading existing form - clear state and load form data
+      let parsedFields: FormField[] = [];
+      let parsedCustomComponents: any[] = [];
+      
+      try {
+        if ((existingForm as any).formDefinition) {
+          const definition = JSON.parse((existingForm as any).formDefinition);
+          parsedFields = Array.isArray(definition.fields) ? definition.fields : [];
+          parsedCustomComponents = Array.isArray(definition.customComponents) ? definition.customComponents : [];
+        } else if (Array.isArray((existingForm as any).fields)) {
+          parsedFields = (existingForm as any).fields;
         }
-        if (backup.fields && backup.fields.length > 0) {
-          setFormData(prev => ({ ...prev, fields: backup.fields }));
-        }
-        if (backup.customComponents && backup.customComponents.length > 0) {
-          setCustomComponents(backup.customComponents);
-        }
+      } catch (error) {
+        console.error('Error parsing form definition:', error);
+        parsedFields = [];
+        parsedCustomComponents = [];
       }
-    } catch (error) {
-      console.log('No valid backup found');
+      
+      setFormData({
+        id: (existingForm as any).id,
+        menuId: (existingForm as any).menuId || `FORM_${Date.now()}`,
+        label: (existingForm as any).label || 'Mon Formulaire',
+        formWidth: (existingForm as any).formWidth || '700px',
+        layout: (existingForm as any).layout || 'PROCESS',
+        fields: parsedFields
+      });
+      setSelectedField(null);
+      setCustomComponents(parsedCustomComponents); // Load form-specific custom components
+    } else if (!formId) {
+      // Creating new form - reset to default state
+      setFormData({
+        id: null,
+        menuId: `FORM_${Date.now()}`,
+        label: 'Mon Formulaire',
+        formWidth: '700px',
+        layout: 'PROCESS',
+        fields: []
+      });
+      setSelectedField(null);
+      setCustomComponents([]);
     }
-  }, []);
+  }, [formId, existingForm]);
 
   const createDefaultField = (componentType: string): FormField => {
     const timestamp = Date.now();
@@ -1448,13 +1490,6 @@ export default function FormBuilderFixed() {
       
       alert('Formulaire sauvegardé avec succès !');
       queryClient.invalidateQueries({ queryKey: ['/api/forms'] });
-      
-      // Also save to localStorage as backup
-      localStorage.setItem('formBuilder_backup', JSON.stringify({
-        id: savedForm.id,
-        fields: formData.fields,
-        customComponents: customComponents
-      }));
     },
     onError: (error) => {
       console.error('Error saving form:', error);
