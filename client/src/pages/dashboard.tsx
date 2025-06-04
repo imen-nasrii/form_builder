@@ -236,18 +236,18 @@ export default function Dashboard() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">Étiquette <span className="text-red-500">*</span></label>
+                      <label className="text-sm font-medium">Label <span className="text-red-500">*</span></label>
                       <Input
                         value={formConfig.label}
                         onChange={(e) => setFormConfig(prev => ({ ...prev, label: e.target.value }))}
-                        placeholder="Étiquette du formulaire"
+                        placeholder="Form label"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">Largeur</label>
+                      <label className="text-sm font-medium">Width</label>
                       <Select 
                         value={formConfig.formWidth} 
                         onValueChange={(value) => setFormConfig(prev => ({ ...prev, formWidth: value }))}
@@ -264,7 +264,7 @@ export default function Dashboard() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">Mise en page</label>
+                      <label className="text-sm font-medium">Layout</label>
                       <Select 
                         value={formConfig.layout} 
                         onValueChange={(value) => setFormConfig(prev => ({ ...prev, layout: value }))}
@@ -286,14 +286,14 @@ export default function Dashboard() {
                       variant="outline" 
                       onClick={() => setShowNewFormDialog(false)}
                     >
-                      Annuler
+                      Cancel
                     </Button>
                     <Button
                       onClick={() => createFormMutation.mutate()}
                       disabled={createFormMutation.isPending || !formConfig.menuId || !formConfig.label}
                       className="bg-blue-600 hover:bg-blue-700"
                     >
-                      {createFormMutation.isPending ? 'Création...' : 'Créer le formulaire'}
+                      {createFormMutation.isPending ? 'Creating...' : 'Create Form'}
                     </Button>
                   </div>
                 </div>
