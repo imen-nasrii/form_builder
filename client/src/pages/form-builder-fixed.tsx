@@ -2097,6 +2097,9 @@ export default function FormBuilderFixed() {
                       isSelected={selectedField?.Id === field.Id}
                       addField={addField}
                       isDarkMode={isDarkMode}
+                      selectedField={selectedField}
+                      setSelectedField={setSelectedField}
+                      removeChildField={removeChildField}
                     />
                   ))}
                 </div>
