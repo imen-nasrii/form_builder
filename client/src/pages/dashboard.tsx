@@ -99,16 +99,10 @@ export default function Dashboard() {
       description: "Workflow and business process forms"
     },
     {
-      value: "MASTER",
-      label: "Master Form", 
+      value: "MASTER_MENU",
+      label: "Master Menu",
       icon: Database,
-      description: "Master data and configuration forms"
-    },
-    {
-      value: "MENU",
-      label: "Menu Form",
-      icon: Menu,
-      description: "Navigation and menu interface forms"
+      description: "Master data and menu interface forms"
     },
     {
       value: "TRANSACTIONS",
@@ -280,8 +274,7 @@ export default function Dashboard() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="PROCESS">Process Form</SelectItem>
-                          <SelectItem value="MASTER">Master Form</SelectItem>
-                          <SelectItem value="MENU">Menu Form</SelectItem>
+                          <SelectItem value="MASTER_MENU">Master Menu</SelectItem>
                           <SelectItem value="TRANSACTIONS">Transaction Form</SelectItem>
                         </SelectContent>
                       </Select>
