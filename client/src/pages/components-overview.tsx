@@ -188,72 +188,7 @@ export default function ComponentsOverview() {
           </p>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="border-gray-200 dark:border-gray-700">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
-                  <Activity className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-black dark:text-white">
-                    {filteredComponents.filter(c => c.status === 'active').length}
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">Active</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
 
-          <Card className="border-gray-200 dark:border-gray-700">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
-                  <Users className="w-6 h-6 text-green-600 dark:text-green-400" />
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-black dark:text-white">
-                    {new Set(realComponents.map((c: ComponentProgress) => c.creator.id)).size}
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">Créateurs</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-gray-200 dark:border-gray-700">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center">
-                  <Clock className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-black dark:text-white">
-                    {filteredComponents.filter(c => c.status === 'completed').length}
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">Completed</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-gray-200 dark:border-gray-700">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/20 rounded-lg flex items-center justify-center">
-                  <Edit className="w-6 h-6 text-orange-600 dark:text-orange-400" />
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-black dark:text-white">
-                    {realComponents.length > 0 ? Math.round(realComponents.reduce((acc: number, c: ComponentProgress) => acc + c.progress, 0) / realComponents.length) : 0}%
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">Progrès Moyen</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
 
         {/* Filters */}
         <Card className="border-gray-200 dark:border-gray-700 mb-6">
