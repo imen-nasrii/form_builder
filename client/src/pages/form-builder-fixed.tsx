@@ -1780,11 +1780,16 @@ export default function FormBuilderFixed() {
       });
 
       console.log('Importing fields:', processedFields);
+      console.log('Current formData before import:', formData);
       
-      setFormData(prev => ({
-        ...prev,
-        fields: processedFields
-      }));
+      setFormData(prev => {
+        const newFormData = {
+          ...prev,
+          fields: processedFields
+        };
+        console.log('New formData after import:', newFormData);
+        return newFormData;
+      });
       
       if (importedData.customComponents) {
         setCustomComponents(importedData.customComponents);
