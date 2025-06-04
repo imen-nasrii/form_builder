@@ -50,7 +50,7 @@ export default function Navigation() {
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full opacity-75 group-hover:opacity-100 transition-opacity"></div>
             </div>
             <div>
-              <span className="text-xl font-bold bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="text-xl font-bold text-blue-600">
                 FormBuilder
               </span>
               <div className="text-xs text-gray-500 dark:text-gray-400 -mt-1 font-medium">Enterprise</div>
