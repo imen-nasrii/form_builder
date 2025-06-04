@@ -48,10 +48,11 @@ export const SimpleGroupContainer: React.FC<SimpleGroupContainerProps> = ({
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
+    e.stopPropagation(); // Prevent bubbling to parent drop handlers
     setIsDropZone(false);
     
     try {
-      const componentType = e.dataTransfer.getData('text/plain');
+      const componentType = e.dataTransfer.getData('componentType') || e.dataTransfer.getData('text/plain');
       if (componentType) {
         const newField: FormField = {
           Id: `group_field_${Date.now()}`,
@@ -109,6 +110,7 @@ export const SimpleGroupContainer: React.FC<SimpleGroupContainerProps> = ({
     <div
       className={containerClass}
       style={containerStyle}
+      data-group-drop="true"
       onClick={(e) => {
         e.stopPropagation();
         onSelectField(field);
