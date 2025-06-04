@@ -278,15 +278,18 @@ function GroupField({
 
       {isExpanded && (
         <div 
+          data-group-drop="true"
           onDragOver={(e) => e.preventDefault()}
           onDrop={(e) => {
             e.preventDefault();
+            e.stopPropagation(); // Prevent event from bubbling to main form
             const componentType = e.dataTransfer.getData('componentType');
             if (componentType) {
+              console.log('Adding component to group:', componentType, 'Group ID:', field.Id);
               addField(componentType, field.Id);
             }
           }}
-          className={`min-h-24 p-4 border-2 border-dashed rounded transition-colors ${
+          className={`group-drop-zone min-h-24 p-4 border-2 border-dashed rounded transition-colors ${
             isDarkMode 
               ? 'border-gray-600 bg-gray-700 hover:border-blue-500 hover:bg-blue-900/20' 
               : 'border-gray-200 bg-gray-50 hover:border-blue-500 hover:bg-blue-50'
@@ -1287,13 +1290,35 @@ export default function FormBuilderFixed() {
     };
   };
 
+  // Clean up duplicate components that appear both in groups and root level
+  const cleanupDuplicateComponents = (fields: FormField[]): FormField[] => {
+    const componentIdsInGroups = new Set<string>();
+    
+    // First pass: collect all component IDs that are inside groups
+    fields.forEach(field => {
+      if (field.Type === 'GROUP' && field.ChildFields) {
+        field.ChildFields.forEach(child => {
+          componentIdsInGroups.add(child.Id);
+        });
+      }
+    });
+    
+    // Second pass: remove root-level components that also exist in groups
+    return fields.filter(field => {
+      if (field.Type === 'GROUP') {
+        return true; // Keep all groups
+      }
+      return !componentIdsInGroups.has(field.Id); // Remove if exists in a group
+    });
+  };
+
   const addField = (componentType: string, targetGroupId?: string) => {
     const newField = createDefaultField(componentType);
     
     if (targetGroupId) {
-      setFormData(prev => ({
-        ...prev,
-        fields: prev.fields.map(field => {
+      // Adding to a specific group
+      setFormData(prev => {
+        const updatedFields = prev.fields.map(field => {
           if (field.Id === targetGroupId) {
             return {
               ...field,
@@ -1301,9 +1326,16 @@ export default function FormBuilderFixed() {
             };
           }
           return field;
-        })
-      }));
+        });
+        
+        // Clean up any duplicates after adding to group
+        return {
+          ...prev,
+          fields: cleanupDuplicateComponents(updatedFields)
+        };
+      });
     } else {
+      // Adding to main form
       setFormData(prev => ({
         ...prev,
         fields: [...prev.fields, newField]
@@ -1930,13 +1962,20 @@ export default function FormBuilderFixed() {
               onDragOver={(e) => e.preventDefault()}
               onDrop={(e) => {
                 e.preventDefault();
-                // Only add to root level if not dropped on a group
-                const target = e.target as HTMLElement;
-                const isDroppedOnGroup = target.closest('[data-group-drop]');
                 
+                // Check if the drop event originated from a group drop zone
+                const target = e.target as HTMLElement;
+                const isDroppedOnGroup = target.closest('[data-group-drop]') || 
+                                        target.hasAttribute('data-group-drop') ||
+                                        target.closest('.group-drop-zone');
+                
+                console.log('Construction zone drop - target:', target, 'isDroppedOnGroup:', isDroppedOnGroup);
+                
+                // Only add to main form if NOT dropped on a group
                 if (!isDroppedOnGroup) {
                   const componentType = e.dataTransfer.getData('componentType');
                   if (componentType) {
+                    console.log('Adding component to main form:', componentType);
                     addField(componentType);
                   }
                 }
