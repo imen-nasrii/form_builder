@@ -1315,12 +1315,7 @@ export default function FormBuilderFixed() {
     // Auto-save after adding a component
     if (formData.id) {
       setTimeout(() => {
-        // Mark as auto-save to suppress success alerts
-        document.body.setAttribute('data-auto-save', 'true');
         saveFormMutation.mutate();
-        setTimeout(() => {
-          document.body.removeAttribute('data-auto-save');
-        }, 100);
       }, 500);
     }
   };
@@ -1350,12 +1345,7 @@ export default function FormBuilderFixed() {
     // Auto-save after removing a component
     if (formData.id) {
       setTimeout(() => {
-        // Mark as auto-save to suppress success alerts
-        document.body.setAttribute('data-auto-save', 'true');
         saveFormMutation.mutate();
-        setTimeout(() => {
-          document.body.removeAttribute('data-auto-save');
-        }, 100);
       }, 500);
     }
   };
@@ -1388,12 +1378,7 @@ export default function FormBuilderFixed() {
     // Auto-save after updating field properties
     if (formData.id) {
       setTimeout(() => {
-        // Mark as auto-save to suppress success alerts
-        document.body.setAttribute('data-auto-save', 'true');
         saveFormMutation.mutate();
-        setTimeout(() => {
-          document.body.removeAttribute('data-auto-save');
-        }, 100);
       }, 1000);
     }
   };
@@ -1535,10 +1520,6 @@ export default function FormBuilderFixed() {
         setFormData(prev => ({ ...prev, id: savedForm.id }));
       }
       
-      // Silent save for auto-save, only show alert for manual save
-      if (!document.body.hasAttribute('data-auto-save')) {
-        alert('Formulaire sauvegardé avec succès !');
-      }
       queryClient.invalidateQueries({ queryKey: ['/api/forms'] });
     },
     onError: (error) => {
@@ -1547,9 +1528,13 @@ export default function FormBuilderFixed() {
     }
   });
 
-  // Save form function
-  const saveForm = () => {
-    saveFormMutation.mutate();
+  // Manual save form function with confirmation
+  const saveFormManually = () => {
+    saveFormMutation.mutate(undefined, {
+      onSuccess: () => {
+        alert('Formulaire sauvegardé avec succès !');
+      }
+    });
   };
 
   // Tutorial functions
@@ -1839,11 +1824,11 @@ export default function FormBuilderFixed() {
             </Button>
             <Button 
               size="sm" 
-              onClick={saveForm}
+              onClick={saveFormManually}
               disabled={saveFormMutation.isPending}
             >
               <Save className="w-4 h-4 mr-2" />
-              {saveFormMutation.isPending ? 'Saving...' : 'Save'}
+              {saveFormMutation.isPending ? 'Sauvegarde...' : 'Sauvegarder'}
             </Button>
           </div>
         </div>
