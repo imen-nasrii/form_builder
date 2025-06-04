@@ -1200,61 +1200,111 @@ function TutorialDialog({ isOpen, onClose, step, onNextStep, onPrevStep, totalSt
   );
 }
 
-// Quick Tips Component
-function QuickTips({ isDarkMode }: { isDarkMode: boolean }) {
-  const [showTips, setShowTips] = useState(false);
-
-  const tips = [
-    {
-      title: "Keyboard Shortcuts",
-      content: "Ctrl+S to save, Ctrl+Z to undo, Ctrl+D to duplicate a component"
+// Step-by-Step Guidance System
+function StepByStepGuide({ isDarkMode }: { isDarkMode: boolean }) {
+  const [currentStep, setCurrentStep] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  
+  const steps = {
+    welcome: {
+      title: "Welcome to FormBuilder Enterprise",
+      content: "Let's get you started with creating professional forms. This guide will walk you through each step.",
+      nextStep: "create-form",
+      actions: [
+        { label: "Start Building", action: () => setCurrentStep("create-form") },
+        { label: "Skip Guide", action: () => setIsOpen(false) }
+      ]
     },
-    {
-      title: "Component Groups", 
-      content: "Drag components into a GROUP to organize them visually"
+    "create-form": {
+      title: "Step 1: Create Your Form",
+      content: "Begin by setting up your form's basic information. Give it a meaningful name and configure the layout.",
+      nextStep: "add-components",
+      actions: [
+        { label: "Next: Add Components", action: () => setCurrentStep("add-components") },
+        { label: "Previous", action: () => setCurrentStep("welcome") }
+      ]
     },
-    {
-      title: "Advanced Validation",
-      content: "Use the JSON tab to see validation errors in real-time"
+    "add-components": {
+      title: "Step 2: Add Form Components",
+      content: "Drag components from the left panel into your form. Start with basic inputs like text fields and selections.",
+      nextStep: "configure-properties",
+      actions: [
+        { label: "Next: Configure Properties", action: () => setCurrentStep("configure-properties") },
+        { label: "Previous", action: () => setCurrentStep("create-form") }
+      ]
     },
-    {
-      title: "Custom Components",
-      content: "Create your own reusable components with specific properties"
+    "configure-properties": {
+      title: "Step 3: Configure Component Properties",
+      content: "Select any component to configure its properties on the right panel. Set labels, validation rules, and styling.",
+      nextStep: "save-form",
+      actions: [
+        { label: "Next: Save Your Work", action: () => setCurrentStep("save-form") },
+        { label: "Previous", action: () => setCurrentStep("add-components") }
+      ]
     },
-    {
-      title: "Dark Mode",
-      content: "Switch between light and dark mode for visual comfort"
+    "save-form": {
+      title: "Step 4: Save Your Form",
+      content: "Click the Save button to store your form. You can always come back to edit it later from the dashboard.",
+      nextStep: null,
+      actions: [
+        { label: "Finish Guide", action: () => setIsOpen(false) },
+        { label: "Previous", action: () => setCurrentStep("configure-properties") }
+      ]
     }
-  ];
+  };
+
+  const currentStepData = currentStep ? steps[currentStep as keyof typeof steps] : null;
+
+  const startGuide = () => {
+    setCurrentStep("welcome");
+    setIsOpen(true);
+  };
 
   return (
-    <Dialog open={showTips} onOpenChange={setShowTips}>
-      <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className={isDarkMode ? 'text-gray-300' : ''}>
-          <HelpCircle className="w-4 h-4 mr-2" />
-          Tips
-        </Button>
-      </DialogTrigger>
-      <DialogContent className={`max-w-lg ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
-        <DialogHeader>
-          <DialogTitle className={isDarkMode ? 'text-white' : ''}>
-            Quick Tips
-          </DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4">
-          {tips.map((tip, index) => (
-            <div key={index} className={`p-3 rounded-lg border ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'}`}>
-              <h4 className={`font-medium mb-1 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                {tip.title}
-              </h4>
-              <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                {tip.content}
-              </p>
-            </div>
-          ))}
-        </div>
-      </DialogContent>
-    </Dialog>
+    <>
+      <Button 
+        variant="outline" 
+        size="sm" 
+        onClick={startGuide}
+        className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
+      >
+        <HelpCircle className="w-4 h-4 mr-2" />
+        Guide
+      </Button>
+      
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className={`max-w-lg ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
+          {currentStepData && (
+            <>
+              <DialogHeader>
+                <DialogTitle className={isDarkMode ? 'text-white' : ''}>
+                  {currentStepData.title}
+                </DialogTitle>
+              </DialogHeader>
+              
+              <div className="space-y-6">
+                <p className={`text-base leading-relaxed ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  {currentStepData.content}
+                </p>
+                
+                <div className="flex justify-between items-center pt-4">
+                  {currentStepData.actions.map((action, index) => (
+                    <Button
+                      key={index}
+                      variant={index === 0 ? "default" : "outline"}
+                      onClick={action.action}
+                      className={index === 1 && isDarkMode ? 'border-gray-600 text-gray-300' : ''}
+                    >
+                      {action.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 
@@ -1285,8 +1335,7 @@ export default function FormBuilderFixed() {
     properties: ''
   });
   const [showAddComponent, setShowAddComponent] = useState(false);
-  const [showTutorial, setShowTutorial] = useState(false);
-  const [tutorialStep, setTutorialStep] = useState(0);
+
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [importedData, setImportedData] = useState<any>(null);
   const formBuilderRef = useRef<HTMLDivElement>(null);
@@ -1876,18 +1925,7 @@ export default function FormBuilderFixed() {
               {isFullScreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
             </Button>
 
-            {/* Help */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={startTutorial}
-              className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
-            >
-              <HelpCircle className="w-4 h-4 mr-2" />
-              Tutorial
-            </Button>
-
-            <QuickTips isDarkMode={isDarkMode} />
+            <StepByStepGuide isDarkMode={isDarkMode} />
 
             {/* Import/Export JSON */}
             <div className="flex space-x-2">
