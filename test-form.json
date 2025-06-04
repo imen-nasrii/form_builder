@@ -1,0 +1,40 @@
+{
+  "formMetadata": {
+    "menuId": "TEST_FORM",
+    "label": "Test Form",
+    "formWidth": "700px",
+    "layout": "PROCESS",
+    "exportedAt": "2025-06-04T16:00:00.000Z"
+  },
+  "fields": [
+    {
+      "Id": "SELECT_TEST_001",
+      "Type": "SELECT",
+      "Label": "Test Select Field",
+      "DataField": "test_select",
+      "Entity": "TestEntity",
+      "Width": "100%",
+      "Spacing": "4",
+      "Required": false,
+      "Inline": false,
+      "Outlined": false,
+      "Value": "",
+      "ChildFields": []
+    },
+    {
+      "Id": "TEXT_TEST_002",
+      "Type": "TEXT",
+      "Label": "Test Text Input",
+      "DataField": "test_text",
+      "Entity": "TestEntity",
+      "Width": "100%",
+      "Spacing": "4",
+      "Required": true,
+      "Inline": false,
+      "Outlined": false,
+      "Value": "",
+      "ChildFields": []
+    }
+  ],
+  "customComponents": []
+}
