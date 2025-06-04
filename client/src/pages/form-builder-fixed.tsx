@@ -643,7 +643,7 @@ function PropertiesPanel({ field, onUpdate }: {
       <CardHeader>
         <CardTitle className="text-lg flex items-center space-x-2">
           <Settings className="w-5 h-5" />
-          <span>Propriétés</span>
+          <span>Properties</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -887,12 +887,12 @@ function JsonValidator({ formData, customComponents, isDarkMode }: {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-          Schema JSON avec Validation
+          JSON Schema with Validation
         </h3>
         <div className="flex items-center space-x-2">
           <div className={`w-3 h-3 rounded-full ${isValid ? 'bg-green-500' : 'bg-red-500'}`}></div>
           <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-            {isValid ? 'Valide' : `${validationErrors.length} erreur(s)`}
+            {isValid ? 'Valid' : `${validationErrors.length} error(s)`}
           </span>
         </div>
       </div>
@@ -1613,7 +1613,7 @@ export default function FormBuilderFixed() {
               className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
             >
               <HelpCircle className="w-4 h-4 mr-2" />
-              Tutoriel
+              Tutorial
             </Button>
 
             <QuickTips isDarkMode={isDarkMode} />
@@ -1627,12 +1627,12 @@ export default function FormBuilderFixed() {
                   className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  Composants Externes
+                  External Components
                 </Button>
               </DialogTrigger>
               <DialogContent className={`max-w-2xl ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
                 <DialogHeader>
-                  <DialogTitle className={isDarkMode ? 'text-white' : ''}>Ajouter des Composants Externes</DialogTitle>
+                  <DialogTitle className={isDarkMode ? 'text-white' : ''}>Add External Components</DialogTitle>
                 </DialogHeader>
                 <Tabs defaultValue="json" className="w-full">
                   <TabsList className={`grid w-full grid-cols-2 ${isDarkMode ? 'bg-gray-700' : ''}`}>
