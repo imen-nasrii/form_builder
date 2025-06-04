@@ -1300,6 +1300,13 @@ export default function FormBuilderFixed() {
     }
     
     setSelectedField(newField);
+    
+    // Auto-save after adding a component
+    if (formData.id) {
+      setTimeout(() => {
+        saveFormMutation.mutate();
+      }, 500);
+    }
   };
 
   const removeField = (fieldId: string) => {
@@ -1322,6 +1329,13 @@ export default function FormBuilderFixed() {
     
     if (selectedField?.Id === fieldId) {
       setSelectedField(null);
+    }
+    
+    // Auto-save after removing a component
+    if (formData.id) {
+      setTimeout(() => {
+        saveFormMutation.mutate();
+      }, 500);
     }
   };
 
@@ -1348,6 +1362,13 @@ export default function FormBuilderFixed() {
 
     if (selectedField?.Id === fieldId) {
       setSelectedField(prev => prev ? { ...prev, ...updates } : null);
+    }
+    
+    // Auto-save after updating field properties
+    if (formData.id) {
+      setTimeout(() => {
+        saveFormMutation.mutate();
+      }, 1000);
     }
   };
 
