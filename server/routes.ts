@@ -162,6 +162,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch('/api/forms/:id', requireAuth, async (req: any, res) => {
+    try {
+      const formId = parseInt(req.params.id);
+      if (isNaN(formId)) {
+        return res.status(400).json({ message: "Invalid form ID" });
+      }
+
+      const formData = req.body;
+      console.log(`Updating form ${formId} with data:`, JSON.stringify(formData, null, 2));
+
+      const updatedForm = await storage.updateForm(formId, formData);
+      
+      if (!updatedForm) {
+        return res.status(404).json({ message: "Form not found" });
+      }
+
+      res.json(updatedForm);
+    } catch (error) {
+      console.error("Error updating form:", error);
+      
+      // Ensure we always return JSON
+      if (!res.headersSent) {
+        res.status(500).json({ 
+          message: "Failed to update form",
+          error: error instanceof Error ? error.message : "Unknown error"
+        });
+      }
+    }
+  });
+
   app.delete('/api/forms/:id', requireAuth, async (req: any, res) => {
     try {
       const formId = parseInt(req.params.id);
