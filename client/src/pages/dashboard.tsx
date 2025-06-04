@@ -153,26 +153,40 @@ export default function Dashboard() {
               <h2 className="text-2xl font-bold text-slate-900">My Forms</h2>
               <p className="text-slate-600">Create and manage your custom forms</p>
             </div>
-            <Button 
-              onClick={async () => {
-                try {
-                  const response = await fetch('/api/forms/create', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' }
-                  });
-                  const newForm = await response.json();
-                  if (response.ok) {
-                    window.location.href = `/form-builder/${newForm.id}`;
+            <div className="flex items-center gap-2">
+              <select 
+                id="formType"
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                defaultValue="PROCESS"
+              >
+                <option value="PROCESS">Process</option>
+                <option value="MASTER">Master</option>
+                <option value="MENU">Menu</option>
+                <option value="TRANSACTIONS">Transactions</option>
+              </select>
+              <Button 
+                onClick={async () => {
+                  try {
+                    const formType = (document.getElementById('formType') as HTMLSelectElement)?.value || 'PROCESS';
+                    const response = await fetch('/api/forms/create', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ layout: formType })
+                    });
+                    const newForm = await response.json();
+                    if (response.ok) {
+                      window.location.href = `/form-builder/${newForm.id}`;
+                    }
+                  } catch (error) {
+                    console.error('Error creating form:', error);
                   }
-                } catch (error) {
-                  console.error('Error creating form:', error);
-                }
-              }}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Create New Form
-            </Button>
+                }}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Create New Form
+              </Button>
+            </div>
           </div>
 
           {/* Forms List */}
@@ -231,26 +245,6 @@ export default function Dashboard() {
               <FileText className="h-12 w-12 text-slate-400 mx-auto mb-3" />
               <h3 className="text-lg font-medium text-slate-900 mb-2">No forms yet</h3>
               <p className="text-slate-600 mb-6">Create your first form to get started</p>
-              <Button 
-                onClick={async () => {
-                  try {
-                    const response = await fetch('/api/forms/create', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' }
-                    });
-                    const newForm = await response.json();
-                    if (response.ok) {
-                      window.location.href = `/form-builder/${newForm.id}`;
-                    }
-                  } catch (error) {
-                    console.error('Error creating form:', error);
-                  }
-                }}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Create First Form
-              </Button>
             </div>
           )}
         </div>

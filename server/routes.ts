@@ -183,12 +183,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/forms/create', requireAuth, async (req: any, res) => {
     try {
       const userId = req.user.id;
+      const { layout = "PROCESS" } = req.body;
       
       const newForm = await storage.createForm({
         menuId: `FORM_${Date.now()}`,
         label: "New Form",
         formWidth: "700px",
-        layout: "PROCESS",
+        layout: layout,
         fields: [],
         actions: [],
         validations: [],
