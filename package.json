@@ -74,6 +74,7 @@
     "openai": "^4.103.0",
     "openid-client": "^6.5.0",
     "passport": "^0.7.0",
+    "passport-github2": "^0.1.12",
     "passport-local": "^1.0.0",
     "qrcode": "^1.5.4",
     "react": "^18.3.1",

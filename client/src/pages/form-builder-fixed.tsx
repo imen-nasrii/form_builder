@@ -1346,9 +1346,16 @@ export default function FormBuilderFixed() {
       };
       
       console.log('Setting form data:', formDataToSet);
+      console.log('Setting custom components:', parsedCustomComponents);
       setFormData(formDataToSet);
       setSelectedField(null);
       setCustomComponents(parsedCustomComponents);
+      
+      // Force a re-render after a short delay to ensure state has updated
+      setTimeout(() => {
+        console.log('Current formData after setting:', formData);
+        console.log('Current fields after setting:', formData.fields);
+      }, 100);
     } else if (!formId) {
       console.log('Creating new form - resetting to default state');
       // Creating new form - reset to default state
