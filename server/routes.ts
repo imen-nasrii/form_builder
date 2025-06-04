@@ -226,22 +226,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const formData = req.body;
       console.log(`Updating form ${formId} with data:`, JSON.stringify(formData, null, 2));
 
-      // Process formDefinition if present
+      // Process formDefinition if present - keep it as JSON string for database storage
       let processedData = { ...formData };
       if (formData.formDefinition) {
         try {
-          const definition = typeof formData.formDefinition === 'string' 
-            ? JSON.parse(formData.formDefinition) 
-            : formData.formDefinition;
-          
-          processedData.fields = definition.fields || [];
-          processedData.actions = definition.actions || [];
-          processedData.validations = definition.validations || [];
-          
-          // Remove formDefinition as it's not a database column
-          delete processedData.formDefinition;
+          // Ensure formDefinition is stored as JSON string
+          processedData.formDefinition = typeof formData.formDefinition === 'string' 
+            ? formData.formDefinition 
+            : JSON.stringify(formData.formDefinition);
+          console.log("Saving formDefinition:", processedData.formDefinition);
         } catch (parseError) {
-          console.error("Error parsing formDefinition:", parseError);
+          console.error("Error processing formDefinition:", parseError);
         }
       }
 
