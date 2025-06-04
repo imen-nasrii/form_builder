@@ -1803,6 +1803,26 @@ export default function FormBuilderFixed() {
 
             <QuickTips isDarkMode={isDarkMode} />
 
+            {/* Import JSON */}
+            <div>
+              <input
+                type="file"
+                accept=".json"
+                onChange={handleFileUpload}
+                style={{ display: 'none' }}
+                id="json-file-input"
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => document.getElementById('json-file-input')?.click()}
+                className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                Import JSON
+              </Button>
+            </div>
+
             {/* Add External Components */}
             <Dialog>
               <DialogTrigger asChild>
@@ -2189,6 +2209,70 @@ export default function FormBuilderFixed() {
           </Tabs>
         </div>
       </div>
+
+      {/* Import JSON Dialog */}
+      <Dialog open={showImportDialog} onOpenChange={setShowImportDialog}>
+        <DialogContent className={`max-w-2xl ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
+          <DialogHeader>
+            <DialogTitle className={isDarkMode ? 'text-white' : ''}>Import JSON Form Definition</DialogTitle>
+          </DialogHeader>
+          
+          {importedData && (
+            <div className="space-y-4">
+              <div className={`p-4 rounded-lg border ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'}`}>
+                <h4 className={`font-medium mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                  Form Preview
+                </h4>
+                <div className="space-y-2 text-sm">
+                  <div className={`flex justify-between ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    <span>Fields:</span>
+                    <span>{importedData.fields?.length || 0}</span>
+                  </div>
+                  <div className={`flex justify-between ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    <span>Custom Components:</span>
+                    <span>{importedData.customComponents?.length || 0}</span>
+                  </div>
+                </div>
+              </div>
+
+              {importedData.fields && importedData.fields.length > 0 && (
+                <div className={`max-h-64 overflow-y-auto border rounded-lg ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
+                  <div className={`p-3 border-b ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}>
+                    <h5 className="font-medium">Field List</h5>
+                  </div>
+                  <div className="p-3 space-y-2">
+                    {importedData.fields.map((field: any, index: number) => (
+                      <div key={index} className={`flex items-center justify-between p-2 rounded ${isDarkMode ? 'bg-gray-600' : 'bg-gray-100'}`}>
+                        <div>
+                          <span className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                            {field.Label || field.label || 'Unnamed Field'}
+                          </span>
+                          <span className={`ml-2 text-xs px-2 py-1 rounded ${isDarkMode ? 'bg-gray-500 text-gray-200' : 'bg-gray-200 text-gray-600'}`}>
+                            {field.Type || field.type || 'Unknown'}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex justify-end space-x-3">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowImportDialog(false)}
+                  className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
+                >
+                  Cancel
+                </Button>
+                <Button onClick={handleImportJSON}>
+                  Import Form
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
