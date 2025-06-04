@@ -38,8 +38,8 @@ export default function Navigation() {
         <Link href="/">
           <div className="flex items-center gap-3 cursor-pointer group">
             <div className="relative">
-              <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 via-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-                <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+              <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
                   <polyline points="14,2 14,8 20,8"/>
                   <line x1="16" y1="13" x2="8" y2="13"/>
@@ -47,7 +47,7 @@ export default function Navigation() {
                   <polyline points="10,9 9,9 8,9"/>
                 </svg>
               </div>
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full opacity-75 group-hover:opacity-100 transition-opacity"></div>
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-orange-500 rounded-full opacity-90 group-hover:opacity-100 transition-opacity"></div>
             </div>
             <div>
               <span className="text-xl font-bold text-blue-600">
