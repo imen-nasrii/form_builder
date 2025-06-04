@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FormField } from '@/lib/form-types';
-import { Settings, Trash2, Plus } from 'lucide-react';
+import { Settings, Trash2, Plus, Move } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface SimpleGroupContainerProps {
@@ -38,16 +38,22 @@ export const SimpleGroupContainer: React.FC<SimpleGroupContainerProps> = ({
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsDropZone(true);
   };
 
   const handleDragLeave = (e: React.DragEvent) => {
     e.preventDefault();
-    setIsDropZone(false);
+    e.stopPropagation();
+    // Only hide drop zone if we're actually leaving the container
+    if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+      setIsDropZone(false);
+    }
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     e.stopPropagation(); // Prevent bubbling to parent drop handlers
     setIsDropZone(false);
     
