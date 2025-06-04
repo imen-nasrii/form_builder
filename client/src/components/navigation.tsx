@@ -101,23 +101,14 @@ export default function Navigation() {
                   Analytics
                 </button>
               </Link>
-              <Link href="/admin-panel">
-                <button className={`px-4 py-2 rounded-lg transition-all ${
-                  isActive("/admin-panel") 
-                    ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 font-medium" 
-                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
-                }`}>
-                  User Management
-                </button>
-              </Link>
+
             </>
           )}
         </div>
 
         {/* User Progress & Profile */}
         <div className="flex items-center gap-4">
-          {/* Language Toggle */}
-          <LanguageToggle />
+
 
           
           {/* User Info */}
