@@ -59,8 +59,8 @@ export default function NewFormDialog({ onCreateForm }: NewFormDialogProps) {
     });
 
     toast({
-      title: "Formulaire créé avec succès! 🎉",
-      description: `Le nouveau formulaire "${formConfig.label}" est prêt pour la conception`,
+      title: "Form created successfully!",
+      description: `New form "${formConfig.label}" is ready for design`,
     });
   };
 
@@ -91,14 +91,14 @@ export default function NewFormDialog({ onCreateForm }: NewFormDialogProps) {
       <DialogTrigger asChild>
         <Button className="enterprise-gradient text-lg px-6 py-3">
           <Plus className="w-5 h-5 mr-2" />
-          Concepteur de formulaires
+          Form Designer
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-4xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3 text-2xl">
             <Settings className="w-7 h-7 text-blue-600" />
-            Concepteur de formulaires
+            Form Designer
           </DialogTitle>
         </DialogHeader>
 
@@ -106,7 +106,7 @@ export default function NewFormDialog({ onCreateForm }: NewFormDialogProps) {
           <div className="grid grid-cols-2 gap-6">
             <div className="space-y-3">
               <Label htmlFor="menuId" className="text-base font-semibold text-gray-900">
-                ID du menu <span className="text-red-500">*</span>
+                Menu ID <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="menuId"
@@ -121,13 +121,13 @@ export default function NewFormDialog({ onCreateForm }: NewFormDialogProps) {
 
             <div className="space-y-3">
               <Label htmlFor="label" className="text-base font-semibold text-gray-900">
-                Étiquette <span className="text-red-500">*</span>
+                Label <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="label"
                 value={formConfig.label}
                 onChange={(e) => handleInputChange('label', e.target.value)}
-                placeholder="Étiquette du formulaire"
+                placeholder="Form label"
                 className="text-lg h-12"
                 required
               />
@@ -137,14 +137,14 @@ export default function NewFormDialog({ onCreateForm }: NewFormDialogProps) {
           <div className="grid grid-cols-2 gap-6">
             <div className="space-y-3">
               <Label htmlFor="formWidth" className="text-base font-semibold text-gray-900">
-                Largeur
+                Width
               </Label>
               <Select 
                 value={formConfig.formWidth} 
                 onValueChange={(value) => handleInputChange('formWidth', value)}
               >
                 <SelectTrigger className="h-12 text-lg">
-                  <SelectValue placeholder="Sélectionner largeur" />
+                  <SelectValue placeholder="Select width" />
                 </SelectTrigger>
                 <SelectContent>
                   {widthOptions.map((option) => (
