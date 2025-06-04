@@ -53,7 +53,8 @@ export function setupAuth(app: Express) {
       // Hash password
       const hashedPassword = await bcrypt.hash(password, 12);
 
-      // Create user
+      // Create user - auto-verify email in development
+      const isDevelopment = process.env.NODE_ENV === 'development';
       const user = await storage.createUser({
         id: nanoid(),
         email,
@@ -64,7 +65,7 @@ export function setupAuth(app: Express) {
         role: role,
         twoFactorEnabled: false,
         twoFactorSecret: null,
-        emailVerified: role === 'admin' ? true : false,
+        emailVerified: role === 'admin' || isDevelopment ? true : false,
         emailVerificationToken: null,
         isActive: true,
       });
@@ -108,8 +109,9 @@ export function setupAuth(app: Express) {
         return res.status(401).json({ message: "Invalid email or password" });
       }
 
-      // Check email verification for users
-      if (user.role === 'user' && !user.emailVerified) {
+      // Check email verification for users (skip in development)
+      const isDevelopment = process.env.NODE_ENV === 'development';
+      if (user.role === 'user' && !user.emailVerified && !isDevelopment) {
         return res.status(401).json({ 
           message: "Please verify your email before logging in",
           requireEmailVerification: true 
