@@ -129,7 +129,7 @@ const ComponentTypes = Object.values(ComponentCategories).reduce((acc, category)
   return { ...acc, ...category.components };
 }, {} as Record<string, { icon: any; label: string; color: string }>);
 
-function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMode }: {
+function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMode = false }: {
   componentType: string;
   label: string;
   icon: any;
@@ -154,6 +154,29 @@ function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMod
       text: 'text-gray-900',
       icon: `text-${color}-600`
     };
+  };
+
+  const getIconBackgroundClass = (color: string, isDarkMode: boolean) => {
+    if (isDarkMode) {
+      return 'bg-gray-600';
+    }
+    
+    const colorMap = {
+      'blue': 'bg-blue-600',
+      'green': 'bg-green-600',
+      'orange': 'bg-orange-600',
+      'cyan': 'bg-cyan-600',
+      'purple': 'bg-purple-600',
+      'pink': 'bg-pink-600',
+      'indigo': 'bg-indigo-600',
+      'teal': 'bg-teal-600',
+      'violet': 'bg-violet-600',
+      'red': 'bg-red-600',
+      'yellow': 'bg-yellow-600',
+      'gray': 'bg-gray-600'
+    };
+    
+    return colorMap[color as keyof typeof colorMap] || 'bg-gray-600';
   };
 
   const classes = getColorClasses();
@@ -205,7 +228,7 @@ function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMod
       <div className="flex items-center space-x-2">
         <div className={`
           relative w-8 h-8 rounded flex items-center justify-center transition-all duration-200
-          ${isDarkMode ? 'bg-gray-600' : `bg-${color}-600`}
+          ${getIconBackgroundClass(color, isDarkMode)}
           ${isDragging ? 'animate-pulse' : ''}
         `}>
           <Icon className="w-4 h-4 text-white" />
