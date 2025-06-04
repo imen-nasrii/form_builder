@@ -146,10 +146,119 @@ export default function Dashboard() {
           </div>
         </div>
 
+        {/* Create New Form Section */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-2xl font-bold text-slate-900">My Forms</h2>
+              <p className="text-slate-600">Create and manage your custom forms</p>
+            </div>
+            <Button 
+              onClick={async () => {
+                try {
+                  const response = await fetch('/api/forms/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                  });
+                  const newForm = await response.json();
+                  if (response.ok) {
+                    window.location.href = `/form-builder/${newForm.id}`;
+                  }
+                } catch (error) {
+                  console.error('Error creating form:', error);
+                }
+              }}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Create New Form
+            </Button>
+          </div>
+
+          {/* Forms List */}
+          {forms.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {forms.map((form) => (
+                <Card key={form.id} className="hover:shadow-lg transition-shadow duration-300">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-lg">{form.label || 'Untitled Form'}</CardTitle>
+                      <Badge variant="outline">{form.layout}</Badge>
+                    </div>
+                    <CardDescription>Menu ID: {form.menuId}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-slate-600">Fields:</span>
+                        <span className="font-medium">
+                          {Array.isArray(form.fields) ? form.fields.length : 0}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-slate-600">Width:</span>
+                        <span className="font-medium">{form.formWidth}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-slate-600">Updated:</span>
+                        <span className="font-medium">{formatDate(form.updatedAt)}</span>
+                      </div>
+                      
+                      <div className="flex items-center space-x-2 pt-4">
+                        <Button 
+                          variant="outline" 
+                          className="flex-1"
+                          onClick={() => window.location.href = `/form-builder/${form.id}`}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={() => deleteFormMutation.mutate(form.id)}
+                          className="text-red-600 hover:text-red-700"
+                          disabled={deleteFormMutation.isPending}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 bg-slate-50 rounded-lg border border-slate-200">
+              <FileText className="h-12 w-12 text-slate-400 mx-auto mb-3" />
+              <h3 className="text-lg font-medium text-slate-900 mb-2">No forms yet</h3>
+              <p className="text-slate-600 mb-6">Create your first form to get started</p>
+              <Button 
+                onClick={async () => {
+                  try {
+                    const response = await fetch('/api/forms/create', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' }
+                    });
+                    const newForm = await response.json();
+                    if (response.ok) {
+                      window.location.href = `/form-builder/${newForm.id}`;
+                    }
+                  } catch (error) {
+                    console.error('Error creating form:', error);
+                  }
+                }}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Create First Form
+              </Button>
+            </div>
+          )}
+        </div>
+
         {/* Templates Section */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-slate-900">🎯 Form Templates</h2>
+            <h2 className="text-xl font-semibold text-slate-900">Form Templates</h2>
             <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
               {templates.length} templates
             </Badge>
