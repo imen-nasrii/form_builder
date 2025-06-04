@@ -31,8 +31,8 @@ export default function NewFormDialog({ onCreateForm }: NewFormDialogProps) {
     
     if (!formConfig.menuId.trim()) {
       toast({
-        title: "Erreur de validation",
-        description: "L'ID du menu est obligatoire",
+        title: "Validation Error",
+        description: "Menu ID is required",
         variant: "destructive",
       });
       return;
@@ -40,8 +40,8 @@ export default function NewFormDialog({ onCreateForm }: NewFormDialogProps) {
 
     if (!formConfig.label.trim()) {
       toast({
-        title: "Erreur de validation", 
-        description: "L'étiquette est obligatoire",
+        title: "Validation Error", 
+        description: "Label is required",
         variant: "destructive",
       });
       return;

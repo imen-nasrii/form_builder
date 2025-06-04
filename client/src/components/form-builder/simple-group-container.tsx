@@ -189,7 +189,7 @@ export const SimpleGroupContainer: React.FC<SimpleGroupContainerProps> = ({
       {isDropZone && (
         <div className="mt-2 border-2 border-blue-500 border-dashed bg-blue-50 dark:bg-blue-900/20 p-2 rounded text-center">
           <Plus className="w-6 h-6 mx-auto text-blue-500 mb-1" />
-          <p className="text-sm text-blue-600 font-medium">Relâchez pour ajouter au groupe</p>
+          <p className="text-sm text-blue-600 font-medium">Release to add to group</p>
         </div>
       )}
     </div>
