@@ -5,16 +5,19 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import Navigation from "@/components/navigation";
-import NewFormDialog from "@/components/form-builder/new-form-dialog";
 import JSONValidatorDialog from "@/components/form-builder/json-validator-dialog";
-import { Plus, Search, FileText, Calendar, User, FileCheck } from "lucide-react";
+import { Plus, Search, FileText, Calendar, User, FileCheck, Settings, Database, Menu, ArrowRightLeft } from "lucide-react";
 import type { Form, FormTemplate } from "@shared/schema";
 
 export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedFormType, setSelectedFormType] = useState("PROCESS");
+  const [showNewFormDialog, setShowNewFormDialog] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -46,6 +49,57 @@ export default function Dashboard() {
     },
   });
 
+  const createFormMutation = useMutation({
+    mutationFn: async (formType: string) => {
+      const response = await fetch('/api/forms/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ layout: formType })
+      });
+      if (!response.ok) throw new Error('Failed to create form');
+      return response.json();
+    },
+    onSuccess: (newForm) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/forms"] });
+      setShowNewFormDialog(false);
+      window.location.href = `/form-builder/${newForm.id}`;
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to create form",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const formTypeOptions = [
+    {
+      value: "PROCESS",
+      label: "Process Form",
+      icon: Settings,
+      description: "Workflow and business process forms"
+    },
+    {
+      value: "MASTER",
+      label: "Master Form", 
+      icon: Database,
+      description: "Master data and configuration forms"
+    },
+    {
+      value: "MENU",
+      label: "Menu Form",
+      icon: Menu,
+      description: "Navigation and menu interface forms"
+    },
+    {
+      value: "TRANSACTIONS",
+      label: "Transaction Form",
+      icon: ArrowRightLeft,
+      description: "Transaction and data entry forms"
+    }
+  ];
+
   const filteredForms = forms.filter(form =>
     form.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
     form.menuId.toLowerCase().includes(searchQuery.toLowerCase())
@@ -69,12 +123,6 @@ export default function Dashboard() {
           </div>
           <div className="flex gap-3">
             <JSONValidatorDialog />
-            <NewFormDialog 
-              onCreateForm={(config) => {
-                // Navigate to form builder with the new form config
-                window.location.href = `/form-builder?menuId=${config.menuId}&label=${config.label}&width=${config.formWidth}&layout=${config.layout}`;
-              }}
-            />
           </div>
         </div>
 
@@ -153,40 +201,65 @@ export default function Dashboard() {
               <h2 className="text-2xl font-bold text-slate-900">My Forms</h2>
               <p className="text-slate-600">Create and manage your custom forms</p>
             </div>
-            <div className="flex items-center gap-2">
-              <select 
-                id="formType"
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                defaultValue="PROCESS"
-              >
-                <option value="PROCESS">Process</option>
-                <option value="MASTER">Master</option>
-                <option value="MENU">Menu</option>
-                <option value="TRANSACTIONS">Transactions</option>
-              </select>
-              <Button 
-                onClick={async () => {
-                  try {
-                    const formType = (document.getElementById('formType') as HTMLSelectElement)?.value || 'PROCESS';
-                    const response = await fetch('/api/forms/create', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ layout: formType })
-                    });
-                    const newForm = await response.json();
-                    if (response.ok) {
-                      window.location.href = `/form-builder/${newForm.id}`;
-                    }
-                  } catch (error) {
-                    console.error('Error creating form:', error);
-                  }
-                }}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Create New Form
-              </Button>
-            </div>
+            <Dialog open={showNewFormDialog} onOpenChange={setShowNewFormDialog}>
+              <DialogTrigger asChild>
+                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Créer un formulaire
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[600px]">
+                <DialogHeader>
+                  <DialogTitle>Créer un nouveau formulaire</DialogTitle>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="space-y-3">
+                    <label className="text-sm font-medium">Type de formulaire</label>
+                    <div className="grid grid-cols-2 gap-3">
+                      {formTypeOptions.map((option) => {
+                        const IconComponent = option.icon;
+                        return (
+                          <Card
+                            key={option.value}
+                            className={`cursor-pointer transition-all border-2 ${
+                              selectedFormType === option.value
+                                ? 'border-blue-500 bg-blue-50'
+                                : 'border-gray-200 hover:border-gray-300'
+                            }`}
+                            onClick={() => setSelectedFormType(option.value)}
+                          >
+                            <CardContent className="p-4">
+                              <div className="flex items-center space-x-3">
+                                <IconComponent className="h-6 w-6 text-blue-600" />
+                                <div>
+                                  <h3 className="font-medium text-sm">{option.label}</h3>
+                                  <p className="text-xs text-gray-500 mt-1">{option.description}</p>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <div className="flex justify-end space-x-2 pt-4">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setShowNewFormDialog(false)}
+                    >
+                      Annuler
+                    </Button>
+                    <Button
+                      onClick={() => createFormMutation.mutate(selectedFormType)}
+                      disabled={createFormMutation.isPending}
+                      className="bg-blue-600 hover:bg-blue-700"
+                    >
+                      {createFormMutation.isPending ? 'Création...' : 'Créer le formulaire'}
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
 
           {/* Forms List */}
