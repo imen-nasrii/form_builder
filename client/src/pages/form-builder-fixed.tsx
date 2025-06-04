@@ -1930,9 +1930,15 @@ export default function FormBuilderFixed() {
               onDragOver={(e) => e.preventDefault()}
               onDrop={(e) => {
                 e.preventDefault();
-                const componentType = e.dataTransfer.getData('componentType');
-                if (componentType) {
-                  addField(componentType);
+                // Only add to root level if not dropped on a group
+                const target = e.target as HTMLElement;
+                const isDroppedOnGroup = target.closest('[data-group-drop]');
+                
+                if (!isDroppedOnGroup) {
+                  const componentType = e.dataTransfer.getData('componentType');
+                  if (componentType) {
+                    addField(componentType);
+                  }
                 }
               }}
             >
