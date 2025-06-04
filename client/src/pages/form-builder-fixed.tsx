@@ -1922,7 +1922,7 @@ export default function FormBuilderFixed() {
         <div className="flex-1 p-6">
           <div className={`rounded-lg border h-full ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
             <div className={`p-4 border-b ${isDarkMode ? 'border-gray-700' : ''}`}>
-              <h3 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Zone de construction</h3>
+              <h3 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Construction Zone</h3>
             </div>
             <div 
               ref={formBuilderRef}
@@ -1939,8 +1939,8 @@ export default function FormBuilderFixed() {
               {formData.fields.length === 0 ? (
                 <div className={`text-center py-16 border-2 border-dashed rounded-lg ${isDarkMode ? 'text-gray-400 border-gray-600' : 'text-gray-400 border-gray-300'}`}>
                   <Type className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p className="text-lg font-medium mb-2">Commencez à construire</p>
-                  <p className="text-sm">Glissez des composants ici pour créer votre formulaire</p>
+                  <p className="text-lg font-medium mb-2">Start Building</p>
+                  <p className="text-sm">Drag components here to create your form</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -1964,7 +1964,7 @@ export default function FormBuilderFixed() {
         <div className={`w-80 border-l overflow-y-auto ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
           <Tabs defaultValue="properties" className="h-full">
             <TabsList className={`grid w-full grid-cols-2 ${isDarkMode ? 'bg-gray-700' : ''}`}>
-              <TabsTrigger value="properties" className={isDarkMode ? 'data-[state=active]:bg-gray-600 text-gray-300' : ''}>Propriétés</TabsTrigger>
+              <TabsTrigger value="properties" className={isDarkMode ? 'data-[state=active]:bg-gray-600 text-gray-300' : ''}>Properties</TabsTrigger>
               <TabsTrigger value="json" className={isDarkMode ? 'data-[state=active]:bg-gray-600 text-gray-300' : ''}>JSON</TabsTrigger>
             </TabsList>
             
@@ -1977,7 +1977,7 @@ export default function FormBuilderFixed() {
               ) : (
                 <div className={`p-6 text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                   <Settings className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p>Sélectionnez un composant pour voir ses propriétés</p>
+                  <p>Select a component to view its properties</p>
                 </div>
               )}
             </TabsContent>
