@@ -1108,24 +1108,24 @@ function QuickTips({ isDarkMode }: { isDarkMode: boolean }) {
 
   const tips = [
     {
-      title: "Raccourcis clavier",
-      content: "Ctrl+S pour sauvegarder, Ctrl+Z pour annuler, Ctrl+D pour dupliquer un composant"
+      title: "Keyboard Shortcuts",
+      content: "Ctrl+S to save, Ctrl+Z to undo, Ctrl+D to duplicate a component"
     },
     {
-      title: "Groupes de composants", 
-      content: "Glissez des composants dans un GROUP pour les organiser visuellement"
+      title: "Component Groups", 
+      content: "Drag components into a GROUP to organize them visually"
     },
     {
-      title: "Validation avancée",
-      content: "Utilisez l'onglet JSON pour voir les erreurs de validation en temps réel"
+      title: "Advanced Validation",
+      content: "Use the JSON tab to see validation errors in real-time"
     },
     {
-      title: "Composants personnalisés",
-      content: "Créez vos propres composants réutilisables avec des propriétés spécifiques"
+      title: "Custom Components",
+      content: "Create your own reusable components with specific properties"
     },
     {
-      title: "Mode sombre",
-      content: "Basculez entre mode clair et sombre pour votre confort visuel"
+      title: "Dark Mode",
+      content: "Switch between light and dark mode for visual comfort"
     }
   ];
 
@@ -1134,13 +1134,13 @@ function QuickTips({ isDarkMode }: { isDarkMode: boolean }) {
       <DialogTrigger asChild>
         <Button variant="ghost" size="sm" className={isDarkMode ? 'text-gray-300' : ''}>
           <HelpCircle className="w-4 h-4 mr-2" />
-          Astuces
+          Tips
         </Button>
       </DialogTrigger>
       <DialogContent className={`max-w-lg ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
         <DialogHeader>
           <DialogTitle className={isDarkMode ? 'text-white' : ''}>
-            Astuces rapides
+            Quick Tips
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
@@ -1638,11 +1638,11 @@ export default function FormBuilderFixed() {
                   <TabsList className={`grid w-full grid-cols-2 ${isDarkMode ? 'bg-gray-700' : ''}`}>
                     <TabsTrigger value="json" className={isDarkMode ? 'data-[state=active]:bg-gray-600 text-gray-300' : ''}>
                       <Code className="w-4 h-4 mr-2" />
-                      Configuration JSON
+                      JSON Configuration
                     </TabsTrigger>
                     <TabsTrigger value="form" className={isDarkMode ? 'data-[state=active]:bg-gray-600 text-gray-300' : ''}>
                       <Package className="w-4 h-4 mr-2" />
-                      Créateur Visuel
+                      Visual Creator
                     </TabsTrigger>
                   </TabsList>
                   
@@ -1855,7 +1855,7 @@ export default function FormBuilderFixed() {
       <div className="flex h-[calc(100vh-80px)]">
         <div className={`w-80 border-r overflow-y-auto ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
           <div className="p-4">
-            <h3 className={`font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Composants Standards</h3>
+            <h3 className={`font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Standard Components</h3>
             <div className="space-y-4">
               {Object.entries(ComponentCategories).map(([categoryKey, category]) => (
                 <div key={categoryKey} className="space-y-2">
@@ -1881,7 +1881,7 @@ export default function FormBuilderFixed() {
             {customComponents.length > 0 && (
               <>
                 <Separator className="my-4" />
-                <h3 className={`font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Composants Personnalisés</h3>
+                <h3 className={`font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Custom Components</h3>
                 <div className="grid grid-cols-1 gap-2">
                   {customComponents.map((component) => (
                     <div
