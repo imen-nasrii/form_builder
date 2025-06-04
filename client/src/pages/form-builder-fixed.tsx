@@ -40,7 +40,8 @@ import {
   Plus,
   Code,
   Package,
-  Save
+  Save,
+  FileUp
 } from 'lucide-react';
 
 interface FormField {
@@ -1265,6 +1266,8 @@ export default function FormBuilderFixed() {
   const [showAddComponent, setShowAddComponent] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialStep, setTutorialStep] = useState(0);
+  const [showImportDialog, setShowImportDialog] = useState(false);
+  const [importedData, setImportedData] = useState<any>(null);
   const formBuilderRef = useRef<HTMLDivElement>(null);
 
   // Load form data from API if formId is provided
@@ -1704,6 +1707,57 @@ export default function FormBuilderFixed() {
       document.documentElement.requestFullscreen?.();
     } else {
       document.exitFullscreen?.();
+    }
+  };
+
+  // JSON Import functionality
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const content = e.target?.result as string;
+          const parsedData = JSON.parse(content);
+          
+          // Validate JSON structure
+          if (parsedData.fields && Array.isArray(parsedData.fields)) {
+            setImportedData(parsedData);
+            setShowImportDialog(true);
+          } else {
+            alert('Invalid format: The file must contain a valid form definition with "fields" array');
+          }
+        } catch (error) {
+          alert('Parse error: Invalid JSON file format');
+        }
+      };
+      reader.readAsText(file);
+    }
+    // Reset input value to allow same file selection
+    event.target.value = '';
+  };
+
+  const handleImportJSON = () => {
+    if (importedData) {
+      setFormData(prev => ({
+        ...prev,
+        fields: importedData.fields || []
+      }));
+      
+      if (importedData.customComponents) {
+        setCustomComponents(importedData.customComponents);
+      }
+      
+      setShowImportDialog(false);
+      setImportedData(null);
+      setSelectedField(null);
+      
+      // Auto-save if form exists
+      if (formData.id) {
+        setTimeout(() => {
+          saveFormMutation.mutate();
+        }, 500);
+      }
     }
   };
 
