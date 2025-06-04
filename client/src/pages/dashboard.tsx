@@ -28,7 +28,7 @@ export default function Dashboard() {
 
   const deleteFormMutation = useMutation({
     mutationFn: async (formId: number) => {
-      await apiRequest("DELETE", `/api/forms/${formId}`);
+      await apiRequest(`/api/forms/${formId}`, { method: "DELETE" });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/forms"] });

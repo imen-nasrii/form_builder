@@ -34,20 +34,26 @@ export default function Navigation() {
   return (
     <nav className="bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 px-6 py-3">
       <div className="flex items-center justify-between max-w-7xl mx-auto">
-        {/* New Cool Logo */}
+        {/* Modern Logo */}
         <Link href="/">
           <div className="flex items-center gap-3 cursor-pointer group">
             <div className="relative">
-              <div className="w-8 h-8 bg-gradient-to-br from-purple-600 via-blue-500 to-cyan-400 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
-                <span className="text-white font-black text-sm">F</span>
+              <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 via-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+                  <polyline points="14,2 14,8 20,8"/>
+                  <line x1="16" y1="13" x2="8" y2="13"/>
+                  <line x1="16" y1="17" x2="8" y2="17"/>
+                  <polyline points="10,9 9,9 8,9"/>
+                </svg>
               </div>
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-pink-500 to-orange-500 rounded-full animate-pulse"></div>
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full opacity-75 group-hover:opacity-100 transition-opacity"></div>
             </div>
             <div>
-              <span className="text-xl font-black bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
-                FormCraft
+              <span className="text-xl font-bold bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
+                FormBuilder
               </span>
-              <div className="text-xs text-gray-500 dark:text-gray-400 -mt-1">Pro Studio</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400 -mt-1 font-medium">Enterprise</div>
             </div>
           </div>
         </Link>
