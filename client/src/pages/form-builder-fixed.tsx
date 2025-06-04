@@ -41,7 +41,8 @@ import {
   Code,
   Package,
   Save,
-  FileUp
+  FileUp,
+  Download
 } from 'lucide-react';
 
 interface FormField {
@@ -1761,6 +1762,33 @@ export default function FormBuilderFixed() {
     }
   };
 
+  // JSON Export functionality
+  const handleExportJSON = () => {
+    const exportData = {
+      formMetadata: {
+        menuId: formData.menuId,
+        label: formData.label,
+        formWidth: formData.formWidth,
+        layout: formData.layout,
+        exportedAt: new Date().toISOString()
+      },
+      fields: formData.fields,
+      customComponents: customComponents
+    };
+
+    const jsonString = JSON.stringify(exportData, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${formData.label.replace(/[^a-zA-Z0-9]/g, '_')}_form_definition.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className={`min-h-screen transition-colors ${isDarkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
       <div className={`border-b px-6 py-4 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
@@ -1803,8 +1831,8 @@ export default function FormBuilderFixed() {
 
             <QuickTips isDarkMode={isDarkMode} />
 
-            {/* Import JSON */}
-            <div>
+            {/* Import/Export JSON */}
+            <div className="flex space-x-2">
               <input
                 type="file"
                 accept=".json"
@@ -1819,7 +1847,16 @@ export default function FormBuilderFixed() {
                 className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
               >
                 <Upload className="w-4 h-4 mr-2" />
-                Import JSON
+                Import
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleExportJSON}
+                className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Export
               </Button>
             </div>
 
