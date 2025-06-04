@@ -1480,6 +1480,13 @@ export default function FormBuilderFixed() {
         fields: []
       }));
       setSelectedField(null);
+      
+      // Auto-save after clearing
+      if (formData.id) {
+        setTimeout(() => {
+          saveFormMutation.mutate();
+        }, 500);
+      }
     }
   };
 

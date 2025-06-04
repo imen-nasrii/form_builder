@@ -323,16 +323,6 @@ export default function Dashboard() {
                   <CardContent>
                     <div className="space-y-3">
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-slate-600">Fields:</span>
-                        <span className="font-medium">
-                          {Array.isArray(form.fields) ? form.fields.length : 0}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-slate-600">Width:</span>
-                        <span className="font-medium">{form.formWidth}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
                         <span className="text-slate-600">Updated:</span>
                         <span className="font-medium">{formatDate(form.updatedAt)}</span>
                       </div>
