@@ -118,13 +118,7 @@ export default function Navigation() {
         <div className="flex items-center gap-4">
           {/* Language Toggle */}
           <LanguageToggle />
-          {/* User Progress Indicator */}
-          <div className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
-              3 Components Active
-            </span>
-          </div>
+
           
           {/* User Info */}
           <div className="flex items-center gap-3">
