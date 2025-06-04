@@ -53,6 +53,7 @@ export const forms = pgTable("forms", {
   fields: jsonb("fields").notNull().default("[]"),
   actions: jsonb("actions").notNull().default("[]"),
   validations: jsonb("validations").notNull().default("[]"),
+  formDefinition: text("form_definition"),
   createdBy: varchar("created_by").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
