@@ -1193,7 +1193,7 @@ export default function FormBuilderFixed() {
 
   // Load form data from API if formId is provided
   const { data: existingForm, isLoading: formLoading } = useQuery({
-    queryKey: ['/api/forms', formId],
+    queryKey: [`/api/forms/${formId}`],
     enabled: !!formId,
   });
 
@@ -1210,17 +1210,24 @@ export default function FormBuilderFixed() {
 
   // Clear form state when changing forms and load existing form data
   useEffect(() => {
+    console.log('Form loading effect triggered:', { formId, existingForm, formLoading });
+    
     if (formId && existingForm) {
+      console.log('Loading existing form data:', existingForm);
+      
       // Loading existing form - clear state and load form data
       let parsedFields: FormField[] = [];
       let parsedCustomComponents: any[] = [];
       
       try {
         if ((existingForm as any).formDefinition) {
+          console.log('Found formDefinition:', (existingForm as any).formDefinition);
           const definition = JSON.parse((existingForm as any).formDefinition);
           parsedFields = Array.isArray(definition.fields) ? definition.fields : [];
           parsedCustomComponents = Array.isArray(definition.customComponents) ? definition.customComponents : [];
+          console.log('Parsed fields and components:', { parsedFields, parsedCustomComponents });
         } else if (Array.isArray((existingForm as any).fields)) {
+          console.log('Using legacy fields format:', (existingForm as any).fields);
           parsedFields = (existingForm as any).fields;
         }
       } catch (error) {
@@ -1229,17 +1236,21 @@ export default function FormBuilderFixed() {
         parsedCustomComponents = [];
       }
       
-      setFormData({
+      const formDataToSet = {
         id: (existingForm as any).id,
         menuId: (existingForm as any).menuId || `FORM_${Date.now()}`,
         label: (existingForm as any).label || 'Mon Formulaire',
         formWidth: (existingForm as any).formWidth || '700px',
         layout: (existingForm as any).layout || 'PROCESS',
         fields: parsedFields
-      });
+      };
+      
+      console.log('Setting form data:', formDataToSet);
+      setFormData(formDataToSet);
       setSelectedField(null);
-      setCustomComponents(parsedCustomComponents); // Load form-specific custom components
+      setCustomComponents(parsedCustomComponents);
     } else if (!formId) {
+      console.log('Creating new form - resetting to default state');
       // Creating new form - reset to default state
       setFormData({
         id: null,
