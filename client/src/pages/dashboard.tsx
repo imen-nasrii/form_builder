@@ -18,6 +18,12 @@ export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFormType, setSelectedFormType] = useState("PROCESS");
   const [showNewFormDialog, setShowNewFormDialog] = useState(false);
+  const [formConfig, setFormConfig] = useState({
+    menuId: `ACCADJ`,
+    label: "Étiquette du formulaire",
+    formWidth: "Medium (700px)",
+    layout: "PROCESS"
+  });
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -50,11 +56,23 @@ export default function Dashboard() {
   });
 
   const createFormMutation = useMutation({
-    mutationFn: async (formType: string) => {
+    mutationFn: async () => {
+      const widthMap: { [key: string]: string } = {
+        "Small (500px)": "500px",
+        "Medium (700px)": "700px", 
+        "Large (900px)": "900px",
+        "Full Width": "100%"
+      };
+      
       const response = await fetch('/api/forms/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ layout: formType })
+        body: JSON.stringify({ 
+          menuId: formConfig.menuId,
+          label: formConfig.label,
+          formWidth: widthMap[formConfig.formWidth] || "700px",
+          layout: formConfig.layout
+        })
       });
       if (!response.ok) throw new Error('Failed to create form');
       return response.json();
@@ -208,40 +226,68 @@ export default function Dashboard() {
                   Créer un formulaire
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[600px]">
+              <DialogContent className="sm:max-w-[700px]">
                 <DialogHeader>
                   <DialogTitle>Créer un nouveau formulaire</DialogTitle>
                 </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="space-y-3">
-                    <label className="text-sm font-medium">Type de formulaire</label>
-                    <div className="grid grid-cols-2 gap-3">
-                      {formTypeOptions.map((option) => {
-                        const IconComponent = option.icon;
-                        return (
-                          <Card
-                            key={option.value}
-                            className={`cursor-pointer transition-all border-2 ${
-                              selectedFormType === option.value
-                                ? 'border-blue-500 bg-blue-50'
-                                : 'border-gray-200 hover:border-gray-300'
-                            }`}
-                            onClick={() => setSelectedFormType(option.value)}
-                          >
-                            <CardContent className="p-4">
-                              <div className="flex items-center space-x-3">
-                                <IconComponent className="h-6 w-6 text-blue-600" />
-                                <div>
-                                  <h3 className="font-medium text-sm">{option.label}</h3>
-                                  <p className="text-xs text-gray-500 mt-1">{option.description}</p>
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        );
-                      })}
+                <div className="grid gap-6 py-4">
+                  {/* Form Configuration */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">ID du menu <span className="text-red-500">*</span></label>
+                      <Input
+                        value={formConfig.menuId}
+                        onChange={(e) => setFormConfig(prev => ({ ...prev, menuId: e.target.value }))}
+                        placeholder="ACCADJ"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Étiquette <span className="text-red-500">*</span></label>
+                      <Input
+                        value={formConfig.label}
+                        onChange={(e) => setFormConfig(prev => ({ ...prev, label: e.target.value }))}
+                        placeholder="Étiquette du formulaire"
+                      />
                     </div>
                   </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Largeur</label>
+                      <Select 
+                        value={formConfig.formWidth} 
+                        onValueChange={(value) => setFormConfig(prev => ({ ...prev, formWidth: value }))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Small (500px)">Small (500px)</SelectItem>
+                          <SelectItem value="Medium (700px)">Medium (700px)</SelectItem>
+                          <SelectItem value="Large (900px)">Large (900px)</SelectItem>
+                          <SelectItem value="Full Width">Full Width</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Mise en page</label>
+                      <Select 
+                        value={formConfig.layout} 
+                        onValueChange={(value) => setFormConfig(prev => ({ ...prev, layout: value }))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="PROCESS">Process Form</SelectItem>
+                          <SelectItem value="MASTER">Master Form</SelectItem>
+                          <SelectItem value="MENU">Menu Form</SelectItem>
+                          <SelectItem value="TRANSACTIONS">Transaction Form</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
                   <div className="flex justify-end space-x-2 pt-4">
                     <Button 
                       variant="outline" 
@@ -250,8 +296,8 @@ export default function Dashboard() {
                       Annuler
                     </Button>
                     <Button
-                      onClick={() => createFormMutation.mutate(selectedFormType)}
-                      disabled={createFormMutation.isPending}
+                      onClick={() => createFormMutation.mutate()}
+                      disabled={createFormMutation.isPending || !formConfig.menuId || !formConfig.label}
                       className="bg-blue-600 hover:bg-blue-700"
                     >
                       {createFormMutation.isPending ? 'Création...' : 'Créer le formulaire'}
