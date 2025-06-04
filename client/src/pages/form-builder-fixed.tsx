@@ -129,23 +129,43 @@ const ComponentTypes = Object.values(ComponentCategories).reduce((acc, category)
   return { ...acc, ...category.components };
 }, {} as Record<string, { icon: any; label: string; color: string }>);
 
-function DraggableComponent({ componentType, label, icon: Icon, color }: {
+function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMode }: {
   componentType: string;
   label: string;
   icon: any;
   color: string;
+  isDarkMode?: boolean;
 }) {
+  const getColorClasses = () => {
+    if (isDarkMode) {
+      return {
+        bg: 'bg-gray-700 hover:bg-gray-600',
+        border: 'border-gray-500 hover:border-gray-400',
+        text: 'text-gray-200',
+        icon: 'text-gray-300'
+      };
+    }
+    return {
+      bg: `bg-${color}-50 hover:bg-${color}-100`,
+      border: `border-${color}-200 hover:border-${color}-400`,
+      text: 'text-gray-900',
+      icon: `text-${color}-600`
+    };
+  };
+
+  const classes = getColorClasses();
+  
   return (
     <div
       draggable
       onDragStart={(e) => {
         e.dataTransfer.setData('componentType', componentType);
       }}
-      className={`p-3 border-2 border-dashed rounded-lg cursor-move transition-all hover:shadow-md bg-${color}-50 border-${color}-200 hover:border-${color}-400`}
+      className={`p-3 border-2 border-dashed rounded-lg cursor-move transition-all hover:shadow-md ${classes.bg} ${classes.border}`}
     >
       <div className="flex items-center space-x-2">
-        <Icon className={`w-4 h-4 text-${color}-600`} />
-        <span className="text-sm font-medium">{label}</span>
+        <Icon className={`w-4 h-4 ${classes.icon}`} />
+        <span className={`text-sm font-medium ${classes.text}`}>{label}</span>
       </div>
     </div>
   );
@@ -2113,6 +2133,7 @@ export default function FormBuilderFixed() {
                         label={(config as any).label}
                         icon={(config as any).icon}
                         color={(config as any).color}
+                        isDarkMode={isDarkMode}
                       />
                     ))}
                   </div>
