@@ -156,13 +156,38 @@ export default function Dashboard() {
 
   const handleImportForm = () => {
     if (importedFormData) {
+      // Process and normalize imported fields
+      const processedFields = (importedFormData.fields || []).map((field: any) => {
+        return {
+          Id: field.Id || field.id || `field_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          Type: field.Type || field.type || 'TEXT',
+          Label: field.Label || field.label || 'Imported Field',
+          DataField: field.DataField || field.dataField || field.Label || field.label || 'field',
+          Entity: field.Entity || field.entity || '',
+          Width: field.Width || field.width || '100%',
+          Spacing: field.Spacing || field.spacing || '4',
+          Required: Boolean(field.Required || field.required),
+          Inline: Boolean(field.Inline || field.inline),
+          Outlined: Boolean(field.Outlined || field.outlined),
+          Value: field.Value || field.value || '',
+          ChildFields: field.ChildFields || field.childFields || []
+        };
+      });
+
+      const formDefinition = {
+        fields: processedFields,
+        customComponents: importedFormData.customComponents || []
+      };
+
       const formData = {
         menuId: `IMPORTED_${Date.now()}`,
         label: "Imported Form",
         formWidth: "700px",
         layout: "PROCESS",
-        formDefinition: JSON.stringify(importedFormData),
+        formDefinition: JSON.stringify(formDefinition),
       };
+      
+      console.log('Importing form with data:', formDefinition);
       importFormMutation.mutate(formData);
     }
   };
