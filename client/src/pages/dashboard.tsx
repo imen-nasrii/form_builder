@@ -193,79 +193,7 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* Custom Forms Section */}
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-slate-900">✏️ My Custom Forms</h2>
-            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-              {forms.length} forms
-            </Badge>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredForms.map((form) => (
-            <Card key={form.id} className="hover:shadow-lg transition-shadow duration-300">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">{form.label}</CardTitle>
-                  <Badge variant="outline">{form.layout}</Badge>
-                </div>
-                <CardDescription>Menu ID: {form.menuId}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-600">Fields:</span>
-                    <span className="font-medium">
-                      {Array.isArray(form.fields) ? form.fields.length : 0}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-600">Width:</span>
-                    <span className="font-medium">{form.formWidth}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-600">Updated:</span>
-                    <span className="font-medium">{formatDate(form.updatedAt)}</span>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2 pt-4">
-                    <Link href={`/form-builder/${form.id}`} className="flex-1">
-                      <Button variant="outline" className="w-full">
-                        Edit
-                      </Button>
-                    </Link>
-                    <Button
-                      variant="outline"
-                      onClick={() => deleteFormMutation.mutate(form.id)}
-                      className="text-red-600 hover:text-red-700"
-                      disabled={deleteFormMutation.isPending}
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-          </div>
 
-          {filteredForms.length === 0 && (
-            <div className="text-center py-12 bg-green-50 rounded-lg border border-green-200">
-              <FileText className="h-12 w-12 text-green-400 mx-auto mb-3" />
-              <h3 className="text-lg font-medium text-green-900 mb-2">Aucun formulaire personnalisé</h3>
-              <p className="text-green-700 mb-6">
-                {searchQuery ? "Aucun résultat pour votre recherche" : "Commencez par créer votre premier formulaire personnalisé"}
-              </p>
-              <Link href="/form-builder">
-                <Button className="bg-green-600 hover:bg-green-700 text-white">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Créer un formulaire
-                </Button>
-              </Link>
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );
