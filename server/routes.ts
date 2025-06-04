@@ -298,7 +298,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { id } = req.params;
       const userId = req.user.id;
       
-      await storage.deleteTemplate(id, userId);
+      // Check if template exists and belongs to user
+      const template = await storage.getTemplate(parseInt(id));
+      if (!template) {
+        return res.status(404).json({ message: "Template not found" });
+      }
+      if (template.createdBy !== userId) {
+        return res.status(403).json({ message: "Not authorized to delete this template" });
+      }
+      
+      await storage.deleteTemplate(parseInt(id));
       res.json({ message: "Template deleted successfully" });
     } catch (error) {
       console.error("Error deleting template:", error);
@@ -311,7 +320,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { id } = req.params;
       const userId = req.user.id;
       
-      await storage.deleteForm(id, userId);
+      // Check if form exists and belongs to user
+      const form = await storage.getForm(parseInt(id));
+      if (!form) {
+        return res.status(404).json({ message: "Form not found" });
+      }
+      if (form.createdBy !== userId) {
+        return res.status(403).json({ message: "Not authorized to delete this form" });
+      }
+      
+      await storage.deleteForm(parseInt(id));
       res.json({ message: "Form deleted successfully" });
     } catch (error) {
       console.error("Error deleting form:", error);
