@@ -136,6 +136,9 @@ function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMod
   color: string;
   isDarkMode?: boolean;
 }) {
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+
   const getColorClasses = () => {
     if (isDarkMode) {
       return {
@@ -155,17 +158,89 @@ function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMod
 
   const classes = getColorClasses();
   
+  const handleDragStart = useCallback((e: React.DragEvent) => {
+    setIsDragging(true);
+    e.dataTransfer.setData('componentType', componentType);
+    e.dataTransfer.effectAllowed = 'copy';
+    
+    // Calculate offset for better drag feedback
+    const rect = e.currentTarget.getBoundingClientRect();
+    setDragOffset({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    });
+    
+    // Create custom drag image for better visual feedback
+    const dragImage = e.currentTarget.cloneNode(true) as HTMLElement;
+    dragImage.style.transform = 'rotate(2deg)';
+    dragImage.style.opacity = '0.8';
+    document.body.appendChild(dragImage);
+    e.dataTransfer.setDragImage(dragImage, dragOffset.x, dragOffset.y);
+    
+    // Remove the temporary drag image after a short delay
+    setTimeout(() => {
+      if (document.body.contains(dragImage)) {
+        document.body.removeChild(dragImage);
+      }
+    }, 0);
+  }, [componentType, dragOffset.x, dragOffset.y]);
+
+  const handleDragEnd = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+  
   return (
     <div
       draggable
-      onDragStart={(e) => {
-        e.dataTransfer.setData('componentType', componentType);
-      }}
-      className={`p-3 border-2 border-dashed rounded-lg cursor-move transition-all hover:shadow-md ${classes.bg} ${classes.border}`}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      className={`
+        relative p-3 border-2 border-dashed rounded-lg cursor-move transition-all duration-200
+        hover:shadow-lg hover:scale-105 active:scale-95
+        ${isDragging ? 'opacity-60 rotate-1 scale-95' : ''}
+        ${classes.bg} ${classes.border}
+        group
+      `}
     >
       <div className="flex items-center space-x-2">
-        <Icon className={`w-4 h-4 ${classes.icon}`} />
+        <div className={`
+          relative w-8 h-8 rounded flex items-center justify-center transition-all duration-200
+          ${isDarkMode ? 'bg-gray-600' : `bg-${color}-600`}
+          ${isDragging ? 'animate-pulse' : ''}
+        `}>
+          <Icon className="w-4 h-4 text-white" />
+          
+          {/* Drag indicator dot */}
+          <div className={`
+            absolute -top-1 -right-1 w-2 h-2 rounded-full transition-all duration-200
+            ${isDragging 
+              ? (isDarkMode ? 'bg-blue-400 animate-ping' : 'bg-blue-500 animate-ping') 
+              : 'bg-transparent'
+            }
+          `} />
+        </div>
         <span className={`text-sm font-medium ${classes.text}`}>{label}</span>
+      </div>
+      
+      {/* Hover overlay with grab cursor indicator */}
+      <div className={`
+        absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200
+        ${isDarkMode ? 'bg-white/5' : 'bg-black/5'}
+        pointer-events-none
+      `}>
+        <div className="absolute top-1 right-1">
+          <div className={`
+            w-4 h-4 rounded-full flex items-center justify-center
+            ${isDarkMode ? 'bg-gray-600' : 'bg-gray-300'}
+          `}>
+            <div className="w-2 h-2 grid grid-cols-2 gap-0.5">
+              <div className={`w-0.5 h-0.5 rounded-full ${isDarkMode ? 'bg-gray-400' : 'bg-gray-600'}`} />
+              <div className={`w-0.5 h-0.5 rounded-full ${isDarkMode ? 'bg-gray-400' : 'bg-gray-600'}`} />
+              <div className={`w-0.5 h-0.5 rounded-full ${isDarkMode ? 'bg-gray-400' : 'bg-gray-600'}`} />
+              <div className={`w-0.5 h-0.5 rounded-full ${isDarkMode ? 'bg-gray-400' : 'bg-gray-600'}`} />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
