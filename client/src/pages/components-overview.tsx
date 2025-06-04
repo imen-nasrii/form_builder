@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/useAuth";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -34,79 +37,122 @@ interface ComponentProgress {
 }
 
 export default function ComponentsOverview() {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
 
-  // Real data from your FormCraft Pro components
-  const mockComponents: ComponentProgress[] = [
-    {
-      id: "comp_1",
-      name: "ACCADJ Form System",
-      type: "GRIDLKP",
-      status: "completed",
+  // Fetch real forms data
+  const { data: forms = [], isLoading: formsLoading } = useQuery<any[]>({
+    queryKey: ['/api/forms'],
+  });
+
+  // Fetch real templates data
+  const { data: templates = [], isLoading: templatesLoading } = useQuery<any[]>({
+    queryKey: ['/api/templates'],
+  });
+
+  // Get user profile safely
+  const currentUser = user as any;
+
+  // Convert forms and templates to component format
+  const realComponents: ComponentProgress[] = [
+    ...forms.map((form: any) => ({
+      id: form.id,
+      name: form.label || form.menuId,
+      type: form.layout || "FORM",
+      status: (form.fields?.length > 0 ? 'completed' : 'draft') as 'active' | 'completed' | 'draft',
       creator: {
-        id: "user_1",
-        name: "Imen BELHSAN",
-        avatar: "",
-        role: "Admin"
+        id: form.createdBy || currentUser?.id || '',
+        name: currentUser?.firstName && currentUser?.lastName 
+          ? `${currentUser.firstName} ${currentUser.lastName}` 
+          : currentUser?.email?.split('@')[0] || 'Unknown User',
+        avatar: currentUser?.profileImageUrl || '',
+        role: currentUser?.role || 'Creator'
       },
-      lastModified: "2 hours ago",
-      progress: 98,
-      collaborators: ["user_2", "user_3"]
-    },
-    {
-      id: "comp_2", 
-      name: "FormCraft AI Bot System",
-      type: "LSTLKP",
-      status: "completed",
-      creator: {
-        id: "user_2",
-        name: "Marie Dupont",
-        avatar: "",
-        role: "Creator"
-      },
-      lastModified: "Yesterday",
-      progress: 100,
+      lastModified: form.updatedAt ? new Date(form.updatedAt).toLocaleDateString() : 'Recently',
+      progress: form.fields?.length > 0 ? Math.min(100, form.fields.length * 20) : 10,
       collaborators: []
-    },
-    {
-      id: "comp_3",
-      name: "Dynamic Form Builder",
-      type: "DATEPICKER", 
-      status: "completed",
+    })),
+    ...templates.map((template: any) => ({
+      id: template.id,
+      name: template.name,
+      type: "TEMPLATE",
+      status: (template.config ? 'completed' : 'draft') as 'active' | 'completed' | 'draft',
       creator: {
-        id: "user_3",
-        name: "Jean Martin",
-        avatar: "",
-        role: "Creator"
+        id: template.createdBy || currentUser?.id || '',
+        name: currentUser?.firstName && currentUser?.lastName 
+          ? `${currentUser.firstName} ${currentUser.lastName}` 
+          : currentUser?.email?.split('@')[0] || 'Unknown User',
+        avatar: currentUser?.profileImageUrl || '',
+        role: currentUser?.role || 'Creator'
       },
-      lastModified: "3 days ago",
-      progress: 95,
-      collaborators: ["user_1"]
-    },
-    {
-      id: "comp_4",
-      name: "Enterprise JSON Schema Validator",
-      type: "SELECT",
-      status: "completed",
-      creator: {
-        id: "user_1",
-        name: "Imen BELHSAN", 
-        avatar: "",
-        role: "Admin"
-      },
-      lastModified: "1 hour ago",
-      progress: 92,
+      lastModified: template.updatedAt ? new Date(template.updatedAt).toLocaleDateString() : 'Recently',
+      progress: template.config ? 100 : 50,
       collaborators: []
-    }
+    }))
   ];
 
-  const filteredComponents = mockComponents.filter(comp => {
+  const filteredComponents = realComponents.filter(comp => {
     const matchesSearch = comp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          comp.creator.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = filterStatus === "all" || comp.status === filterStatus;
     return matchesSearch && matchesFilter;
   });
+
+  // Delete mutations
+  const deleteFormMutation = useMutation({
+    mutationFn: async (formId: string) => {
+      return apiRequest(`/api/forms/${formId}`, {
+        method: 'DELETE',
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/forms'] });
+      toast({
+        title: "Form Deleted",
+        description: "The form has been successfully deleted.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteTemplateMutation = useMutation({
+    mutationFn: async (templateId: string) => {
+      return apiRequest(`/api/templates/${templateId}`, {
+        method: 'DELETE',
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/templates'] });
+      toast({
+        title: "Template Deleted",
+        description: "The template has been successfully deleted.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleDelete = (component: ComponentProgress) => {
+    if (component.type === "TEMPLATE") {
+      deleteTemplateMutation.mutate(component.id);
+    } else {
+      deleteFormMutation.mutate(component.id);
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -168,7 +214,7 @@ export default function ComponentsOverview() {
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-black dark:text-white">
-                    {new Set(mockComponents.map(c => c.creator.id)).size}
+                    {new Set(realComponents.map((c: ComponentProgress) => c.creator.id)).size}
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">Créateurs</div>
                 </div>
@@ -200,7 +246,7 @@ export default function ComponentsOverview() {
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-black dark:text-white">
-                    {Math.round(mockComponents.reduce((acc, c) => acc + c.progress, 0) / mockComponents.length)}%
+                    {realComponents.length > 0 ? Math.round(realComponents.reduce((acc: number, c: ComponentProgress) => acc + c.progress, 0) / realComponents.length) : 0}%
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">Progrès Moyen</div>
                 </div>
@@ -323,13 +369,39 @@ export default function ComponentsOverview() {
 
                     {/* Actions */}
                     <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="sm">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => {
+                          if (component.type === "TEMPLATE") {
+                            window.open(`/templates/${component.id}`, '_blank');
+                          } else {
+                            window.open(`/form-builder/${component.id}`, '_blank');
+                          }
+                        }}
+                      >
                         <Eye className="w-4 h-4" />
                       </Button>
-                      <Button variant="ghost" size="sm">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => {
+                          if (component.type === "TEMPLATE") {
+                            window.location.href = `/templates/${component.id}/edit`;
+                          } else {
+                            window.location.href = `/form-builder/${component.id}`;
+                          }
+                        }}
+                      >
                         <Edit className="w-4 h-4" />
                       </Button>
-                      <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="text-red-500 hover:text-red-700"
+                        onClick={() => handleDelete(component)}
+                        disabled={deleteFormMutation.isPending || deleteTemplateMutation.isPending}
+                      >
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
