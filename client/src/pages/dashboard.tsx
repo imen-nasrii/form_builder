@@ -11,13 +11,15 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import Navigation from "@/components/navigation";
 import JSONValidatorDialog from "@/components/form-builder/json-validator-dialog";
-import { Plus, Search, FileText, Calendar, User, FileCheck, Settings, Database, Menu, ArrowRightLeft } from "lucide-react";
+import { Plus, Search, FileText, Calendar, User, FileCheck, Settings, Database, Menu, ArrowRightLeft, Upload, FileX } from "lucide-react";
 import type { Form, FormTemplate } from "@shared/schema";
 
 export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFormType, setSelectedFormType] = useState("PROCESS");
   const [showNewFormDialog, setShowNewFormDialog] = useState(false);
+  const [showImportDialog, setShowImportDialog] = useState(false);
+  const [importedFormData, setImportedFormData] = useState<any>(null);
   const [formConfig, setFormConfig] = useState({
     menuId: `ACCADJ`,
     label: "Étiquette du formulaire",
@@ -91,6 +93,80 @@ export default function Dashboard() {
     },
   });
 
+  const importFormMutation = useMutation({
+    mutationFn: async (formData: any) => {
+      const response = await fetch('/api/forms/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+      if (!response.ok) throw new Error('Failed to import form');
+      return response.json();
+    },
+    onSuccess: (newForm) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/forms"] });
+      setShowImportDialog(false);
+      setImportedFormData(null);
+      toast({
+        title: "Success",
+        description: "Form imported and validated successfully",
+      });
+      window.location.href = `/form-builder/${newForm.id}`;
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to import form",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const content = e.target?.result as string;
+          const parsedData = JSON.parse(content);
+          
+          // Validate JSON structure
+          if (parsedData.fields && Array.isArray(parsedData.fields)) {
+            setImportedFormData(parsedData);
+            setShowImportDialog(true);
+          } else {
+            toast({
+              title: "Invalid Format",
+              description: "The file must contain a valid form definition with 'fields' array",
+              variant: "destructive",
+            });
+          }
+        } catch (error) {
+          toast({
+            title: "Parse Error",
+            description: "Invalid JSON file format",
+            variant: "destructive",
+          });
+        }
+      };
+      reader.readAsText(file);
+    }
+  };
+
+  const handleImportForm = () => {
+    if (importedFormData) {
+      const formData = {
+        menuId: `IMPORTED_${Date.now()}`,
+        label: "Imported Form",
+        formWidth: "700px",
+        layout: "PROCESS",
+        formDefinition: JSON.stringify(importedFormData),
+      };
+      importFormMutation.mutate(formData);
+    }
+  };
+
   const formTypeOptions = [
     {
       value: "PROCESS",
@@ -134,6 +210,21 @@ export default function Dashboard() {
             <p className="text-slate-600 mt-1">Manage your forms and templates</p>
           </div>
           <div className="flex gap-3">
+            <input
+              type="file"
+              accept=".json"
+              onChange={handleFileUpload}
+              className="hidden"
+              id="file-upload"
+            />
+            <label htmlFor="file-upload">
+              <Button variant="outline" className="cursor-pointer" asChild>
+                <span>
+                  <Upload className="w-4 h-4 mr-2" />
+                  Import Form
+                </span>
+              </Button>
+            </label>
             <JSONValidatorDialog />
           </div>
         </div>
@@ -398,6 +489,85 @@ export default function Dashboard() {
           )}
         </div>
 
+        {/* Import Form Dialog */}
+        <Dialog open={showImportDialog} onOpenChange={setShowImportDialog}>
+          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <FileCheck className="w-5 h-5 text-green-600" />
+                Import Form Validation
+              </DialogTitle>
+            </DialogHeader>
+            
+            {importedFormData && (
+              <div className="space-y-4">
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <FileCheck className="w-4 h-4 text-green-600" />
+                    <span className="font-medium text-green-800">Valid Form Structure</span>
+                  </div>
+                  <p className="text-sm text-green-700">
+                    Form contains {importedFormData.fields?.length || 0} components and has been validated successfully.
+                  </p>
+                </div>
+
+                <div className="border rounded-lg p-4">
+                  <h4 className="font-medium mb-3">Form Preview</h4>
+                  <div className="space-y-2 max-h-60 overflow-y-auto">
+                    {importedFormData.fields?.map((field: any, index: number) => (
+                      <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <div className="flex items-center gap-2">
+                          <div className={`w-3 h-3 rounded-full ${
+                            field.Type === 'TEXT' ? 'bg-blue-500' :
+                            field.Type === 'SELECT' ? 'bg-orange-500' :
+                            field.Type === 'CHECKBOX' ? 'bg-green-500' :
+                            field.Type === 'GROUP' ? 'bg-purple-500' :
+                            'bg-gray-500'
+                          }`} />
+                          <span className="font-medium">{field.Label || field.Id}</span>
+                        </div>
+                        <Badge variant="outline">{field.Type}</Badge>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="border rounded-lg p-4">
+                  <h4 className="font-medium mb-2">Raw JSON Data</h4>
+                  <pre className="text-xs bg-gray-100 p-3 rounded overflow-x-auto max-h-40">
+                    {JSON.stringify(importedFormData, null, 2)}
+                  </pre>
+                </div>
+
+                <div className="flex justify-end gap-3 pt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setShowImportDialog(false);
+                      setImportedFormData(null);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleImportForm}
+                    disabled={importFormMutation.isPending}
+                    className="bg-green-600 hover:bg-green-700"
+                  >
+                    {importFormMutation.isPending ? (
+                      <>Loading...</>
+                    ) : (
+                      <>
+                        <FileCheck className="w-4 h-4 mr-2" />
+                        Import & Edit Form
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
 
       </div>
     </div>
