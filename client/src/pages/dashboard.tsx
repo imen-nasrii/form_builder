@@ -217,18 +217,18 @@ export default function Dashboard() {
               <DialogTrigger asChild>
                 <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
                   <Plus className="w-4 h-4 mr-2" />
-                  Créer un formulaire
+                  Create Form
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[700px]">
                 <DialogHeader>
-                  <DialogTitle>Créer un nouveau formulaire</DialogTitle>
+                  <DialogTitle>Create New Form</DialogTitle>
                 </DialogHeader>
                 <div className="grid gap-6 py-4">
                   {/* Form Configuration */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">ID du menu <span className="text-red-500">*</span></label>
+                      <label className="text-sm font-medium">Menu ID <span className="text-red-500">*</span></label>
                       <Input
                         value={formConfig.menuId}
                         onChange={(e) => setFormConfig(prev => ({ ...prev, menuId: e.target.value }))}

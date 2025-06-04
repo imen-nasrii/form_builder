@@ -158,14 +158,14 @@ export default function NewFormDialog({ onCreateForm }: NewFormDialogProps) {
 
             <div className="space-y-3">
               <Label htmlFor="layout" className="text-base font-semibold text-gray-900">
-                Mise en page
+                Layout
               </Label>
               <Select 
                 value={formConfig.layout} 
                 onValueChange={(value) => handleInputChange('layout', value)}
               >
                 <SelectTrigger className="h-12 text-lg">
-                  <SelectValue placeholder="Type de mise en page" />
+                  <SelectValue placeholder="Layout type" />
                 </SelectTrigger>
                 <SelectContent>
                   {layoutOptions.map((option) => (
@@ -202,10 +202,10 @@ export default function NewFormDialog({ onCreateForm }: NewFormDialogProps) {
 
           <div className="flex justify-end space-x-4 pt-4">
             <Button type="button" variant="outline" onClick={() => setIsOpen(false)} className="px-8 py-3">
-              Annuler
+              Cancel
             </Button>
             <Button type="submit" className="enterprise-gradient px-8 py-3">
-              Créer le formulaire
+              Create Form
             </Button>
           </div>
         </form>
