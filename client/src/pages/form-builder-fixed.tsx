@@ -155,7 +155,10 @@ function FieldComponent({
   onRemove, 
   isSelected,
   addField,
-  isDarkMode 
+  isDarkMode,
+  selectedField,
+  setSelectedField,
+  removeChildField
 }: { 
   field: FormField; 
   onSelect: () => void;
@@ -163,6 +166,9 @@ function FieldComponent({
   isSelected: boolean;
   addField: (type: string, groupId?: string) => void;
   isDarkMode: boolean;
+  selectedField: FormField | null;
+  setSelectedField: (field: FormField | null) => void;
+  removeChildField: (groupId: string, childFieldId: string) => void;
 }) {
   const [isExpanded, setIsExpanded] = useState(true);
   
@@ -177,6 +183,9 @@ function FieldComponent({
         isExpanded={isExpanded}
         setIsExpanded={setIsExpanded}
         isDarkMode={isDarkMode}
+        selectedField={selectedField}
+        setSelectedField={setSelectedField}
+        removeChildField={removeChildField}
       />
     );
   }
@@ -226,7 +235,10 @@ function GroupField({
   addField,
   isExpanded,
   setIsExpanded,
-  isDarkMode
+  isDarkMode,
+  selectedField,
+  setSelectedField,
+  removeChildField
 }: {
   field: FormField;
   onSelect: () => void;
@@ -236,6 +248,9 @@ function GroupField({
   isExpanded: boolean;
   setIsExpanded: (expanded: boolean) => void;
   isDarkMode: boolean;
+  selectedField: FormField | null;
+  setSelectedField: (field: FormField | null) => void;
+  removeChildField: (groupId: string, childFieldId: string) => void;
 }) {
   return (
     <div
@@ -305,8 +320,18 @@ function GroupField({
               {(field.ChildFields || []).map((childField) => (
                 <div
                   key={childField.Id}
-                  className={`p-3 border rounded shadow-sm ${
-                    isDarkMode ? 'bg-gray-600 border-gray-500' : 'bg-white border-gray-200'
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedField(childField);
+                  }}
+                  className={`p-3 border rounded shadow-sm cursor-pointer transition-all hover:shadow-md ${
+                    selectedField?.Id === childField.Id
+                      ? isDarkMode 
+                        ? 'bg-blue-600 border-blue-500' 
+                        : 'bg-blue-50 border-blue-300'
+                      : isDarkMode 
+                        ? 'bg-gray-600 border-gray-500 hover:bg-gray-550' 
+                        : 'bg-white border-gray-200 hover:bg-gray-50'
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -315,18 +340,66 @@ function GroupField({
                         childField.Type === 'TEXT' ? 'bg-blue-500' :
                         childField.Type === 'SELECT' ? 'bg-orange-500' :
                         childField.Type === 'CHECKBOX' ? 'bg-cyan-500' :
+                        childField.Type === 'GRIDLKP' ? 'bg-green-500' :
+                        childField.Type === 'LSTLKP' ? 'bg-purple-500' :
+                        childField.Type === 'ACTION' ? 'bg-red-500' :
                         childField.Type === 'WARNING' ? 'bg-yellow-500' :
                         'bg-gray-500'
                       }`} />
-                      <span className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                        {childField.Label || childField.Id}
+                      <span className={`text-sm font-medium ${
+                        selectedField?.Id === childField.Id
+                          ? isDarkMode ? 'text-white' : 'text-blue-700'
+                          : isDarkMode ? 'text-white' : 'text-gray-900'
+                      }`}>
+                        {childField.Label || 'Unnamed Component'}
                       </span>
                       <span className={`text-xs px-2 py-1 rounded ${
-                        isDarkMode ? 'text-gray-300 bg-gray-700' : 'text-gray-500 bg-gray-100'
+                        selectedField?.Id === childField.Id
+                          ? isDarkMode ? 'text-blue-200 bg-blue-700' : 'text-blue-600 bg-blue-200'
+                          : isDarkMode ? 'text-gray-300 bg-gray-700' : 'text-gray-500 bg-gray-100'
                       }`}>
                         {childField.Type}
                       </span>
                     </div>
+                    <div className="flex items-center space-x-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedField(childField);
+                        }}
+                        className={`h-6 w-6 p-0 ${
+                          isDarkMode ? 'text-gray-400 hover:text-blue-400' : 'text-gray-400 hover:text-blue-600'
+                        }`}
+                      >
+                        <Settings className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeChildField(field.Id, childField.Id);
+                        }}
+                        className={`h-6 w-6 p-0 ${
+                          isDarkMode ? 'text-gray-400 hover:text-red-400' : 'text-gray-400 hover:text-red-600'
+                        }`}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  {/* Component preview/summary */}
+                  <div className={`mt-2 text-xs ${
+                    selectedField?.Id === childField.Id
+                      ? isDarkMode ? 'text-blue-200' : 'text-blue-600'
+                      : isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                  }`}>
+                    {childField.DataField && `Field: ${childField.DataField}`}
+                    {childField.Required && ' • Required'}
+                    {childField.Width && ` • Width: ${childField.Width}`}
                   </div>
                 </div>
               ))}
@@ -1375,6 +1448,32 @@ export default function FormBuilderFixed() {
     }
     
     // Auto-save after removing a component
+    if (formData.id) {
+      setTimeout(() => {
+        saveFormMutation.mutate();
+      }, 500);
+    }
+  };
+
+  const removeChildField = (groupId: string, childFieldId: string) => {
+    setFormData(prev => ({
+      ...prev,
+      fields: prev.fields.map(field => {
+        if (field.Id === groupId && field.ChildFields) {
+          return {
+            ...field,
+            ChildFields: field.ChildFields.filter(child => child.Id !== childFieldId)
+          };
+        }
+        return field;
+      })
+    }));
+
+    if (selectedField?.Id === childFieldId) {
+      setSelectedField(null);
+    }
+    
+    // Auto-save after removing a child component
     if (formData.id) {
       setTimeout(() => {
         saveFormMutation.mutate();
