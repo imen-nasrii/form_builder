@@ -1755,28 +1755,7 @@ export default function FormBuilderFixed() {
     });
   };
 
-  // Tutorial functions
-  const startTutorial = () => {
-    setTutorialStep(0);
-    setShowTutorial(true);
-  };
 
-  const nextTutorialStep = () => {
-    if (tutorialStep < 6) {
-      setTutorialStep(tutorialStep + 1);
-    }
-  };
-
-  const prevTutorialStep = () => {
-    if (tutorialStep > 0) {
-      setTutorialStep(tutorialStep - 1);
-    }
-  };
-
-  const closeTutorial = () => {
-    setShowTutorial(false);
-    setTutorialStep(0);
-  };
 
   const toggleFullScreen = () => {
     setIsFullScreen(!isFullScreen);
@@ -2178,16 +2157,7 @@ export default function FormBuilderFixed() {
           </div>
         </div>
 
-        {/* Tutorial Dialog */}
-        <TutorialDialog
-          isOpen={showTutorial}
-          onClose={closeTutorial}
-          step={tutorialStep}
-          onNextStep={nextTutorialStep}
-          onPrevStep={prevTutorialStep}
-          totalSteps={7}
-          isDarkMode={isDarkMode}
-        />
+
       </div>
 
       <div className="flex h-[calc(100vh-80px)]">

@@ -11,8 +11,100 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import Navigation from "@/components/navigation";
 import JSONValidatorDialog from "@/components/form-builder/json-validator-dialog";
-import { Plus, Search, FileText, Calendar, User, FileCheck, Settings, Database, Menu, ArrowRightLeft, Upload, FileX } from "lucide-react";
+import { Plus, Search, FileText, Calendar, User, FileCheck, Settings, Database, Menu, ArrowRightLeft, Upload, FileX, HelpCircle } from "lucide-react";
 import type { Form, FormTemplate } from "@shared/schema";
+
+// Dashboard Step-by-Step Guide Component
+function DashboardGuide() {
+  const [currentStep, setCurrentStep] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  
+  const steps = {
+    welcome: {
+      title: "Welcome to FormBuilder Enterprise Dashboard",
+      content: "Your central hub for managing all forms. Let's walk through the key features.",
+      actions: [
+        { label: "Start Tour", action: () => setCurrentStep("forms-overview") },
+        { label: "Skip Tour", action: () => setIsOpen(false) }
+      ]
+    },
+    "forms-overview": {
+      title: "Step 1: Your Forms Overview",
+      content: "View all your forms here. Use the search bar to find specific forms quickly, or filter by type.",
+      actions: [
+        { label: "Next: Create New Form", action: () => setCurrentStep("create-form") },
+        { label: "Previous", action: () => setCurrentStep("welcome") }
+      ]
+    },
+    "create-form": {
+      title: "Step 2: Creating New Forms",
+      content: "Click 'Create New Form' to start building. You can also import existing forms from JSON files.",
+      actions: [
+        { label: "Next: Templates", action: () => setCurrentStep("templates") },
+        { label: "Previous", action: () => setCurrentStep("forms-overview") }
+      ]
+    },
+    "templates": {
+      title: "Step 3: Form Templates",
+      content: "Save time by using pre-built templates. Create your own templates from successful forms.",
+      actions: [
+        { label: "Finish Tour", action: () => setIsOpen(false) },
+        { label: "Previous", action: () => setCurrentStep("create-form") }
+      ]
+    }
+  };
+
+  const currentStepData = currentStep ? steps[currentStep as keyof typeof steps] : null;
+
+  const startGuide = () => {
+    setCurrentStep("welcome");
+    setIsOpen(true);
+  };
+
+  return (
+    <>
+      <Button 
+        variant="outline" 
+        size="sm" 
+        onClick={startGuide}
+        className="flex items-center space-x-2"
+      >
+        <HelpCircle className="w-4 h-4" />
+        <span>Guide</span>
+      </Button>
+      
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="max-w-lg">
+          {currentStepData && (
+            <>
+              <DialogHeader>
+                <DialogTitle>{currentStepData.title}</DialogTitle>
+              </DialogHeader>
+              
+              <div className="space-y-6">
+                <p className="text-base leading-relaxed text-gray-700">
+                  {currentStepData.content}
+                </p>
+                
+                <div className="flex justify-between items-center pt-4">
+                  {currentStepData.actions.map((action, index) => (
+                    <Button
+                      key={index}
+                      variant={index === 0 ? "default" : "outline"}
+                      onClick={action.action}
+                    >
+                      {action.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
 
 export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -235,6 +327,7 @@ export default function Dashboard() {
             <p className="text-slate-600 mt-1">Manage your forms and templates</p>
           </div>
           <div className="flex gap-3">
+            <DashboardGuide />
             <input
               type="file"
               accept=".json"
