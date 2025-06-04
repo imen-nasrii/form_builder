@@ -133,15 +133,68 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create a new form
   app.post('/api/forms', requireAuth, async (req: any, res) => {
     try {
       const userId = req.user.id;
-      const formData = insertFormSchema.parse({
-        ...req.body,
+      const formData = req.body;
+
+      // Process formDefinition if present
+      let processedData = { ...formData };
+      if (formData.formDefinition) {
+        try {
+          const definition = typeof formData.formDefinition === 'string' 
+            ? JSON.parse(formData.formDefinition) 
+            : formData.formDefinition;
+          
+          processedData.fields = definition.fields || [];
+          processedData.actions = definition.actions || [];
+          processedData.validations = definition.validations || [];
+          
+          // Remove formDefinition as it's not a database column
+          delete processedData.formDefinition;
+        } catch (parseError) {
+          console.error("Error parsing formDefinition:", parseError);
+        }
+      }
+
+      // Ensure we have required fields
+      if (!processedData.menuId) {
+        processedData.menuId = `FORM_${Date.now()}`;
+      }
+      if (!processedData.label) {
+        processedData.label = "New Form";
+      }
+
+      const parsedData = insertFormSchema.parse({
+        ...processedData,
         createdBy: userId
       });
 
-      const newForm = await storage.createForm(formData);
+      const newForm = await storage.createForm(parsedData);
+      res.status(201).json(newForm);
+    } catch (error) {
+      console.error("Error creating form:", error);
+      res.status(500).json({ message: "Failed to create form" });
+    }
+  });
+
+  // Create a new form from form builder
+  app.post('/api/forms/create', requireAuth, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      
+      const newForm = await storage.createForm({
+        menuId: `FORM_${Date.now()}`,
+        label: "New Form",
+        formWidth: "700px",
+        layout: "PROCESS",
+        fields: [],
+        actions: [],
+        validations: [],
+        createdBy: userId
+      });
+
       res.status(201).json(newForm);
     } catch (error) {
       console.error("Error creating form:", error);
@@ -172,7 +225,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const formData = req.body;
       console.log(`Updating form ${formId} with data:`, JSON.stringify(formData, null, 2));
 
-      const updatedForm = await storage.updateForm(formId, formData);
+      // Process formDefinition if present
+      let processedData = { ...formData };
+      if (formData.formDefinition) {
+        try {
+          const definition = typeof formData.formDefinition === 'string' 
+            ? JSON.parse(formData.formDefinition) 
+            : formData.formDefinition;
+          
+          processedData.fields = definition.fields || [];
+          processedData.actions = definition.actions || [];
+          processedData.validations = definition.validations || [];
+          
+          // Remove formDefinition as it's not a database column
+          delete processedData.formDefinition;
+        } catch (parseError) {
+          console.error("Error parsing formDefinition:", parseError);
+        }
+      }
+
+      const updatedForm = await storage.updateForm(formId, processedData);
       
       if (!updatedForm) {
         return res.status(404).json({ message: "Form not found" });
