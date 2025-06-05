@@ -432,48 +432,50 @@ function ModelViewerComponent({
     <>
       <div
         onClick={onSelect}
-        className={`p-3 border rounded-lg cursor-pointer transition-all ${
+        className={`p-4 border rounded-lg cursor-pointer transition-all ${
           isSelected
             ? `border-blue-500 ${isDarkMode ? 'bg-blue-900/50' : 'bg-blue-50'}`
             : `${isDarkMode ? 'border-gray-600 hover:border-gray-500 bg-gray-700' : 'border-gray-200 hover:border-gray-300 bg-white'}`
         }`}
       >
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-3">
           <div className="flex items-center space-x-3">
-            <Database className="w-4 h-4 text-emerald-600" />
+            <Database className="w-5 h-5 text-emerald-600" />
             <div>
-              <div className={`font-medium text-sm ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              <div className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                 {field.Label || 'Model Viewer'}
               </div>
-              <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                {field.Entity ? `Model: ${field.Entity}` : 'No model selected'}
+              <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                {field.Entity ? `Selected: ${field.Entity}` : 'Click to select model'}
               </div>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleViewProperties();
-              }}
-              className={`p-1 h-6 w-6 ${isDarkMode ? 'text-emerald-400 hover:text-emerald-300' : 'text-emerald-600 hover:text-emerald-700'}`}
-            >
-              <Eye className="w-3 h-3" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                onRemove();
-              }}
-              className={`p-1 h-6 w-6 ${isDarkMode ? 'text-gray-400 hover:text-red-400' : 'text-gray-400 hover:text-red-500'}`}
-            >
-              <Trash2 className="w-3 h-3" />
-            </Button>
-          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemove();
+            }}
+            className={`p-1 h-6 w-6 ${isDarkMode ? 'text-gray-400 hover:text-red-400' : 'text-gray-400 hover:text-red-500'}`}
+          >
+            <Trash2 className="w-3 h-3" />
+          </Button>
+        </div>
+        
+        <div className="flex gap-2">
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleViewProperties();
+            }}
+            size="sm"
+            variant="outline"
+            className="flex-1"
+          >
+            <Database className="w-4 h-4 mr-2" />
+            {field.Entity ? 'Change Model' : 'Select Model'}
+          </Button>
         </div>
       </div>
 
