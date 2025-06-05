@@ -293,27 +293,12 @@ function ModelViewerComponent({
   isDarkMode: boolean;
 }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedModel, setSelectedModel] = useState<string>('');
-  const [modelProperties, setModelProperties] = useState<any[]>([]);
-  const [modelsLoading, setModelsLoading] = useState(false);
-  const [propertiesLoading, setPropertiesLoading] = useState(false);
+  const [selectedModel, setSelectedModel] = useState<string>(field.Entity || '');
 
   const { data: modelsData, isLoading: isModelsLoading } = useQuery({
     queryKey: ['/api/models'],
     enabled: isDialogOpen
   });
-
-  const { data: propertiesData, isLoading: isPropertiesLoading } = useQuery({
-    queryKey: [`/api/models/${selectedModel}`],
-    enabled: !!selectedModel && isDialogOpen,
-    retry: false
-  });
-
-  useEffect(() => {
-    if (propertiesData && (propertiesData as any).success) {
-      setModelProperties((propertiesData as any).properties || []);
-    }
-  }, [propertiesData]);
 
   const handleModelSelect = (modelName: string) => {
     setSelectedModel(modelName);
@@ -383,145 +368,67 @@ function ModelViewerComponent({
             </DialogTitle>
           </DialogHeader>
           
-          <div className="flex gap-4 h-96">
-            {/* Models List */}
-            <div className={`w-1/3 border rounded-lg p-4 ${isDarkMode ? 'border-gray-600 bg-gray-700' : 'border-gray-200'}`}>
-              <h3 className={`font-semibold mb-3 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Available Models</h3>
-              
-              {isModelsLoading ? (
-                <div className="text-center py-4">
-                  <div className="animate-spin h-6 w-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
-                  <p className={`text-sm mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Loading models...</p>
-                </div>
-              ) : (
-                <div className="space-y-2 max-h-72 overflow-y-auto">
-                  {(modelsData as any)?.models?.map((model: any) => (
-                    <button
-                      key={model.name}
-                      onClick={() => handleModelSelect(model.name)}
-                      className={`w-full text-left p-2 rounded text-sm transition-colors ${
-                        selectedModel === model.name
-                          ? (isDarkMode ? 'bg-blue-700 text-white' : 'bg-blue-100 text-blue-900')
-                          : (isDarkMode ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-100 text-gray-700')
-                      }`}
-                    >
-                      <div className="font-medium">{model.name}</div>
-                      <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                        {model.displayName}
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Properties Table */}
-            <div className={`flex-1 border rounded-lg p-4 ${isDarkMode ? 'border-gray-600 bg-gray-700' : 'border-gray-200'}`}>
-              {selectedModel ? (
-                <div className="mb-4">
-                  <h3 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                    {selectedModel} Model Details
-                  </h3>
-                  <div className={`text-sm mt-2 space-y-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                    {(propertiesData as any)?.displayName && (
-                      <p>Display Name: {(propertiesData as any).displayName}</p>
-                    )}
-                    {(propertiesData as any)?.totalProperties && (
-                      <p>Total Properties: {(propertiesData as any).totalProperties}</p>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <h3 className={`font-semibold mb-3 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                  Model Properties
-                </h3>
-              )}
-
-              {!selectedModel ? (
-                <div className={`text-center py-8 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                  <Database className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                  <p>Select a model to view its properties</p>
-                </div>
-              ) : isPropertiesLoading ? (
-                <div className="text-center py-8">
-                  <div className="animate-spin h-6 w-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
-                  <p className={`text-sm mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Loading properties...</p>
-                </div>
-              ) : (
-                <div className="max-h-80 overflow-y-auto">
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm border-collapse">
-                      <thead className="sticky top-0 bg-inherit">
-                        <tr className={`border-b-2 ${isDarkMode ? 'border-gray-600 bg-gray-800' : 'border-gray-300 bg-gray-50'}`}>
-                          <th className={`text-left py-3 px-3 font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Property Name</th>
-                          <th className={`text-left py-3 px-3 font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Display Name</th>
-                          <th className={`text-left py-3 px-3 font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Data Type</th>
-                          <th className={`text-center py-3 px-3 font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Nullable</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {modelProperties.map((prop: any, index: number) => (
-                          <tr key={index} className={`border-b hover:bg-opacity-50 transition-colors ${
-                            isDarkMode 
-                              ? 'border-gray-600 hover:bg-gray-700' 
-                              : 'border-gray-200 hover:bg-gray-50'
-                          }`}>
-                            <td className={`py-3 px-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}>
-                              <div className="font-mono text-sm font-medium">{prop.name}</div>
-                            </td>
-                            <td className={`py-3 px-3 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                              <div className="text-sm">{prop.displayName}</div>
-                            </td>
-                            <td className={`py-3 px-3`}>
-                              <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-                                prop.type === 'string' ? 'bg-green-100 text-green-800 border border-green-200' :
-                                prop.type === 'int' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
-                                prop.type === 'decimal' ? 'bg-purple-100 text-purple-800 border border-purple-200' :
-                                prop.type === 'DateTime' ? 'bg-orange-100 text-orange-800 border border-orange-200' :
-                                'bg-gray-100 text-gray-800 border border-gray-200'
-                              }`}>
-                                {prop.type}
-                              </span>
-                            </td>
-                            <td className={`py-3 px-3 text-center`}>
-                              {prop.nullable ? (
-                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
-                                  Optional
-                                </span>
-                              ) : (
-                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200">
-                                  Required
-                                </span>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  {/* Statistics Footer */}
-                  <div className={`mt-4 pt-4 border-t flex justify-between items-center text-sm ${
-                    isDarkMode ? 'border-gray-600 text-gray-400' : 'border-gray-200 text-gray-600'
-                  }`}>
-                    <div>
-                      <span className="font-medium">Total Properties: </span>
-                      {(propertiesData as any)?.totalProperties || modelProperties.length}
+          <div className="py-4">
+            <h3 className={`font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              Select a Model/Table
+            </h3>
+            
+            {isModelsLoading ? (
+              <div className="text-center py-8">
+                <div className="animate-spin h-6 w-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
+                <p className={`text-sm mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Loading models...</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-64 overflow-y-auto">
+                {(modelsData as any)?.models?.map((model: any) => (
+                  <button
+                    key={model.name}
+                    onClick={() => handleModelSelect(model.name)}
+                    className={`p-3 rounded-lg text-left transition-all border ${
+                      selectedModel === model.name
+                        ? (isDarkMode ? 'bg-blue-700 border-blue-600 text-white' : 'bg-blue-100 border-blue-300 text-blue-900')
+                        : (isDarkMode ? 'hover:bg-gray-600 border-gray-600 text-gray-300' : 'hover:bg-gray-50 border-gray-200 text-gray-700')
+                    }`}
+                  >
+                    <div className="font-medium text-sm">{model.name}</div>
+                    <div className={`text-xs mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      {model.displayName}
                     </div>
-                    <div className="flex gap-4">
-                      <div>
-                        <span className="font-medium">Required: </span>
-                        {modelProperties.filter((p: any) => !p.nullable).length}
-                      </div>
-                      <div>
-                        <span className="font-medium">Optional: </span>
-                        {modelProperties.filter((p: any) => p.nullable).length}
-                      </div>
-                    </div>
-                  </div>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {selectedModel && (
+              <div className={`mt-4 p-3 rounded-lg ${isDarkMode ? 'bg-green-900/30 border border-green-700' : 'bg-green-50 border border-green-200'}`}>
+                <div className={`flex items-center ${isDarkMode ? 'text-green-300' : 'text-green-800'}`}>
+                  <Database className="w-4 h-4 mr-2" />
+                  <span className="font-medium">Selected Model: {selectedModel}</span>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
+          </div>
+
+          <div className="flex justify-end gap-3 pt-4 border-t">
+            <Button
+              variant="outline"
+              onClick={() => setIsDialogOpen(false)}
+              className={isDarkMode ? 'border-gray-600 text-gray-300' : ''}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                if (selectedModel) {
+                  field.Entity = selectedModel;
+                  setIsDialogOpen(false);
+                }
+              }}
+              disabled={!selectedModel}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              Select Model
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
