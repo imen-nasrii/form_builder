@@ -421,85 +421,99 @@ function ModelViewerComponent({
     setSelectedModel(modelName);
   };
 
-  const handleViewProperties = () => {
-    if (field.Entity) {
-      setSelectedModel(field.Entity);
-    }
-    setIsDialogOpen(true);
-  };
-
   return (
-    <>
-      <div
-        onClick={onSelect}
-        className={`p-4 border rounded-lg cursor-pointer transition-all ${
-          isSelected
-            ? `border-blue-500 ${isDarkMode ? 'bg-blue-900/50' : 'bg-blue-50'}`
-            : `${isDarkMode ? 'border-gray-600 hover:border-gray-500 bg-gray-700' : 'border-gray-200 hover:border-gray-300 bg-white'}`
-        }`}
-      >
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center space-x-3">
-            <Database className="w-5 h-5 text-emerald-600" />
-            <div>
-              <div className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                {field.Label || 'Model Viewer'}
-              </div>
-              <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                {field.Entity ? `Selected: ${field.Entity}` : 'Click to select model'}
-              </div>
-            </div>
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              onRemove();
-            }}
-            className={`p-1 h-6 w-6 ${isDarkMode ? 'text-gray-400 hover:text-red-400' : 'text-gray-400 hover:text-red-500'}`}
-          >
-            <Trash2 className="w-3 h-3" />
-          </Button>
+    <div
+      onClick={onSelect}
+      className={`p-3 border-2 rounded-lg cursor-pointer transition-all ${
+        isSelected
+          ? 'border-blue-500 bg-blue-50'
+          : 'border-gray-200 hover:border-gray-300 bg-white'
+      }`}
+    >
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center space-x-2">
+          <Database className="w-4 h-4 text-emerald-600" />
+          <span className="font-medium text-sm">Model Viewer</span>
         </div>
-        
-        <div className="flex gap-2">
-          <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleViewProperties();
-            }}
-            size="sm"
-            variant="outline"
-            className="flex-1"
-          >
-            <Database className="w-4 h-4 mr-2" />
-            {field.Entity ? 'Change Model' : 'Select Model'}
-          </Button>
-        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove();
+          }}
+          className="p-1 h-6 w-6 text-gray-400 hover:text-red-500"
+        >
+          <Trash2 className="w-3 h-3" />
+        </Button>
       </div>
+      
+      <div className="text-xs text-gray-500 mb-3">
+        {field.Entity ? `Model: ${field.Entity}` : 'No model selected'}
+      </div>
+      
+      <Button
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsDialogOpen(true);
+        }}
+        size="sm"
+        variant="outline"
+        className="w-full"
+      >
+        <Database className="w-4 h-4 mr-2" />
+        {field.Entity ? 'Change Model' : 'Select Model'}
+      </Button>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className={`max-w-md ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
+        <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className={isDarkMode ? 'text-white' : ''}>
-              Select Model
-            </DialogTitle>
+            <DialogTitle>Select Model</DialogTitle>
           </DialogHeader>
           
-          <ModelDropdownSelector
-            models={(modelsData as any)?.models || []}
-            selectedModel={selectedModel}
-            onSelectModel={handleModelSelect}
-            isLoading={isModelsLoading}
-            isDarkMode={isDarkMode}
-          />
+          <div className="py-4">
+            <Label className="text-sm font-medium">Select Model/Table</Label>
+            
+            {isModelsLoading ? (
+              <div className="text-center py-8">
+                <div className="animate-spin h-6 w-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
+                <p className="text-sm mt-2">Loading models...</p>
+              </div>
+            ) : (
+              <div className="mt-2 space-y-2 max-h-64 overflow-y-auto">
+                {((modelsData as any)?.models || []).map((model: any) => (
+                  <button
+                    key={model.name}
+                    onClick={() => handleModelSelect(model.name)}
+                    className={`w-full text-left p-3 rounded border transition-colors ${
+                      selectedModel === model.name
+                        ? 'bg-blue-100 border-blue-300 text-blue-900'
+                        : 'hover:bg-gray-50 border-gray-200'
+                    }`}
+                  >
+                    <div className="font-medium">{model.name}</div>
+                    <div className="text-xs text-gray-500">
+                      {model.displayName}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {selectedModel && (
+              <div className="mt-3 p-2 rounded bg-green-50 text-green-800">
+                <div className="flex items-center text-sm">
+                  <Database className="w-4 h-4 mr-2" />
+                  Selected: {selectedModel}
+                </div>
+              </div>
+            )}
+          </div>
 
           <div className="flex justify-end gap-3 pt-4 border-t">
             <Button
               variant="outline"
               onClick={() => setIsDialogOpen(false)}
-              className={isDarkMode ? 'border-gray-600 text-gray-300' : ''}
             >
               Cancel
             </Button>
@@ -518,7 +532,7 @@ function ModelViewerComponent({
           </div>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }
 
