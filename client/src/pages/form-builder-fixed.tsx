@@ -17,7 +17,6 @@ import {
   Calendar, 
   Upload, 
   Table, 
-  Search, 
   Square, 
   Play, 
   RotateCcw, 
@@ -44,8 +43,126 @@ import {
   FileUp,
   Download,
   Database,
-  Eye
+  Eye,
+  ChevronDown
 } from 'lucide-react';
+
+// Model Dropdown Selector Component
+function ModelDropdownSelector({ 
+  models, 
+  selectedModel, 
+  onSelectModel, 
+  isLoading, 
+  isDarkMode 
+}: {
+  models: any[];
+  selectedModel: string;
+  onSelectModel: (model: string) => void;
+  isLoading: boolean;
+  isDarkMode: boolean;
+}) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
+
+  const filteredModels = models.filter(model => 
+    model.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    model.displayName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleSelect = (modelName: string) => {
+    onSelectModel(modelName);
+    setIsOpen(false);
+    setSearchTerm('');
+  };
+
+  if (isLoading) {
+    return (
+      <div className="text-center py-8">
+        <div className="animate-spin h-6 w-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
+        <p className={`text-sm mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Loading models...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="py-4">
+      <Label className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+        Select Model/Table
+      </Label>
+      
+      <div className="relative mt-2">
+        <Button
+          variant="outline"
+          onClick={() => setIsOpen(!isOpen)}
+          className={`w-full justify-between ${isDarkMode ? 'border-gray-600 bg-gray-700 text-gray-300' : ''}`}
+        >
+          <span>{selectedModel || 'Choose a model...'}</span>
+          <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        </Button>
+
+        {isOpen && (
+          <div className={`absolute z-50 w-full mt-1 border rounded-md shadow-lg ${
+            isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'
+          }`}>
+            {/* Search Input */}
+            <div className="p-3 border-b">
+              <div className="relative">
+                <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${
+                  isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                }`} />
+                <Input
+                  placeholder="Search models..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className={`pl-10 ${isDarkMode ? 'bg-gray-800 border-gray-600 text-gray-300' : ''}`}
+                />
+              </div>
+            </div>
+
+            {/* Models List */}
+            <div className="max-h-64 overflow-y-auto">
+              {filteredModels.length === 0 ? (
+                <div className={`p-4 text-center text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                  No models found
+                </div>
+              ) : (
+                filteredModels.map((model) => (
+                  <button
+                    key={model.name}
+                    onClick={() => handleSelect(model.name)}
+                    className={`w-full text-left p-3 hover:bg-opacity-75 transition-colors border-b last:border-b-0 ${
+                      selectedModel === model.name
+                        ? (isDarkMode ? 'bg-blue-700 text-white' : 'bg-blue-100 text-blue-900')
+                        : (isDarkMode ? 'text-gray-300 hover:bg-gray-600' : 'text-gray-700 hover:bg-gray-50')
+                    }`}
+                  >
+                    <div className="font-medium">{model.name}</div>
+                    <div className={`text-xs mt-1 ${
+                      selectedModel === model.name
+                        ? (isDarkMode ? 'text-blue-200' : 'text-blue-700')
+                        : (isDarkMode ? 'text-gray-400' : 'text-gray-500')
+                    }`}>
+                      {model.displayName}
+                    </div>
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {selectedModel && (
+        <div className={`mt-3 p-2 rounded ${isDarkMode ? 'bg-green-900/30 text-green-300' : 'bg-green-50 text-green-800'}`}>
+          <div className="flex items-center text-sm">
+            <Database className="w-4 h-4 mr-2" />
+            Selected: {selectedModel}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 interface FormField {
   Id: string;
@@ -361,53 +478,20 @@ function ModelViewerComponent({
       </div>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className={`max-w-4xl max-h-[80vh] overflow-hidden ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
+        <DialogContent className={`max-w-md ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
           <DialogHeader>
             <DialogTitle className={isDarkMode ? 'text-white' : ''}>
-              MfactModels Explorer
+              Select Model
             </DialogTitle>
           </DialogHeader>
           
-          <div className="py-4">
-            <h3 className={`font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-              Select a Model/Table
-            </h3>
-            
-            {isModelsLoading ? (
-              <div className="text-center py-8">
-                <div className="animate-spin h-6 w-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
-                <p className={`text-sm mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Loading models...</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-64 overflow-y-auto">
-                {(modelsData as any)?.models?.map((model: any) => (
-                  <button
-                    key={model.name}
-                    onClick={() => handleModelSelect(model.name)}
-                    className={`p-3 rounded-lg text-left transition-all border ${
-                      selectedModel === model.name
-                        ? (isDarkMode ? 'bg-blue-700 border-blue-600 text-white' : 'bg-blue-100 border-blue-300 text-blue-900')
-                        : (isDarkMode ? 'hover:bg-gray-600 border-gray-600 text-gray-300' : 'hover:bg-gray-50 border-gray-200 text-gray-700')
-                    }`}
-                  >
-                    <div className="font-medium text-sm">{model.name}</div>
-                    <div className={`text-xs mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                      {model.displayName}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {selectedModel && (
-              <div className={`mt-4 p-3 rounded-lg ${isDarkMode ? 'bg-green-900/30 border border-green-700' : 'bg-green-50 border border-green-200'}`}>
-                <div className={`flex items-center ${isDarkMode ? 'text-green-300' : 'text-green-800'}`}>
-                  <Database className="w-4 h-4 mr-2" />
-                  <span className="font-medium">Selected Model: {selectedModel}</span>
-                </div>
-              </div>
-            )}
-          </div>
+          <ModelDropdownSelector
+            models={(modelsData as any)?.models || []}
+            selectedModel={selectedModel}
+            onSelectModel={handleModelSelect}
+            isLoading={isModelsLoading}
+            isDarkMode={isDarkMode}
+          />
 
           <div className="flex justify-end gap-3 pt-4 border-t">
             <Button
