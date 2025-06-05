@@ -43,7 +43,8 @@ import {
   Save,
   FileUp,
   Download,
-  Database
+  Database,
+  Eye
 } from 'lucide-react';
 
 interface FormField {
