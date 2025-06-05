@@ -585,6 +585,7 @@ function FieldComponent({
   if (field.Type === 'MODELVIEWER') {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [selectedModel, setSelectedModel] = useState<string>(field.Entity || '');
+    const [displayModel, setDisplayModel] = useState<string>(field.Entity || '');
 
     const { data: modelsData, isLoading: isModelsLoading } = useQuery({
       queryKey: ['/api/models'],
@@ -619,8 +620,20 @@ function FieldComponent({
             </Button>
           </div>
           
-          <div className="text-xs text-gray-500 mb-3">
-            {field.Entity ? `Model: ${field.Entity}` : 'No model selected'}
+          <div className="mb-3">
+            {displayModel ? (
+              <div className="p-2 bg-green-50 border border-green-200 rounded">
+                <div className="flex items-center text-sm text-green-800">
+                  <Database className="w-4 h-4 mr-2" />
+                  <span className="font-medium">Selected Model:</span>
+                  <span className="ml-1 font-semibold">{displayModel}</span>
+                </div>
+              </div>
+            ) : (
+              <div className="text-xs text-gray-500">
+                No model selected
+              </div>
+            )}
           </div>
           
           <Button
@@ -693,6 +706,7 @@ function FieldComponent({
                 onClick={() => {
                   if (selectedModel) {
                     field.Entity = selectedModel;
+                    setDisplayModel(selectedModel);
                     setIsDialogOpen(false);
                   }
                 }}
