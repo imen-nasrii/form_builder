@@ -565,8 +565,8 @@ function FieldComponent({
   const Icon = componentType?.icon || Type;
   const color = componentType?.color || 'gray';
 
-  // Special rendering for MODELVIEWER
-  if (field.Type === 'MODELVIEWER') {
+  // Special rendering for ModelViewer
+  if (field.Type === 'ModelViewer') {
     return (
       <ModelViewerComponent 
         field={field}
@@ -1054,7 +1054,7 @@ function PropertiesPanel({ field, onUpdate }: {
           </div>
         );
 
-      case 'MODELVIEWER':
+      case 'ModelViewer':
         return (
           <div className="space-y-3">
             <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">Model Viewer Properties</h4>
