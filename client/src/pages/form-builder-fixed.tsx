@@ -304,13 +304,14 @@ function ModelViewerComponent({
   });
 
   const { data: propertiesData, isLoading: isPropertiesLoading } = useQuery({
-    queryKey: ['/api/models', selectedModel],
-    enabled: !!selectedModel && isDialogOpen
+    queryKey: [`/api/models/${selectedModel}`],
+    enabled: !!selectedModel && isDialogOpen,
+    retry: false
   });
 
   useEffect(() => {
-    if (propertiesData?.success) {
-      setModelProperties(propertiesData.properties || []);
+    if (propertiesData && (propertiesData as any).success) {
+      setModelProperties((propertiesData as any).properties || []);
     }
   }, [propertiesData]);
 
@@ -394,7 +395,7 @@ function ModelViewerComponent({
                 </div>
               ) : (
                 <div className="space-y-2 max-h-72 overflow-y-auto">
-                  {modelsData?.models?.map((model: any) => (
+                  {(modelsData as any)?.models?.map((model: any) => (
                     <button
                       key={model.name}
                       onClick={() => handleModelSelect(model.name)}
