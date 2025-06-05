@@ -6,6 +6,8 @@ import { setupEnhancedAuth, requireAuth as requireAuthEnhanced, requireAdmin as 
 import { insertFormSchema, insertTemplateSchema } from "@shared/schema";
 import { apiService, type ApiDataSource } from "./services/apiService";
 import crypto from "crypto";
+import fs from "fs";
+import path from "path";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication with role-based access

@@ -42,7 +42,8 @@ import {
   Package,
   Save,
   FileUp,
-  Download
+  Download,
+  Database
 } from 'lucide-react';
 
 interface FormField {
@@ -120,6 +121,14 @@ const ComponentCategories = {
     components: {
       ACTION: { icon: Play, label: "Action Button", color: 'red' },
       WARNING: { icon: AlertTriangle, label: 'Warning', color: 'yellow' }
+    }
+  },
+  models: {
+    name: 'Models',
+    icon: Database,
+    color: 'emerald',
+    components: {
+      MODELVIEWER: { icon: Database, label: 'Model Viewer', color: 'emerald' }
     }
   }
 };
