@@ -799,6 +799,46 @@ function PropertiesPanel({ field, onUpdate }: {
           </div>
         );
 
+      case 'MODELVIEWER':
+        return (
+          <div className="space-y-3">
+            <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">Model Viewer Properties</h4>
+            
+            <div>
+              <Label htmlFor="field-model">Model Name</Label>
+              <Input
+                id="field-model"
+                value={field.Entity || ""}
+                onChange={(e) => onUpdate({ Entity: e.target.value })}
+                placeholder="Select model (e.g., Users, Secrty)"
+                className="text-sm"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="field-display-mode">Display Mode</Label>
+              <Input
+                id="field-display-mode"
+                value={field.Value || "popup"}
+                onChange={(e) => onUpdate({ Value: e.target.value })}
+                placeholder="popup, inline, modal"
+                className="text-sm"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="field-button-text">Button Text</Label>
+              <Input
+                id="field-button-text"
+                value={field.Label}
+                onChange={(e) => onUpdate({ Label: e.target.value })}
+                placeholder="View Model Properties"
+                className="text-sm"
+              />
+            </div>
+          </div>
+        );
+
       case 'GROUP':
         return (
           <div className="space-y-3">

@@ -573,6 +573,86 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get MfactModels list
+  app.get('/api/models', requireAuth, async (req: any, res) => {
+    try {
+      const modelsDir = path.join(process.cwd(), 'MfactModels');
+      
+      if (!fs.existsSync(modelsDir)) {
+        return res.status(404).json({
+          success: false,
+          error: 'MfactModels directory not found'
+        });
+      }
+
+      const files = fs.readdirSync(modelsDir)
+        .filter(file => file.endsWith('.cs'))
+        .map(file => ({
+          name: file.replace('.cs', ''),
+          displayName: file.replace('.cs', '').replace(/([A-Z])/g, ' $1').trim(),
+          fileName: file
+        }))
+        .sort((a, b) => a.displayName.localeCompare(b.displayName));
+
+      res.json({
+        success: true,
+        models: files
+      });
+    } catch (error) {
+      console.error('Error reading models directory:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to read models directory'
+      });
+    }
+  });
+
+  // Get model properties
+  app.get('/api/models/:modelName', requireAuth, async (req: any, res) => {
+    try {
+      const { modelName } = req.params;
+      const modelFile = path.join(process.cwd(), 'MfactModels', `${modelName}.cs`);
+      
+      if (!fs.existsSync(modelFile)) {
+        return res.status(404).json({
+          success: false,
+          error: 'Model file not found'
+        });
+      }
+
+      const content = fs.readFileSync(modelFile, 'utf-8');
+      
+      // Parse C# properties from the file
+      const propertyRegex = /public\s+(\w+\??)\s+(\w+)\s*{\s*get;\s*set;\s*}/g;
+      const properties = [];
+      let match;
+
+      while ((match = propertyRegex.exec(content)) !== null) {
+        const [, type, name] = match;
+        properties.push({
+          name,
+          type: type.replace('?', ''),
+          nullable: type.includes('?'),
+          displayName: name.replace(/([A-Z])/g, ' $1').trim()
+        });
+      }
+
+      res.json({
+        success: true,
+        modelName,
+        displayName: modelName.replace(/([A-Z])/g, ' $1').trim(),
+        properties,
+        totalProperties: properties.length
+      });
+    } catch (error) {
+      console.error('Error reading model file:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to read model file'
+      });
+    }
+  });
+
   // Cleanup expired tokens periodically
   setInterval(async () => {
     try {
