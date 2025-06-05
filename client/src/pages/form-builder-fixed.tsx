@@ -24,7 +24,6 @@ import {
   AlertTriangle,
   Trash2,
   Settings,
-  ChevronDown,
   ChevronRight,
   Moon,
   Sun,
@@ -44,7 +43,8 @@ import {
   Download,
   Database,
   Eye,
-  ChevronDown
+  ChevronDown,
+  Search
 } from 'lucide-react';
 
 // Model Dropdown Selector Component
@@ -107,9 +107,9 @@ function ModelDropdownSelector({
             {/* Search Input */}
             <div className="p-3 border-b">
               <div className="relative">
-                <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${
+                <div className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${
                   isDarkMode ? 'text-gray-400' : 'text-gray-500'
-                }`} />
+                }`}>🔍</div>
                 <Input
                   placeholder="Search models..."
                   value={searchTerm}
