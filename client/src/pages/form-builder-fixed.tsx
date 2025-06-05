@@ -278,6 +278,219 @@ function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMod
   );
 }
 
+function ModelViewerComponent({ 
+  field, 
+  isSelected, 
+  onSelect, 
+  onRemove, 
+  isDarkMode 
+}: {
+  field: FormField;
+  isSelected: boolean;
+  onSelect: () => void;
+  onRemove: () => void;
+  isDarkMode: boolean;
+}) {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedModel, setSelectedModel] = useState<string>('');
+  const [modelProperties, setModelProperties] = useState<any[]>([]);
+  const [modelsLoading, setModelsLoading] = useState(false);
+  const [propertiesLoading, setPropertiesLoading] = useState(false);
+
+  const { data: modelsData, isLoading: isModelsLoading } = useQuery({
+    queryKey: ['/api/models'],
+    enabled: isDialogOpen
+  });
+
+  const { data: propertiesData, isLoading: isPropertiesLoading } = useQuery({
+    queryKey: ['/api/models', selectedModel],
+    enabled: !!selectedModel && isDialogOpen
+  });
+
+  useEffect(() => {
+    if (propertiesData?.success) {
+      setModelProperties(propertiesData.properties || []);
+    }
+  }, [propertiesData]);
+
+  const handleModelSelect = (modelName: string) => {
+    setSelectedModel(modelName);
+  };
+
+  const handleViewProperties = () => {
+    if (field.Entity) {
+      setSelectedModel(field.Entity);
+    }
+    setIsDialogOpen(true);
+  };
+
+  return (
+    <>
+      <div
+        onClick={onSelect}
+        className={`p-3 border rounded-lg cursor-pointer transition-all ${
+          isSelected
+            ? `border-blue-500 ${isDarkMode ? 'bg-blue-900/50' : 'bg-blue-50'}`
+            : `${isDarkMode ? 'border-gray-600 hover:border-gray-500 bg-gray-700' : 'border-gray-200 hover:border-gray-300 bg-white'}`
+        }`}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <Database className="w-4 h-4 text-emerald-600" />
+            <div>
+              <div className={`font-medium text-sm ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                {field.Label || 'Model Viewer'}
+              </div>
+              <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                {field.Entity ? `Model: ${field.Entity}` : 'No model selected'}
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleViewProperties();
+              }}
+              className={`p-1 h-6 w-6 ${isDarkMode ? 'text-emerald-400 hover:text-emerald-300' : 'text-emerald-600 hover:text-emerald-700'}`}
+            >
+              <Eye className="w-3 h-3" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                onRemove();
+              }}
+              className={`p-1 h-6 w-6 ${isDarkMode ? 'text-gray-400 hover:text-red-400' : 'text-gray-400 hover:text-red-500'}`}
+            >
+              <Trash2 className="w-3 h-3" />
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className={`max-w-4xl max-h-[80vh] overflow-hidden ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
+          <DialogHeader>
+            <DialogTitle className={isDarkMode ? 'text-white' : ''}>
+              MfactModels Explorer
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="flex gap-4 h-96">
+            {/* Models List */}
+            <div className={`w-1/3 border rounded-lg p-4 ${isDarkMode ? 'border-gray-600 bg-gray-700' : 'border-gray-200'}`}>
+              <h3 className={`font-semibold mb-3 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Available Models</h3>
+              
+              {isModelsLoading ? (
+                <div className="text-center py-4">
+                  <div className="animate-spin h-6 w-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
+                  <p className={`text-sm mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Loading models...</p>
+                </div>
+              ) : (
+                <div className="space-y-2 max-h-72 overflow-y-auto">
+                  {modelsData?.models?.map((model: any) => (
+                    <button
+                      key={model.name}
+                      onClick={() => handleModelSelect(model.name)}
+                      className={`w-full text-left p-2 rounded text-sm transition-colors ${
+                        selectedModel === model.name
+                          ? (isDarkMode ? 'bg-blue-700 text-white' : 'bg-blue-100 text-blue-900')
+                          : (isDarkMode ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-100 text-gray-700')
+                      }`}
+                    >
+                      <div className="font-medium">{model.name}</div>
+                      <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                        {model.displayName}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Properties Table */}
+            <div className={`flex-1 border rounded-lg p-4 ${isDarkMode ? 'border-gray-600 bg-gray-700' : 'border-gray-200'}`}>
+              <h3 className={`font-semibold mb-3 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                Model Properties
+                {selectedModel && (
+                  <span className={`ml-2 text-sm font-normal ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    ({selectedModel})
+                  </span>
+                )}
+              </h3>
+
+              {!selectedModel ? (
+                <div className={`text-center py-8 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                  <Database className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                  <p>Select a model to view its properties</p>
+                </div>
+              ) : isPropertiesLoading ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin h-6 w-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
+                  <p className={`text-sm mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Loading properties...</p>
+                </div>
+              ) : (
+                <div className="max-h-72 overflow-y-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className={`border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
+                        <th className={`text-left py-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Property</th>
+                        <th className={`text-left py-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Type</th>
+                        <th className={`text-left py-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Nullable</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {modelProperties.map((prop: any, index: number) => (
+                        <tr key={index} className={`border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-100'}`}>
+                          <td className={`py-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                            <div className="font-medium">{prop.name}</div>
+                            <div className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
+                              {prop.displayName}
+                            </div>
+                          </td>
+                          <td className={`py-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            <span className={`px-2 py-1 rounded text-xs ${
+                              prop.type === 'string' ? 'bg-green-100 text-green-800' :
+                              prop.type === 'int' ? 'bg-blue-100 text-blue-800' :
+                              prop.type === 'decimal' ? 'bg-purple-100 text-purple-800' :
+                              prop.type === 'DateTime' ? 'bg-orange-100 text-orange-800' :
+                              'bg-gray-100 text-gray-800'
+                            }`}>
+                              {prop.type}
+                            </span>
+                          </td>
+                          <td className={`py-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            {prop.nullable ? (
+                              <span className="text-yellow-600">Optional</span>
+                            ) : (
+                              <span className="text-red-600">Required</span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+
+                  {propertiesData?.totalProperties && (
+                    <div className={`text-center mt-4 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                      Total: {propertiesData.totalProperties} properties
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
+
 function FieldComponent({ 
   field, 
   onSelect, 
@@ -322,6 +535,19 @@ function FieldComponent({
   const componentType = ComponentTypes[field.Type as keyof typeof ComponentTypes];
   const Icon = componentType?.icon || Type;
   const color = componentType?.color || 'gray';
+
+  // Special rendering for MODELVIEWER
+  if (field.Type === 'MODELVIEWER') {
+    return (
+      <ModelViewerComponent 
+        field={field}
+        isSelected={isSelected}
+        onSelect={onSelect}
+        onRemove={onRemove}
+        isDarkMode={isDarkMode}
+      />
+    );
+  }
 
   return (
     <div
