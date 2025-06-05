@@ -417,14 +417,25 @@ function ModelViewerComponent({
 
             {/* Properties Table */}
             <div className={`flex-1 border rounded-lg p-4 ${isDarkMode ? 'border-gray-600 bg-gray-700' : 'border-gray-200'}`}>
-              <h3 className={`font-semibold mb-3 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                Model Properties
-                {selectedModel && (
-                  <span className={`ml-2 text-sm font-normal ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                    ({selectedModel})
-                  </span>
-                )}
-              </h3>
+              {selectedModel ? (
+                <div className="mb-4">
+                  <h3 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                    {selectedModel} Model Details
+                  </h3>
+                  <div className={`text-sm mt-2 space-y-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    {(propertiesData as any)?.displayName && (
+                      <p>Display Name: {(propertiesData as any).displayName}</p>
+                    )}
+                    {(propertiesData as any)?.totalProperties && (
+                      <p>Total Properties: {(propertiesData as any).totalProperties}</p>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <h3 className={`font-semibold mb-3 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                  Model Properties
+                </h3>
+              )}
 
               {!selectedModel ? (
                 <div className={`text-center py-8 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
@@ -437,52 +448,77 @@ function ModelViewerComponent({
                   <p className={`text-sm mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Loading properties...</p>
                 </div>
               ) : (
-                <div className="max-h-72 overflow-y-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className={`border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
-                        <th className={`text-left py-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Property</th>
-                        <th className={`text-left py-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Type</th>
-                        <th className={`text-left py-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Nullable</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {modelProperties.map((prop: any, index: number) => (
-                        <tr key={index} className={`border-b ${isDarkMode ? 'border-gray-600' : 'border-gray-100'}`}>
-                          <td className={`py-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                            <div className="font-medium">{prop.name}</div>
-                            <div className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
-                              {prop.displayName}
-                            </div>
-                          </td>
-                          <td className={`py-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                            <span className={`px-2 py-1 rounded text-xs ${
-                              prop.type === 'string' ? 'bg-green-100 text-green-800' :
-                              prop.type === 'int' ? 'bg-blue-100 text-blue-800' :
-                              prop.type === 'decimal' ? 'bg-purple-100 text-purple-800' :
-                              prop.type === 'DateTime' ? 'bg-orange-100 text-orange-800' :
-                              'bg-gray-100 text-gray-800'
-                            }`}>
-                              {prop.type}
-                            </span>
-                          </td>
-                          <td className={`py-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                            {prop.nullable ? (
-                              <span className="text-yellow-600">Optional</span>
-                            ) : (
-                              <span className="text-red-600">Required</span>
-                            )}
-                          </td>
+                <div className="max-h-80 overflow-y-auto">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                      <thead className="sticky top-0 bg-inherit">
+                        <tr className={`border-b-2 ${isDarkMode ? 'border-gray-600 bg-gray-800' : 'border-gray-300 bg-gray-50'}`}>
+                          <th className={`text-left py-3 px-3 font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Property Name</th>
+                          <th className={`text-left py-3 px-3 font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Display Name</th>
+                          <th className={`text-left py-3 px-3 font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Data Type</th>
+                          <th className={`text-center py-3 px-3 font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Nullable</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {modelProperties.map((prop: any, index: number) => (
+                          <tr key={index} className={`border-b hover:bg-opacity-50 transition-colors ${
+                            isDarkMode 
+                              ? 'border-gray-600 hover:bg-gray-700' 
+                              : 'border-gray-200 hover:bg-gray-50'
+                          }`}>
+                            <td className={`py-3 px-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}>
+                              <div className="font-mono text-sm font-medium">{prop.name}</div>
+                            </td>
+                            <td className={`py-3 px-3 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                              <div className="text-sm">{prop.displayName}</div>
+                            </td>
+                            <td className={`py-3 px-3`}>
+                              <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
+                                prop.type === 'string' ? 'bg-green-100 text-green-800 border border-green-200' :
+                                prop.type === 'int' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
+                                prop.type === 'decimal' ? 'bg-purple-100 text-purple-800 border border-purple-200' :
+                                prop.type === 'DateTime' ? 'bg-orange-100 text-orange-800 border border-orange-200' :
+                                'bg-gray-100 text-gray-800 border border-gray-200'
+                              }`}>
+                                {prop.type}
+                              </span>
+                            </td>
+                            <td className={`py-3 px-3 text-center`}>
+                              {prop.nullable ? (
+                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
+                                  Optional
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200">
+                                  Required
+                                </span>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
 
-                  {(propertiesData as any)?.totalProperties && (
-                    <div className={`text-center mt-4 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                      Total: {(propertiesData as any).totalProperties} properties
+                  {/* Statistics Footer */}
+                  <div className={`mt-4 pt-4 border-t flex justify-between items-center text-sm ${
+                    isDarkMode ? 'border-gray-600 text-gray-400' : 'border-gray-200 text-gray-600'
+                  }`}>
+                    <div>
+                      <span className="font-medium">Total Properties: </span>
+                      {(propertiesData as any)?.totalProperties || modelProperties.length}
                     </div>
-                  )}
+                    <div className="flex gap-4">
+                      <div>
+                        <span className="font-medium">Required: </span>
+                        {modelProperties.filter((p: any) => !p.nullable).length}
+                      </div>
+                      <div>
+                        <span className="font-medium">Optional: </span>
+                        {modelProperties.filter((p: any) => p.nullable).length}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
