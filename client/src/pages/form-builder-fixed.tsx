@@ -581,8 +581,8 @@ function FieldComponent({
   const Icon = componentType?.icon || Type;
   const color = componentType?.color || 'gray';
 
-  // Special rendering for ModelViewer
-  if (field.Type === 'ModelViewer') {
+  // Special rendering for MODELVIEWER
+  if (field.Type === 'MODELVIEWER') {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [selectedModel, setSelectedModel] = useState<string>(field.Entity || '');
 
@@ -1184,7 +1184,7 @@ function PropertiesPanel({ field, onUpdate }: {
           </div>
         );
 
-      case 'ModelViewer':
+      case 'MODELVIEWER':
         return (
           <div className="space-y-3">
             <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">Model Viewer Properties</h4>
