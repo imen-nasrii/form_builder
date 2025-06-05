@@ -478,9 +478,9 @@ function ModelViewerComponent({
                     </tbody>
                   </table>
 
-                  {propertiesData?.totalProperties && (
+                  {(propertiesData as any)?.totalProperties && (
                     <div className={`text-center mt-4 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                      Total: {propertiesData.totalProperties} properties
+                      Total: {(propertiesData as any).totalProperties} properties
                     </div>
                   )}
                 </div>
