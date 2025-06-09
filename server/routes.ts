@@ -781,49 +781,113 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }
 
   function getSampleDataForTable(tableName: string): any[] {
+    const sampleDataSets: { [key: string]: any[] } = {
+      'Secrty': [
+        { tkr: 'AAPL', tkr_DESC: 'Apple Inc.', currency: 'USD', country: 'US', seccat: 'COMMON', price_ID: 150.25, face_VALUE: 1.0, outshs: 15943077000, rating: 'AAA', ytm: 0.025, inactive: false },
+        { tkr: 'MSFT', tkr_DESC: 'Microsoft Corporation', currency: 'USD', country: 'US', seccat: 'COMMON', price_ID: 342.75, face_VALUE: 1.0, outshs: 7430439000, rating: 'AAA', ytm: 0.028, inactive: false },
+        { tkr: 'GOOGL', tkr_DESC: 'Alphabet Inc Class A', currency: 'USD', country: 'US', seccat: 'COMMON', price_ID: 2875.50, face_VALUE: 1.0, outshs: 12800000000, rating: 'AA+', ytm: 0.030, inactive: false },
+        { tkr: 'TSLA', tkr_DESC: 'Tesla Inc.', currency: 'USD', country: 'US', seccat: 'COMMON', price_ID: 248.42, face_VALUE: 1.0, outshs: 3178919000, rating: 'B+', ytm: 0.045, inactive: false }
+      ],
+      'Fund': [
+        { fund: 'FUND001', acnam1: 'Global Equity Fund', base_CURR: 'USD', domicile: 'US', inactive: false, legal: 'MUTUAL_FUND', nav_DECS: 2, share_DECS: 3 },
+        { fund: 'FUND002', acnam1: 'European Bond Fund', base_CURR: 'EUR', domicile: 'IE', inactive: false, legal: 'UCITS', nav_DECS: 4, share_DECS: 2 },
+        { fund: 'FUND003', acnam1: 'Asia Pacific Growth', base_CURR: 'USD', domicile: 'LU', inactive: false, legal: 'SICAV', nav_DECS: 2, share_DECS: 3 },
+        { fund: 'FUND004', acnam1: 'Emerging Markets Fund', base_CURR: 'USD', domicile: 'US', inactive: false, legal: 'MUTUAL_FUND', nav_DECS: 3, share_DECS: 2 }
+      ],
+      'FundCg': [
+        { fund: 'FUND001', acnam1: 'Global Equity Fund', base_CURR: 'USD', domicile: 'US', inactive: false, legal: 'MUTUAL_FUND', nav_DECS: 2, share_DECS: 3 },
+        { fund: 'FUND002', acnam1: 'European Bond Fund', base_CURR: 'EUR', domicile: 'IE', inactive: false, legal: 'UCITS', nav_DECS: 4, share_DECS: 2 },
+        { fund: 'FUND005', acnam1: 'Technology Growth Fund', base_CURR: 'USD', domicile: 'US', inactive: false, legal: 'ETF', nav_DECS: 2, share_DECS: 3 }
+      ],
+      'Alias': [
+        { aliasname: 'APPLE_EQUITY', descr: 'Apple Inc Common Stock', criteria: 'TKR=AAPL', user_ID: 'admin' },
+        { aliasname: 'MSFT_EQUITY', descr: 'Microsoft Corporation', criteria: 'TKR=MSFT', user_ID: 'trader1' },
+        { aliasname: 'TECH_STOCKS', descr: 'Technology Sector Stocks', criteria: 'SECCAT=TECH', user_ID: 'analyst' }
+      ],
+      'Glprm': [
+        { accdivdate: '2024-01-01', accdivtime: '09:00:00', accdivuser: 'system', accdivweekend: 'Y' },
+        { accdivdate: '2024-06-30', accdivtime: '17:00:00', accdivuser: 'admin', accdivweekend: 'N' }
+      ],
+      'Seccat': [
+        { seccat: 'COMMON' },
+        { seccat: 'PREFERRED' },
+        { seccat: 'BOND' },
+        { seccat: 'OPTION' },
+        { seccat: 'FUTURE' }
+      ],
+      'Secgrp': [
+        { secgrp: 'EQUITY' },
+        { secgrp: 'FIXED_INCOME' },
+        { secgrp: 'DERIVATIVES' },
+        { secgrp: 'COMMODITIES' }
+      ],
+      'Broker': [
+        { broker: 'GOLDMAN_SACHS' },
+        { broker: 'MORGAN_STANLEY' },
+        { broker: 'JP_MORGAN' },
+        { broker: 'CREDIT_SUISSE' }
+      ],
+      'Reason': [
+        { reason: 'TRADE_SETTLEMENT' },
+        { reason: 'DIVIDEND_PAYMENT' },
+        { reason: 'CORPORATE_ACTION' },
+        { reason: 'FEE_ADJUSTMENT' }
+      ],
+      'Exchng': [
+        { exchng: 'NYSE' },
+        { exchng: 'NASDAQ' },
+        { exchng: 'LSE' },
+        { exchng: 'EURONEXT' }
+      ],
+      'Subunit': [
+        { subunit: 'PORTFOLIO_1' },
+        { subunit: 'PORTFOLIO_2' },
+        { subunit: 'TRADING_DESK_A' },
+        { subunit: 'FIXED_INCOME_DESK' }
+      ],
+      'Source': [
+        { source: 'BLOOMBERG' },
+        { source: 'REUTERS' },
+        { source: 'FACTSET' },
+        { source: 'INTERNAL_PRICING' }
+      ],
+      'Aatrr': [
+        { source: 'BLOOMBERG' },
+        { source: 'REUTERS' },
+        { source: 'MANUAL_ENTRY' }
+      ],
+      'Actype': [
+        { actype: 'TRADING', actype_DESC: 'Trading Account', active: true },
+        { actype: 'CUSTODY', actype_DESC: 'Custody Account', active: true },
+        { actype: 'SETTLEMENT', actype_DESC: 'Settlement Account', active: false }
+      ],
+      'GkDet': [
+        { gk_id: 'GK001', account: 'ACC001', security: 'AAPL', quantity: 1000, price: 150.25, trade_date: '2024-01-15' },
+        { gk_id: 'GK002', account: 'ACC002', security: 'MSFT', quantity: 500, price: 342.75, trade_date: '2024-01-16' },
+        { gk_id: 'GK003', account: 'ACC001', security: 'GOOGL', quantity: 100, price: 2875.50, trade_date: '2024-01-17' }
+      ]
+    };
+
+    // Return specific sample data for the table, or generate dynamic data if not found
+    if (sampleDataSets[tableName]) {
+      return sampleDataSets[tableName];
+    }
+
+    // Fallback: generate data based on model properties
     try {
       const columns = getColumnsForTable(tableName);
+      const recordCount = 3;
       
-      // Generate sample data based on actual model properties
-      const generateSampleRecord = (index: number) => {
+      return Array.from({ length: recordCount }, (_, index) => {
         const record: any = {};
-        
         columns.forEach(column => {
-          // Generate realistic sample data based on property name patterns
-          if (column.toLowerCase().includes('fund')) {
-            record[column] = `FUND${String(index + 1).padStart(3, '0')}`;
-          } else if (column.toLowerCase().includes('tkr')) {
-            record[column] = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA'][index % 5];
-          } else if (column.toLowerCase().includes('hash')) {
-            record[column] = Math.floor(Math.random() * 1000000);
-          } else if (column.toLowerCase().includes('date')) {
-            record[column] = new Date().toISOString();
-          } else if (column.toLowerCase().includes('decimal') || column.toLowerCase().includes('amount')) {
-            record[column] = (Math.random() * 1000).toFixed(2);
-          } else if (column.toLowerCase().includes('seccat')) {
-            record[column] = ['COMMON', 'BOND', 'OPTION', 'FUTURE'][index % 4];
-          } else if (column.toLowerCase().includes('secgrp')) {
-            record[column] = ['EQUITY', 'FIXED_INCOME', 'DERIVATIVES'][index % 3];
-          } else if (column.toLowerCase().includes('subunit')) {
-            record[column] = `SUBUNIT_${index + 1}`;
-          } else if (column.toLowerCase().includes('pby') || column.toLowerCase().includes('tc')) {
-            record[column] = ['Y', 'N'][index % 2];
-          } else {
-            // Default string value
-            record[column] = `${column}_${index + 1}`;
-          }
+          record[column] = `${column}_${index + 1}`;
         });
-        
         return record;
-      };
-      
-      // Generate 3-5 sample records
-      const recordCount = Math.min(5, Math.max(3, columns.length > 10 ? 3 : 5));
-      return Array.from({ length: recordCount }, (_, index) => generateSampleRecord(index));
-      
+      });
     } catch (error) {
-      console.error(`Error generating sample data for ${tableName}:`, error);
-      return [{ error: 'Unable to generate sample data' }];
+      console.error(`Error generating data for ${tableName}:`, error);
+      return [{ message: `No data available for ${tableName}` }];
     }
   }
 
