@@ -969,7 +969,7 @@ function GroupField({
                             const updatedChildren = [...(field.ChildFields || [])];
                             [updatedChildren[childIndex], updatedChildren[childIndex + 1]] = 
                             [updatedChildren[childIndex + 1], updatedChildren[childIndex]];
-                            onUpdate({ ChildFields: updatedChildren });
+                            updateFieldInFormData(field.Id, { ChildFields: updatedChildren });
                           }
                         }}
                         disabled={(field.ChildFields || []).findIndex(f => f.Id === childField.Id) === (field.ChildFields || []).length - 1}
