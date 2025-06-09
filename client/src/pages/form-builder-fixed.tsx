@@ -347,31 +347,22 @@ function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMod
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       className={`
-        relative p-1.5 border-2 border-dashed rounded-md cursor-move transition-all duration-200
+        relative p-1 border border-solid rounded cursor-move transition-all duration-200
         hover:shadow-lg hover:scale-105 active:scale-95
         ${isDragging ? 'opacity-60 rotate-1 scale-95' : ''}
         ${classes.bg} ${classes.border}
         group
       `}
     >
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-1.5">
         <div className={`
-          relative w-6 h-6 rounded flex items-center justify-center transition-all duration-200
+          relative w-5 h-5 rounded-sm flex items-center justify-center transition-all duration-200
           ${getIconBackgroundClass(color, isDarkMode)}
           ${isDragging ? 'animate-pulse' : ''}
         `}>
-          <Icon className="w-3 h-3 text-white" />
-          
-          {/* Drag indicator dot */}
-          <div className={`
-            absolute -top-1 -right-1 w-2 h-2 rounded-full transition-all duration-200
-            ${isDragging 
-              ? (isDarkMode ? 'bg-blue-400 animate-ping' : 'bg-blue-500 animate-ping') 
-              : 'bg-transparent'
-            }
-          `} />
+          <Icon className="w-2.5 h-2.5 text-white" />
         </div>
-        <span className={`text-xs font-medium ${classes.text}`}>{label}</span>
+        <span className={`text-xs font-medium truncate ${classes.text}`}>{label}</span>
       </div>
       
       {/* Hover overlay with grab cursor indicator */}
@@ -2783,7 +2774,7 @@ export default function FormBuilderFixed() {
                     <category.icon className="w-3 h-3" />
                     <span>{category.name}</span>
                   </div>
-                  <div className="pl-3 space-y-0.5">
+                  <div className="grid grid-cols-2 gap-1 pl-2">
                     {Object.entries(category.components).map(([type, config]) => (
                       <DraggableComponent
                         key={type}
