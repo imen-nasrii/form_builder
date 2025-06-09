@@ -451,7 +451,7 @@ function ModelViewerComponent({
         </div>
         
         <div className={`text-xs mb-3 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-          {field.Entity ? `Model: ${field.Entity}` : 'No model selected'}
+          {field.Entity ? `Selected Model: ${field.Entity}` : 'No model selected'}
         </div>
         
         <div className="space-y-2">
@@ -468,20 +468,19 @@ function ModelViewerComponent({
             {field.Entity ? 'Change Model' : 'Select Model'}
           </Button>
 
-          {field.Entity && (
-            <Button
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsDataViewOpen(true);
-              }}
-              size="sm"
-              variant="outline"
-              className={`w-full ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
-            >
-              <Table className="w-4 h-4 mr-2" />
-              View Database Table
-            </Button>
-          )}
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsDataViewOpen(true);
+            }}
+            size="sm"
+            variant="outline"
+            className={`w-full ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+            disabled={!field.Entity}
+          >
+            <Table className="w-4 h-4 mr-2" />
+            View Database Table
+          </Button>
         </div>
       </div>
 
