@@ -763,17 +763,41 @@ function FieldComponent({
             <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{field.Type}</div>
           </div>
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={(e) => {
-            e.stopPropagation();
-            onRemove();
-          }}
-          className={`p-1 h-6 w-6 ${isDarkMode ? 'text-gray-400 hover:text-red-400' : 'text-gray-400 hover:text-red-500'}`}
-        >
-          <Trash2 className="w-3 h-3" />
-        </Button>
+        <div className="flex items-center space-x-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onMoveUp();
+            }}
+            className={`p-1 h-6 w-6 ${isDarkMode ? 'text-gray-400 hover:text-blue-400' : 'text-gray-400 hover:text-blue-500'}`}
+          >
+            <ChevronUp className="w-3 h-3" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onMoveDown();
+            }}
+            className={`p-1 h-6 w-6 ${isDarkMode ? 'text-gray-400 hover:text-blue-400' : 'text-gray-400 hover:text-blue-500'}`}
+          >
+            <ChevronDown className="w-3 h-3" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemove();
+            }}
+            className={`p-1 h-6 w-6 ${isDarkMode ? 'text-gray-400 hover:text-red-400' : 'text-gray-400 hover:text-red-500'}`}
+          >
+            <Trash2 className="w-3 h-3" />
+          </Button>
+        </div>
       </div>
     </div>
   );
@@ -783,6 +807,8 @@ function GroupField({
   field,
   onSelect,
   onRemove,
+  onMoveUp,
+  onMoveDown,
   isSelected,
   addField,
   isExpanded,
@@ -790,7 +816,8 @@ function GroupField({
   isDarkMode,
   selectedField,
   setSelectedField,
-  removeChildField
+  removeChildField,
+  updateFieldInFormData
 }: {
   field: FormField;
   onSelect: () => void;
@@ -914,6 +941,42 @@ function GroupField({
                       </span>
                     </div>
                     <div className="flex items-center space-x-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const childIndex = (field.ChildFields || []).findIndex(f => f.Id === childField.Id);
+                          if (childIndex > 0) {
+                            const updatedChildren = [...(field.ChildFields || [])];
+                            [updatedChildren[childIndex], updatedChildren[childIndex - 1]] = 
+                            [updatedChildren[childIndex - 1], updatedChildren[childIndex]];
+                            updateFieldInFormData(field.Id, { ChildFields: updatedChildren });
+                          }
+                        }}
+                        disabled={(field.ChildFields || []).findIndex(f => f.Id === childField.Id) === 0}
+                        className={`h-6 w-6 p-0 ${isDarkMode ? 'text-gray-400 hover:text-blue-400' : 'text-gray-400 hover:text-blue-500'}`}
+                      >
+                        <ChevronUp className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const childIndex = (field.ChildFields || []).findIndex(f => f.Id === childField.Id);
+                          if (childIndex < (field.ChildFields || []).length - 1) {
+                            const updatedChildren = [...(field.ChildFields || [])];
+                            [updatedChildren[childIndex], updatedChildren[childIndex + 1]] = 
+                            [updatedChildren[childIndex + 1], updatedChildren[childIndex]];
+                            onUpdate({ ChildFields: updatedChildren });
+                          }
+                        }}
+                        disabled={(field.ChildFields || []).findIndex(f => f.Id === childField.Id) === (field.ChildFields || []).length - 1}
+                        className={`h-6 w-6 p-0 ${isDarkMode ? 'text-gray-400 hover:text-blue-400' : 'text-gray-400 hover:text-blue-500'}`}
+                      >
+                        <ChevronDown className="h-3 w-3" />
+                      </Button>
                       <Button
                         variant="ghost"
                         size="sm"
