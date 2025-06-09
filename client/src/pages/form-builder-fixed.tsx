@@ -412,7 +412,7 @@ function ModelViewerComponent({
   });
 
   // Debug logging
-  React.useEffect(() => {
+  useEffect(() => {
     if (isDialogOpen) {
       console.log('Dialog opened, models data:', modelsData);
       console.log('Models loading:', isModelsLoading);
