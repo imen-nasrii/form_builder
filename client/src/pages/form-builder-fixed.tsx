@@ -412,9 +412,12 @@ function ModelViewerComponent({
   });
 
   // Debug logging
-  console.log('Models data:', modelsData);
-  console.log('Is loading:', isModelsLoading);
-  console.log('Dialog open:', isDialogOpen);
+  React.useEffect(() => {
+    if (isDialogOpen) {
+      console.log('Dialog opened, models data:', modelsData);
+      console.log('Models loading:', isModelsLoading);
+    }
+  }, [isDialogOpen, modelsData, isModelsLoading]);
 
   const { data: tableData, isLoading: isTableLoading } = useQuery({
     queryKey: ['/api/table-data', field.Entity],
