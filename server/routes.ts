@@ -693,24 +693,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log(`Fetching data for table: ${tableName} using query: ${queryName}`);
       
-      // For now, return the query structure and column information
-      // In a real implementation, you would make the GraphQL request here
+      // Use schema-based sample data that matches your GraphQL structure
+      const sampleData = getSampleDataForTable(tableName);
+      
       res.json({ 
         success: true, 
         tableName,
         queryName,
         columns: getColumnsForTable(tableName),
         graphqlQuery: graphqlQuery.query,
-        message: `Table data endpoint ready for ${tableName}. Connect to your GraphQL endpoint to fetch real data.`,
-        // Real implementation would include:
-        // const response = await fetch('YOUR_GRAPHQL_ENDPOINT', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify(graphqlQuery)
-        // });
-        // const result = await response.json();
-        // data: result.data[queryName]
-        data: [] // Will contain real data from GraphQL
+        data: sampleData,
+        recordCount: sampleData.length,
+        message: `Schema-based data for ${tableName} (${sampleData.length} sample records)`,
+        schemaStructure: true
       });
       
     } catch (error) {
@@ -758,6 +753,131 @@ export async function registerRoutes(app: Express): Promise<Server> {
       'Aatrr': ['source']
     };
     return columnMap[tableName] || ['id'];
+  }
+
+  function getSampleDataForTable(tableName: string): any[] {
+    const sampleData: { [key: string]: any[] } = {
+      'Secrty': [
+        { 
+          tkr: 'AAPL', 
+          tkr_DESC: 'Apple Inc Common Stock', 
+          currency: 'USD', 
+          country: 'US', 
+          seccat: 'COMMON', 
+          price_ID: 'AAPL_US_EQUITY',
+          face_VALUE: 0.00001,
+          outshs: 15204100000,
+          rating: 'AA+',
+          ytm: 0.0,
+          inactive: '',
+          cusip: '037833100',
+          isin: 'US0378331005',
+          exch: 'NASDAQ',
+          issuer: 'Apple Inc',
+          matdat: null
+        },
+        { 
+          tkr: 'GOOGL', 
+          tkr_DESC: 'Alphabet Inc Class A', 
+          currency: 'USD', 
+          country: 'US', 
+          seccat: 'COMMON', 
+          price_ID: 'GOOGL_US_EQUITY',
+          face_VALUE: 0.001,
+          outshs: 12800000000,
+          rating: 'AA+',
+          ytm: 0.0,
+          inactive: '',
+          cusip: '02079K305',
+          isin: 'US02079K3059',
+          exch: 'NASDAQ',
+          issuer: 'Alphabet Inc',
+          matdat: null
+        }
+      ],
+      'Fund': [
+        { 
+          fund: 'USEQUITY01', 
+          acnam1: 'US Large Cap Equity Fund', 
+          base_CURR: 'USD', 
+          domicile: 'US',
+          inactive: '',
+          legal: 1,
+          nav_DECS: 4,
+          share_DECS: 6,
+          add1: '200 West Street',
+          city: 'New York',
+          state: 'NY',
+          zip: '10282',
+          contry: 'US',
+          cusip: 'G12345678',
+          family: 'EQUITY_FUNDS'
+        },
+        { 
+          fund: 'INTLEQUITY01', 
+          acnam1: 'International Equity Fund', 
+          base_CURR: 'USD', 
+          domicile: 'US',
+          inactive: '',
+          legal: 1,
+          nav_DECS: 4,
+          share_DECS: 6,
+          add1: '200 West Street',
+          city: 'New York',
+          state: 'NY',
+          zip: '10282',
+          contry: 'US',
+          cusip: 'G12345679',
+          family: 'EQUITY_FUNDS'
+        }
+      ],
+      'FundCg': [
+        { 
+          fund: 'USEQUITY01', 
+          acnam1: 'US Large Cap Equity Fund', 
+          base_CURR: 'USD', 
+          domicile: 'US',
+          inactive: '',
+          legal: 1,
+          nav_DECS: 4,
+          share_DECS: 6
+        },
+        { 
+          fund: 'INTLEQUITY01', 
+          acnam1: 'International Equity Fund', 
+          base_CURR: 'USD', 
+          domicile: 'US',
+          inactive: '',
+          legal: 1,
+          nav_DECS: 4,
+          share_DECS: 6
+        }
+      ],
+      'Alias': [
+        { 
+          aliasname: 'US_LARGE_CAP', 
+          descr: 'US Large Cap Equity Securities', 
+          criteria: 'country=US AND seccat=COMMON', 
+          user_ID: 'portfolio_mgr' 
+        },
+        { 
+          aliasname: 'TECH_STOCKS', 
+          descr: 'Technology Sector Stocks', 
+          criteria: 'seccat=COMMON AND sector=TECHNOLOGY', 
+          user_ID: 'sector_analyst' 
+        }
+      ],
+      'Glprm': [
+        {
+          fund: 'USEQUITY01',
+          accdivdate: '2024-12-31T00:00:00Z',
+          accdivtime: '16:00:00',
+          accdivuser: 'SYSTEM',
+          accdivweekend: 'Y'
+        }
+      ]
+    };
+    return sampleData[tableName] || [];
   }
 
   // Cleanup expired tokens periodically
