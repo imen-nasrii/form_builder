@@ -1997,6 +1997,7 @@ export default function FormBuilderFixed() {
     maxLength: '',
     options: ''
   });
+  const [componentCreationStep, setComponentCreationStep] = useState(1);
   const [showAddComponent, setShowAddComponent] = useState(false);
 
   const [showImportDialog, setShowImportDialog] = useState(false);
@@ -2325,6 +2326,30 @@ export default function FormBuilderFixed() {
     }
   };
 
+  // Reset component creation form
+  const resetComponentCreation = () => {
+    setNewComponentConfig({ 
+      name: '', 
+      label: '', 
+      icon: 'Square', 
+      color: 'gray',
+      properties: '',
+      dataField: '',
+      entity: '',
+      width: '',
+      spacing: '',
+      value: '',
+      required: false,
+      inline: false,
+      outlined: false,
+      placeholder: '',
+      minLength: '',
+      maxLength: '',
+      options: ''
+    } as typeof newComponentConfig);
+    setComponentCreationStep(1);
+  };
+
   // Method 2: Form-based Component Creator
   const addComponentFromForm = () => {
     if (!newComponentConfig.name || !newComponentConfig.label) return;
@@ -2360,25 +2385,7 @@ export default function FormBuilderFixed() {
     };
     
     setCustomComponents(prev => [...prev, newComponent]);
-    setNewComponentConfig({ 
-      name: '', 
-      label: '', 
-      icon: 'Square', 
-      color: 'gray',
-      properties: '',
-      dataField: '',
-      entity: '',
-      width: '',
-      spacing: '',
-      value: '',
-      required: false,
-      inline: false,
-      outlined: false,
-      placeholder: '',
-      minLength: '',
-      maxLength: '',
-      options: ''
-    } as typeof newComponentConfig);
+    resetComponentCreation();
     setShowAddComponent(false);
   };
 
@@ -2678,9 +2685,9 @@ export default function FormBuilderFixed() {
                   External Components
                 </Button>
               </DialogTrigger>
-              <DialogContent className={`max-w-2xl ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
+              <DialogContent className={`max-w-3xl ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
                 <DialogHeader>
-                  <DialogTitle className={isDarkMode ? 'text-white' : ''}>Add External Components</DialogTitle>
+                  <DialogTitle className={isDarkMode ? 'text-white' : ''}>Assistant de création de composant</DialogTitle>
                 </DialogHeader>
                 <Tabs defaultValue="json" className="w-full">
                   <TabsList className={`grid w-full grid-cols-2 ${isDarkMode ? 'bg-gray-700' : ''}`}>
@@ -2764,147 +2771,268 @@ export default function FormBuilderFixed() {
                         />
                       </div>
                     </div>
-                    <div className="space-y-4">
-                      <h4 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Propriétés du Composant</h4>
-                      
-                      {/* Propriétés de base */}
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label className={isDarkMode ? 'text-gray-300' : ''}>Data Field</Label>
-                          <Input
-                            placeholder="field_name"
-                            value={newComponentConfig.dataField || ''}
-                            onChange={(e) => setNewComponentConfig(prev => ({ ...prev, dataField: e.target.value }))}
-                            className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-                          />
+                    <div className="space-y-6">
+                      {/* Progress indicator */}
+                      <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center space-x-4">
+                          {[1, 2, 3, 4].map((step) => (
+                            <div key={step} className="flex items-center">
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${
+                                step <= componentCreationStep 
+                                  ? 'bg-blue-600 text-white' 
+                                  : isDarkMode ? 'bg-gray-700 text-gray-400' : 'bg-gray-200 text-gray-500'
+                              }`}>
+                                {step}
+                              </div>
+                              {step < 4 && (
+                                <div className={`w-8 h-0.5 mx-2 ${
+                                  step < componentCreationStep 
+                                    ? 'bg-blue-600' 
+                                    : isDarkMode ? 'bg-gray-700' : 'bg-gray-200'
+                                }`} />
+                              )}
+                            </div>
+                          ))}
                         </div>
-                        <div>
-                          <Label className={isDarkMode ? 'text-gray-300' : ''}>Entity</Label>
-                          <Input
-                            placeholder="TableName"
-                            value={newComponentConfig.entity || ''}
-                            onChange={(e) => setNewComponentConfig(prev => ({ ...prev, entity: e.target.value }))}
-                            className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-                          />
-                        </div>
+                        <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                          Étape {componentCreationStep} sur 4
+                        </span>
                       </div>
 
-                      {/* Propriétés de mise en page */}
-                      <div className="grid grid-cols-3 gap-4">
-                        <div>
-                          <Label className={isDarkMode ? 'text-gray-300' : ''}>Width</Label>
-                          <Input
-                            placeholder="100%"
-                            value={newComponentConfig.width || ''}
-                            onChange={(e) => setNewComponentConfig(prev => ({ ...prev, width: e.target.value }))}
-                            className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-                          />
+                      {/* Step 1: Basic Information */}
+                      {componentCreationStep === 1 && (
+                        <div className="space-y-4">
+                          <h4 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                            Informations de base
+                          </h4>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <Label className={isDarkMode ? 'text-gray-300' : ''}>Nom du composant</Label>
+                              <Input
+                                placeholder="customButton"
+                                value={newComponentConfig.name}
+                                onChange={(e) => setNewComponentConfig(prev => ({ ...prev, name: e.target.value }))}
+                                className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                              />
+                            </div>
+                            <div>
+                              <Label className={isDarkMode ? 'text-gray-300' : ''}>Label d'affichage</Label>
+                              <Input
+                                placeholder="Bouton Personnalisé"
+                                value={newComponentConfig.label}
+                                onChange={(e) => setNewComponentConfig(prev => ({ ...prev, label: e.target.value }))}
+                                className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                              />
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <Label className={isDarkMode ? 'text-gray-300' : ''}>Icône</Label>
+                              <Input
+                                placeholder="Square"
+                                value={newComponentConfig.icon}
+                                onChange={(e) => setNewComponentConfig(prev => ({ ...prev, icon: e.target.value }))}
+                                className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                              />
+                            </div>
+                            <div>
+                              <Label className={isDarkMode ? 'text-gray-300' : ''}>Couleur</Label>
+                              <Input
+                                placeholder="gray"
+                                value={newComponentConfig.color}
+                                onChange={(e) => setNewComponentConfig(prev => ({ ...prev, color: e.target.value }))}
+                                className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                              />
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <Label className={isDarkMode ? 'text-gray-300' : ''}>Spacing</Label>
-                          <Input
-                            placeholder="md"
-                            value={newComponentConfig.spacing || ''}
-                            onChange={(e) => setNewComponentConfig(prev => ({ ...prev, spacing: e.target.value }))}
-                            className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-                          />
-                        </div>
-                        <div>
-                          <Label className={isDarkMode ? 'text-gray-300' : ''}>Value</Label>
-                          <Input
-                            placeholder="Default value"
-                            value={newComponentConfig.value || ''}
-                            onChange={(e) => setNewComponentConfig(prev => ({ ...prev, value: e.target.value }))}
-                            className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-                          />
-                        </div>
-                      </div>
+                      )}
 
-                      {/* Options booléennes */}
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="flex items-center space-x-2">
-                          <input
-                            type="checkbox"
-                            id="required"
-                            checked={newComponentConfig.required || false}
-                            onChange={(e) => setNewComponentConfig(prev => ({ ...prev, required: e.target.checked }))}
-                            className="rounded"
-                          />
-                          <Label htmlFor="required" className={isDarkMode ? 'text-gray-300' : ''}>Required</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <input
-                            type="checkbox"
-                            id="inline"
-                            checked={newComponentConfig.inline || false}
-                            onChange={(e) => setNewComponentConfig(prev => ({ ...prev, inline: e.target.checked }))}
-                            className="rounded"
-                          />
-                          <Label htmlFor="inline" className={isDarkMode ? 'text-gray-300' : ''}>Inline</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <input
-                            type="checkbox"
-                            id="outlined"
-                            checked={newComponentConfig.outlined || false}
-                            onChange={(e) => setNewComponentConfig(prev => ({ ...prev, outlined: e.target.checked }))}
-                            className="rounded"
-                          />
-                          <Label htmlFor="outlined" className={isDarkMode ? 'text-gray-300' : ''}>Outlined</Label>
-                        </div>
-                      </div>
-
-                      {/* Propriétés spécifiques */}
-                      <div className="space-y-3">
-                        <div>
-                          <Label className={isDarkMode ? 'text-gray-300' : ''}>Placeholder</Label>
-                          <Input
-                            placeholder="Texte d'aide"
-                            value={newComponentConfig.placeholder || ''}
-                            onChange={(e) => setNewComponentConfig(prev => ({ ...prev, placeholder: e.target.value }))}
-                            className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-                          />
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <Label className={isDarkMode ? 'text-gray-300' : ''}>Min Length</Label>
-                            <Input
-                              type="number"
-                              placeholder="0"
-                              value={newComponentConfig.minLength || ''}
-                              onChange={(e) => setNewComponentConfig(prev => ({ ...prev, minLength: e.target.value }))}
-                              className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-                            />
+                      {/* Step 2: Database Configuration */}
+                      {componentCreationStep === 2 && (
+                        <div className="space-y-4">
+                          <h4 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                            Configuration Base de données
+                          </h4>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <Label className={isDarkMode ? 'text-gray-300' : ''}>Data Field</Label>
+                              <Input
+                                placeholder="field_name"
+                                value={newComponentConfig.dataField}
+                                onChange={(e) => setNewComponentConfig(prev => ({ ...prev, dataField: e.target.value }))}
+                                className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                              />
+                            </div>
+                            <div>
+                              <Label className={isDarkMode ? 'text-gray-300' : ''}>Entity</Label>
+                              <Input
+                                placeholder="TableName"
+                                value={newComponentConfig.entity}
+                                onChange={(e) => setNewComponentConfig(prev => ({ ...prev, entity: e.target.value }))}
+                                className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                              />
+                            </div>
                           </div>
                           <div>
-                            <Label className={isDarkMode ? 'text-gray-300' : ''}>Max Length</Label>
+                            <Label className={isDarkMode ? 'text-gray-300' : ''}>Valeur par défaut</Label>
                             <Input
-                              type="number"
-                              placeholder="255"
-                              value={newComponentConfig.maxLength || ''}
-                              onChange={(e) => setNewComponentConfig(prev => ({ ...prev, maxLength: e.target.value }))}
+                              placeholder="Default value"
+                              value={newComponentConfig.value}
+                              onChange={(e) => setNewComponentConfig(prev => ({ ...prev, value: e.target.value }))}
                               className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
                             />
                           </div>
                         </div>
-                        <div>
-                          <Label className={isDarkMode ? 'text-gray-300' : ''}>Options (pour select/radio)</Label>
-                          <Textarea
-                            placeholder="Option 1&#10;Option 2&#10;Option 3"
-                            value={newComponentConfig.options || ''}
-                            onChange={(e) => setNewComponentConfig(prev => ({ ...prev, options: e.target.value }))}
-                            className={`h-20 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
-                          />
-                          <p className={`text-xs mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                            Une option par ligne
-                          </p>
+                      )}
+
+                      {/* Step 3: Layout & Style */}
+                      {componentCreationStep === 3 && (
+                        <div className="space-y-4">
+                          <h4 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                            Mise en page et Style
+                          </h4>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <Label className={isDarkMode ? 'text-gray-300' : ''}>Width</Label>
+                              <Input
+                                placeholder="100%"
+                                value={newComponentConfig.width}
+                                onChange={(e) => setNewComponentConfig(prev => ({ ...prev, width: e.target.value }))}
+                                className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                              />
+                            </div>
+                            <div>
+                              <Label className={isDarkMode ? 'text-gray-300' : ''}>Spacing</Label>
+                              <Input
+                                placeholder="md"
+                                value={newComponentConfig.spacing}
+                                onChange={(e) => setNewComponentConfig(prev => ({ ...prev, spacing: e.target.value }))}
+                                className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                              />
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-3 gap-4">
+                            <div className="flex items-center space-x-2">
+                              <input
+                                type="checkbox"
+                                id="required"
+                                checked={newComponentConfig.required}
+                                onChange={(e) => setNewComponentConfig(prev => ({ ...prev, required: e.target.checked }))}
+                                className="rounded"
+                              />
+                              <Label htmlFor="required" className={isDarkMode ? 'text-gray-300' : ''}>Required</Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <input
+                                type="checkbox"
+                                id="inline"
+                                checked={newComponentConfig.inline}
+                                onChange={(e) => setNewComponentConfig(prev => ({ ...prev, inline: e.target.checked }))}
+                                className="rounded"
+                              />
+                              <Label htmlFor="inline" className={isDarkMode ? 'text-gray-300' : ''}>Inline</Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <input
+                                type="checkbox"
+                                id="outlined"
+                                checked={newComponentConfig.outlined}
+                                onChange={(e) => setNewComponentConfig(prev => ({ ...prev, outlined: e.target.checked }))}
+                                className="rounded"
+                              />
+                              <Label htmlFor="outlined" className={isDarkMode ? 'text-gray-300' : ''}>Outlined</Label>
+                            </div>
+                          </div>
                         </div>
+                      )}
+
+                      {/* Step 4: Advanced Properties */}
+                      {componentCreationStep === 4 && (
+                        <div className="space-y-4">
+                          <h4 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                            Propriétés avancées
+                          </h4>
+                          <div>
+                            <Label className={isDarkMode ? 'text-gray-300' : ''}>Placeholder</Label>
+                            <Input
+                              placeholder="Texte d'aide"
+                              value={newComponentConfig.placeholder}
+                              onChange={(e) => setNewComponentConfig(prev => ({ ...prev, placeholder: e.target.value }))}
+                              className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                            />
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <Label className={isDarkMode ? 'text-gray-300' : ''}>Min Length</Label>
+                              <Input
+                                type="number"
+                                placeholder="0"
+                                value={newComponentConfig.minLength}
+                                onChange={(e) => setNewComponentConfig(prev => ({ ...prev, minLength: e.target.value }))}
+                                className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                              />
+                            </div>
+                            <div>
+                              <Label className={isDarkMode ? 'text-gray-300' : ''}>Max Length</Label>
+                              <Input
+                                type="number"
+                                placeholder="255"
+                                value={newComponentConfig.maxLength}
+                                onChange={(e) => setNewComponentConfig(prev => ({ ...prev, maxLength: e.target.value }))}
+                                className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <Label className={isDarkMode ? 'text-gray-300' : ''}>Options (pour select/radio)</Label>
+                            <Textarea
+                              placeholder="Option 1&#10;Option 2&#10;Option 3"
+                              value={newComponentConfig.options}
+                              onChange={(e) => setNewComponentConfig(prev => ({ ...prev, options: e.target.value }))}
+                              className={`h-20 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
+                            />
+                            <p className={`text-xs mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                              Une option par ligne
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Navigation buttons */}
+                      <div className="flex justify-between pt-4 border-t">
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            if (componentCreationStep > 1) {
+                              setComponentCreationStep(componentCreationStep - 1);
+                            }
+                          }}
+                          disabled={componentCreationStep === 1}
+                          className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
+                        >
+                          Précédent
+                        </Button>
+                        
+                        {componentCreationStep < 4 ? (
+                          <Button
+                            onClick={() => setComponentCreationStep(componentCreationStep + 1)}
+                            disabled={componentCreationStep === 1 && (!newComponentConfig.name || !newComponentConfig.label)}
+                          >
+                            Suivant
+                          </Button>
+                        ) : (
+                          <Button
+                            onClick={addComponentFromForm}
+                            disabled={!newComponentConfig.name || !newComponentConfig.label}
+                          >
+                            <Package className="w-4 h-4 mr-2" />
+                            Créer le Composant
+                          </Button>
+                        )}
                       </div>
                     </div>
-                    <Button onClick={addComponentFromForm}>
-                      <Package className="w-4 h-4 mr-2" />
-                      Create Component
-                    </Button>
+
                   </TabsContent>
                 </Tabs>
                 
