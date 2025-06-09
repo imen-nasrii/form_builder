@@ -2624,9 +2624,6 @@ export default function FormBuilderFixed() {
       <div className={`border-b px-6 py-4 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div>
-              <h1 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-blue-600'}`}>FormBuilder</h1>
-            </div>
           </div>
           <div className="flex items-center space-x-3">
             {/* Home Button */}
@@ -3095,15 +3092,7 @@ export default function FormBuilderFixed() {
               </DialogContent>
             </Dialog>
 
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={createNewForm}
-              className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              New
-            </Button>
+
             <Button 
               variant="outline" 
               size="sm" 
