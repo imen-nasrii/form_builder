@@ -820,7 +820,500 @@ function DataModelComponent({
       { name: 'amount', type: 'decimal', required: false, description: 'Transaction amount' },
       { name: 'status', type: 'string', required: false, description: 'Settlement status' }
     ],
-    
+
+    // Reference Data Models
+    'Curncy': [
+      { name: 'Currency', type: 'string', required: true, description: 'Currency code' },
+      { name: 'Name', type: 'string', required: false, description: 'Currency name' },
+      { name: 'Tkr', type: 'string', required: false, description: 'Currency ticker' },
+      { name: 'Symbol', type: 'string', required: false, description: 'Currency symbol' },
+      { name: 'Lcl_M_Decs', type: 'string', required: false, description: 'Local money decimals' },
+      { name: 'Qty_Decs', type: 'string', required: false, description: 'Quantity decimals' },
+      { name: 'Price_Decs', type: 'string', required: false, description: 'Price decimals' },
+      { name: 'Bas_M_Decs', type: 'string', required: false, description: 'Base money decimals' },
+      { name: 'Reciprical', type: 'string', required: false, description: 'Reciprocal flag' },
+      { name: 'Fwd_Tkr_7', type: 'string', required: false, description: '7-day forward ticker' },
+      { name: 'Fwd_Tkr_30', type: 'string', required: false, description: '30-day forward ticker' },
+      { name: 'Fwd_Tkr_60', type: 'string', required: false, description: '60-day forward ticker' },
+      { name: 'Fwd_Tkr_90', type: 'string', required: false, description: '90-day forward ticker' },
+      { name: 'Fwd_Tkr180', type: 'string', required: false, description: '180-day forward ticker' },
+      { name: 'Euro_Code', type: 'string', required: false, description: 'Euro conversion code' },
+      { name: 'Euro_Rate', type: 'decimal', required: false, description: 'Euro conversion rate' },
+      { name: 'Euro_Round', type: 'string', required: false, description: 'Euro rounding rule' },
+      { name: 'Hash', type: 'decimal', required: false, description: 'Hash value for validation' }
+    ],
+
+    'Exchng': [
+      { name: 'Exch', type: 'string', required: true, description: 'Exchange code' },
+      { name: 'Exchange', type: 'string', required: false, description: 'Exchange name' },
+      { name: 'Country', type: 'string', required: false, description: 'Exchange country' },
+      { name: 'Tplus', type: 'string', required: false, description: 'Settlement days (T+n)' },
+      { name: 'Hash', type: 'decimal', required: false, description: 'Hash value for validation' }
+    ],
+
+    'Holiday': [
+      { name: 'Country', type: 'string', required: true, description: 'Country code' },
+      { name: 'DateOfHoliday', type: 'DateTime', required: true, description: 'Holiday date' },
+      { name: 'Descr', type: 'string', required: false, description: 'Holiday description' },
+      { name: 'Hash', type: 'decimal', required: false, description: 'Hash value for validation' }
+    ],
+
+    'Codes': [
+      { name: 'code', type: 'string', required: true, description: 'Code type' },
+      { name: 'id', type: 'string', required: true, description: 'Code identifier' },
+      { name: 'desc1', type: 'string', required: false, description: 'Code description' },
+      { name: 'id2', type: 'string', required: false, description: 'Secondary identifier' },
+      { name: 'hash', type: 'decimal', required: false, description: 'Hash value for validation' }
+    ],
+
+    // Market Data and Pricing Models
+    'NavHst': [
+      { name: 'fund', type: 'string', required: false, description: 'Fund identifier' },
+      { name: 'dated', type: 'DateTime', required: false, description: 'NAV date' },
+      { name: 'assets', type: 'decimal', required: false, description: 'Total assets' },
+      { name: 'liability', type: 'decimal', required: false, description: 'Total liabilities' },
+      { name: 'capital', type: 'decimal', required: false, description: 'Total capital' },
+      { name: 'revenues', type: 'decimal', required: false, description: 'Total revenues' },
+      { name: 'expenses', type: 'decimal', required: false, description: 'Total expenses' },
+      { name: 'shares', type: 'decimal', required: false, description: 'Shares outstanding' },
+      { name: 'setldshare', type: 'decimal', required: false, description: 'Settled shares' },
+      { name: 'net_value', type: 'decimal', required: false, description: 'Net asset value' },
+      { name: 'class', type: 'string', required: false, description: 'Share class' },
+      { name: 'income', type: 'decimal', required: false, description: 'Income amount' },
+      { name: 'user_id', type: 'string', required: false, description: 'User who entered record' },
+      { name: 'entry_date', type: 'DateTime', required: false, description: 'Entry date' },
+      { name: 'entry_time', type: 'string', required: false, description: 'Entry time' },
+      { name: 'status', type: 'int', required: false, description: 'Record status' },
+      { name: 'longmktval', type: 'decimal', required: false, description: 'Long position market value' },
+      { name: 'sht_mktval', type: 'decimal', required: false, description: 'Short position market value' },
+      { name: 'curncy', type: 'string', required: false, description: 'Currency code' },
+      { name: 'fxrate', type: 'decimal', required: false, description: 'FX conversion rate' }
+    ],
+
+    'Prihst': [
+      { name: 'tkr', type: 'string', required: false, description: 'Security ticker' },
+      { name: 'cusip', type: 'string', required: false, description: 'CUSIP identifier' },
+      { name: 'prcdate', type: 'DateTime', required: false, description: 'Price date' },
+      { name: 'date_chng', type: 'DateTime', required: false, description: 'Date changed' },
+      { name: 'price', type: 'decimal', required: false, description: 'Security price' },
+      { name: 'source', type: 'string', required: false, description: 'Price source' },
+      { name: 'price_type', type: 'string', required: false, description: 'Price type' },
+      { name: 'fund', type: 'string', required: false, description: 'Fund identifier' },
+      { name: 'tkr_type', type: 'string', required: false, description: 'Ticker type' },
+      { name: 'factor', type: 'decimal', required: false, description: 'Price factor' },
+      { name: 'user_id', type: 'string', required: false, description: 'User who entered price' },
+      { name: 'prcmemo', type: 'string', required: false, description: 'Price memo' },
+      { name: 'long_short', type: 'string', required: false, description: 'Long/short indicator' },
+      { name: 'pricetime', type: 'string', required: false, description: 'Price time' },
+      { name: 'yield_code', type: 'string', required: false, description: 'Yield calculation code' },
+      { name: 'fas_code', type: 'string', required: false, description: 'FAS classification code' },
+      { name: 'con_lvl', type: 'decimal', required: false, description: 'Confidence level' },
+      { name: 'prc_by_yld', type: 'string', required: false, description: 'Price by yield flag' },
+      { name: 'yield', type: 'decimal', required: false, description: 'Yield percentage' },
+      { name: 'hash', type: 'decimal', required: false, description: 'Hash value for validation' }
+    ],
+
+    'Mktval': [
+      { name: 'fund', type: 'string', required: true, description: 'Fund identifier' },
+      { name: 'tkr', type: 'string', required: true, description: 'Security ticker' },
+      { name: 'valuation_date', type: 'DateTime', required: false, description: 'Valuation date' },
+      { name: 'market_value', type: 'decimal', required: false, description: 'Market value' },
+      { name: 'price', type: 'decimal', required: false, description: 'Market price' },
+      { name: 'quantity', type: 'decimal', required: false, description: 'Position quantity' },
+      { name: 'unrealized_gl', type: 'decimal', required: false, description: 'Unrealized gain/loss' }
+    ],
+
+    'DailyP': [
+      { name: 'tkr', type: 'string', required: true, description: 'Security ticker' },
+      { name: 'price_date', type: 'DateTime', required: true, description: 'Price date' },
+      { name: 'open_price', type: 'decimal', required: false, description: 'Opening price' },
+      { name: 'high_price', type: 'decimal', required: false, description: 'High price' },
+      { name: 'low_price', type: 'decimal', required: false, description: 'Low price' },
+      { name: 'close_price', type: 'decimal', required: false, description: 'Closing price' },
+      { name: 'volume', type: 'decimal', required: false, description: 'Trading volume' },
+      { name: 'source', type: 'string', required: false, description: 'Price source' }
+    ],
+
+    'Fairv': [
+      { name: 'tkr', type: 'string', required: true, description: 'Security ticker' },
+      { name: 'fund', type: 'string', required: false, description: 'Fund identifier' },
+      { name: 'valuation_date', type: 'DateTime', required: false, description: 'Valuation date' },
+      { name: 'fair_value', type: 'decimal', required: false, description: 'Fair value amount' },
+      { name: 'method', type: 'string', required: false, description: 'Valuation method' },
+      { name: 'level', type: 'int', required: false, description: 'Fair value hierarchy level' }
+    ],
+
+    'Pcrf': [
+      { name: 'tkr', type: 'string', required: true, description: 'Security ticker' },
+      { name: 'price_source', type: 'string', required: true, description: 'Price source' },
+      { name: 'external_id', type: 'string', required: false, description: 'External identifier' },
+      { name: 'mapping_rule', type: 'string', required: false, description: 'Price mapping rule' },
+      { name: 'is_active', type: 'bool', required: false, description: 'Active status' }
+    ],
+
+    'IdxHis': [
+      { name: 'index_id', type: 'string', required: true, description: 'Index identifier' },
+      { name: 'index_date', type: 'DateTime', required: true, description: 'Index date' },
+      { name: 'index_value', type: 'decimal', required: false, description: 'Index value' },
+      { name: 'change_value', type: 'decimal', required: false, description: 'Change from previous' },
+      { name: 'change_percent', type: 'decimal', required: false, description: 'Percentage change' }
+    ],
+
+    'IdxMas': [
+      { name: 'index_id', type: 'string', required: true, description: 'Index identifier' },
+      { name: 'index_name', type: 'string', required: false, description: 'Index name' },
+      { name: 'index_type', type: 'string', required: false, description: 'Index type' },
+      { name: 'base_value', type: 'decimal', required: false, description: 'Base index value' },
+      { name: 'base_date', type: 'DateTime', required: false, description: 'Base date' }
+    ],
+
+    'Yields': [
+      { name: 'tkr', type: 'string', required: true, description: 'Security ticker' },
+      { name: 'fund', type: 'string', required: false, description: 'Fund identifier' },
+      { name: 'yield_date', type: 'DateTime', required: false, description: 'Yield calculation date' },
+      { name: 'yield_type', type: 'string', required: false, description: 'Type of yield' },
+      { name: 'yield_value', type: 'decimal', required: false, description: 'Yield percentage' },
+      { name: 'duration', type: 'decimal', required: false, description: 'Duration in years' }
+    ],
+
+    // Security Classification Models
+    'SecCat': [
+      { name: 'category_code', type: 'string', required: true, description: 'Security category code' },
+      { name: 'category_name', type: 'string', required: false, description: 'Category name' },
+      { name: 'parent_category', type: 'string', required: false, description: 'Parent category' },
+      { name: 'sort_order', type: 'int', required: false, description: 'Display sort order' }
+    ],
+
+    'SecGrp': [
+      { name: 'group_code', type: 'string', required: true, description: 'Security group code' },
+      { name: 'group_name', type: 'string', required: false, description: 'Group name' },
+      { name: 'sector', type: 'string', required: false, description: 'Sector classification' },
+      { name: 'industry', type: 'string', required: false, description: 'Industry classification' }
+    ],
+
+    'Ptype': [
+      { name: 'portfolio_type', type: 'string', required: true, description: 'Portfolio type code' },
+      { name: 'type_name', type: 'string', required: false, description: 'Portfolio type name' },
+      { name: 'investment_style', type: 'string', required: false, description: 'Investment style' },
+      { name: 'risk_level', type: 'string', required: false, description: 'Risk level classification' }
+    ],
+
+    'Seclyd': [
+      { name: 'layout_id', type: 'string', required: true, description: 'Security layout identifier' },
+      { name: 'layout_name', type: 'string', required: false, description: 'Layout name' },
+      { name: 'display_config', type: 'string', required: false, description: 'Display configuration' },
+      { name: 'is_default', type: 'bool', required: false, description: 'Default layout flag' }
+    ],
+
+    'SeclydAg': [
+      { name: 'aggregation_id', type: 'string', required: true, description: 'Aggregation identifier' },
+      { name: 'layout_id', type: 'string', required: false, description: 'Associated layout ID' },
+      { name: 'aggregation_rule', type: 'string', required: false, description: 'Aggregation rule' },
+      { name: 'group_by', type: 'string', required: false, description: 'Grouping criteria' }
+    ],
+
+    'Auxid': [
+      { name: 'primary_id', type: 'string', required: true, description: 'Primary identifier' },
+      { name: 'auxiliary_id', type: 'string', required: true, description: 'Auxiliary identifier' },
+      { name: 'id_type', type: 'string', required: false, description: 'Identifier type' },
+      { name: 'is_active', type: 'bool', required: false, description: 'Active status' }
+    ],
+
+    // Fund Organization Models
+    'Family': [
+      { name: 'family_code', type: 'string', required: true, description: 'Fund family code' },
+      { name: 'family_name', type: 'string', required: false, description: 'Family name' },
+      { name: 'parent_family', type: 'string', required: false, description: 'Parent family code' },
+      { name: 'manager', type: 'string', required: false, description: 'Family manager' },
+      { name: 'is_active', type: 'bool', required: false, description: 'Active status' }
+    ],
+
+    'Series': [
+      { name: 'series_code', type: 'string', required: true, description: 'Series code' },
+      { name: 'series_name', type: 'string', required: false, description: 'Series name' },
+      { name: 'fund', type: 'string', required: false, description: 'Parent fund' },
+      { name: 'expense_ratio', type: 'decimal', required: false, description: 'Expense ratio' },
+      { name: 'min_investment', type: 'decimal', required: false, description: 'Minimum investment' }
+    ],
+
+    'Shrmas': [
+      { name: 'share_id', type: 'string', required: true, description: 'Share identifier' },
+      { name: 'fund', type: 'string', required: false, description: 'Fund identifier' },
+      { name: 'share_class', type: 'string', required: false, description: 'Share class' },
+      { name: 'shares_outstanding', type: 'decimal', required: false, description: 'Shares outstanding' },
+      { name: 'nav_per_share', type: 'decimal', required: false, description: 'NAV per share' }
+    ],
+
+    'Shrgrp': [
+      { name: 'group_id', type: 'string', required: true, description: 'Share group identifier' },
+      { name: 'group_name', type: 'string', required: false, description: 'Group name' },
+      { name: 'classification', type: 'string', required: false, description: 'Group classification' },
+      { name: 'sort_order', type: 'int', required: false, description: 'Display sort order' }
+    ],
+
+    'FundCg': [
+      { name: 'capital_gain_id', type: 'string', required: true, description: 'Capital gain identifier' },
+      { name: 'fund', type: 'string', required: false, description: 'Fund identifier' },
+      { name: 'tkr', type: 'string', required: false, description: 'Security ticker' },
+      { name: 'realized_gain', type: 'decimal', required: false, description: 'Realized gain/loss' },
+      { name: 'unrealized_gain', type: 'decimal', required: false, description: 'Unrealized gain/loss' }
+    ],
+
+    'Falias': [
+      { name: 'alias_id', type: 'string', required: true, description: 'Alias identifier' },
+      { name: 'fund', type: 'string', required: false, description: 'Fund identifier' },
+      { name: 'alias_type', type: 'string', required: false, description: 'Alias type' },
+      { name: 'alias_value', type: 'string', required: false, description: 'Alias value' },
+      { name: 'is_active', type: 'bool', required: false, description: 'Active status' }
+    ],
+
+    // Additional Reference Data Models
+    'Contry': [
+      { name: 'Country', type: 'string', required: true, description: 'Country code' },
+      { name: 'ContryName', type: 'string', required: false, description: 'Country name' },
+      { name: 'AccInc_Net', type: 'string', required: false, description: 'Accrued income netting' },
+      { name: 'TaxTreaty', type: 'string', required: false, description: 'Tax treaty flag' },
+      { name: 'Cfd', type: 'string', required: false, description: 'CFD classification' },
+      { name: 'Suffix', type: 'string', required: false, description: 'Country suffix' },
+      { name: 'CfdDesc', type: 'string', required: false, description: 'CFD description' },
+      { name: 'IsoCode', type: 'string', required: false, description: 'ISO country code' },
+      { name: 'BpCode', type: 'string', required: false, description: 'BP code' },
+      { name: 'Mon', type: 'string', required: false, description: 'Monday trading flag' },
+      { name: 'Tue', type: 'string', required: false, description: 'Tuesday trading flag' },
+      { name: 'Wed', type: 'string', required: false, description: 'Wednesday trading flag' },
+      { name: 'Thu', type: 'string', required: false, description: 'Thursday trading flag' },
+      { name: 'Fri', type: 'string', required: false, description: 'Friday trading flag' },
+      { name: 'Sat', type: 'string', required: false, description: 'Saturday trading flag' },
+      { name: 'Sun', type: 'string', required: false, description: 'Sunday trading flag' },
+      { name: 'TPlus', type: 'string', required: false, description: 'Settlement period' },
+      { name: 'TaxLot_Liq', type: 'string', required: false, description: 'Tax lot liquidation' },
+      { name: 'Hash', type: 'decimal', required: false, description: 'Hash value for validation' }
+    ],
+
+    'States': [
+      { name: 'state', type: 'string', required: true, description: 'State code' },
+      { name: 'name', type: 'string', required: false, description: 'State name' },
+      { name: 'hash', type: 'decimal', required: false, description: 'Hash value for validation' }
+    ],
+
+    'Reason': [
+      { name: 'reason', type: 'string', required: true, description: 'Reason code' },
+      { name: 'descr', type: 'string', required: false, description: 'Reason description' },
+      { name: 'unused', type: 'string', required: false, description: 'Unused field' },
+      { name: 'hash', type: 'decimal', required: false, description: 'Hash value for validation' }
+    ],
+
+    // Accounting and GL Models
+    'Glcat': [
+      { name: 'category_id', type: 'string', required: true, description: 'GL category identifier' },
+      { name: 'category_name', type: 'string', required: false, description: 'Category name' },
+      { name: 'account_type', type: 'string', required: false, description: 'Account type' },
+      { name: 'is_active', type: 'bool', required: false, description: 'Active status' }
+    ],
+
+    'Glgrp': [
+      { name: 'group_id', type: 'string', required: true, description: 'GL group identifier' },
+      { name: 'group_name', type: 'string', required: false, description: 'Group name' },
+      { name: 'parent_group', type: 'string', required: false, description: 'Parent group' },
+      { name: 'sort_order', type: 'int', required: false, description: 'Display sort order' }
+    ],
+
+    'Glprm': [
+      { name: 'parameter_id', type: 'string', required: true, description: 'GL parameter identifier' },
+      { name: 'parameter_name', type: 'string', required: false, description: 'Parameter name' },
+      { name: 'parameter_value', type: 'string', required: false, description: 'Parameter value' },
+      { name: 'data_type', type: 'string', required: false, description: 'Data type' }
+    ],
+
+    'Glxcat': [
+      { name: 'extended_category_id', type: 'string', required: true, description: 'Extended GL category ID' },
+      { name: 'category_name', type: 'string', required: false, description: 'Category name' },
+      { name: 'mapping_rule', type: 'string', required: false, description: 'Mapping rule' },
+      { name: 'is_active', type: 'bool', required: false, description: 'Active status' }
+    ],
+
+    'Gl988': [
+      { name: 'gl988_id', type: 'string', required: true, description: 'GL 988 identifier' },
+      { name: 'fund', type: 'string', required: false, description: 'Fund identifier' },
+      { name: 'account_number', type: 'string', required: false, description: 'GL account number' },
+      { name: 'amount', type: 'decimal', required: false, description: 'Transaction amount' },
+      { name: 'transaction_date', type: 'DateTime', required: false, description: 'Transaction date' }
+    ],
+
+    'Ae': [
+      { name: 'entry_id', type: 'string', required: true, description: 'Accounting entry identifier' },
+      { name: 'fund', type: 'string', required: false, description: 'Fund identifier' },
+      { name: 'post_date', type: 'DateTime', required: false, description: 'Posting date' },
+      { name: 'debit_account', type: 'string', required: false, description: 'Debit account number' },
+      { name: 'credit_account', type: 'string', required: false, description: 'Credit account number' },
+      { name: 'amount', type: 'decimal', required: false, description: 'Entry amount' },
+      { name: 'description', type: 'string', required: false, description: 'Entry description' }
+    ],
+
+    // Expense Management Models
+    'Opnexp': [
+      { name: 'expense_id', type: 'string', required: true, description: 'Open expense identifier' },
+      { name: 'fund', type: 'string', required: false, description: 'Fund identifier' },
+      { name: 'expense_type', type: 'string', required: false, description: 'Expense type' },
+      { name: 'accrued_amount', type: 'decimal', required: false, description: 'Accrued amount' },
+      { name: 'last_accrual_date', type: 'DateTime', required: false, description: 'Last accrual date' },
+      { name: 'vendor', type: 'string', required: false, description: 'Vendor name' }
+    ],
+
+    'Expfnd': [
+      { name: 'expense_fund_id', type: 'string', required: true, description: 'Expense fund identifier' },
+      { name: 'fund', type: 'string', required: false, description: 'Fund identifier' },
+      { name: 'expense_type', type: 'string', required: false, description: 'Expense type' },
+      { name: 'amount', type: 'decimal', required: false, description: 'Expense amount' },
+      { name: 'allocation_method', type: 'string', required: false, description: 'Allocation method' },
+      { name: 'effective_date', type: 'DateTime', required: false, description: 'Effective date' }
+    ],
+
+    'PosExp': [
+      { name: 'position_expense_id', type: 'string', required: true, description: 'Position expense identifier' },
+      { name: 'fund', type: 'string', required: false, description: 'Fund identifier' },
+      { name: 'tkr', type: 'string', required: false, description: 'Security ticker' },
+      { name: 'expense_amount', type: 'decimal', required: false, description: 'Expense amount' },
+      { name: 'calculation_method', type: 'string', required: false, description: 'Calculation method' }
+    ],
+
+    // As-Of Data Models
+    'AsOfExpend': [
+      { name: 'asof_expend_id', type: 'string', required: true, description: 'As-of expense identifier' },
+      { name: 'fund', type: 'string', required: false, description: 'Fund identifier' },
+      { name: 'asof_date', type: 'DateTime', required: false, description: 'As-of date' },
+      { name: 'expense_amount', type: 'decimal', required: false, description: 'Expense amount' },
+      { name: 'expense_type', type: 'string', required: false, description: 'Expense type' }
+    ],
+
+    'AsOfTExpend': [
+      { name: 'asof_total_expend_id', type: 'string', required: true, description: 'As-of total expense identifier' },
+      { name: 'fund', type: 'string', required: false, description: 'Fund identifier' },
+      { name: 'asof_date', type: 'DateTime', required: false, description: 'As-of date' },
+      { name: 'total_expenses', type: 'decimal', required: false, description: 'Total expenses' },
+      { name: 'calculation_date', type: 'DateTime', required: false, description: 'Calculation date' }
+    ],
+
+    'AsOfIncome': [
+      { name: 'asof_income_id', type: 'string', required: true, description: 'As-of income identifier' },
+      { name: 'fund', type: 'string', required: false, description: 'Fund identifier' },
+      { name: 'asof_date', type: 'DateTime', required: false, description: 'As-of date' },
+      { name: 'income_amount', type: 'decimal', required: false, description: 'Income amount' },
+      { name: 'income_type', type: 'string', required: false, description: 'Income type' }
+    ],
+
+    'AsOfTIncome': [
+      { name: 'asof_total_income_id', type: 'string', required: true, description: 'As-of total income identifier' },
+      { name: 'fund', type: 'string', required: false, description: 'Fund identifier' },
+      { name: 'asof_date', type: 'DateTime', required: false, description: 'As-of date' },
+      { name: 'total_income', type: 'decimal', required: false, description: 'Total income' },
+      { name: 'calculation_date', type: 'DateTime', required: false, description: 'Calculation date' }
+    ],
+
+    'Divtyp': [
+      { name: 'dividend_type', type: 'string', required: true, description: 'Dividend type code' },
+      { name: 'description', type: 'string', required: false, description: 'Dividend type description' },
+      { name: 'tax_treatment', type: 'string', required: false, description: 'Tax treatment code' },
+      { name: 'is_active', type: 'bool', required: false, description: 'Active status' }
+    ],
+
+    // OID and Amortization Models
+    'Oidlot': [
+      { name: 'oid_lot_id', type: 'string', required: true, description: 'OID lot identifier' },
+      { name: 'fund', type: 'string', required: false, description: 'Fund identifier' },
+      { name: 'tkr', type: 'string', required: false, description: 'Security ticker' },
+      { name: 'purchase_date', type: 'DateTime', required: false, description: 'Purchase date' },
+      { name: 'original_discount', type: 'decimal', required: false, description: 'Original discount amount' },
+      { name: 'accrued_discount', type: 'decimal', required: false, description: 'Accrued discount to date' },
+      { name: 'maturity_date', type: 'DateTime', required: false, description: 'Maturity date' }
+    ],
+
+    'AsOfOidlot': [
+      { name: 'asof_oid_lot_id', type: 'string', required: true, description: 'As-of OID lot identifier' },
+      { name: 'fund', type: 'string', required: false, description: 'Fund identifier' },
+      { name: 'asof_date', type: 'DateTime', required: false, description: 'As-of date' },
+      { name: 'oid_amount', type: 'decimal', required: false, description: 'OID amount' },
+      { name: 'accrual_method', type: 'string', required: false, description: 'Accrual method' }
+    ],
+
+    'AsOfTOidlot': [
+      { name: 'asof_total_oid_lot_id', type: 'string', required: true, description: 'As-of total OID lot identifier' },
+      { name: 'fund', type: 'string', required: false, description: 'Fund identifier' },
+      { name: 'asof_date', type: 'DateTime', required: false, description: 'As-of date' },
+      { name: 'total_oid', type: 'decimal', required: false, description: 'Total OID amount' },
+      { name: 'calculation_date', type: 'DateTime', required: false, description: 'Calculation date' }
+    ],
+
+    // Tax Processing Models
+    'Taxrat': [
+      { name: 'tax_rate_id', type: 'string', required: true, description: 'Tax rate identifier' },
+      { name: 'tax_type', type: 'string', required: false, description: 'Tax type' },
+      { name: 'country', type: 'string', required: false, description: 'Country code' },
+      { name: 'rate', type: 'decimal', required: false, description: 'Tax rate percentage' },
+      { name: 'effective_date', type: 'DateTime', required: false, description: 'Effective date' },
+      { name: 'expiration_date', type: 'DateTime', required: false, description: 'Expiration date' }
+    ],
+
+    'Taxcod': [
+      { name: 'tax_code', type: 'string', required: true, description: 'Tax code' },
+      { name: 'description', type: 'string', required: false, description: 'Tax code description' },
+      { name: 'tax_category', type: 'string', required: false, description: 'Tax category' },
+      { name: 'withholding_rate', type: 'decimal', required: false, description: 'Withholding rate' }
+    ],
+
+    'Taxtbl': [
+      { name: 'tax_table_id', type: 'string', required: true, description: 'Tax table identifier' },
+      { name: 'country', type: 'string', required: false, description: 'Country code' },
+      { name: 'income_type', type: 'string', required: false, description: 'Income type' },
+      { name: 'tax_rate', type: 'decimal', required: false, description: 'Tax rate' },
+      { name: 'threshold_amount', type: 'decimal', required: false, description: 'Threshold amount' }
+    ],
+
+    'AsOfTaxlot': [
+      { name: 'asof_taxlot_id', type: 'string', required: true, description: 'As-of tax lot identifier' },
+      { name: 'fund', type: 'string', required: false, description: 'Fund identifier' },
+      { name: 'asof_date', type: 'DateTime', required: false, description: 'As-of date' },
+      { name: 'tax_basis', type: 'decimal', required: false, description: 'Tax basis' },
+      { name: 'unrealized_gl', type: 'decimal', required: false, description: 'Unrealized gain/loss' }
+    ],
+
+    'AsOfTTaxlot': [
+      { name: 'asof_total_taxlot_id', type: 'string', required: true, description: 'As-of total tax lot identifier' },
+      { name: 'fund', type: 'string', required: false, description: 'Fund identifier' },
+      { name: 'asof_date', type: 'DateTime', required: false, description: 'As-of date' },
+      { name: 'total_tax_basis', type: 'decimal', required: false, description: 'Total tax basis' },
+      { name: 'total_unrealized_gl', type: 'decimal', required: false, description: 'Total unrealized gain/loss' }
+    ],
+
+    // Trading and Settlement Models
+    'Trxtyp': [
+      { name: 'transaction_type', type: 'string', required: true, description: 'Transaction type code' },
+      { name: 'description', type: 'string', required: false, description: 'Transaction description' },
+      { name: 'category', type: 'string', required: false, description: 'Transaction category' },
+      { name: 'requires_approval', type: 'bool', required: false, description: 'Approval required flag' },
+      { name: 'is_reversible', type: 'bool', required: false, description: 'Reversible transaction flag' },
+      { name: 'gl_impact', type: 'string', required: false, description: 'GL impact type' }
+    ],
+
+    'Trxcur': [
+      { name: 'transaction_currency_id', type: 'string', required: true, description: 'Transaction currency identifier' },
+      { name: 'fund', type: 'string', required: false, description: 'Fund identifier' },
+      { name: 'transaction_id', type: 'string', required: false, description: 'Transaction identifier' },
+      { name: 'currency_code', type: 'string', required: false, description: 'Currency code' },
+      { name: 'exchange_rate', type: 'decimal', required: false, description: 'Exchange rate' },
+      { name: 'local_amount', type: 'decimal', required: false, description: 'Local currency amount' },
+      { name: 'base_amount', type: 'decimal', required: false, description: 'Base currency amount' }
+    ],
+
+    'Auttrx': [
+      { name: 'auto_transaction_id', type: 'string', required: true, description: 'Auto transaction identifier' },
+      { name: 'fund', type: 'string', required: false, description: 'Fund identifier' },
+      { name: 'transaction_type', type: 'string', required: false, description: 'Transaction type' },
+      { name: 'frequency', type: 'string', required: false, description: 'Processing frequency' },
+      { name: 'next_run_date', type: 'DateTime', required: false, description: 'Next execution date' },
+      { name: 'is_active', type: 'bool', required: false, description: 'Active status' }
+    ],
+
     // Default fallback for models without specific definitions
     'default': [
       { name: 'id', type: 'string', required: true, description: 'Primary identifier' },
