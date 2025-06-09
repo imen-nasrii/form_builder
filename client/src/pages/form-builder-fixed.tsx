@@ -2733,44 +2733,6 @@ export default function FormBuilderFixed() {
                   </TabsContent>
                   
                   <TabsContent value="form" className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label className={isDarkMode ? 'text-gray-300' : ''}>Nom du composant</Label>
-                        <Input
-                          placeholder="customButton"
-                          value={newComponentConfig.name}
-                          onChange={(e) => setNewComponentConfig(prev => ({ ...prev, name: e.target.value }))}
-                          className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-                        />
-                      </div>
-                      <div>
-                        <Label className={isDarkMode ? 'text-gray-300' : ''}>Label d'affichage</Label>
-                        <Input
-                          placeholder="Bouton Personnalisé"
-                          value={newComponentConfig.label}
-                          onChange={(e) => setNewComponentConfig(prev => ({ ...prev, label: e.target.value }))}
-                          className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-                        />
-                      </div>
-                      <div>
-                        <Label className={isDarkMode ? 'text-gray-300' : ''}>Icône</Label>
-                        <Input
-                          placeholder="Square"
-                          value={newComponentConfig.icon}
-                          onChange={(e) => setNewComponentConfig(prev => ({ ...prev, icon: e.target.value }))}
-                          className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-                        />
-                      </div>
-                      <div>
-                        <Label className={isDarkMode ? 'text-gray-300' : ''}>Color</Label>
-                        <Input
-                          placeholder="blue"
-                          value={newComponentConfig.color}
-                          onChange={(e) => setNewComponentConfig(prev => ({ ...prev, color: e.target.value }))}
-                          className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-                        />
-                      </div>
-                    </div>
                     <div className="space-y-6">
                       {/* Progress indicator */}
                       <div className="flex items-center justify-between mb-6">
