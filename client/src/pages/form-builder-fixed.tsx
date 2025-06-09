@@ -1908,6 +1908,8 @@ export default function FormBuilderFixed() {
 
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [importedData, setImportedData] = useState<any>(null);
+  const [isPaletteCollapsed, setIsPaletteCollapsed] = useState(false);
+  const [isDragZoneCollapsed, setIsDragZoneCollapsed] = useState(false);
   const formBuilderRef = useRef<HTMLDivElement>(null);
 
   // Load form data from API if formId is provided
@@ -2764,31 +2766,43 @@ export default function FormBuilderFixed() {
       </div>
 
       <div className="flex h-[calc(100vh-80px)]">
-        <div className={`w-72 border-r overflow-y-auto ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
+        <div className={`${isPaletteCollapsed ? 'w-12' : 'w-72'} border-r overflow-y-auto transition-all duration-300 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
           <div className="p-3">
-            <h3 className={`font-semibold mb-3 text-sm ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Components</h3>
-            <div className="space-y-2">
-              {Object.entries(ComponentCategories).map(([categoryKey, category]) => (
-                <div key={categoryKey} className="space-y-1">
-                  <div className={`flex items-center space-x-2 text-xs font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                    <category.icon className="w-3 h-3" />
-                    <span>{category.name}</span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-1 pl-2">
-                    {Object.entries(category.components).map(([type, config]) => (
-                      <DraggableComponent
-                        key={type}
-                        componentType={type}
-                        label={(config as any).label}
-                        icon={(config as any).icon}
-                        color={(config as any).color}
-                        isDarkMode={isDarkMode}
-                      />
-                    ))}
-                  </div>
-                </div>
-              ))}
+            <div className="flex items-center justify-between mb-3">
+              <h3 className={`font-semibold text-sm ${isDarkMode ? 'text-white' : 'text-gray-900'} ${isPaletteCollapsed ? 'hidden' : 'block'}`}>Components</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsPaletteCollapsed(!isPaletteCollapsed)}
+                className={`h-6 w-6 p-0 ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+              >
+                {isPaletteCollapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+              </Button>
             </div>
+            {!isPaletteCollapsed && (
+              <div className="space-y-2">
+                {Object.entries(ComponentCategories).map(([categoryKey, category]) => (
+                  <div key={categoryKey} className="space-y-1">
+                    <div className={`flex items-center space-x-2 text-xs font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                      <category.icon className="w-3 h-3" />
+                      <span>{category.name}</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-1 pl-2">
+                      {Object.entries(category.components).map(([type, config]) => (
+                        <DraggableComponent
+                          key={type}
+                          componentType={type}
+                          label={(config as any).label}
+                          icon={(config as any).icon}
+                          color={(config as any).color}
+                          isDarkMode={isDarkMode}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
             
             {customComponents.length > 0 && (
               <>
@@ -2834,33 +2848,44 @@ export default function FormBuilderFixed() {
         <div className="flex-1 p-6">
           <div className={`rounded-lg border h-full ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
             <div className={`p-4 border-b ${isDarkMode ? 'border-gray-700' : ''}`}>
-              <h3 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Construction Zone</h3>
+              <div className="flex items-center justify-between">
+                <h3 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Construction Zone</h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsDragZoneCollapsed(!isDragZoneCollapsed)}
+                  className={`h-6 w-6 p-0 ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+                >
+                  {isDragZoneCollapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronUp className="w-3 h-3" />}
+                </Button>
+              </div>
             </div>
-            <div 
-              ref={formBuilderRef}
-              className="p-6"
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={(e) => {
-                e.preventDefault();
-                
-                // Check if the drop event originated from a group drop zone
-                const target = e.target as HTMLElement;
-                const isDroppedOnGroup = target.closest('[data-group-drop]') || 
-                                        target.hasAttribute('data-group-drop') ||
-                                        target.closest('.group-drop-zone');
-                
-                console.log('Construction zone drop - target:', target, 'isDroppedOnGroup:', isDroppedOnGroup);
-                
-                // Only add to main form if NOT dropped on a group
-                if (!isDroppedOnGroup) {
-                  const componentType = e.dataTransfer.getData('componentType');
-                  if (componentType) {
-                    console.log('Adding component to main form:', componentType);
-                    addField(componentType);
+            {!isDragZoneCollapsed && (
+              <div 
+                ref={formBuilderRef}
+                className="p-6"
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  
+                  // Check if the drop event originated from a group drop zone
+                  const target = e.target as HTMLElement;
+                  const isDroppedOnGroup = target.closest('[data-group-drop]') || 
+                                          target.hasAttribute('data-group-drop') ||
+                                          target.closest('.group-drop-zone');
+                  
+                  console.log('Construction zone drop - target:', target, 'isDroppedOnGroup:', isDroppedOnGroup);
+                  
+                  // Only add to main form if NOT dropped on a group
+                  if (!isDroppedOnGroup) {
+                    const componentType = e.dataTransfer.getData('componentType');
+                    if (componentType) {
+                      console.log('Adding component to main form:', componentType);
+                      addField(componentType);
+                    }
                   }
-                }
-              }}
-            >
+                }}
+              >
               {formData.fields.length === 0 ? (
                 <div className={`text-center py-16 border-2 border-dashed rounded-lg ${isDarkMode ? 'text-gray-400 border-gray-600' : 'text-gray-400 border-gray-300'}`}>
                   <Type className="w-12 h-12 mx-auto mb-4 opacity-50" />
@@ -2887,7 +2912,8 @@ export default function FormBuilderFixed() {
                   ))}
                 </div>
               )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
 
