@@ -3242,7 +3242,7 @@ export default function FormBuilderFixed() {
                   <p className="text-sm">Drag components here to create your form</p>
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-2">
                   {formData.fields.map((field, index) => (
                     <FieldComponent
                       key={field.Id}
