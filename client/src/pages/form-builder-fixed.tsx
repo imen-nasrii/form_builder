@@ -2791,9 +2791,9 @@ export default function FormBuilderFixed() {
                               />
                             </div>
                             <div>
-                              <Label className={isDarkMode ? 'text-gray-300' : ''}>Label d'affichage</Label>
+                              <Label className={isDarkMode ? 'text-gray-300' : ''}>Display Label</Label>
                               <Input
-                                placeholder="Bouton Personnalisé"
+                                placeholder="Custom Button"
                                 value={newComponentConfig.label}
                                 onChange={(e) => setNewComponentConfig(prev => ({ ...prev, label: e.target.value }))}
                                 className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
@@ -2802,7 +2802,7 @@ export default function FormBuilderFixed() {
                           </div>
                           <div className="grid grid-cols-2 gap-4">
                             <div>
-                              <Label className={isDarkMode ? 'text-gray-300' : ''}>Icône</Label>
+                              <Label className={isDarkMode ? 'text-gray-300' : ''}>Icon</Label>
                               <Input
                                 placeholder="Square"
                                 value={newComponentConfig.icon}
@@ -2811,7 +2811,7 @@ export default function FormBuilderFixed() {
                               />
                             </div>
                             <div>
-                              <Label className={isDarkMode ? 'text-gray-300' : ''}>Couleur</Label>
+                              <Label className={isDarkMode ? 'text-gray-300' : ''}>Color</Label>
                               <Input
                                 placeholder="gray"
                                 value={newComponentConfig.color}
@@ -2827,7 +2827,7 @@ export default function FormBuilderFixed() {
                       {componentCreationStep === 2 && (
                         <div className="space-y-4">
                           <h4 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                            Configuration Base de données
+                            Database Configuration
                           </h4>
                           <div className="grid grid-cols-2 gap-4">
                             <div>
@@ -2850,7 +2850,7 @@ export default function FormBuilderFixed() {
                             </div>
                           </div>
                           <div>
-                            <Label className={isDarkMode ? 'text-gray-300' : ''}>Valeur par défaut</Label>
+                            <Label className={isDarkMode ? 'text-gray-300' : ''}>Default Value</Label>
                             <Input
                               placeholder="Default value"
                               value={newComponentConfig.value}
@@ -2865,7 +2865,7 @@ export default function FormBuilderFixed() {
                       {componentCreationStep === 3 && (
                         <div className="space-y-4">
                           <h4 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                            Mise en page et Style
+                            Layout & Style
                           </h4>
                           <div className="grid grid-cols-2 gap-4">
                             <div>
@@ -2926,12 +2926,12 @@ export default function FormBuilderFixed() {
                       {componentCreationStep === 4 && (
                         <div className="space-y-4">
                           <h4 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                            Propriétés avancées
+                            Advanced Properties
                           </h4>
                           <div>
                             <Label className={isDarkMode ? 'text-gray-300' : ''}>Placeholder</Label>
                             <Input
-                              placeholder="Texte d'aide"
+                              placeholder="Help text"
                               value={newComponentConfig.placeholder}
                               onChange={(e) => setNewComponentConfig(prev => ({ ...prev, placeholder: e.target.value }))}
                               className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
@@ -2960,7 +2960,7 @@ export default function FormBuilderFixed() {
                             </div>
                           </div>
                           <div>
-                            <Label className={isDarkMode ? 'text-gray-300' : ''}>Options (pour select/radio)</Label>
+                            <Label className={isDarkMode ? 'text-gray-300' : ''}>Options (for select/radio)</Label>
                             <Textarea
                               placeholder="Option 1&#10;Option 2&#10;Option 3"
                               value={newComponentConfig.options}
