@@ -571,8 +571,6 @@ function FieldComponent({
         field={field} 
         onSelect={onSelect} 
         onRemove={onRemove} 
-        onMoveUp={onMoveUp}
-        onMoveDown={onMoveDown}
         isSelected={isSelected}
         addField={addField}
         isExpanded={isExpanded}
@@ -2086,6 +2084,28 @@ export default function FormBuilderFixed() {
     }
   };
 
+  const moveField = (fromIndex: number, toIndex: number) => {
+    if (toIndex < 0 || toIndex >= formData.fields.length) return;
+    
+    setFormData(prev => {
+      const newFields = [...prev.fields];
+      const [movedField] = newFields.splice(fromIndex, 1);
+      newFields.splice(toIndex, 0, movedField);
+      
+      return {
+        ...prev,
+        fields: newFields
+      };
+    });
+    
+    // Auto-save after moving
+    if (formData.id) {
+      setTimeout(() => {
+        saveFormMutation.mutate();
+      }, 500);
+    }
+  };
+
   const removeField = (fieldId: string) => {
     const removeFieldRecursive = (fields: FormField[]): FormField[] => {
       return fields.filter(field => field.Id !== fieldId).map(field => {
@@ -2465,6 +2485,17 @@ export default function FormBuilderFixed() {
             </div>
           </div>
           <div className="flex items-center space-x-3">
+            {/* Home Button */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.location.href = '/'}
+              className={`flex items-center space-x-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+            >
+              <Home className="w-4 h-4" />
+              <span>Home</span>
+            </Button>
+            
             {/* Theme Toggle */}
             <Button
               variant="outline"
@@ -2847,12 +2878,14 @@ export default function FormBuilderFixed() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {formData.fields.map((field) => (
+                  {formData.fields.map((field, index) => (
                     <FieldComponent
                       key={field.Id}
                       field={field}
                       onSelect={() => setSelectedField(field)}
                       onRemove={() => removeField(field.Id)}
+                      onMoveUp={() => moveField(index, index - 1)}
+                      onMoveDown={() => moveField(index, index + 1)}
                       isSelected={selectedField?.Id === field.Id}
                       addField={addField}
                       isDarkMode={isDarkMode}
