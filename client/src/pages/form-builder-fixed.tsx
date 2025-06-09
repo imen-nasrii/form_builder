@@ -17,7 +17,8 @@ import {
   Calendar, 
   Upload, 
   Table, 
-  Square, 
+  Square,
+  Search, 
   Play, 
   RotateCcw, 
   X, 
@@ -45,7 +46,6 @@ import {
   Eye,
   ChevronDown,
   ChevronUp,
-  Search,
   Home
 } from 'lucide-react';
 
