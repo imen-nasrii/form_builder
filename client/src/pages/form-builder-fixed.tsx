@@ -347,7 +347,7 @@ function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMod
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       className={`
-        relative p-2 border-2 border-dashed rounded-lg cursor-move transition-all duration-200
+        relative p-1.5 border-2 border-dashed rounded-md cursor-move transition-all duration-200
         hover:shadow-lg hover:scale-105 active:scale-95
         ${isDragging ? 'opacity-60 rotate-1 scale-95' : ''}
         ${classes.bg} ${classes.border}
@@ -356,11 +356,11 @@ function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMod
     >
       <div className="flex items-center space-x-2">
         <div className={`
-          relative w-8 h-8 rounded flex items-center justify-center transition-all duration-200
+          relative w-6 h-6 rounded flex items-center justify-center transition-all duration-200
           ${getIconBackgroundClass(color, isDarkMode)}
           ${isDragging ? 'animate-pulse' : ''}
         `}>
-          <Icon className="w-4 h-4 text-white" />
+          <Icon className="w-3 h-3 text-white" />
           
           {/* Drag indicator dot */}
           <div className={`
@@ -2776,14 +2776,14 @@ export default function FormBuilderFixed() {
         <div className={`w-72 border-r overflow-y-auto ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
           <div className="p-3">
             <h3 className={`font-semibold mb-3 text-sm ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Components</h3>
-            <div className="space-y-3">
+            <div className="space-y-2">
               {Object.entries(ComponentCategories).map(([categoryKey, category]) => (
                 <div key={categoryKey} className="space-y-1">
                   <div className={`flex items-center space-x-2 text-xs font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                     <category.icon className="w-3 h-3" />
                     <span>{category.name}</span>
                   </div>
-                  <div className="pl-4 space-y-1">
+                  <div className="pl-3 space-y-0.5">
                     {Object.entries(category.components).map(([type, config]) => (
                       <DraggableComponent
                         key={type}
