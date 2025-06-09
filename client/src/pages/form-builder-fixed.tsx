@@ -744,17 +744,17 @@ function FieldComponent({
   return (
     <div
       onClick={onSelect}
-      className={`p-3 border rounded-lg cursor-pointer transition-all ${
+      className={`p-2 border rounded cursor-pointer transition-all ${
         isSelected
           ? `border-blue-500 ${isDarkMode ? 'bg-blue-900/50' : 'bg-blue-50'}`
           : `${isDarkMode ? 'border-gray-600 hover:border-gray-500 bg-gray-700' : 'border-gray-200 hover:border-gray-300 bg-white'}`
       }`}
     >
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <Icon className={`w-4 h-4 text-${color}-600`} />
+        <div className="flex items-center space-x-2">
+          <Icon className={`w-3 h-3 text-${color}-600`} />
           <div>
-            <div className={`font-medium text-sm ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{field.Label || field.Id}</div>
+            <div className={`font-medium text-xs ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{field.Label || field.Id}</div>
             <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{field.Type}</div>
           </div>
         </div>
