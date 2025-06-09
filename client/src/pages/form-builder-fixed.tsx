@@ -427,7 +427,11 @@ function ModelViewerComponent({
     { name: 'Reason', displayName: 'Reason Codes' },
     { name: 'Exchng', displayName: 'Exchanges - Trading venues' },
     { name: 'Subunit', displayName: 'Subunits - Organizational units' },
-    { name: 'Source', displayName: 'Data Sources' }
+    { name: 'Source', displayName: 'Data Sources' },
+    { name: 'Actype', displayName: 'Account Types - Account classification' },
+    { name: 'Aatrr', displayName: 'Account Attributes - Account properties' },
+    { name: 'Sector', displayName: 'Sectors - Industry classification' },
+    { name: 'Region', displayName: 'Regions - Geographic areas' }
   ];
 
   // Sample data structure matching GraphQL schema
@@ -451,6 +455,30 @@ function ModelViewerComponent({
         { aliasname: 'FIXED_INCOME', descr: 'Fixed Income Securities', criteria: 'seccat=BOND', user_ID: 'trader1' },
         { aliasname: 'LARGE_CAP', descr: 'Large Cap Stocks', criteria: 'outshs>10000000000', user_ID: 'analyst1' },
         { aliasname: 'HIGH_YIELD', descr: 'High Yield Bonds', criteria: 'rating<BBB', user_ID: 'portfolio_mgr' }
+      ],
+      Actype: [
+        { actype: 'EQUITY', descr: 'Equity Account', category: 'TRADING', status: 'ACTIVE', created_DATE: '2024-01-15' },
+        { actype: 'BOND', descr: 'Fixed Income Account', category: 'TRADING', status: 'ACTIVE', created_DATE: '2024-01-20' },
+        { actype: 'CASH', descr: 'Cash Management Account', category: 'SETTLEMENT', status: 'ACTIVE', created_DATE: '2024-02-01' },
+        { actype: 'DERIVATIVE', descr: 'Derivatives Account', category: 'TRADING', status: 'ACTIVE', created_DATE: '2024-02-15' }
+      ],
+      Aatrr: [
+        { attribute: 'RISK_PROFILE', value: 'MODERATE', account_TYPE: 'EQUITY', effective_DATE: '2024-01-01' },
+        { attribute: 'LIMIT_AMOUNT', value: '1000000', account_TYPE: 'TRADING', effective_DATE: '2024-01-01' },
+        { attribute: 'CURRENCY_PREF', value: 'USD', account_TYPE: 'CASH', effective_DATE: '2024-01-01' },
+        { attribute: 'TRADE_APPROVAL', value: 'AUTO', account_TYPE: 'DERIVATIVE', effective_DATE: '2024-01-01' }
+      ],
+      Sector: [
+        { sector: 'TECHNOLOGY', descr: 'Technology Sector', parent_SECTOR: null, industry_COUNT: 45 },
+        { sector: 'HEALTHCARE', descr: 'Healthcare Sector', parent_SECTOR: null, industry_COUNT: 32 },
+        { sector: 'FINANCIALS', descr: 'Financial Services', parent_SECTOR: null, industry_COUNT: 28 },
+        { sector: 'ENERGY', descr: 'Energy Sector', parent_SECTOR: null, industry_COUNT: 15 }
+      ],
+      Region: [
+        { region: 'NORTH_AMERICA', descr: 'North America', country_COUNT: 3, timezone: 'EST' },
+        { region: 'EUROPE', descr: 'Europe', country_COUNT: 27, timezone: 'CET' },
+        { region: 'ASIA_PACIFIC', descr: 'Asia Pacific', country_COUNT: 15, timezone: 'JST' },
+        { region: 'LATIN_AMERICA', descr: 'Latin America', country_COUNT: 8, timezone: 'BRT' }
       ]
     };
     return sampleData[modelType as keyof typeof sampleData] || [];
@@ -460,7 +488,11 @@ function ModelViewerComponent({
     const columns = {
       Secrty: ['tkr', 'tkr_DESC', 'currency', 'country', 'seccat', 'price_ID', 'face_VALUE', 'outshs', 'rating', 'ytm'],
       Fund: ['fund', 'acnam1', 'base_CURR', 'domicile', 'inactive', 'legal', 'nav_DECS', 'share_DECS'],
-      Alias: ['aliasname', 'descr', 'criteria', 'user_ID']
+      Alias: ['aliasname', 'descr', 'criteria', 'user_ID'],
+      Actype: ['actype', 'descr', 'category', 'status', 'created_DATE'],
+      Aatrr: ['attribute', 'value', 'account_TYPE', 'effective_DATE'],
+      Sector: ['sector', 'descr', 'parent_SECTOR', 'industry_COUNT'],
+      Region: ['region', 'descr', 'country_COUNT', 'timezone']
     };
     return columns[modelType as keyof typeof columns] || [];
   };
