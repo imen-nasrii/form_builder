@@ -2389,7 +2389,7 @@ export default function FormBuilderFixed() {
       inline: newComponentConfig.inline || false,
       outlined: newComponentConfig.outlined || false,
       
-      // Propriétés spécifiques
+      // Specific properties
       placeholder: newComponentConfig.placeholder || '',
       minLength: newComponentConfig.minLength ? parseInt(newComponentConfig.minLength) : undefined,
       maxLength: newComponentConfig.maxLength ? parseInt(newComponentConfig.maxLength) : undefined,
@@ -2434,7 +2434,7 @@ export default function FormBuilderFixed() {
 
   // Reset form function (clear fields only)
   const resetForm = () => {
-    if (confirm('Êtes-vous sûr de vouloir vider le formulaire ? Tous les champs seront supprimés.')) {
+    if (confirm('Are you sure you want to clear the form? All fields will be removed.')) {
       setFormData(prev => ({
         ...prev,
         fields: []
@@ -2491,7 +2491,7 @@ export default function FormBuilderFixed() {
     },
     onError: (error) => {
       console.error('Error saving form:', error);
-      alert('Erreur lors de la sauvegarde du formulaire');
+      alert('Error saving form');
     }
   });
 
@@ -2499,7 +2499,7 @@ export default function FormBuilderFixed() {
   const saveFormManually = () => {
     saveFormMutation.mutate(undefined, {
       onSuccess: () => {
-        alert('Formulaire sauvegardé avec succès !');
+        alert('Form saved successfully!');
       }
     });
   };
