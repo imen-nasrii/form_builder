@@ -411,6 +411,11 @@ function ModelViewerComponent({
     enabled: isDialogOpen
   });
 
+  // Debug logging
+  console.log('Models data:', modelsData);
+  console.log('Is loading:', isModelsLoading);
+  console.log('Dialog open:', isDialogOpen);
+
   const { data: tableData, isLoading: isTableLoading } = useQuery({
     queryKey: ['/api/table-data', field.Entity],
     enabled: isDataViewOpen && !!field.Entity
@@ -501,22 +506,37 @@ function ModelViewerComponent({
               </div>
             ) : (
               <div className="mt-2 space-y-2 max-h-64 overflow-y-auto">
-                {((modelsData as any)?.models || []).map((model: any) => (
-                  <button
-                    key={model.name}
-                    onClick={() => handleModelSelect(model.name)}
-                    className={`w-full text-left p-3 rounded border transition-colors ${
-                      selectedModel === model.name
-                        ? isDarkMode ? 'bg-blue-900/30 border-blue-400 text-blue-300' : 'bg-blue-100 border-blue-300 text-blue-900'
-                        : isDarkMode ? 'hover:bg-gray-700 border-gray-600 text-gray-300' : 'hover:bg-gray-50 border-gray-200'
-                    }`}
-                  >
-                    <div className="font-medium">{model.name}</div>
-                    <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                      {model.displayName}
+                {modelsData && (modelsData as any).success ? (
+                  ((modelsData as any).models || []).length > 0 ? (
+                    ((modelsData as any).models || []).map((model: any) => (
+                      <button
+                        key={model.name}
+                        onClick={() => handleModelSelect(model.name)}
+                        className={`w-full text-left p-3 rounded border transition-colors ${
+                          selectedModel === model.name
+                            ? isDarkMode ? 'bg-blue-900/30 border-blue-400 text-blue-300' : 'bg-blue-100 border-blue-300 text-blue-900'
+                            : isDarkMode ? 'hover:bg-gray-700 border-gray-600 text-gray-300' : 'hover:bg-gray-50 border-gray-200'
+                        }`}
+                      >
+                        <div className="font-medium">{model.name}</div>
+                        <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                          {model.displayName}
+                        </div>
+                      </button>
+                    ))
+                  ) : (
+                    <div className={`text-center py-8 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <p>No models found</p>
                     </div>
-                  </button>
-                ))}
+                  )
+                ) : (
+                  <div className={`text-center py-8 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                    <p>Failed to load models</p>
+                    {modelsData && (modelsData as any).error && (
+                      <p className="text-xs mt-2">{(modelsData as any).error}</p>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
