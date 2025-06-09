@@ -248,6 +248,7 @@ const ComponentCategories = {
     icon: Database,
     color: 'emerald',
     components: {
+      DATAMODEL: { icon: Database, label: 'Data Model', color: 'emerald' }
     }
   }
 };
@@ -388,7 +389,287 @@ function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMod
   );
 }
 
+// Data Model Component
+function DataModelComponent({ 
+  field, 
+  isSelected, 
+  onSelect, 
+  onRemove, 
+  isDarkMode,
+  updateField
+}: {
+  field: FormField;
+  isSelected: boolean;
+  onSelect: () => void;
+  onRemove: () => void;
+  isDarkMode: boolean;
+  updateField: (fieldId: string, updates: Partial<FormField>) => void;
+}) {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedModel, setSelectedModel] = useState<string>(field.Entity || '');
+  const [modelAttributes, setModelAttributes] = useState<any[]>([]);
+  const [isLoadingAttributes, setIsLoadingAttributes] = useState(false);
 
+  // Available models from MfactModels
+  const availableModels = [
+    { name: 'Users', description: 'User management and permissions' },
+    { name: 'Secrty', description: 'Securities and financial instruments' },
+    { name: 'Trx', description: 'Transaction records' },
+    { name: 'Fndmas', description: 'Fund master data' },
+    { name: 'Taxlot', description: 'Tax lot information' },
+    { name: 'Opnpos', description: 'Open positions' },
+    { name: 'Custod', description: 'Custodian information' },
+    { name: 'Curncy', description: 'Currency data' },
+    { name: 'Exchng', description: 'Exchange information' },
+    { name: 'Codes', description: 'System codes and references' },
+    { name: 'Family', description: 'Fund family data' },
+    { name: 'Income', description: 'Income tracking' },
+    { name: 'Unsetl', description: 'Unsettled transactions' },
+    { name: 'Gl', description: 'General ledger entries' },
+    { name: 'Prihst', description: 'Price history' },
+    { name: 'NavHst', description: 'NAV history' },
+    { name: 'Mktval', description: 'Market valuation' },
+    { name: 'Contry', description: 'Country reference data' },
+    { name: 'Datact', description: 'Data actions' },
+    { name: 'Report', description: 'Report definitions' }
+  ];
+
+  // Model attribute definitions based on the C# models
+  const modelAttributeMap: Record<string, any[]> = {
+    'Users': [
+      { name: 'user_id', type: 'string', required: true, description: 'Unique user identifier' },
+      { name: 'name', type: 'string', required: false, description: 'User display name' },
+      { name: 'email', type: 'string', required: false, description: 'User email address' },
+      { name: 'role', type: 'string', required: false, description: 'User role/permission level' },
+      { name: 'allmenus', type: 'string', required: false, description: 'Menu access permissions' },
+      { name: 'glprm', type: 'string', required: false, description: 'GL permissions' },
+      { name: 'webportal', type: 'string', required: false, description: 'Web portal access' },
+      { name: 'fails', type: 'int', required: false, description: 'Failed login attempts' },
+      { name: 'hash', type: 'decimal', required: false, description: 'Password hash' }
+    ],
+    'Secrty': [
+      { name: 'tkr', type: 'string', required: true, description: 'Security ticker symbol' },
+      { name: 'cusip', type: 'string', required: false, description: 'CUSIP identifier' },
+      { name: 'sedol', type: 'string', required: false, description: 'SEDOL identifier' },
+      { name: 'isin', type: 'string', required: false, description: 'ISIN identifier' },
+      { name: 'tkr_desc', type: 'string', required: false, description: 'Security description' },
+      { name: 'exch', type: 'string', required: false, description: 'Exchange code' },
+      { name: 'currency', type: 'string', required: false, description: 'Currency code' },
+      { name: 'seccat', type: 'string', required: false, description: 'Security category' },
+      { name: 'lsttrx', type: 'DateTime', required: false, description: 'Last transaction date' },
+      { name: 'lstdiv', type: 'decimal', required: false, description: 'Last dividend amount' },
+      { name: 'factor', type: 'decimal', required: false, description: 'Price factor' },
+      { name: 'beta', type: 'decimal', required: false, description: 'Beta coefficient' },
+      { name: 'outshs', type: 'decimal', required: false, description: 'Outstanding shares' },
+      { name: 'matdat', type: 'DateTime', required: false, description: 'Maturity date' },
+      { name: 'face_value', type: 'decimal', required: false, description: 'Face value' }
+    ],
+    'Trx': [
+      { name: 'trx_id', type: 'string', required: true, description: 'Transaction identifier' },
+      { name: 'tkr', type: 'string', required: true, description: 'Security ticker' },
+      { name: 'fund', type: 'string', required: true, description: 'Fund identifier' },
+      { name: 'trx_date', type: 'DateTime', required: true, description: 'Transaction date' },
+      { name: 'trx_type', type: 'string', required: true, description: 'Transaction type' },
+      { name: 'quantity', type: 'decimal', required: false, description: 'Transaction quantity' },
+      { name: 'price', type: 'decimal', required: false, description: 'Transaction price' },
+      { name: 'amount', type: 'decimal', required: false, description: 'Transaction amount' },
+      { name: 'settle_date', type: 'DateTime', required: false, description: 'Settlement date' },
+      { name: 'broker', type: 'string', required: false, description: 'Broker code' },
+      { name: 'custodian', type: 'string', required: false, description: 'Custodian code' }
+    ],
+    'Fndmas': [
+      { name: 'fund', type: 'string', required: true, description: 'Fund identifier' },
+      { name: 'fund_name', type: 'string', required: false, description: 'Fund name' },
+      { name: 'inception_date', type: 'DateTime', required: false, description: 'Fund inception date' },
+      { name: 'currency', type: 'string', required: false, description: 'Base currency' },
+      { name: 'nav', type: 'decimal', required: false, description: 'Net asset value' },
+      { name: 'total_assets', type: 'decimal', required: false, description: 'Total fund assets' },
+      { name: 'status', type: 'string', required: false, description: 'Fund status' }
+    ]
+  };
+
+  const handleModelSelect = (modelName: string) => {
+    setSelectedModel(modelName);
+    setIsLoadingAttributes(true);
+    
+    // Load attributes for the selected model
+    const attributes = modelAttributeMap[modelName] || [];
+    setTimeout(() => {
+      setModelAttributes(attributes);
+      setIsLoadingAttributes(false);
+    }, 500); // Simulate loading time
+  };
+
+  const applyModelSelection = () => {
+    if (selectedModel) {
+      updateField(field.Id, { 
+        Entity: selectedModel,
+        Label: `${selectedModel} Data Model`
+      });
+      setIsDialogOpen(false);
+    }
+  };
+
+  return (
+    <>
+      <div
+        onClick={onSelect}
+        className={`p-3 border-2 rounded-lg cursor-pointer transition-all ${
+          isSelected
+            ? isDarkMode ? 'border-blue-400 bg-blue-900/20' : 'border-blue-500 bg-blue-50'
+            : isDarkMode ? 'border-gray-600 hover:border-gray-500 bg-gray-800' : 'border-gray-200 hover:border-gray-300 bg-white'
+        }`}
+      >
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center space-x-2">
+            <Database className="w-4 h-4 text-emerald-600" />
+            <span className={`font-medium text-sm ${isDarkMode ? 'text-white' : ''}`}>Data Model</span>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemove();
+            }}
+            className="p-1 h-6 w-6 text-gray-400 hover:text-red-500"
+          >
+            <Trash2 className="w-3 h-3" />
+          </Button>
+        </div>
+        
+        <div className={`text-xs mb-3 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+          {field.Entity ? `Model: ${field.Entity}` : 'No model selected'}
+        </div>
+        
+        <Button
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsDialogOpen(true);
+          }}
+          size="sm"
+          variant="outline"
+          className={`w-full ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+        >
+          <Database className="w-4 h-4 mr-2" />
+          {field.Entity ? 'Change Model' : 'Select Model'}
+        </Button>
+      </div>
+
+      {/* Model Selection Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className={`max-w-4xl max-h-[80vh] ${isDarkMode ? 'bg-gray-800 border-gray-600' : ''}`}>
+          <DialogHeader>
+            <DialogTitle className={isDarkMode ? 'text-white' : ''}>Select Data Model</DialogTitle>
+          </DialogHeader>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 py-4">
+            {/* Model Selection */}
+            <div>
+              <Label className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : ''}`}>Available Models</Label>
+              <div className="mt-2 space-y-2 max-h-96 overflow-y-auto">
+                {availableModels.map((model) => (
+                  <button
+                    key={model.name}
+                    onClick={() => handleModelSelect(model.name)}
+                    className={`w-full text-left p-3 rounded border transition-colors ${
+                      selectedModel === model.name
+                        ? isDarkMode ? 'bg-emerald-900/30 border-emerald-400 text-emerald-300' : 'bg-emerald-100 border-emerald-300 text-emerald-900'
+                        : isDarkMode ? 'hover:bg-gray-700 border-gray-600 text-gray-300' : 'hover:bg-gray-50 border-gray-200'
+                    }`}
+                  >
+                    <div className="font-medium">{model.name}</div>
+                    <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      {model.description}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Model Attributes */}
+            <div>
+              <Label className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : ''}`}>
+                Model Attributes {selectedModel && `(${selectedModel})`}
+              </Label>
+              
+              <div className={`mt-2 border rounded-lg ${isDarkMode ? 'border-gray-600' : 'border-gray-200'} h-96 overflow-y-auto`}>
+                {isLoadingAttributes ? (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="animate-spin h-6 w-6 border-2 border-emerald-500 border-t-transparent rounded-full"></div>
+                  </div>
+                ) : modelAttributes.length > 0 ? (
+                  <div className="p-3 space-y-2">
+                    {modelAttributes.map((attr, index) => (
+                      <div 
+                        key={index} 
+                        className={`p-2 rounded border ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'}`}
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span className={`font-medium text-sm ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                            {attr.name}
+                          </span>
+                          <div className="flex items-center space-x-2">
+                            <span className={`text-xs px-2 py-1 rounded ${
+                              isDarkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-800'
+                            }`}>
+                              {attr.type}
+                            </span>
+                            {attr.required && (
+                              <span className={`text-xs px-2 py-1 rounded ${
+                                isDarkMode ? 'bg-red-900/30 text-red-300' : 'bg-red-100 text-red-800'
+                              }`}>
+                                Required
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                          {attr.description}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                ) : selectedModel ? (
+                  <div className={`flex items-center justify-center h-full ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                    <div className="text-center">
+                      <Database className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                      <p>No attributes defined for {selectedModel}</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className={`flex items-center justify-center h-full ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                    <div className="text-center">
+                      <Database className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                      <p>Select a model to view attributes</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-3 pt-4 border-t">
+            <Button
+              variant="outline"
+              onClick={() => setIsDialogOpen(false)}
+              className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={applyModelSelection}
+              disabled={!selectedModel}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white"
+            >
+              Select Model
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
 
 function FieldComponent({ 
   field, 
@@ -436,6 +717,20 @@ function FieldComponent({
         setSelectedField={setSelectedField}
         removeChildField={removeChildField}
         updateFieldInFormData={updateFieldInFormData}
+      />
+    );
+  }
+
+  // Special rendering for DATAMODEL
+  if (field.Type === 'DATAMODEL') {
+    return (
+      <DataModelComponent
+        field={field}
+        isSelected={isSelected}
+        onSelect={onSelect}
+        onRemove={onRemove}
+        isDarkMode={isDarkMode}
+        updateField={updateFieldInFormData}
       />
     );
   }
@@ -1012,7 +1307,47 @@ function PropertiesPanel({ field, onUpdate }: {
           </div>
         );
 
+      case 'DATAMODEL':
+        return (
+          <div className="space-y-3">
+            <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">Data Model Properties</h4>
+            
+            <div>
+              <Label htmlFor="field-model">Selected Model</Label>
+              <Input
+                id="field-model"
+                value={field.Entity || ""}
+                onChange={(e) => onUpdate({ Entity: e.target.value })}
+                placeholder="Select a model from MfactModels"
+                className="text-sm"
+                readOnly
+              />
+              <p className="text-xs text-gray-500 mt-1">Use the "Select Model" button in the component to choose a model</p>
+            </div>
 
+            <div>
+              <Label htmlFor="field-display-label">Display Label</Label>
+              <Input
+                id="field-display-label"
+                value={field.Label}
+                onChange={(e) => onUpdate({ Label: e.target.value })}
+                placeholder="Data Model Display Name"
+                className="text-sm"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="field-data-field">Data Field</Label>
+              <Input
+                id="field-data-field"
+                value={field.DataField}
+                onChange={(e) => onUpdate({ DataField: e.target.value })}
+                placeholder="model_data_field"
+                className="text-sm"
+              />
+            </div>
+          </div>
+        );
 
       case 'GROUP':
         return (
