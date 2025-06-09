@@ -53,7 +53,6 @@ export default function Navigation() {
               <span className="text-xl font-bold text-blue-600">
                 FormBuilder
               </span>
-              <div className="text-xs text-gray-500 dark:text-gray-400 -mt-1 font-medium">Enterprise</div>
             </div>
           </div>
         </Link>
