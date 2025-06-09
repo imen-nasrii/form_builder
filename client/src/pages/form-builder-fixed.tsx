@@ -44,7 +44,9 @@ import {
   Database,
   Eye,
   ChevronDown,
-  Search
+  ChevronUp,
+  Search,
+  Home
 } from 'lucide-react';
 
 // Model Dropdown Selector Component
@@ -345,7 +347,7 @@ function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMod
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       className={`
-        relative p-3 border-2 border-dashed rounded-lg cursor-move transition-all duration-200
+        relative p-2 border-2 border-dashed rounded-lg cursor-move transition-all duration-200
         hover:shadow-lg hover:scale-105 active:scale-95
         ${isDragging ? 'opacity-60 rotate-1 scale-95' : ''}
         ${classes.bg} ${classes.border}
@@ -369,7 +371,7 @@ function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMod
             }
           `} />
         </div>
-        <span className={`text-sm font-medium ${classes.text}`}>{label}</span>
+        <span className={`text-xs font-medium ${classes.text}`}>{label}</span>
       </div>
       
       {/* Hover overlay with grab cursor indicator */}
@@ -540,6 +542,8 @@ function FieldComponent({
   field, 
   onSelect, 
   onRemove, 
+  onMoveUp,
+  onMoveDown,
   isSelected,
   addField,
   isDarkMode,
@@ -550,6 +554,8 @@ function FieldComponent({
   field: FormField; 
   onSelect: () => void;
   onRemove: () => void;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
   isSelected: boolean;
   addField: (type: string, groupId?: string) => void;
   isDarkMode: boolean;
@@ -565,6 +571,8 @@ function FieldComponent({
         field={field} 
         onSelect={onSelect} 
         onRemove={onRemove} 
+        onMoveUp={onMoveUp}
+        onMoveDown={onMoveDown}
         isSelected={isSelected}
         addField={addField}
         isExpanded={isExpanded}
@@ -607,17 +615,44 @@ function FieldComponent({
               <Database className="w-4 h-4 text-emerald-600" />
               <span className="font-medium text-sm">Model Viewer</span>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                onRemove();
-              }}
-              className="p-1 h-6 w-6 text-gray-400 hover:text-red-500"
-            >
-              <Trash2 className="w-3 h-3" />
-            </Button>
+            <div className="flex items-center space-x-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onMoveUp();
+                }}
+                className="p-1 h-6 w-6 text-gray-400 hover:text-blue-500"
+                title="Move up"
+              >
+                <ChevronUp className="w-3 h-3" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onMoveDown();
+                }}
+                className="p-1 h-6 w-6 text-gray-400 hover:text-blue-500"
+                title="Move down"
+              >
+                <ChevronDown className="w-3 h-3" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRemove();
+                }}
+                className="p-1 h-6 w-6 text-gray-400 hover:text-red-500"
+                title="Remove"
+              >
+                <Trash2 className="w-3 h-3" />
+              </Button>
+            </div>
           </div>
           
           <div className="mb-3">
