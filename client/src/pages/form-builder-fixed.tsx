@@ -1960,12 +1960,42 @@ export default function FormBuilderFixed() {
   const [collaboratorEmail, setCollaboratorEmail] = useState('');
   const [collaborators, setCollaborators] = useState<string[]>([]);
   const [customComponents, setCustomComponents] = useState<any[]>([]);
-  const [newComponentConfig, setNewComponentConfig] = useState({
+  const [newComponentConfig, setNewComponentConfig] = useState<{
+    name: string;
+    label: string;
+    icon: string;
+    color: string;
+    properties: string;
+    dataField: string;
+    entity: string;
+    width: string;
+    spacing: string;
+    value: string;
+    required: boolean;
+    inline: boolean;
+    outlined: boolean;
+    placeholder: string;
+    minLength: string;
+    maxLength: string;
+    options: string;
+  }>({
     name: '',
     label: '',
     icon: 'Square',
     color: 'gray',
-    properties: ''
+    properties: '',
+    dataField: '',
+    entity: '',
+    width: '',
+    spacing: '',
+    value: '',
+    required: false,
+    inline: false,
+    outlined: false,
+    placeholder: '',
+    minLength: '',
+    maxLength: '',
+    options: ''
   });
   const [showAddComponent, setShowAddComponent] = useState(false);
 
@@ -2299,24 +2329,57 @@ export default function FormBuilderFixed() {
   const addComponentFromForm = () => {
     if (!newComponentConfig.name || !newComponentConfig.label) return;
     
-    try {
-      const newComponent = {
-        id: newComponentConfig.name.toUpperCase(),
-        name: newComponentConfig.name,
-        label: newComponentConfig.label,
-        icon: newComponentConfig.icon,
-        color: newComponentConfig.color,
-        properties: newComponentConfig.properties ? JSON.parse(newComponentConfig.properties) : {},
-        isCustom: true
-      };
+    const properties = {
+      // Propriétés de base
+      dataField: newComponentConfig.dataField || '',
+      entity: newComponentConfig.entity || 'TableName',
+      width: newComponentConfig.width || '100%',
+      spacing: newComponentConfig.spacing || 'md',
+      value: newComponentConfig.value || '',
       
-      setCustomComponents(prev => [...prev, newComponent]);
-      setNewComponentConfig({ name: '', label: '', icon: 'Square', color: 'gray', properties: '' });
-      setShowAddComponent(false);
-    } catch (error) {
-      console.error('Invalid JSON in properties:', error);
-      alert('Format JSON invalide dans les propriétés');
-    }
+      // Options booléennes
+      required: newComponentConfig.required || false,
+      inline: newComponentConfig.inline || false,
+      outlined: newComponentConfig.outlined || false,
+      
+      // Propriétés spécifiques
+      placeholder: newComponentConfig.placeholder || '',
+      minLength: newComponentConfig.minLength ? parseInt(newComponentConfig.minLength) : undefined,
+      maxLength: newComponentConfig.maxLength ? parseInt(newComponentConfig.maxLength) : undefined,
+      options: newComponentConfig.options ? newComponentConfig.options.split('\n').filter(opt => opt.trim()) : []
+    };
+
+    const newComponent = {
+      id: newComponentConfig.name.toUpperCase(),
+      name: newComponentConfig.name,
+      label: newComponentConfig.label,
+      icon: newComponentConfig.icon,
+      color: newComponentConfig.color,
+      properties: properties,
+      isCustom: true
+    };
+    
+    setCustomComponents(prev => [...prev, newComponent]);
+    setNewComponentConfig({ 
+      name: '', 
+      label: '', 
+      icon: 'Square', 
+      color: 'gray',
+      properties: '',
+      dataField: '',
+      entity: '',
+      width: '',
+      spacing: '',
+      value: '',
+      required: false,
+      inline: false,
+      outlined: false,
+      placeholder: '',
+      minLength: '',
+      maxLength: '',
+      options: ''
+    } as typeof newComponentConfig);
+    setShowAddComponent(false);
   };
 
   const removeCustomComponent = (componentId: string) => {
@@ -2701,14 +2764,142 @@ export default function FormBuilderFixed() {
                         />
                       </div>
                     </div>
-                    <div>
-                      <Label className={isDarkMode ? 'text-gray-300' : ''}>Properties (JSON)</Label>
-                      <Textarea
-                        placeholder='{"placeholder": "Default value", "required": true}'
-                        value={newComponentConfig.properties}
-                        onChange={(e) => setNewComponentConfig(prev => ({ ...prev, properties: e.target.value }))}
-                        className={`h-24 text-xs font-mono ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
-                      />
+                    <div className="space-y-4">
+                      <h4 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Propriétés du Composant</h4>
+                      
+                      {/* Propriétés de base */}
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label className={isDarkMode ? 'text-gray-300' : ''}>Data Field</Label>
+                          <Input
+                            placeholder="field_name"
+                            value={newComponentConfig.dataField || ''}
+                            onChange={(e) => setNewComponentConfig(prev => ({ ...prev, dataField: e.target.value }))}
+                            className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                          />
+                        </div>
+                        <div>
+                          <Label className={isDarkMode ? 'text-gray-300' : ''}>Entity</Label>
+                          <Input
+                            placeholder="TableName"
+                            value={newComponentConfig.entity || ''}
+                            onChange={(e) => setNewComponentConfig(prev => ({ ...prev, entity: e.target.value }))}
+                            className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Propriétés de mise en page */}
+                      <div className="grid grid-cols-3 gap-4">
+                        <div>
+                          <Label className={isDarkMode ? 'text-gray-300' : ''}>Width</Label>
+                          <Input
+                            placeholder="100%"
+                            value={newComponentConfig.width || ''}
+                            onChange={(e) => setNewComponentConfig(prev => ({ ...prev, width: e.target.value }))}
+                            className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                          />
+                        </div>
+                        <div>
+                          <Label className={isDarkMode ? 'text-gray-300' : ''}>Spacing</Label>
+                          <Input
+                            placeholder="md"
+                            value={newComponentConfig.spacing || ''}
+                            onChange={(e) => setNewComponentConfig(prev => ({ ...prev, spacing: e.target.value }))}
+                            className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                          />
+                        </div>
+                        <div>
+                          <Label className={isDarkMode ? 'text-gray-300' : ''}>Value</Label>
+                          <Input
+                            placeholder="Default value"
+                            value={newComponentConfig.value || ''}
+                            onChange={(e) => setNewComponentConfig(prev => ({ ...prev, value: e.target.value }))}
+                            className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Options booléennes */}
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="checkbox"
+                            id="required"
+                            checked={newComponentConfig.required || false}
+                            onChange={(e) => setNewComponentConfig(prev => ({ ...prev, required: e.target.checked }))}
+                            className="rounded"
+                          />
+                          <Label htmlFor="required" className={isDarkMode ? 'text-gray-300' : ''}>Required</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="checkbox"
+                            id="inline"
+                            checked={newComponentConfig.inline || false}
+                            onChange={(e) => setNewComponentConfig(prev => ({ ...prev, inline: e.target.checked }))}
+                            className="rounded"
+                          />
+                          <Label htmlFor="inline" className={isDarkMode ? 'text-gray-300' : ''}>Inline</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="checkbox"
+                            id="outlined"
+                            checked={newComponentConfig.outlined || false}
+                            onChange={(e) => setNewComponentConfig(prev => ({ ...prev, outlined: e.target.checked }))}
+                            className="rounded"
+                          />
+                          <Label htmlFor="outlined" className={isDarkMode ? 'text-gray-300' : ''}>Outlined</Label>
+                        </div>
+                      </div>
+
+                      {/* Propriétés spécifiques */}
+                      <div className="space-y-3">
+                        <div>
+                          <Label className={isDarkMode ? 'text-gray-300' : ''}>Placeholder</Label>
+                          <Input
+                            placeholder="Texte d'aide"
+                            value={newComponentConfig.placeholder || ''}
+                            onChange={(e) => setNewComponentConfig(prev => ({ ...prev, placeholder: e.target.value }))}
+                            className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label className={isDarkMode ? 'text-gray-300' : ''}>Min Length</Label>
+                            <Input
+                              type="number"
+                              placeholder="0"
+                              value={newComponentConfig.minLength || ''}
+                              onChange={(e) => setNewComponentConfig(prev => ({ ...prev, minLength: e.target.value }))}
+                              className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                            />
+                          </div>
+                          <div>
+                            <Label className={isDarkMode ? 'text-gray-300' : ''}>Max Length</Label>
+                            <Input
+                              type="number"
+                              placeholder="255"
+                              value={newComponentConfig.maxLength || ''}
+                              onChange={(e) => setNewComponentConfig(prev => ({ ...prev, maxLength: e.target.value }))}
+                              className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <Label className={isDarkMode ? 'text-gray-300' : ''}>Options (pour select/radio)</Label>
+                          <Textarea
+                            placeholder="Option 1&#10;Option 2&#10;Option 3"
+                            value={newComponentConfig.options || ''}
+                            onChange={(e) => setNewComponentConfig(prev => ({ ...prev, options: e.target.value }))}
+                            className={`h-20 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
+                          />
+                          <p className={`text-xs mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                            Une option par ligne
+                          </p>
+                        </div>
+                      </div>
                     </div>
                     <Button onClick={addComponentFromForm}>
                       <Package className="w-4 h-4 mr-2" />
