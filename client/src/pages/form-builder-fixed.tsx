@@ -410,81 +410,425 @@ function DataModelComponent({
   const [modelAttributes, setModelAttributes] = useState<any[]>([]);
   const [isLoadingAttributes, setIsLoadingAttributes] = useState(false);
 
-  // Available models from MfactModels
+  // Complete list of available MfactModels (100+ models)
   const availableModels = [
-    { name: 'Users', description: 'User management and permissions' },
-    { name: 'Secrty', description: 'Securities and financial instruments' },
-    { name: 'Trx', description: 'Transaction records' },
-    { name: 'Fndmas', description: 'Fund master data' },
-    { name: 'Taxlot', description: 'Tax lot information' },
-    { name: 'Opnpos', description: 'Open positions' },
-    { name: 'Custod', description: 'Custodian information' },
-    { name: 'Curncy', description: 'Currency data' },
-    { name: 'Exchng', description: 'Exchange information' },
-    { name: 'Codes', description: 'System codes and references' },
-    { name: 'Family', description: 'Fund family data' },
-    { name: 'Income', description: 'Income tracking' },
-    { name: 'Unsetl', description: 'Unsettled transactions' },
-    { name: 'Gl', description: 'General ledger entries' },
-    { name: 'Prihst', description: 'Price history' },
-    { name: 'NavHst', description: 'NAV history' },
-    { name: 'Mktval', description: 'Market valuation' },
-    { name: 'Contry', description: 'Country reference data' },
-    { name: 'Datact', description: 'Data actions' },
-    { name: 'Report', description: 'Report definitions' }
+    // Core System Models
+    { name: 'Users', description: 'User management and authentication' },
+    { name: 'Sessions', description: 'User session management' },
+    { name: 'Pswrd', description: 'Password management and security' },
+    { name: 'Usrlog', description: 'User activity logging' },
+    { name: 'Usrprg', description: 'User program access permissions' },
+    { name: 'Usrico', description: 'User interface customization' },
+    { name: 'Usrdef', description: 'User-defined fields and preferences' },
+    
+    // Financial Core Models
+    { name: 'Secrty', description: 'Securities and financial instruments master data' },
+    { name: 'Trx', description: 'Transaction records and trade data' },
+    { name: 'Fndmas', description: 'Fund master data and configuration' },
+    { name: 'Taxlot', description: 'Tax lot positions and cost basis tracking' },
+    { name: 'Opnpos', description: 'Open positions and portfolio holdings' },
+    { name: 'Unsetl', description: 'Unsettled transactions and pending trades' },
+    { name: 'Gl', description: 'General ledger accounts and balances' },
+    { name: 'Income', description: 'Income tracking and dividend processing' },
+    
+    // Market Data and Pricing
+    { name: 'Prihst', description: 'Price history and historical pricing data' },
+    { name: 'DailyP', description: 'Daily pricing and valuation data' },
+    { name: 'Mktval', description: 'Market valuation and pricing data' },
+    { name: 'NavHst', description: 'Net Asset Value history and tracking' },
+    { name: 'Fairv', description: 'Fair value pricing and adjustments' },
+    { name: 'Pcrf', description: 'Price cross-reference and mapping' },
+    { name: 'IdxHis', description: 'Index history and benchmark data' },
+    { name: 'IdxMas', description: 'Index master data and definitions' },
+    { name: 'Yields', description: 'Yield calculations and return analysis' },
+    
+    // Reference Data
+    { name: 'Custod', description: 'Custodian and counterparty information' },
+    { name: 'Curncy', description: 'Currency definitions and exchange rates' },
+    { name: 'Exchng', description: 'Exchange definitions and trading venues' },
+    { name: 'Contry', description: 'Country codes and geographic data' },
+    { name: 'States', description: 'State and province reference data' },
+    { name: 'Holiday', description: 'Holiday calendar and business day rules' },
+    { name: 'Codes', description: 'System codes and lookup values' },
+    { name: 'Reason', description: 'Reason codes and transaction justifications' },
+    
+    // Security Classifications
+    { name: 'SecCat', description: 'Security categories and classifications' },
+    { name: 'SecGrp', description: 'Security groups and sector classifications' },
+    { name: 'Ptype', description: 'Portfolio types and investment styles' },
+    { name: 'Seclyd', description: 'Security layout and display configurations' },
+    { name: 'SeclydAg', description: 'Security layout aggregations' },
+    { name: 'Auxid', description: 'Auxiliary identifiers and cross-references' },
+    
+    // Fund Organization
+    { name: 'Family', description: 'Fund family groupings and hierarchies' },
+    { name: 'Series', description: 'Fund series and share class definitions' },
+    { name: 'Shrmas', description: 'Share master data and share class information' },
+    { name: 'Shrgrp', description: 'Share group classifications' },
+    { name: 'FundCg', description: 'Fund capital gains and loss tracking' },
+    { name: 'Falias', description: 'Fund aliases and alternative identifiers' },
+    
+    // Accounting and GL
+    { name: 'Actype', description: 'Account type definitions and classifications' },
+    { name: 'Glcat', description: 'General ledger categories' },
+    { name: 'Glgrp', description: 'General ledger groupings' },
+    { name: 'Glprm', description: 'General ledger parameters' },
+    { name: 'Glxcat', description: 'Extended GL categories' },
+    { name: 'Gl988', description: 'GL 988 specific entries' },
+    { name: 'Ae', description: 'Accounting entries and journal postings' },
+    
+    // Expense Management
+    { name: 'Opnexp', description: 'Open expense positions and accruals' },
+    { name: 'Expfnd', description: 'Expense fund allocations and distributions' },
+    { name: 'PosExp', description: 'Position-based expense calculations' },
+    { name: 'AsOfExpend', description: 'As-of expense data' },
+    { name: 'AsOfTExpend', description: 'As-of total expense data' },
+    
+    // Income and Distributions
+    { name: 'AsOfIncome', description: 'As-of income data' },
+    { name: 'AsOfTIncome', description: 'As-of total income data' },
+    { name: 'Divtyp', description: 'Dividend types and distribution classifications' },
+    
+    // OID and Amortization
+    { name: 'Oidlot', description: 'Original Issue Discount lot tracking' },
+    { name: 'AsOfOidlot', description: 'As-of OID lot data' },
+    { name: 'AsOfTOidlot', description: 'As-of total OID lot data' },
+    
+    // Tax Processing
+    { name: 'Taxrat', description: 'Tax rates and withholding calculations' },
+    { name: 'Taxcod', description: 'Tax codes and classifications' },
+    { name: 'Taxtbl', description: 'Tax tables and lookup data' },
+    { name: 'AsOfTaxlot', description: 'As-of tax lot data' },
+    { name: 'AsOfTTaxlot', description: 'As-of total tax lot data' },
+    
+    // Trading and Settlements
+    { name: 'Trxtyp', description: 'Transaction types and processing rules' },
+    { name: 'Trxcur', description: 'Transaction currency handling' },
+    { name: 'Auttrx', description: 'Automatic transaction processing' },
+    { name: 'AsOfOpnpos', description: 'As-of open position data' },
+    { name: 'AsOfTOpnpos', description: 'As-of total open position data' },
+    { name: 'AsOfOpnexp', description: 'As-of open expense data' },
+    { name: 'AsOfTOpnexp', description: 'As-of total open expense data' },
+    { name: 'AsOfUnsetl', description: 'As-of unsettled transaction data' },
+    { name: 'AsOfTUnsetl', description: 'As-of total unsettled data' },
+    
+    // Compliance and Risk
+    { name: 'CRule', description: 'Compliance rules and investment restrictions' },
+    { name: 'CRsult', description: 'Compliance rule results and violations' },
+    { name: 'RuleStatus', description: 'Rule status tracking and monitoring' },
+    { name: 'NdRule', description: 'Node-based compliance rules' },
+    { name: 'NdCode', description: 'Node classification codes' },
+    { name: 'PreCond', description: 'Pre-condition validations' },
+    { name: 'Range', description: 'Range definitions and validation parameters' },
+    { name: 'Range2', description: 'Extended range validations' },
+    
+    // Reporting and Analytics
+    { name: 'Report', description: 'Report definitions and configurations' },
+    { name: 'RptBat', description: 'Report batch processing' },
+    { name: 'RptGrp', description: 'Report groupings and categories' },
+    { name: 'RptHdr', description: 'Report headers and metadata' },
+    { name: 'MastRpt', description: 'Master report templates' },
+    { name: 'MemRpt', description: 'Memory-based reporting' },
+    { name: 'Extract', description: 'Data extraction jobs and export processes' },
+    { name: 'Gandl', description: 'Gains and losses reporting and analysis' },
+    
+    // System Administration
+    { name: 'Sysparam', description: 'System parameters and configuration settings' },
+    { name: 'Sysprm', description: 'System parameter management' },
+    { name: 'Sysfil', description: 'System file management' },
+    { name: 'Defset', description: 'Default settings and system preferences' },
+    { name: 'Defitm', description: 'Default item definitions and templates' },
+    { name: 'Layout', description: 'Screen layout and form definitions' },
+    
+    // User Interface
+    { name: 'MastMenu', description: 'Master menu definitions' },
+    { name: 'Mnuimg', description: 'Menu images and icons' },
+    { name: 'Images', description: 'System images and graphics' },
+    { name: 'Dasha', description: 'Dashboard configuration A' },
+    { name: 'Dashb', description: 'Dashboard configuration B' },
+    { name: 'Dashc', description: 'Dashboard configuration C' },
+    
+    // Data Management
+    { name: 'Datact', description: 'Data activity logs and audit trails' },
+    { name: 'Datcon', description: 'Data connection and source configurations' },
+    { name: 'Dbloc', description: 'Database location and partition information' },
+    { name: 'Doasof', description: 'As-of date processing and historical snapshots' },
+    { name: 'Supdate', description: 'System update tracking' },
+    { name: 'Vrsn', description: 'Version control and tracking' },
+    
+    // Messaging and Communication
+    { name: 'Messages', description: 'System messages and notifications' },
+    { name: 'Msg', description: 'Message processing and routing' },
+    { name: 'MsgDefs', description: 'Message definitions and templates' },
+    { name: 'MsgErr', description: 'Message error handling' },
+    { name: 'MsgLog', description: 'Message logging and audit' },
+    { name: 'MsgRcp', description: 'Message recipients and distribution' },
+    { name: 'MsgUsr', description: 'User-specific messaging' },
+    { name: 'JobMsg', description: 'Job processing messages' },
+    { name: 'Remind', description: 'Reminder and notification system' },
+    
+    // Job and Process Management
+    { name: 'JobScd', description: 'Job scheduling and automation' },
+    { name: 'CallPrg', description: 'Callable program definitions and parameters' },
+    { name: 'PrgNam', description: 'Program name registry' },
+    
+    // Trading and Broker Management
+    { name: 'Brkcom', description: 'Broker commission rates and fee structures' },
+    { name: 'Brx', description: 'Broker transaction records' },
+    { name: 'Exhfee', description: 'Exchange fees and transaction costs' },
+    { name: 'Setexc', description: 'Settlement exception handling' },
+    
+    // Options and Derivatives
+    { name: 'Opt104', description: 'Options contract specifications' },
+    { name: 'Optevt', description: 'Options corporate events' },
+    { name: 'OptevtAud', description: 'Options event audit trail' },
+    { name: 'Optflt', description: 'Options filter and screening' },
+    { name: 'Optpro', description: 'Options processing parameters' },
+    { name: 'Opnord', description: 'Open orders and pending transactions' },
+    
+    // Swaps and Fixed Income
+    { name: 'Swap', description: 'Swap contract management' },
+    { name: 'SwapMkr', description: 'Swap market maker data' },
+    { name: 'Rathst', description: 'Rating history and credit analysis' },
+    { name: 'Tbhist', description: 'Treasury bill history' },
+    { name: 'Tbnames', description: 'Treasury bill naming conventions' },
+    
+    // Legal and Regulatory
+    { name: 'Legald', description: 'Legal entity data and compliance' },
+    { name: 'LegaldMkr', description: 'Legal entity market maker information' },
+    { name: 'Legent', description: 'Legal entity management' },
+    { name: 'ReglSx', description: 'Regulatory SX reporting' },
+    { name: 'Fas157', description: 'FAS 157 fair value hierarchy classifications' },
+    { name: 'Nrsro', description: 'NRSRO rating agency data' },
+    
+    // Advanced Analytics
+    { name: 'Aatrr', description: 'Asset allocation and attribution reporting' },
+    { name: 'BigBro', description: 'Big brother surveillance and monitoring' },
+    { name: 'Gnskpr', description: 'Gatekeeper compliance monitoring' },
+    { name: 'GkCode', description: 'Gatekeeper codes and validation rules' },
+    { name: 'GkDet', description: 'Gatekeeper detail records' },
+    { name: 'GkMst', description: 'Gatekeeper master configuration' },
+    { name: 'GkTrx', description: 'Gatekeeper transaction monitoring' },
+    { name: 'LockInfo', description: 'Record locking and concurrency control' },
+    
+    // Data Processing
+    { name: 'Actdata', description: 'Activity data and transaction processing' },
+    { name: 'Adjust', description: 'Adjustment entries and corrections' },
+    { name: 'Tarec', description: 'Transaction reconciliation records' },
+    { name: 'Trail', description: 'Audit trail and change tracking' },
+    { name: 'Unreal', description: 'Unrealized gain/loss calculations' },
+    { name: 'LotExp', description: 'Lot expiration and maturity tracking' },
+    
+    // Market Making and Pricing
+    { name: 'Mkrchr', description: 'Market maker characteristics' },
+    { name: 'SecrtyMkr', description: 'Security market maker relationships' },
+    { name: 'PrihistMkr', description: 'Price history market maker data' },
+    { name: 'UdfDataMkr', description: 'User-defined field market maker data' },
+    
+    // User-Defined Extensions
+    { name: 'UdfData', description: 'User-defined field data storage' },
+    { name: 'UdfFields', description: 'User-defined field definitions' },
+    { name: 'UdfGroups', description: 'User-defined field groupings' },
+    
+    // Advanced Processing
+    { name: 'Dtpmat', description: 'Date pattern matching and validation rules' },
+    { name: 'Msfeed', description: 'Market data feed processing' },
+    { name: 'Ntrwzd', description: 'Net trading wizard calculations' },
+    { name: 'Psrc', description: 'Price source management' },
+    { name: 'Sig', description: 'Signature and authorization tracking' },
+    { name: 'SigTkr', description: 'Signature ticker management' },
+    { name: 'Sponsr', description: 'Sponsor and manager information' },
+    { name: 'Ursfnd', description: 'URS fund data processing' },
+    { name: 'LvcNfm', description: 'LVC NFM processing rules' },
+    
+    // Position and Performance
+    { name: 'PrChld', description: 'Price child relationships' },
+    { name: 'PrCrnk', description: 'Price cross-rank analysis' },
+    { name: 'NavPer', description: 'NAV performance tracking' },
+    { name: 'Rtdhst', description: 'Real-time data history' },
+    { name: 'RealGlRul', description: 'Real-time GL processing rules' }
   ];
 
-  // Model attribute definitions based on the C# models
+  // Comprehensive model attribute definitions based on actual C# models from MfactModels
   const modelAttributeMap: Record<string, any[]> = {
+    // Core System Models
     'Users': [
-      { name: 'user_id', type: 'string', required: true, description: 'Unique user identifier' },
-      { name: 'name', type: 'string', required: false, description: 'User display name' },
-      { name: 'email', type: 'string', required: false, description: 'User email address' },
-      { name: 'role', type: 'string', required: false, description: 'User role/permission level' },
-      { name: 'allmenus', type: 'string', required: false, description: 'Menu access permissions' },
-      { name: 'glprm', type: 'string', required: false, description: 'GL permissions' },
-      { name: 'webportal', type: 'string', required: false, description: 'Web portal access' },
-      { name: 'fails', type: 'int', required: false, description: 'Failed login attempts' },
-      { name: 'hash', type: 'decimal', required: false, description: 'Password hash' }
+      { name: 'Id', type: 'string', required: true, description: 'Unique user identifier' },
+      { name: 'Email', type: 'string', required: true, description: 'User email address' },
+      { name: 'FirstName', type: 'string', required: false, description: 'User first name' },
+      { name: 'LastName', type: 'string', required: false, description: 'User last name' },
+      { name: 'ProfileImageUrl', type: 'string', required: false, description: 'Profile image URL' },
+      { name: 'CreatedAt', type: 'DateTime', required: false, description: 'Account creation date' },
+      { name: 'UpdatedAt', type: 'DateTime', required: false, description: 'Last update timestamp' }
     ],
+    
+    'Sessions': [
+      { name: 'sid', type: 'string', required: true, description: 'Session identifier' },
+      { name: 'sess', type: 'jsonb', required: true, description: 'Session data' },
+      { name: 'expire', type: 'DateTime', required: true, description: 'Session expiration' }
+    ],
+    
+    // Financial Core Models
     'Secrty': [
       { name: 'tkr', type: 'string', required: true, description: 'Security ticker symbol' },
       { name: 'cusip', type: 'string', required: false, description: 'CUSIP identifier' },
       { name: 'sedol', type: 'string', required: false, description: 'SEDOL identifier' },
       { name: 'isin', type: 'string', required: false, description: 'ISIN identifier' },
-      { name: 'tkr_desc', type: 'string', required: false, description: 'Security description' },
-      { name: 'exch', type: 'string', required: false, description: 'Exchange code' },
-      { name: 'currency', type: 'string', required: false, description: 'Currency code' },
+      { name: 'ric', type: 'string', required: false, description: 'Reuters RIC code' },
+      { name: 'custom_id1', type: 'string', required: false, description: 'Custom identifier 1' },
+      { name: 'custom_id2', type: 'string', required: false, description: 'Custom identifier 2' },
+      { name: 'tkr_type', type: 'string', required: false, description: 'Ticker type' },
       { name: 'seccat', type: 'string', required: false, description: 'Security category' },
+      { name: 'tkr_desc', type: 'string', required: false, description: 'Security description' },
+      { name: 'desc2', type: 'string', required: false, description: 'Secondary description' },
+      { name: 'exch', type: 'string', required: false, description: 'Exchange code' },
       { name: 'lsttrx', type: 'DateTime', required: false, description: 'Last transaction date' },
       { name: 'lstdiv', type: 'decimal', required: false, description: 'Last dividend amount' },
-      { name: 'factor', type: 'decimal', required: false, description: 'Price factor' },
+      { name: 'secgrp', type: 'string', required: false, description: 'Security group' },
+      { name: 'factor', type: 'decimal', required: false, description: 'Multiplication factor' },
+      { name: 'issuer', type: 'string', required: false, description: 'Issuer name' },
+      { name: 'guarantor', type: 'string', required: false, description: 'Guarantor entity' },
+      { name: 'country', type: 'string', required: false, description: 'Country of issue' },
+      { name: 'currency', type: 'string', required: false, description: 'Base currency' },
       { name: 'beta', type: 'decimal', required: false, description: 'Beta coefficient' },
       { name: 'outshs', type: 'decimal', required: false, description: 'Outstanding shares' },
       { name: 'matdat', type: 'DateTime', required: false, description: 'Maturity date' },
-      { name: 'face_value', type: 'decimal', required: false, description: 'Face value' }
+      { name: 'strike', type: 'decimal', required: false, description: 'Strike price for options' },
+      { name: 'conv_ratio', type: 'decimal', required: false, description: 'Conversion ratio' }
     ],
+    
     'Trx': [
-      { name: 'trx_id', type: 'string', required: true, description: 'Transaction identifier' },
-      { name: 'tkr', type: 'string', required: true, description: 'Security ticker' },
       { name: 'fund', type: 'string', required: true, description: 'Fund identifier' },
-      { name: 'trx_date', type: 'DateTime', required: true, description: 'Transaction date' },
-      { name: 'trx_type', type: 'string', required: true, description: 'Transaction type' },
-      { name: 'quantity', type: 'decimal', required: false, description: 'Transaction quantity' },
-      { name: 'price', type: 'decimal', required: false, description: 'Transaction price' },
+      { name: 'trx_no', type: 'string', required: true, description: 'Transaction number' },
+      { name: 'trxdate', type: 'DateTime', required: false, description: 'Transaction date' },
+      { name: 'acct_cr', type: 'string', required: false, description: 'Credit account' },
+      { name: 'acct_dr', type: 'string', required: false, description: 'Debit account' },
+      { name: 'datent', type: 'DateTime', required: false, description: 'Entry date' },
       { name: 'amount', type: 'decimal', required: false, description: 'Transaction amount' },
-      { name: 'settle_date', type: 'DateTime', required: false, description: 'Settlement date' },
-      { name: 'broker', type: 'string', required: false, description: 'Broker code' },
-      { name: 'custodian', type: 'string', required: false, description: 'Custodian code' }
+      { name: 'trx_type', type: 'string', required: false, description: 'Transaction type' },
+      { name: 'revflg', type: 'string', required: false, description: 'Reversal flag' },
+      { name: 'check_num', type: 'string', required: false, description: 'Check number' },
+      { name: 'trxcur_no', type: 'string', required: false, description: 'Transaction currency number' },
+      { name: 'user_id', type: 'string', required: false, description: 'User who entered transaction' },
+      { name: 'postdate', type: 'DateTime', required: false, description: 'Post date' },
+      { name: 'long_short', type: 'string', required: false, description: 'Long/short indicator' },
+      { name: 'Class', type: 'string', required: false, description: 'Transaction class' }
     ],
+    
     'Fndmas': [
+      { name: 'Fund', type: 'string', required: true, description: 'Fund identifier' },
+      { name: 'Acnam1', type: 'string', required: false, description: 'Account name 1' },
+      { name: 'Acnam2', type: 'string', required: false, description: 'Account name 2' },
+      { name: 'Officer1', type: 'string', required: false, description: 'Primary officer' },
+      { name: 'Officer2', type: 'string', required: false, description: 'Secondary officer' },
+      { name: 'Officer3', type: 'string', required: false, description: 'Tertiary officer' },
+      { name: 'Add1', type: 'string', required: false, description: 'Address line 1' },
+      { name: 'Add2', type: 'string', required: false, description: 'Address line 2' },
+      { name: 'City', type: 'string', required: false, description: 'City' },
+      { name: 'State', type: 'string', required: false, description: 'State' },
+      { name: 'Zip', type: 'string', required: false, description: 'ZIP code' },
+      { name: 'Country', type: 'string', required: false, description: 'Country' },
+      { name: 'Phone', type: 'string', required: false, description: 'Phone number' },
+      { name: 'Start_Date', type: 'DateTime', required: false, description: 'Fund start date' },
+      { name: 'AcType', type: 'string', required: false, description: 'Account type' },
+      { name: 'Base_Curr', type: 'string', required: false, description: 'Base currency' },
+      { name: 'Multi_Curr', type: 'string', required: false, description: 'Multi-currency flag' },
+      { name: 'Par_Value', type: 'decimal', required: false, description: 'Par value' },
+      { name: 'Comments', type: 'string', required: false, description: 'Fund comments' },
+      { name: 'Family', type: 'string', required: false, description: 'Fund family' },
+      { name: 'Domicile', type: 'string', required: false, description: 'Fund domicile' }
+    ],
+    
+    'Taxlot': [
+      { name: 'fund', type: 'string', required: false, description: 'Fund identifier' },
+      { name: 'tkr', type: 'string', required: false, description: 'Security ticker' },
+      { name: 'trade_date', type: 'DateTime', required: false, description: 'Trade date' },
+      { name: 'settl_date', type: 'DateTime', required: false, description: 'Settlement date' },
+      { name: 'qty', type: 'decimal', required: false, description: 'Quantity' },
+      { name: 'lcltaxbook', type: 'decimal', required: false, description: 'Local tax book value' },
+      { name: 'opnord', type: 'decimal', required: false, description: 'Open order quantity' },
+      { name: 'price', type: 'decimal', required: false, description: 'Price per share' },
+      { name: 'trxcur_no', type: 'string', required: false, description: 'Transaction currency number' },
+      { name: 'bastaxbook', type: 'decimal', required: false, description: 'Base tax book value' },
+      { name: 'lcl_accinc', type: 'decimal', required: false, description: 'Local accrued income' },
+      { name: 'bas_accinc', type: 'decimal', required: false, description: 'Base accrued income' },
+      { name: 'lunreal', type: 'decimal', required: false, description: 'Local unrealized P&L' },
+      { name: 'bunreal', type: 'decimal', required: false, description: 'Base unrealized P&L' }
+    ],
+    
+    'Gl': [
       { name: 'fund', type: 'string', required: true, description: 'Fund identifier' },
-      { name: 'fund_name', type: 'string', required: false, description: 'Fund name' },
-      { name: 'inception_date', type: 'DateTime', required: false, description: 'Fund inception date' },
-      { name: 'currency', type: 'string', required: false, description: 'Base currency' },
-      { name: 'nav', type: 'decimal', required: false, description: 'Net asset value' },
-      { name: 'total_assets', type: 'decimal', required: false, description: 'Total fund assets' },
-      { name: 'status', type: 'string', required: false, description: 'Fund status' }
+      { name: 'acno', type: 'string', required: true, description: 'Account number' },
+      { name: 'actype', type: 'string', required: false, description: 'Account type' },
+      { name: 'ytdbal_ty', type: 'decimal', required: false, description: 'YTD balance this year' },
+      { name: 'ytdbal_ly', type: 'decimal', required: false, description: 'YTD balance last year' },
+      { name: 'opnbal_ty', type: 'decimal', required: false, description: 'Opening balance this year' },
+      { name: 'opnbal_ly', type: 'decimal', required: false, description: 'Opening balance last year' },
+      { name: 'desc1', type: 'string', required: false, description: 'Primary description' },
+      { name: 'desc2', type: 'string', required: false, description: 'Secondary description' },
+      { name: 'ytd_dr_ty', type: 'decimal', required: false, description: 'YTD debits this year' },
+      { name: 'ytd_dr_ly', type: 'decimal', required: false, description: 'YTD debits last year' },
+      { name: 'ytd_cr_ty', type: 'decimal', required: false, description: 'YTD credits this year' },
+      { name: 'ytd_cr_ly', type: 'decimal', required: false, description: 'YTD credits last year' }
+    ],
+    
+    'Custod': [
+      { name: 'Entity', type: 'string', required: true, description: 'Entity identifier' },
+      { name: 'Name', type: 'string', required: false, description: 'Custodian name' },
+      { name: 'Dept', type: 'string', required: false, description: 'Department' },
+      { name: 'Attn', type: 'string', required: false, description: 'Attention line' },
+      { name: 'Addr1', type: 'string', required: false, description: 'Address line 1' },
+      { name: 'Addr2', type: 'string', required: false, description: 'Address line 2' },
+      { name: 'City', type: 'string', required: false, description: 'City' },
+      { name: 'State', type: 'string', required: false, description: 'State/Province' },
+      { name: 'Zip', type: 'string', required: false, description: 'ZIP/Postal code' },
+      { name: 'DtcAgent', type: 'string', required: false, description: 'DTC agent number' },
+      { name: 'EntityType', type: 'string', required: false, description: 'Entity type classification' },
+      { name: 'Hash', type: 'decimal', required: false, description: 'Hash value for validation' }
+    ],
+    
+    'Actype': [
+      { name: 'Actype', type: 'string', required: true, description: 'Account type code' },
+      { name: 'Name', type: 'string', required: false, description: 'Account type name' },
+      { name: 'Hash', type: 'decimal', required: false, description: 'Hash value for validation' }
+    ],
+    
+    // Additional comprehensive model definitions for other major models
+    'Opnpos': [
+      { name: 'fund', type: 'string', required: true, description: 'Fund identifier' },
+      { name: 'tkr', type: 'string', required: true, description: 'Security ticker' },
+      { name: 'qty', type: 'decimal', required: false, description: 'Position quantity' },
+      { name: 'cost_basis', type: 'decimal', required: false, description: 'Cost basis' },
+      { name: 'market_value', type: 'decimal', required: false, description: 'Current market value' },
+      { name: 'unrealized_gl', type: 'decimal', required: false, description: 'Unrealized gain/loss' }
+    ],
+    
+    'Income': [
+      { name: 'fund', type: 'string', required: true, description: 'Fund identifier' },
+      { name: 'tkr', type: 'string', required: false, description: 'Security ticker' },
+      { name: 'income_type', type: 'string', required: false, description: 'Type of income' },
+      { name: 'amount', type: 'decimal', required: false, description: 'Income amount' },
+      { name: 'pay_date', type: 'DateTime', required: false, description: 'Payment date' },
+      { name: 'record_date', type: 'DateTime', required: false, description: 'Record date' }
+    ],
+    
+    'Unsetl': [
+      { name: 'fund', type: 'string', required: true, description: 'Fund identifier' },
+      { name: 'tkr', type: 'string', required: false, description: 'Security ticker' },
+      { name: 'trade_date', type: 'DateTime', required: false, description: 'Trade date' },
+      { name: 'settlement_date', type: 'DateTime', required: false, description: 'Expected settlement date' },
+      { name: 'amount', type: 'decimal', required: false, description: 'Transaction amount' },
+      { name: 'status', type: 'string', required: false, description: 'Settlement status' }
+    ],
+    
+    // Default fallback for models without specific definitions
+    'default': [
+      { name: 'id', type: 'string', required: true, description: 'Primary identifier' },
+      { name: 'name', type: 'string', required: false, description: 'Display name' },
+      { name: 'description', type: 'string', required: false, description: 'Description' },
+      { name: 'created_date', type: 'DateTime', required: false, description: 'Creation date' },
+      { name: 'modified_date', type: 'DateTime', required: false, description: 'Last modification date' },
+      { name: 'status', type: 'string', required: false, description: 'Record status' }
     ]
   };
 
