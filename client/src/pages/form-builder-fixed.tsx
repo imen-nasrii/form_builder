@@ -708,6 +708,8 @@ function FieldComponent({
         field={field} 
         onSelect={onSelect} 
         onRemove={onRemove} 
+        onMoveUp={onMoveUp}
+        onMoveDown={onMoveDown}
         isSelected={isSelected}
         addField={addField}
         isExpanded={isExpanded}
@@ -716,6 +718,7 @@ function FieldComponent({
         selectedField={selectedField}
         setSelectedField={setSelectedField}
         removeChildField={removeChildField}
+        updateFieldInFormData={updateFieldInFormData}
       />
     );
   }
@@ -726,169 +729,15 @@ function FieldComponent({
 
   // Special rendering for MODELVIEWER
   if (field.Type === 'MODELVIEWER') {
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [selectedModel, setSelectedModel] = useState<string>(field.Entity || '');
-    const [displayModel, setDisplayModel] = useState<string>(field.Entity || '');
-
-    const { data: modelsData, isLoading: isModelsLoading } = useQuery({
-      queryKey: ['/api/models'],
-      enabled: isDialogOpen
-    });
-
     return (
-      <>
-        <div
-          onClick={onSelect}
-          className={`p-3 border-2 rounded-lg cursor-pointer transition-all ${
-            isSelected
-              ? 'border-blue-500 bg-blue-50'
-              : 'border-gray-200 hover:border-gray-300 bg-white'
-          }`}
-        >
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center space-x-2">
-              <Database className="w-4 h-4 text-emerald-600" />
-              <span className="font-medium text-sm">Model Viewer</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onMoveUp();
-                }}
-                className="p-1 h-6 w-6 text-gray-400 hover:text-blue-500"
-                title="Move up"
-              >
-                <ChevronUp className="w-3 h-3" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onMoveDown();
-                }}
-                className="p-1 h-6 w-6 text-gray-400 hover:text-blue-500"
-                title="Move down"
-              >
-                <ChevronDown className="w-3 h-3" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onRemove();
-                }}
-                className="p-1 h-6 w-6 text-gray-400 hover:text-red-500"
-                title="Remove"
-              >
-                <Trash2 className="w-3 h-3" />
-              </Button>
-            </div>
-          </div>
-          
-          <div className="mb-3">
-            {displayModel ? (
-              <div className="p-2 bg-green-50 border border-green-200 rounded">
-                <div className="flex items-center text-sm text-green-800">
-                  <Database className="w-4 h-4 mr-2" />
-                  <span className="font-medium">Selected Model:</span>
-                  <span className="ml-1 font-semibold">{displayModel}</span>
-                </div>
-              </div>
-            ) : (
-              <div className="text-xs text-gray-500">
-                No model selected
-              </div>
-            )}
-          </div>
-          
-          <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsDialogOpen(true);
-            }}
-            size="sm"
-            variant="outline"
-            className="w-full"
-          >
-            <Database className="w-4 h-4 mr-2" />
-            {field.Entity ? 'Change Model' : 'Select Model'}
-          </Button>
-        </div>
-
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>Select Model</DialogTitle>
-            </DialogHeader>
-            
-            <div className="py-4">
-              <Label className="text-sm font-medium">Select Model/Table</Label>
-              
-              {isModelsLoading ? (
-                <div className="text-center py-8">
-                  <div className="animate-spin h-6 w-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
-                  <p className="text-sm mt-2">Loading models...</p>
-                </div>
-              ) : (
-                <div className="mt-2 space-y-2 max-h-64 overflow-y-auto">
-                  {((modelsData as any)?.models || []).map((model: any) => (
-                    <button
-                      key={model.name}
-                      onClick={() => setSelectedModel(model.name)}
-                      className={`w-full text-left p-3 rounded border transition-colors ${
-                        selectedModel === model.name
-                          ? 'bg-blue-100 border-blue-300 text-blue-900'
-                          : 'hover:bg-gray-50 border-gray-200'
-                      }`}
-                    >
-                      <div className="font-medium">{model.name}</div>
-                      <div className="text-xs text-gray-500">
-                        {model.displayName}
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              )}
-
-              {selectedModel && (
-                <div className="mt-3 p-2 rounded bg-green-50 text-green-800">
-                  <div className="flex items-center text-sm">
-                    <Database className="w-4 h-4 mr-2" />
-                    Selected: {selectedModel}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="flex justify-end gap-3 pt-4 border-t">
-              <Button
-                variant="outline"
-                onClick={() => setIsDialogOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={() => {
-                  if (selectedModel) {
-                    field.Entity = selectedModel;
-                    setDisplayModel(selectedModel);
-                    setIsDialogOpen(false);
-                  }
-                }}
-                disabled={!selectedModel}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                Select Model
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-      </>
+      <ModelViewerComponent
+        field={field}
+        isSelected={isSelected}
+        onSelect={onSelect}
+        onRemove={onRemove}
+        isDarkMode={isDarkMode}
+        updateField={updateFieldInFormData}
+      />
     );
   }
 
@@ -968,6 +817,8 @@ function GroupField({
   field: FormField;
   onSelect: () => void;
   onRemove: () => void;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
   isSelected: boolean;
   addField: (type: string, groupId?: string) => void;
   isExpanded: boolean;
@@ -976,6 +827,7 @@ function GroupField({
   selectedField: FormField | null;
   setSelectedField: (field: FormField | null) => void;
   removeChildField: (groupId: string, childFieldId: string) => void;
+  updateFieldInFormData: (fieldId: string, updates: Partial<FormField>) => void;
 }) {
   return (
     <div
@@ -1003,17 +855,41 @@ function GroupField({
             {(field.ChildFields || []).length} items
           </div>
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={(e) => {
-            e.stopPropagation();
-            onRemove();
-          }}
-          className={`p-1 h-6 w-6 ${isDarkMode ? 'text-gray-400 hover:text-red-400' : 'text-gray-400 hover:text-red-500'}`}
-        >
-          <Trash2 className="w-3 h-3" />
-        </Button>
+        <div className="flex items-center space-x-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onMoveUp();
+            }}
+            className={`p-1 h-6 w-6 ${isDarkMode ? 'text-gray-400 hover:text-blue-400' : 'text-gray-400 hover:text-blue-500'}`}
+          >
+            <ChevronUp className="w-3 h-3" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onMoveDown();
+            }}
+            className={`p-1 h-6 w-6 ${isDarkMode ? 'text-gray-400 hover:text-blue-400' : 'text-gray-400 hover:text-blue-500'}`}
+          >
+            <ChevronDown className="w-3 h-3" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemove();
+            }}
+            className={`p-1 h-6 w-6 ${isDarkMode ? 'text-gray-400 hover:text-red-400' : 'text-gray-400 hover:text-red-500'}`}
+          >
+            <Trash2 className="w-3 h-3" />
+          </Button>
+        </div>
       </div>
 
       {isExpanded && (
@@ -3398,6 +3274,7 @@ export default function FormBuilderFixed() {
                       selectedField={selectedField}
                       setSelectedField={setSelectedField}
                       removeChildField={removeChildField}
+                      updateFieldInFormData={updateFieldInFormData}
                     />
                   ))}
                 </div>
