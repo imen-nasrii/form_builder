@@ -3047,30 +3047,30 @@ export default function FormBuilderFixed() {
                   className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
                 >
                   <Users className="w-4 h-4 mr-2" />
-                  Collaborer ({collaborators.length})
+                  Collaborate ({collaborators.length})
                 </Button>
               </DialogTrigger>
               <DialogContent className={isDarkMode ? 'bg-gray-800 border-gray-700' : ''}>
                 <DialogHeader>
-                  <DialogTitle className={isDarkMode ? 'text-white' : ''}>Gestion des Collaborateurs</DialogTitle>
+                  <DialogTitle className={isDarkMode ? 'text-white' : ''}>Manage Collaborators</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div className="flex space-x-2">
                     <Input
-                      placeholder="Email du collaborateur"
+                      placeholder="Collaborator email"
                       value={collaboratorEmail}
                       onChange={(e) => setCollaboratorEmail(e.target.value)}
                       className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
                     />
                     <Button onClick={addCollaborator} size="sm">
                       <Mail className="w-4 h-4 mr-2" />
-                      Inviter
+                      Invite
                     </Button>
                   </div>
                   
                   {collaborators.length > 0 && (
                     <div className="space-y-2">
-                      <h4 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Collaborateurs actifs:</h4>
+                      <h4 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Active Collaborators:</h4>
                       {collaborators.map((email, index) => (
                         <div key={index} className={`flex items-center justify-between p-2 rounded border ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50'}`}>
                           <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{email}</span>
@@ -3106,7 +3106,7 @@ export default function FormBuilderFixed() {
               disabled={saveFormMutation.isPending}
             >
               <Save className="w-4 h-4 mr-2" />
-              {saveFormMutation.isPending ? 'Sauvegarde...' : 'Sauvegarder'}
+              {saveFormMutation.isPending ? 'Saving...' : 'Save'}
             </Button>
           </div>
         </div>
