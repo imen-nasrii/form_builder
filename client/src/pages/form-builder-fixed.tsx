@@ -1358,7 +1358,7 @@ function PropertiesPanel({ field, onUpdate }: {
                 id="field-groupTitle"
                 value={field.Label}
                 onChange={(e) => onUpdate({ Label: e.target.value })}
-                placeholder="Titre du groupe"
+                placeholder="Group title"
                 className="text-sm"
               />
             </div>
@@ -2417,7 +2417,7 @@ export default function FormBuilderFixed() {
 
   // Create new form function
   const createNewForm = () => {
-    if (confirm('Êtes-vous sûr de vouloir créer un nouveau formulaire ? Les modifications non sauvegardées seront perdues.')) {
+    if (confirm('Are you sure you want to create a new form? Unsaved changes will be lost.')) {
       setFormData({
         id: null,
         menuId: `FORM_${Date.now()}`,
@@ -2741,7 +2741,7 @@ export default function FormBuilderFixed() {
                       }
                     }}>
                       <Code className="w-4 h-4 mr-2" />
-                      Ajouter depuis JSON
+                      Add from JSON
                     </Button>
                   </TabsContent>
                   
@@ -2968,7 +2968,7 @@ export default function FormBuilderFixed() {
                               className={`h-20 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
                             />
                             <p className={`text-xs mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                              Une option par ligne
+                              One option per line
                             </p>
                           </div>
                         </div>
@@ -2986,7 +2986,7 @@ export default function FormBuilderFixed() {
                           disabled={componentCreationStep === 1}
                           className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
                         >
-                          Précédent
+                          Previous
                         </Button>
                         
                         {componentCreationStep < 4 ? (
@@ -2994,7 +2994,7 @@ export default function FormBuilderFixed() {
                             onClick={() => setComponentCreationStep(componentCreationStep + 1)}
                             disabled={componentCreationStep === 1 && (!newComponentConfig.name || !newComponentConfig.label)}
                           >
-                            Suivant
+                            Next
                           </Button>
                         ) : (
                           <Button
@@ -3002,7 +3002,7 @@ export default function FormBuilderFixed() {
                             disabled={!newComponentConfig.name || !newComponentConfig.label}
                           >
                             <Package className="w-4 h-4 mr-2" />
-                            Créer le Composant
+                            Create Component
                           </Button>
                         )}
                       </div>
@@ -3013,7 +3013,7 @@ export default function FormBuilderFixed() {
                 
                 {customComponents.length > 0 && (
                   <div className="mt-6">
-                    <h4 className={`font-medium mb-3 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Composants Personnalisés:</h4>
+                    <h4 className={`font-medium mb-3 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Custom Components:</h4>
                     <div className="space-y-2 max-h-32 overflow-y-auto">
                       {customComponents.map((component, index) => (
                         <div key={index} className={`flex items-center justify-between p-2 rounded border ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50'}`}>
