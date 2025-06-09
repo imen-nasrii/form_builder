@@ -653,6 +653,107 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get table data from GraphQL database
+  app.get('/api/table-data/:tableName', requireAuth, async (req: any, res) => {
+    try {
+      const { tableName } = req.params;
+      
+      // Map table names to GraphQL query endpoints based on your schema
+      const queryMap: { [key: string]: string } = {
+        'Secrty': 'AllTickers',
+        'Fund': 'AllFunds', 
+        'Alias': 'AllAliases',
+        'Glprm': 'AllGlprm',
+        'Seccat': 'AllSecCat',
+        'Secgrp': 'AllSecGrp',
+        'Broker': 'AllBrokers',
+        'Reason': 'AllReasons',
+        'Exchng': 'AllExchanges',
+        'Subunit': 'AllSubunits',
+        'Source': 'AllSources'
+      };
+
+      const queryName = queryMap[tableName];
+      if (!queryName) {
+        return res.status(400).json({ 
+          success: false,
+          message: `Invalid table name: ${tableName}` 
+        });
+      }
+
+      // Get field selection based on table type
+      const fieldSelection = getFieldsForTable(tableName);
+      
+      // Create GraphQL query
+      const graphqlQuery = {
+        query: `query { ${queryName} { ${fieldSelection} } }`
+      };
+
+      console.log(`Fetching data for table: ${tableName} using query: ${queryName}`);
+      
+      // For now, return the query structure and column information
+      // In a real implementation, you would make the GraphQL request here
+      res.json({ 
+        success: true, 
+        tableName,
+        queryName,
+        columns: getColumnsForTable(tableName),
+        graphqlQuery: graphqlQuery.query,
+        message: `Table data endpoint ready for ${tableName}. Connect to your GraphQL endpoint to fetch real data.`,
+        // Real implementation would include:
+        // const response = await fetch('YOUR_GRAPHQL_ENDPOINT', {
+        //   method: 'POST',
+        //   headers: { 'Content-Type': 'application/json' },
+        //   body: JSON.stringify(graphqlQuery)
+        // });
+        // const result = await response.json();
+        // data: result.data[queryName]
+        data: [] // Will contain real data from GraphQL
+      });
+      
+    } catch (error) {
+      console.error('Error fetching table data:', error);
+      res.status(500).json({ 
+        success: false,
+        message: 'Failed to fetch table data' 
+      });
+    }
+  });
+
+  function getFieldsForTable(tableName: string): string {
+    const fieldMap: { [key: string]: string } = {
+      'Secrty': 'tkr tkr_DESC currency country seccat price_ID face_VALUE outshs rating ytm inactive',
+      'Fund': 'fund acnam1 base_CURR domicile inactive legal nav_DECS share_DECS',
+      'Alias': 'aliasname descr criteria user_ID',
+      'Glprm': 'accdivdate accdivtime accdivuser accdivweekend',
+      'Seccat': 'seccat', // Add description field if available
+      'Secgrp': 'secgrp', // Add description field if available  
+      'Broker': 'broker', // Add description field if available
+      'Reason': 'reason', // Add description field if available
+      'Exchng': 'exchng', // Add description field if available
+      'Subunit': 'subunit', // Add description field if available
+      'Source': 'source' // Add description field if available
+    };
+    return fieldMap[tableName] || 'id';
+  }
+
+  function getColumnsForTable(tableName: string): string[] {
+    const columnMap: { [key: string]: string[] } = {
+      'Secrty': ['tkr', 'tkr_DESC', 'currency', 'country', 'seccat', 'price_ID', 'face_VALUE', 'outshs', 'rating', 'ytm', 'inactive'],
+      'Fund': ['fund', 'acnam1', 'base_CURR', 'domicile', 'inactive', 'legal', 'nav_DECS', 'share_DECS'],
+      'Alias': ['aliasname', 'descr', 'criteria', 'user_ID'],
+      'Glprm': ['accdivdate', 'accdivtime', 'accdivuser', 'accdivweekend'],
+      'Seccat': ['seccat'],
+      'Secgrp': ['secgrp'],
+      'Broker': ['broker'], 
+      'Reason': ['reason'],
+      'Exchng': ['exchng'],
+      'Subunit': ['subunit'],
+      'Source': ['source']
+    };
+    return columnMap[tableName] || ['id'];
+  }
+
   // Cleanup expired tokens periodically
   setInterval(async () => {
     try {
