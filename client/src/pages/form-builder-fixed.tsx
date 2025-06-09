@@ -526,14 +526,16 @@ function ModelViewerComponent({
                     ))
                   ) : (
                     <div className={`text-center py-8 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                      <p>No models found</p>
+                      <p>No models available</p>
+                      <p className="text-xs mt-1">Check your GraphQL endpoint configuration</p>
                     </div>
                   )
                 ) : (
                   <div className={`text-center py-8 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                    <p>Failed to load models</p>
+                    <p>Unable to load models</p>
+                    <p className="text-xs mt-1">Please verify GraphQL connection</p>
                     {modelsData && (modelsData as any).error && (
-                      <p className="text-xs mt-2">{(modelsData as any).error}</p>
+                      <p className="text-xs mt-2 text-red-400">{(modelsData as any).error}</p>
                     )}
                   </div>
                 )}
