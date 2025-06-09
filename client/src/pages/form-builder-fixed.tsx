@@ -410,36 +410,6 @@ function DataModelComponent({
   const [modelAttributes, setModelAttributes] = useState<any[]>([]);
   const [isLoadingAttributes, setIsLoadingAttributes] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
-
-  // Model categories for filtering
-  const modelCategories = [
-    'All',
-    'Core System',
-    'Financial Core',
-    'Market Data',
-    'Reference Data',
-    'Security Classifications',
-    'Fund Organization',
-    'Accounting & GL',
-    'Expense Management',
-    'Income & Distributions',
-    'OID & Amortization',
-    'Tax Processing',
-    'Trading & Settlements',
-    'Compliance & Risk',
-    'Reporting & Analytics',
-    'System Administration',
-    'User Interface',
-    'Data Management',
-    'Messaging',
-    'Job Management',
-    'Trading & Brokers',
-    'Options & Derivatives',
-    'Swaps & Fixed Income',
-    'Legal & Regulatory',
-    'Advanced Analytics'
-  ];
 
   // Complete list of ALL MfactModels alphabetically organized like .cs files
   const availableModels = [
@@ -623,12 +593,11 @@ function DataModelComponent({
     { name: 'Yields', description: 'Yield calculations and return analysis', category: 'Market Data' }
   ];
 
-  // Filter models based on search term and category
+  // Filter models based on search term only
   const filteredModels = availableModels.filter(model => {
     const matchesSearch = model.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          model.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'All' || model.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+    return matchesSearch;
   });
 
   // Comprehensive model attribute definitions based on actual C# models from MfactModels
@@ -1398,20 +1367,6 @@ function DataModelComponent({
                     className={`pl-10 text-sm ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
                   />
                 </div>
-                
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className={`w-full px-3 py-2 text-sm border rounded-md ${
-                    isDarkMode 
-                      ? 'bg-gray-700 border-gray-600 text-white' 
-                      : 'bg-white border-gray-300'
-                  }`}
-                >
-                  {modelCategories.map(category => (
-                    <option key={category} value={category}>{category}</option>
-                  ))}
-                </select>
                 
                 <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                   {filteredModels.length} of {availableModels.length} models
