@@ -113,8 +113,8 @@ export default function Dashboard() {
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [importedFormData, setImportedFormData] = useState<any>(null);
   const [formConfig, setFormConfig] = useState({
-    menuId: `ACCADJ`,
-    label: "Étiquette du formulaire",
+    menuId: `FORM_${Date.now()}`,
+    label: `Form ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(',', '')}`,
     formWidth: "Medium (700px)",
     layout: "PROCESS"
   });
@@ -273,7 +273,7 @@ export default function Dashboard() {
 
       const formData = {
         menuId: `IMPORTED_${Date.now()}`,
-        label: "Imported Form",
+        label: `Imported Form ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(',', '')}`,
         formWidth: "700px",
         layout: "PROCESS",
         formDefinition: JSON.stringify(formDefinition),
@@ -422,7 +422,18 @@ export default function Dashboard() {
               <h2 className="text-2xl font-bold text-slate-900">My Forms</h2>
               <p className="text-slate-600">Create and manage your custom forms</p>
             </div>
-            <Dialog open={showNewFormDialog} onOpenChange={setShowNewFormDialog}>
+            <Dialog open={showNewFormDialog} onOpenChange={(open) => {
+              setShowNewFormDialog(open);
+              if (open) {
+                // Generate fresh default values when dialog opens
+                setFormConfig({
+                  menuId: `FORM_${Date.now()}`,
+                  label: `Form ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(',', '')}`,
+                  formWidth: "Medium (700px)",
+                  layout: "PROCESS"
+                });
+              }
+            }}>
               <DialogTrigger asChild>
                 <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
                   <Plus className="w-4 h-4 mr-2" />
