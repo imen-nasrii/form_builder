@@ -661,7 +661,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Map table names to GraphQL query endpoints based on your schema
       const queryMap: { [key: string]: string } = {
         'Secrty': 'AllTickers',
-        'Fund': 'AllFunds', 
+        'Fund': 'AllFunds',
+        'FundCg': 'AllFunds', // FundCg maps to Fund table
         'Alias': 'AllAliases',
         'Glprm': 'AllGlprm',
         'Seccat': 'AllSecCat',
@@ -670,7 +671,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         'Reason': 'AllReasons',
         'Exchng': 'AllExchanges',
         'Subunit': 'AllSubunits',
-        'Source': 'AllSources'
+        'Source': 'AllSources',
+        'Aatrr': 'AllSources' // Map to available endpoint for now
       };
 
       const queryName = queryMap[tableName];
@@ -724,15 +726,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const fieldMap: { [key: string]: string } = {
       'Secrty': 'tkr tkr_DESC currency country seccat price_ID face_VALUE outshs rating ytm inactive',
       'Fund': 'fund acnam1 base_CURR domicile inactive legal nav_DECS share_DECS',
+      'FundCg': 'fund acnam1 base_CURR domicile inactive legal nav_DECS share_DECS',
       'Alias': 'aliasname descr criteria user_ID',
       'Glprm': 'accdivdate accdivtime accdivuser accdivweekend',
-      'Seccat': 'seccat', // Add description field if available
-      'Secgrp': 'secgrp', // Add description field if available  
-      'Broker': 'broker', // Add description field if available
-      'Reason': 'reason', // Add description field if available
-      'Exchng': 'exchng', // Add description field if available
-      'Subunit': 'subunit', // Add description field if available
-      'Source': 'source' // Add description field if available
+      'Seccat': 'seccat',
+      'Secgrp': 'secgrp',
+      'Broker': 'broker',
+      'Reason': 'reason',
+      'Exchng': 'exchng',
+      'Subunit': 'subunit',
+      'Source': 'source',
+      'Aatrr': 'source'
     };
     return fieldMap[tableName] || 'id';
   }
@@ -741,6 +745,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const columnMap: { [key: string]: string[] } = {
       'Secrty': ['tkr', 'tkr_DESC', 'currency', 'country', 'seccat', 'price_ID', 'face_VALUE', 'outshs', 'rating', 'ytm', 'inactive'],
       'Fund': ['fund', 'acnam1', 'base_CURR', 'domicile', 'inactive', 'legal', 'nav_DECS', 'share_DECS'],
+      'FundCg': ['fund', 'acnam1', 'base_CURR', 'domicile', 'inactive', 'legal', 'nav_DECS', 'share_DECS'],
       'Alias': ['aliasname', 'descr', 'criteria', 'user_ID'],
       'Glprm': ['accdivdate', 'accdivtime', 'accdivuser', 'accdivweekend'],
       'Seccat': ['seccat'],
@@ -749,7 +754,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       'Reason': ['reason'],
       'Exchng': ['exchng'],
       'Subunit': ['subunit'],
-      'Source': ['source']
+      'Source': ['source'],
+      'Aatrr': ['source']
     };
     return columnMap[tableName] || ['id'];
   }
