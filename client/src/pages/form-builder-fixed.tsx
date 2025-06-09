@@ -394,13 +394,15 @@ function ModelViewerComponent({
   isSelected, 
   onSelect, 
   onRemove, 
-  isDarkMode 
+  isDarkMode,
+  updateField
 }: {
   field: FormField;
   isSelected: boolean;
   onSelect: () => void;
   onRemove: () => void;
   isDarkMode: boolean;
+  updateField: (fieldId: string, updates: Partial<FormField>) => void;
 }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedModel, setSelectedModel] = useState<string>(field.Entity || '');
@@ -566,7 +568,7 @@ function ModelViewerComponent({
             <Button
               onClick={() => {
                 if (selectedModel) {
-                  field.Entity = selectedModel;
+                  updateField(field.Id, { Entity: selectedModel });
                   setIsDialogOpen(false);
                 }
               }}
@@ -682,7 +684,8 @@ function FieldComponent({
   isDarkMode,
   selectedField,
   setSelectedField,
-  removeChildField
+  removeChildField,
+  updateFieldInFormData
 }: { 
   field: FormField; 
   onSelect: () => void;
@@ -695,6 +698,7 @@ function FieldComponent({
   selectedField: FormField | null;
   setSelectedField: (field: FormField | null) => void;
   removeChildField: (groupId: string, childFieldId: string) => void;
+  updateFieldInFormData: (fieldId: string, updates: Partial<FormField>) => void;
 }) {
   const [isExpanded, setIsExpanded] = useState(true);
   
