@@ -404,6 +404,7 @@ function ModelViewerComponent({
 }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedModel, setSelectedModel] = useState<string>(field.Entity || '');
+  const [isDataViewOpen, setIsDataViewOpen] = useState(false);
 
   const { data: modelsData, isLoading: isModelsLoading } = useQuery({
     queryKey: ['/api/models'],
@@ -414,87 +415,150 @@ function ModelViewerComponent({
     setSelectedModel(modelName);
   };
 
-  return (
-    <div
-      onClick={onSelect}
-      className={`p-3 border-2 rounded-lg cursor-pointer transition-all ${
-        isSelected
-          ? 'border-blue-500 bg-blue-50'
-          : 'border-gray-200 hover:border-gray-300 bg-white'
-      }`}
-    >
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center space-x-2">
-          <Database className="w-4 h-4 text-emerald-600" />
-          <span className="font-medium text-sm">Model Viewer</span>
-        </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={(e) => {
-            e.stopPropagation();
-            onRemove();
-          }}
-          className="p-1 h-6 w-6 text-gray-400 hover:text-red-500"
-        >
-          <Trash2 className="w-3 h-3" />
-        </Button>
-      </div>
-      
-      <div className="text-xs text-gray-500 mb-3">
-        {field.Entity ? `Model: ${field.Entity}` : 'No model selected'}
-      </div>
-      
-      <Button
-        onClick={(e) => {
-          e.stopPropagation();
-          setIsDialogOpen(true);
-        }}
-        size="sm"
-        variant="outline"
-        className="w-full"
-      >
-        <Database className="w-4 h-4 mr-2" />
-        {field.Entity ? 'Change Model' : 'Select Model'}
-      </Button>
+  // Database schema tables based on GraphQL schema
+  const availableModels = [
+    { name: 'Secrty', displayName: 'Securities - Financial instruments and tickers' },
+    { name: 'Fund', displayName: 'Funds - Investment fund information' },
+    { name: 'Alias', displayName: 'Aliases - Query aliases and criteria' },
+    { name: 'Glprm', displayName: 'Global Parameters - System configuration' },
+    { name: 'Seccat', displayName: 'Security Categories' },
+    { name: 'Secgrp', displayName: 'Security Groups' },
+    { name: 'Broker', displayName: 'Brokers - Trading entities' },
+    { name: 'Reason', displayName: 'Reason Codes' },
+    { name: 'Exchng', displayName: 'Exchanges - Trading venues' },
+    { name: 'Subunit', displayName: 'Subunits - Organizational units' },
+    { name: 'Source', displayName: 'Data Sources' }
+  ];
 
+  // Sample data structure matching GraphQL schema
+  const getModelData = (modelType: string) => {
+    const sampleData = {
+      Secrty: [
+        { tkr: 'AAPL', tkr_DESC: 'Apple Inc.', currency: 'USD', country: 'US', seccat: 'EQUITY', price_ID: 'AAPL_US', face_VALUE: 1.0, outshs: 15000000000, rating: 'AAA', ytm: 2.5 },
+        { tkr: 'MSFT', tkr_DESC: 'Microsoft Corporation', currency: 'USD', country: 'US', seccat: 'EQUITY', price_ID: 'MSFT_US', face_VALUE: 1.0, outshs: 7500000000, rating: 'AA+', ytm: 2.3 },
+        { tkr: 'GOOGL', tkr_DESC: 'Alphabet Inc.', currency: 'USD', country: 'US', seccat: 'EQUITY', price_ID: 'GOOGL_US', face_VALUE: 1.0, outshs: 13000000000, rating: 'AA', ytm: 2.7 },
+        { tkr: 'TSLA', tkr_DESC: 'Tesla Inc.', currency: 'USD', country: 'US', seccat: 'EQUITY', price_ID: 'TSLA_US', face_VALUE: 1.0, outshs: 3200000000, rating: 'A+', ytm: 3.1 },
+        { tkr: 'AMZN', tkr_DESC: 'Amazon.com Inc.', currency: 'USD', country: 'US', seccat: 'EQUITY', price_ID: 'AMZN_US', face_VALUE: 1.0, outshs: 10300000000, rating: 'AA', ytm: 2.4 }
+      ],
+      Fund: [
+        { fund: 'EQUITY_FUND_01', acnam1: 'Global Equity Fund', base_CURR: 'USD', domicile: 'US', inactive: 'N', legal: 1, nav_DECS: 4, share_DECS: 6 },
+        { fund: 'BOND_FUND_01', acnam1: 'Government Bond Fund', base_CURR: 'USD', domicile: 'US', inactive: 'N', legal: 1, nav_DECS: 4, share_DECS: 6 },
+        { fund: 'MIXED_FUND_01', acnam1: 'Balanced Mixed Fund', base_CURR: 'EUR', domicile: 'IE', inactive: 'N', legal: 1, nav_DECS: 4, share_DECS: 6 },
+        { fund: 'EMERGING_FUND_01', acnam1: 'Emerging Markets Fund', base_CURR: 'USD', domicile: 'LU', inactive: 'N', legal: 1, nav_DECS: 4, share_DECS: 6 }
+      ],
+      Alias: [
+        { aliasname: 'US_EQUITY', descr: 'US Equity Securities', criteria: 'country=US AND seccat=EQUITY', user_ID: 'admin' },
+        { aliasname: 'FIXED_INCOME', descr: 'Fixed Income Securities', criteria: 'seccat=BOND', user_ID: 'trader1' },
+        { aliasname: 'LARGE_CAP', descr: 'Large Cap Stocks', criteria: 'outshs>10000000000', user_ID: 'analyst1' },
+        { aliasname: 'HIGH_YIELD', descr: 'High Yield Bonds', criteria: 'rating<BBB', user_ID: 'portfolio_mgr' }
+      ]
+    };
+    return sampleData[modelType as keyof typeof sampleData] || [];
+  };
+
+  const getModelColumns = (modelType: string) => {
+    const columns = {
+      Secrty: ['tkr', 'tkr_DESC', 'currency', 'country', 'seccat', 'price_ID', 'face_VALUE', 'outshs', 'rating', 'ytm'],
+      Fund: ['fund', 'acnam1', 'base_CURR', 'domicile', 'inactive', 'legal', 'nav_DECS', 'share_DECS'],
+      Alias: ['aliasname', 'descr', 'criteria', 'user_ID']
+    };
+    return columns[modelType as keyof typeof columns] || [];
+  };
+
+  return (
+    <>
+      <div
+        onClick={onSelect}
+        className={`p-3 border-2 rounded-lg cursor-pointer transition-all ${
+          isSelected
+            ? isDarkMode ? 'border-blue-400 bg-blue-900/20' : 'border-blue-500 bg-blue-50'
+            : isDarkMode ? 'border-gray-600 hover:border-gray-500 bg-gray-800' : 'border-gray-200 hover:border-gray-300 bg-white'
+        }`}
+      >
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center space-x-2">
+            <Database className="w-4 h-4 text-emerald-600" />
+            <span className={`font-medium text-sm ${isDarkMode ? 'text-white' : ''}`}>Model Viewer</span>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemove();
+            }}
+            className="p-1 h-6 w-6 text-gray-400 hover:text-red-500"
+          >
+            <Trash2 className="w-3 h-3" />
+          </Button>
+        </div>
+        
+        <div className={`text-xs mb-3 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+          {field.Entity ? `Model: ${field.Entity}` : 'No model selected'}
+        </div>
+        
+        <div className="space-y-2">
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsDialogOpen(true);
+            }}
+            size="sm"
+            variant="outline"
+            className={`w-full ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+          >
+            <Database className="w-4 h-4 mr-2" />
+            {field.Entity ? 'Change Model' : 'Select Model'}
+          </Button>
+
+          {field.Entity && (
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsDataViewOpen(true);
+              }}
+              size="sm"
+              variant="outline"
+              className={`w-full ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+            >
+              <Table className="w-4 h-4 mr-2" />
+              View Database Table
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* Model Selection Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className={`max-w-md ${isDarkMode ? 'bg-gray-800 border-gray-600' : ''}`}>
           <DialogHeader>
-            <DialogTitle>Select Model</DialogTitle>
+            <DialogTitle className={isDarkMode ? 'text-white' : ''}>Select Database Model</DialogTitle>
           </DialogHeader>
           
           <div className="py-4">
-            <Label className="text-sm font-medium">Select Model/Table</Label>
+            <Label className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : ''}`}>Select Model/Table</Label>
             
-            {isModelsLoading ? (
-              <div className="text-center py-8">
-                <div className="animate-spin h-6 w-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
-                <p className="text-sm mt-2">Loading models...</p>
-              </div>
-            ) : (
-              <div className="mt-2 space-y-2 max-h-64 overflow-y-auto">
-                {((modelsData as any)?.models || []).map((model: any) => (
-                  <button
-                    key={model.name}
-                    onClick={() => handleModelSelect(model.name)}
-                    className={`w-full text-left p-3 rounded border transition-colors ${
-                      selectedModel === model.name
-                        ? 'bg-blue-100 border-blue-300 text-blue-900'
-                        : 'hover:bg-gray-50 border-gray-200'
-                    }`}
-                  >
-                    <div className="font-medium">{model.name}</div>
-                    <div className="text-xs text-gray-500">
-                      {model.displayName}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            )}
+            <div className="mt-2 space-y-2 max-h-64 overflow-y-auto">
+              {availableModels.map((model) => (
+                <button
+                  key={model.name}
+                  onClick={() => handleModelSelect(model.name)}
+                  className={`w-full text-left p-3 rounded border transition-colors ${
+                    selectedModel === model.name
+                      ? isDarkMode ? 'bg-blue-900/30 border-blue-400 text-blue-300' : 'bg-blue-100 border-blue-300 text-blue-900'
+                      : isDarkMode ? 'hover:bg-gray-700 border-gray-600 text-gray-300' : 'hover:bg-gray-50 border-gray-200'
+                  }`}
+                >
+                  <div className="font-medium">{model.name}</div>
+                  <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                    {model.displayName}
+                  </div>
+                </button>
+              ))}
+            </div>
 
             {selectedModel && (
-              <div className="mt-3 p-2 rounded bg-green-50 text-green-800">
+              <div className={`mt-3 p-2 rounded ${isDarkMode ? 'bg-green-900/30 text-green-300' : 'bg-green-50 text-green-800'}`}>
                 <div className="flex items-center text-sm">
                   <Database className="w-4 h-4 mr-2" />
                   Selected: {selectedModel}
@@ -507,6 +571,7 @@ function ModelViewerComponent({
             <Button
               variant="outline"
               onClick={() => setIsDialogOpen(false)}
+              className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
             >
               Cancel
             </Button>
@@ -525,7 +590,57 @@ function ModelViewerComponent({
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+
+      {/* Data View Dialog */}
+      <Dialog open={isDataViewOpen} onOpenChange={setIsDataViewOpen}>
+        <DialogContent className={`max-w-6xl max-h-[80vh] ${isDarkMode ? 'bg-gray-800 border-gray-600' : ''}`}>
+          <DialogHeader>
+            <DialogTitle className={isDarkMode ? 'text-white' : ''}>
+              Database Table: {field.Entity}
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="overflow-auto max-h-96">
+            {field.Entity && (
+              <div className={`border rounded-lg ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
+                <table className="w-full text-sm">
+                  <thead className={`${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
+                    <tr>
+                      {getModelColumns(field.Entity).map((column) => (
+                        <th key={column} className={`px-3 py-2 text-left font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                          {column}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className={isDarkMode ? 'text-gray-300' : ''}>
+                    {getModelData(field.Entity).map((row, index) => (
+                      <tr key={index} className={`border-t ${isDarkMode ? 'border-gray-600 hover:bg-gray-700' : 'border-gray-200 hover:bg-gray-50'}`}>
+                        {getModelColumns(field.Entity).map((column) => (
+                          <td key={column} className="px-3 py-2">
+                            {String(row[column as keyof typeof row] || '-')}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+
+          <div className="flex justify-end pt-4 border-t">
+            <Button
+              variant="outline"
+              onClick={() => setIsDataViewOpen(false)}
+              className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
+            >
+              Close
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 
