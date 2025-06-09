@@ -2320,7 +2320,7 @@ export default function FormBuilderFixed() {
     try {
       const config = JSON.parse(jsonConfig);
       if (!config.name || !config.label) {
-        alert('Le nom et le label sont requis dans la configuration JSON');
+        alert('Name and label are required in JSON configuration');
         return;
       }
       
@@ -2336,15 +2336,15 @@ export default function FormBuilderFixed() {
       
       // Check if component already exists
       if (customComponents.some(comp => comp.id === newComponent.id)) {
-        alert('Un composant avec ce nom existe déjà');
+        alert('A component with this name already exists');
         return;
       }
       
       setCustomComponents(prev => [...prev, newComponent]);
-      alert('Composant ajouté avec succès !');
+      alert('Component added successfully!');
     } catch (error) {
       console.error('Invalid JSON configuration:', error);
-      alert('Configuration JSON invalide. Vérifiez la syntaxe.');
+      alert('Invalid JSON configuration. Please check the syntax.');
     }
   };
 
@@ -2700,7 +2700,7 @@ export default function FormBuilderFixed() {
               </DialogTrigger>
               <DialogContent className={`max-w-3xl ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
                 <DialogHeader>
-                  <DialogTitle className={isDarkMode ? 'text-white' : ''}>Assistant de création de composant</DialogTitle>
+                  <DialogTitle className={isDarkMode ? 'text-white' : ''}>Component Creation Assistant</DialogTitle>
                 </DialogHeader>
                 <Tabs defaultValue="json" className="w-full">
                   <TabsList className={`grid w-full grid-cols-2 ${isDarkMode ? 'bg-gray-700' : ''}`}>
@@ -2716,7 +2716,7 @@ export default function FormBuilderFixed() {
                   
                   <TabsContent value="json" className="space-y-4">
                     <div>
-                      <Label className={isDarkMode ? 'text-gray-300' : ''}>Configuration JSON du composant:</Label>
+                      <Label className={isDarkMode ? 'text-gray-300' : ''}>Component JSON Configuration:</Label>
                       <Textarea
                         data-json-input
                         placeholder={`{
@@ -2770,7 +2770,7 @@ export default function FormBuilderFixed() {
                           ))}
                         </div>
                         <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                          Étape {componentCreationStep} sur 4
+                          Step {componentCreationStep} of 4
                         </span>
                       </div>
 
@@ -2778,11 +2778,11 @@ export default function FormBuilderFixed() {
                       {componentCreationStep === 1 && (
                         <div className="space-y-4">
                           <h4 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                            Informations de base
+                            Basic Information
                           </h4>
                           <div className="grid grid-cols-2 gap-4">
                             <div>
-                              <Label className={isDarkMode ? 'text-gray-300' : ''}>Nom du composant</Label>
+                              <Label className={isDarkMode ? 'text-gray-300' : ''}>Component Name</Label>
                               <Input
                                 placeholder="customButton"
                                 value={newComponentConfig.name}
