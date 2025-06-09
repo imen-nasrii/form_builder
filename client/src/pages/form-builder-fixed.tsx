@@ -411,91 +411,16 @@ function ModelViewerComponent({
     enabled: isDialogOpen
   });
 
+  const { data: tableData, isLoading: isTableLoading } = useQuery({
+    queryKey: ['/api/table-data', field.Entity],
+    enabled: isDataViewOpen && !!field.Entity
+  });
+
   const handleModelSelect = (modelName: string) => {
     setSelectedModel(modelName);
   };
 
-  // Database schema tables based on GraphQL schema
-  const availableModels = [
-    { name: 'Secrty', displayName: 'Securities - Financial instruments and tickers' },
-    { name: 'Fund', displayName: 'Funds - Investment fund information' },
-    { name: 'Alias', displayName: 'Aliases - Query aliases and criteria' },
-    { name: 'Glprm', displayName: 'Global Parameters - System configuration' },
-    { name: 'Seccat', displayName: 'Security Categories' },
-    { name: 'Secgrp', displayName: 'Security Groups' },
-    { name: 'Broker', displayName: 'Brokers - Trading entities' },
-    { name: 'Reason', displayName: 'Reason Codes' },
-    { name: 'Exchng', displayName: 'Exchanges - Trading venues' },
-    { name: 'Subunit', displayName: 'Subunits - Organizational units' },
-    { name: 'Source', displayName: 'Data Sources' },
-    { name: 'Actype', displayName: 'Account Types - Account classification' },
-    { name: 'Aatrr', displayName: 'Account Attributes - Account properties' },
-    { name: 'Sector', displayName: 'Sectors - Industry classification' },
-    { name: 'Region', displayName: 'Regions - Geographic areas' }
-  ];
 
-  // Sample data structure matching GraphQL schema
-  const getModelData = (modelType: string) => {
-    const sampleData = {
-      Secrty: [
-        { tkr: 'AAPL', tkr_DESC: 'Apple Inc.', currency: 'USD', country: 'US', seccat: 'EQUITY', price_ID: 'AAPL_US', face_VALUE: 1.0, outshs: 15000000000, rating: 'AAA', ytm: 2.5 },
-        { tkr: 'MSFT', tkr_DESC: 'Microsoft Corporation', currency: 'USD', country: 'US', seccat: 'EQUITY', price_ID: 'MSFT_US', face_VALUE: 1.0, outshs: 7500000000, rating: 'AA+', ytm: 2.3 },
-        { tkr: 'GOOGL', tkr_DESC: 'Alphabet Inc.', currency: 'USD', country: 'US', seccat: 'EQUITY', price_ID: 'GOOGL_US', face_VALUE: 1.0, outshs: 13000000000, rating: 'AA', ytm: 2.7 },
-        { tkr: 'TSLA', tkr_DESC: 'Tesla Inc.', currency: 'USD', country: 'US', seccat: 'EQUITY', price_ID: 'TSLA_US', face_VALUE: 1.0, outshs: 3200000000, rating: 'A+', ytm: 3.1 },
-        { tkr: 'AMZN', tkr_DESC: 'Amazon.com Inc.', currency: 'USD', country: 'US', seccat: 'EQUITY', price_ID: 'AMZN_US', face_VALUE: 1.0, outshs: 10300000000, rating: 'AA', ytm: 2.4 }
-      ],
-      Fund: [
-        { fund: 'EQUITY_FUND_01', acnam1: 'Global Equity Fund', base_CURR: 'USD', domicile: 'US', inactive: 'N', legal: 1, nav_DECS: 4, share_DECS: 6 },
-        { fund: 'BOND_FUND_01', acnam1: 'Government Bond Fund', base_CURR: 'USD', domicile: 'US', inactive: 'N', legal: 1, nav_DECS: 4, share_DECS: 6 },
-        { fund: 'MIXED_FUND_01', acnam1: 'Balanced Mixed Fund', base_CURR: 'EUR', domicile: 'IE', inactive: 'N', legal: 1, nav_DECS: 4, share_DECS: 6 },
-        { fund: 'EMERGING_FUND_01', acnam1: 'Emerging Markets Fund', base_CURR: 'USD', domicile: 'LU', inactive: 'N', legal: 1, nav_DECS: 4, share_DECS: 6 }
-      ],
-      Alias: [
-        { aliasname: 'US_EQUITY', descr: 'US Equity Securities', criteria: 'country=US AND seccat=EQUITY', user_ID: 'admin' },
-        { aliasname: 'FIXED_INCOME', descr: 'Fixed Income Securities', criteria: 'seccat=BOND', user_ID: 'trader1' },
-        { aliasname: 'LARGE_CAP', descr: 'Large Cap Stocks', criteria: 'outshs>10000000000', user_ID: 'analyst1' },
-        { aliasname: 'HIGH_YIELD', descr: 'High Yield Bonds', criteria: 'rating<BBB', user_ID: 'portfolio_mgr' }
-      ],
-      Actype: [
-        { actype: 'EQUITY', descr: 'Equity Account', category: 'TRADING', status: 'ACTIVE', created_DATE: '2024-01-15' },
-        { actype: 'BOND', descr: 'Fixed Income Account', category: 'TRADING', status: 'ACTIVE', created_DATE: '2024-01-20' },
-        { actype: 'CASH', descr: 'Cash Management Account', category: 'SETTLEMENT', status: 'ACTIVE', created_DATE: '2024-02-01' },
-        { actype: 'DERIVATIVE', descr: 'Derivatives Account', category: 'TRADING', status: 'ACTIVE', created_DATE: '2024-02-15' }
-      ],
-      Aatrr: [
-        { attribute: 'RISK_PROFILE', value: 'MODERATE', account_TYPE: 'EQUITY', effective_DATE: '2024-01-01' },
-        { attribute: 'LIMIT_AMOUNT', value: '1000000', account_TYPE: 'TRADING', effective_DATE: '2024-01-01' },
-        { attribute: 'CURRENCY_PREF', value: 'USD', account_TYPE: 'CASH', effective_DATE: '2024-01-01' },
-        { attribute: 'TRADE_APPROVAL', value: 'AUTO', account_TYPE: 'DERIVATIVE', effective_DATE: '2024-01-01' }
-      ],
-      Sector: [
-        { sector: 'TECHNOLOGY', descr: 'Technology Sector', parent_SECTOR: null, industry_COUNT: 45 },
-        { sector: 'HEALTHCARE', descr: 'Healthcare Sector', parent_SECTOR: null, industry_COUNT: 32 },
-        { sector: 'FINANCIALS', descr: 'Financial Services', parent_SECTOR: null, industry_COUNT: 28 },
-        { sector: 'ENERGY', descr: 'Energy Sector', parent_SECTOR: null, industry_COUNT: 15 }
-      ],
-      Region: [
-        { region: 'NORTH_AMERICA', descr: 'North America', country_COUNT: 3, timezone: 'EST' },
-        { region: 'EUROPE', descr: 'Europe', country_COUNT: 27, timezone: 'CET' },
-        { region: 'ASIA_PACIFIC', descr: 'Asia Pacific', country_COUNT: 15, timezone: 'JST' },
-        { region: 'LATIN_AMERICA', descr: 'Latin America', country_COUNT: 8, timezone: 'BRT' }
-      ]
-    };
-    return sampleData[modelType as keyof typeof sampleData] || [];
-  };
-
-  const getModelColumns = (modelType: string) => {
-    const columns = {
-      Secrty: ['tkr', 'tkr_DESC', 'currency', 'country', 'seccat', 'price_ID', 'face_VALUE', 'outshs', 'rating', 'ytm'],
-      Fund: ['fund', 'acnam1', 'base_CURR', 'domicile', 'inactive', 'legal', 'nav_DECS', 'share_DECS'],
-      Alias: ['aliasname', 'descr', 'criteria', 'user_ID'],
-      Actype: ['actype', 'descr', 'category', 'status', 'created_DATE'],
-      Aatrr: ['attribute', 'value', 'account_TYPE', 'effective_DATE'],
-      Sector: ['sector', 'descr', 'parent_SECTOR', 'industry_COUNT'],
-      Region: ['region', 'descr', 'country_COUNT', 'timezone']
-    };
-    return columns[modelType as keyof typeof columns] || [];
-  };
 
   return (
     <>
@@ -570,24 +495,31 @@ function ModelViewerComponent({
           <div className="py-4">
             <Label className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : ''}`}>Select Model/Table</Label>
             
-            <div className="mt-2 space-y-2 max-h-64 overflow-y-auto">
-              {availableModels.map((model) => (
-                <button
-                  key={model.name}
-                  onClick={() => handleModelSelect(model.name)}
-                  className={`w-full text-left p-3 rounded border transition-colors ${
-                    selectedModel === model.name
-                      ? isDarkMode ? 'bg-blue-900/30 border-blue-400 text-blue-300' : 'bg-blue-100 border-blue-300 text-blue-900'
-                      : isDarkMode ? 'hover:bg-gray-700 border-gray-600 text-gray-300' : 'hover:bg-gray-50 border-gray-200'
-                  }`}
-                >
-                  <div className="font-medium">{model.name}</div>
-                  <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                    {model.displayName}
-                  </div>
-                </button>
-              ))}
-            </div>
+            {isModelsLoading ? (
+              <div className="text-center py-8">
+                <div className="animate-spin h-6 w-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
+                <p className="text-sm mt-2">Loading models...</p>
+              </div>
+            ) : (
+              <div className="mt-2 space-y-2 max-h-64 overflow-y-auto">
+                {((modelsData as any)?.models || []).map((model: any) => (
+                  <button
+                    key={model.name}
+                    onClick={() => handleModelSelect(model.name)}
+                    className={`w-full text-left p-3 rounded border transition-colors ${
+                      selectedModel === model.name
+                        ? isDarkMode ? 'bg-blue-900/30 border-blue-400 text-blue-300' : 'bg-blue-100 border-blue-300 text-blue-900'
+                        : isDarkMode ? 'hover:bg-gray-700 border-gray-600 text-gray-300' : 'hover:bg-gray-50 border-gray-200'
+                    }`}
+                  >
+                    <div className="font-medium">{model.name}</div>
+                    <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      {model.displayName}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
 
             {selectedModel && (
               <div className={`mt-3 p-2 rounded ${isDarkMode ? 'bg-green-900/30 text-green-300' : 'bg-green-50 text-green-800'}`}>
@@ -635,28 +567,67 @@ function ModelViewerComponent({
           <div className="overflow-auto max-h-96">
             {field.Entity && (
               <div className={`border rounded-lg ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
-                <table className="w-full text-sm">
-                  <thead className={`${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
-                    <tr>
-                      {getModelColumns(field.Entity).map((column) => (
-                        <th key={column} className={`px-3 py-2 text-left font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                          {column}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className={isDarkMode ? 'text-gray-300' : ''}>
-                    {getModelData(field.Entity).map((row, index) => (
-                      <tr key={index} className={`border-t ${isDarkMode ? 'border-gray-600 hover:bg-gray-700' : 'border-gray-200 hover:bg-gray-50'}`}>
-                        {getModelColumns(field.Entity).map((column) => (
-                          <td key={column} className="px-3 py-2">
-                            {String(row[column as keyof typeof row] || '-')}
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                {isTableLoading ? (
+                  <div className="text-center py-8">
+                    <div className="animate-spin h-6 w-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
+                    <p className={`text-sm mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Loading table data...</p>
+                  </div>
+                ) : tableData ? (
+                  <div>
+                    <div className={`p-3 border-b ${isDarkMode ? 'border-gray-600 bg-gray-700' : 'border-gray-200 bg-gray-50'}`}>
+                      <div className="flex items-center justify-between">
+                        <h3 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                          {(tableData as any).queryName || field.Entity} Data
+                        </h3>
+                        <span className={`text-xs px-2 py-1 rounded ${isDarkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-800'}`}>
+                          {(tableData as any).data?.length || 0} records
+                        </span>
+                      </div>
+                      {(tableData as any).message && (
+                        <p className={`text-xs mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                          {(tableData as any).message}
+                        </p>
+                      )}
+                    </div>
+                    
+                    <table className="w-full text-sm">
+                      <thead className={`${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
+                        <tr>
+                          {((tableData as any).columns || []).map((column: string) => (
+                            <th key={column} className={`px-3 py-2 text-left font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                              {column}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody className={isDarkMode ? 'text-gray-300' : ''}>
+                        {((tableData as any).data || []).length > 0 ? (
+                          ((tableData as any).data || []).map((row: any, index: number) => (
+                            <tr key={index} className={`border-t ${isDarkMode ? 'border-gray-600 hover:bg-gray-700' : 'border-gray-200 hover:bg-gray-50'}`}>
+                              {((tableData as any).columns || []).map((column: string) => (
+                                <td key={column} className="px-3 py-2">
+                                  {String(row[column] || '-')}
+                                </td>
+                              ))}
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan={((tableData as any).columns || []).length} className={`px-3 py-8 text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                              Ready to fetch data from GraphQL endpoint
+                              <br />
+                              <span className="text-xs">Query: {(tableData as any).graphqlQuery}</span>
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className={`p-8 text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                    <p>No data available for {field.Entity}</p>
+                  </div>
+                )}
               </div>
             )}
           </div>
