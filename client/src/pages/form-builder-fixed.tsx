@@ -914,7 +914,7 @@ function GroupField({
           {(field.ChildFields || []).length === 0 ? (
             <div className={`text-center py-8 ${isDarkMode ? 'text-gray-400' : 'text-gray-400'}`}>
               <Square className="w-8 h-8 mx-auto mb-2 opacity-50" />
-              <p className="text-sm">Glissez des composants ici</p>
+              <p className="text-sm">Drag components here</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -1414,7 +1414,7 @@ function PropertiesPanel({ field, onUpdate }: {
                 id="field-label"
                 value={field.Label}
                 onChange={(e) => onUpdate({ Label: e.target.value })}
-                placeholder="Nom du champ"
+                placeholder="Field name"
                 className="text-sm"
               />
             </div>
@@ -1969,7 +1969,7 @@ export default function FormBuilderFixed() {
   const [formData, setFormData] = useState({
     id: null as number | null,
     menuId: `FORM_${Date.now()}`,
-    label: 'Mon Formulaire',
+    label: 'My Form',
     formWidth: '700px',
     layout: 'PROCESS',
     fields: [] as FormField[]
@@ -2076,7 +2076,7 @@ export default function FormBuilderFixed() {
       const formDataToSet = {
         id: (existingForm as any).id,
         menuId: (existingForm as any).menuId || `FORM_${Date.now()}`,
-        label: (existingForm as any).label || 'Mon Formulaire',
+        label: (existingForm as any).label || 'My Form',
         formWidth: (existingForm as any).formWidth || '700px',
         layout: (existingForm as any).layout || 'PROCESS',
         fields: parsedFields
@@ -2099,7 +2099,7 @@ export default function FormBuilderFixed() {
       setFormData({
         id: null,
         menuId: `FORM_${Date.now()}`,
-        label: 'Mon Formulaire',
+        label: 'My Form',
         formWidth: '700px',
         layout: 'PROCESS',
         fields: []
@@ -2377,7 +2377,7 @@ export default function FormBuilderFixed() {
     if (!newComponentConfig.name || !newComponentConfig.label) return;
     
     const properties = {
-      // Propriétés de base
+      // Basic properties
       dataField: newComponentConfig.dataField || '',
       entity: newComponentConfig.entity || 'TableName',
       width: newComponentConfig.width || '100%',
@@ -2421,7 +2421,7 @@ export default function FormBuilderFixed() {
       setFormData({
         id: null,
         menuId: `FORM_${Date.now()}`,
-        label: 'Mon Formulaire',
+        label: 'My Form',
         formWidth: '700px',
         layout: 'PROCESS',
         fields: []
