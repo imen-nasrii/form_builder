@@ -2622,9 +2622,7 @@ export default function FormBuilderFixed() {
   return (
     <div className={`min-h-screen transition-colors ${isDarkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
       <div className={`border-b px-6 py-4 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-          </div>
+        <div className="flex items-center justify-center">
           <div className="flex items-center space-x-3">
             {/* Home Button */}
             <Button
