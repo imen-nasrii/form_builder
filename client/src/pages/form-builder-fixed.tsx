@@ -409,48 +409,79 @@ function DataModelComponent({
   const [selectedModel, setSelectedModel] = useState<string>(field.Entity || '');
   const [modelAttributes, setModelAttributes] = useState<any[]>([]);
   const [isLoadingAttributes, setIsLoadingAttributes] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
-  // Complete list of available MfactModels (100+ models)
+  // Model categories for filtering
+  const modelCategories = [
+    'All',
+    'Core System',
+    'Financial Core',
+    'Market Data',
+    'Reference Data',
+    'Security Classifications',
+    'Fund Organization',
+    'Accounting & GL',
+    'Expense Management',
+    'Income & Distributions',
+    'OID & Amortization',
+    'Tax Processing',
+    'Trading & Settlements',
+    'Compliance & Risk',
+    'Reporting & Analytics',
+    'System Administration',
+    'User Interface',
+    'Data Management',
+    'Messaging',
+    'Job Management',
+    'Trading & Brokers',
+    'Options & Derivatives',
+    'Swaps & Fixed Income',
+    'Legal & Regulatory',
+    'Advanced Analytics'
+  ];
+
+  // Complete list of available MfactModels (100+ models) with categories
   const availableModels = [
     // Core System Models
-    { name: 'Users', description: 'User management and authentication' },
-    { name: 'Sessions', description: 'User session management' },
-    { name: 'Pswrd', description: 'Password management and security' },
-    { name: 'Usrlog', description: 'User activity logging' },
-    { name: 'Usrprg', description: 'User program access permissions' },
-    { name: 'Usrico', description: 'User interface customization' },
-    { name: 'Usrdef', description: 'User-defined fields and preferences' },
+    { name: 'Users', description: 'User management and authentication', category: 'Core System' },
+    { name: 'Sessions', description: 'User session management', category: 'Core System' },
+    { name: 'Pswrd', description: 'Password management and security', category: 'Core System' },
+    { name: 'Usrlog', description: 'User activity logging', category: 'Core System' },
+    { name: 'Usrprg', description: 'User program access permissions', category: 'Core System' },
+    { name: 'Usrico', description: 'User interface customization', category: 'Core System' },
+    { name: 'Usrdef', description: 'User-defined fields and preferences', category: 'Core System' },
     
     // Financial Core Models
-    { name: 'Secrty', description: 'Securities and financial instruments master data' },
-    { name: 'Trx', description: 'Transaction records and trade data' },
-    { name: 'Fndmas', description: 'Fund master data and configuration' },
-    { name: 'Taxlot', description: 'Tax lot positions and cost basis tracking' },
-    { name: 'Opnpos', description: 'Open positions and portfolio holdings' },
-    { name: 'Unsetl', description: 'Unsettled transactions and pending trades' },
-    { name: 'Gl', description: 'General ledger accounts and balances' },
-    { name: 'Income', description: 'Income tracking and dividend processing' },
+    { name: 'Secrty', description: 'Securities and financial instruments master data', category: 'Financial Core' },
+    { name: 'Trx', description: 'Transaction records and trade data', category: 'Financial Core' },
+    { name: 'Fndmas', description: 'Fund master data and configuration', category: 'Financial Core' },
+    { name: 'Taxlot', description: 'Tax lot positions and cost basis tracking', category: 'Financial Core' },
+    { name: 'Opnpos', description: 'Open positions and portfolio holdings', category: 'Financial Core' },
+    { name: 'Unsetl', description: 'Unsettled transactions and pending trades', category: 'Financial Core' },
+    { name: 'Gl', description: 'General ledger accounts and balances', category: 'Financial Core' },
+    { name: 'Income', description: 'Income tracking and dividend processing', category: 'Financial Core' },
     
     // Market Data and Pricing
-    { name: 'Prihst', description: 'Price history and historical pricing data' },
-    { name: 'DailyP', description: 'Daily pricing and valuation data' },
-    { name: 'Mktval', description: 'Market valuation and pricing data' },
-    { name: 'NavHst', description: 'Net Asset Value history and tracking' },
-    { name: 'Fairv', description: 'Fair value pricing and adjustments' },
-    { name: 'Pcrf', description: 'Price cross-reference and mapping' },
-    { name: 'IdxHis', description: 'Index history and benchmark data' },
-    { name: 'IdxMas', description: 'Index master data and definitions' },
-    { name: 'Yields', description: 'Yield calculations and return analysis' },
+    { name: 'Prihst', description: 'Price history and historical pricing data', category: 'Market Data' },
+    { name: 'DailyP', description: 'Daily pricing and valuation data', category: 'Market Data' },
+    { name: 'Mktval', description: 'Market valuation and pricing data', category: 'Market Data' },
+    { name: 'NavHst', description: 'Net Asset Value history and tracking', category: 'Market Data' },
+    { name: 'Fairv', description: 'Fair value pricing and adjustments', category: 'Market Data' },
+    { name: 'Pcrf', description: 'Price cross-reference and mapping', category: 'Market Data' },
+    { name: 'IdxHis', description: 'Index history and benchmark data', category: 'Market Data' },
+    { name: 'IdxMas', description: 'Index master data and definitions', category: 'Market Data' },
+    { name: 'Yields', description: 'Yield calculations and return analysis', category: 'Market Data' },
     
     // Reference Data
-    { name: 'Custod', description: 'Custodian and counterparty information' },
-    { name: 'Curncy', description: 'Currency definitions and exchange rates' },
-    { name: 'Exchng', description: 'Exchange definitions and trading venues' },
-    { name: 'Contry', description: 'Country codes and geographic data' },
-    { name: 'States', description: 'State and province reference data' },
-    { name: 'Holiday', description: 'Holiday calendar and business day rules' },
-    { name: 'Codes', description: 'System codes and lookup values' },
-    { name: 'Reason', description: 'Reason codes and transaction justifications' },
+    { name: 'Custod', description: 'Custodian and counterparty information', category: 'Reference Data' },
+    { name: 'Curncy', description: 'Currency definitions and exchange rates', category: 'Reference Data' },
+    { name: 'Exchng', description: 'Exchange definitions and trading venues', category: 'Reference Data' },
+    { name: 'Contry', description: 'Country codes and geographic data', category: 'Reference Data' },
+    { name: 'States', description: 'State and province reference data', category: 'Reference Data' },
+    { name: 'Holiday', description: 'Holiday calendar and business day rules', category: 'Reference Data' },
+    { name: 'Codes', description: 'System codes and lookup values', category: 'Reference Data' },
+    { name: 'Reason', description: 'Reason codes and transaction justifications', category: 'Reference Data' },
     
     // Security Classifications
     { name: 'SecCat', description: 'Security categories and classifications' },
@@ -647,7 +678,15 @@ function DataModelComponent({
     { name: 'NavPer', description: 'NAV performance tracking' },
     { name: 'Rtdhst', description: 'Real-time data history' },
     { name: 'RealGlRul', description: 'Real-time GL processing rules' }
-  ];
+  ].map(model => ({ ...model, category: model.category || 'Advanced Analytics' }));
+
+  // Filter models based on search term and category
+  const filteredModels = availableModels.filter(model => {
+    const matchesSearch = model.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         model.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === 'All' || model.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   // Comprehensive model attribute definitions based on actual C# models from MfactModels
   const modelAttributeMap: Record<string, any[]> = {
@@ -1404,8 +1443,40 @@ function DataModelComponent({
             {/* Model Selection */}
             <div>
               <Label className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : ''}`}>Available Models</Label>
-              <div className="mt-2 space-y-2 max-h-96 overflow-y-auto">
-                {availableModels.map((model) => (
+              
+              {/* Search and Filter Controls */}
+              <div className="mt-2 space-y-3">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Input
+                    placeholder="Search models..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className={`pl-10 text-sm ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
+                  />
+                </div>
+                
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className={`w-full px-3 py-2 text-sm border rounded-md ${
+                    isDarkMode 
+                      ? 'bg-gray-700 border-gray-600 text-white' 
+                      : 'bg-white border-gray-300'
+                  }`}
+                >
+                  {modelCategories.map(category => (
+                    <option key={category} value={category}>{category}</option>
+                  ))}
+                </select>
+                
+                <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                  {filteredModels.length} of {availableModels.length} models
+                </div>
+              </div>
+              
+              <div className="mt-3 space-y-2 max-h-80 overflow-y-auto">
+                {filteredModels.map((model) => (
                   <button
                     key={model.name}
                     onClick={() => handleModelSelect(model.name)}
