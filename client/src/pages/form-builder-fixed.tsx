@@ -2835,6 +2835,7 @@ export default function FormBuilderFixed() {
   const [importedData, setImportedData] = useState<any>(null);
   const [isPaletteCollapsed, setIsPaletteCollapsed] = useState(false);
   const [isDragZoneCollapsed, setIsDragZoneCollapsed] = useState(false);
+  const [isConfigPanelCollapsed, setIsConfigPanelCollapsed] = useState(false);
   const formBuilderRef = useRef<HTMLDivElement>(null);
 
   // Load form data from API if formId is provided
@@ -3917,6 +3918,97 @@ export default function FormBuilderFixed() {
         </div>
 
 
+      </div>
+
+      {/* Program Configuration Panel */}
+      <div className={`border-b px-6 py-4 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Program Configuration</h3>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsConfigPanelCollapsed(!isConfigPanelCollapsed)}
+              className={`h-6 w-6 p-0 ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+            >
+              {isConfigPanelCollapsed ? <ChevronDown className="w-3 h-3" /> : <ChevronUp className="w-3 h-3" />}
+            </Button>
+          </div>
+          
+          {!isConfigPanelCollapsed && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Menu ID */}
+              <div>
+                <Label className={`text-xs font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  Menu ID
+                </Label>
+                <Input
+                  value={formData.menuId}
+                  onChange={(e) => setFormData(prev => ({ ...prev, menuId: e.target.value }))}
+                  placeholder="MENU_ID"
+                  className={`mt-1 h-8 text-sm ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
+                />
+              </div>
+
+              {/* Label */}
+              <div>
+                <Label className={`text-xs font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  Label
+                </Label>
+                <Input
+                  value={formData.label}
+                  onChange={(e) => setFormData(prev => ({ ...prev, label: e.target.value }))}
+                  placeholder="Program Label"
+                  className={`mt-1 h-8 text-sm ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
+                />
+              </div>
+
+              {/* Form Width */}
+              <div>
+                <Label className={`text-xs font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  Form Width
+                </Label>
+                <Select
+                  value={formData.formWidth}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, formWidth: value }))}
+                >
+                  <SelectTrigger className={`mt-1 h-8 text-sm ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className={isDarkMode ? 'bg-gray-700 border-gray-600' : ''}>
+                    <SelectItem value="500px">500px</SelectItem>
+                    <SelectItem value="600px">600px</SelectItem>
+                    <SelectItem value="700px">700px</SelectItem>
+                    <SelectItem value="800px">800px</SelectItem>
+                    <SelectItem value="900px">900px</SelectItem>
+                    <SelectItem value="1000px">1000px</SelectItem>
+                    <SelectItem value="100%">100%</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Layout */}
+              <div>
+                <Label className={`text-xs font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  Layout
+                </Label>
+                <Select
+                  value={formData.layout}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, layout: value }))}
+                >
+                  <SelectTrigger className={`mt-1 h-8 text-sm ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className={isDarkMode ? 'bg-gray-700 border-gray-600' : ''}>
+                    <SelectItem value="PROCESS">PROCESS</SelectItem>
+                    <SelectItem value="MASTER-MENU">MASTER-MENU</SelectItem>
+                    <SelectItem value="TRANSACTION">TRANSACTION</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flex h-[calc(100vh-80px)]">
