@@ -13,11 +13,11 @@ export default function AdminDashboard() {
   const queryClient = useQueryClient();
   const [selectedUser, setSelectedUser] = useState('');
 
-  const { data: programs, isLoading: programsLoading } = useQuery({
+  const { data: programs = [], isLoading: programsLoading } = useQuery({
     queryKey: ['/api/programs'],
   });
 
-  const { data: users, isLoading: usersLoading } = useQuery({
+  const { data: users = [], isLoading: usersLoading } = useQuery({
     queryKey: ['/api/admin/users'],
   });
 

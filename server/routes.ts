@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, requireAuth, requireAdmin } from "./auth";
-import { requireEmailVerification, requireAdmin as requireAdminStrict, requireUser, checkPermission } from "./roleAuth";
+import { requireEmailVerification, requireAdminRole, requireUserRole } from "./roleAuth";
 import { insertFormSchema, insertTemplateSchema } from "@shared/schema";
 import { apiService, type ApiDataSource } from "./services/apiService";
 import crypto from "crypto";
@@ -134,7 +134,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/forms/menu/:menuId', requireAuth, async (req: any, res) => {
+  app.get('/api/programs/menu/:menuId', requireEmailVerification, async (req: any, res) => {
     try {
       const menuId = req.params.menuId;
       const form = await storage.getFormByMenuId(menuId);
@@ -150,19 +150,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Create a new form
-  app.post('/api/forms', requireAuth, async (req: any, res) => {
+  // Create a new program (renamed from form)
+  app.post('/api/programs/create', requireUserRole, async (req: any, res) => {
     try {
       const userId = req.user.id;
-      const formData = req.body;
+      const programData = req.body;
 
       // Process formDefinition if present
-      let processedData = { ...formData };
-      if (formData.formDefinition) {
+      let processedData = { ...programData };
+      if (programData.formDefinition) {
         try {
-          const definition = typeof formData.formDefinition === 'string' 
-            ? JSON.parse(formData.formDefinition) 
-            : formData.formDefinition;
+          const definition = typeof programData.formDefinition === 'string' 
+            ? JSON.parse(programData.formDefinition) 
+            : programData.formDefinition;
           
           processedData.fields = definition.fields || [];
           processedData.actions = definition.actions || [];
@@ -177,22 +177,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Ensure we have required fields
       if (!processedData.menuId) {
-        processedData.menuId = `FORM_${Date.now()}`;
+        processedData.menuId = `PROG_${Date.now()}`;
       }
       if (!processedData.label) {
-        processedData.label = "New Form";
+        processedData.label = "New Program";
       }
 
       const parsedData = insertFormSchema.parse({
         ...processedData,
-        createdBy: userId
+        createdBy: userId,
+        status: 'draft'
       });
 
-      const newForm = await storage.createForm(parsedData);
-      res.status(201).json(newForm);
+      const newProgram = await storage.createProgram(parsedData);
+      res.status(201).json(newProgram);
     } catch (error) {
-      console.error("Error creating form:", error);
-      res.status(500).json({ message: "Failed to create form" });
+      console.error("Error creating program:", error);
+      res.status(500).json({ message: "Failed to create program" });
+    }
+  });
+
+  // Update program status (Admin only)
+  app.patch('/api/programs/:id/status', requireAdminRole, async (req: any, res) => {
+    try {
+      const programId = parseInt(req.params.id);
+      const { status, assignedTo } = req.body;
+      
+      await storage.updateProgramStatus(programId, status, assignedTo);
+      
+      const updatedProgram = await storage.getProgram(programId);
+      res.json(updatedProgram);
+    } catch (error) {
+      console.error("Error updating program status:", error);
+      res.status(500).json({ message: "Failed to update program status" });
+    }
+  });
+
+  // Stop program (User only - for their own programs)
+  app.patch('/api/programs/:id/stop', requireUserRole, async (req: any, res) => {
+    try {
+      const programId = parseInt(req.params.id);
+      const userId = req.user.id;
+      
+      const program = await storage.getProgram(programId);
+      if (!program) {
+        return res.status(404).json({ message: "Program not found" });
+      }
+      
+      if (program.createdBy !== userId) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+      
+      await storage.updateProgramStatus(programId, 'stopped');
+      
+      const updatedProgram = await storage.getProgram(programId);
+      res.json(updatedProgram);
+    } catch (error) {
+      console.error("Error stopping program:", error);
+      res.status(500).json({ message: "Failed to stop program" });
     }
   });
 
