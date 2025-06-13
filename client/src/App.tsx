@@ -57,19 +57,18 @@ function Router() {
       <Route path="/verify-email" component={VerifyEmail} />
       
       {/* Role-based authenticated routes */}
-      {isAuthenticated && user?.emailVerified && (
+      {isAuthenticated && user && (user as any).emailVerified && (
         <>
           {/* Admin routes */}
-          {user?.role === 'admin' && (
+          {user && (user as any).role === 'admin' && (
             <>
               <Route path="/admin" component={AdminDashboard} />
               <Route path="/admin-panel" component={AdminPanel} />
-              <Route path="/statistics" component={Statistics} />
             </>
           )}
           
           {/* User routes */}
-          {user?.role === 'user' && (
+          {user && (user as any).role === 'user' && (
             <>
               <Route path="/program-builder" component={FormBuilderFixed} />
               <Route path="/program-builder/:formId" component={FormBuilderFixed} />
@@ -78,7 +77,6 @@ function Router() {
           )}
           
           {/* Common authenticated routes */}
-          <Route path="/data-models" component={DataModels} />
           <Route path="/ai-bot" component={DFMToJSONBotStable} />
           <Route path="/setup-2fa" component={Setup2FA} />
         </>
@@ -86,10 +84,10 @@ function Router() {
       
       {/* Root route with role-based redirection */}
       <Route path="/" component={() => {
-        if (!isAuthenticated || !user?.emailVerified) {
+        if (!isAuthenticated || !user || !(user as any).emailVerified) {
           return <SignUp />;
         }
-        return user?.role === 'admin' ? <AdminDashboard /> : <UserDashboard />;
+        return (user as any).role === 'admin' ? <AdminDashboard /> : <UserDashboard />;
       }} />
       
       {/* 404 fallback */}
