@@ -191,13 +191,15 @@ export function setupAuth(app: Express) {
         twoFactorSecret: null,
         emailVerified: isDevelopment ? true : false,
         emailVerificationToken,
+        passwordResetToken: null,
+        passwordResetTokenExpiry: null,
         isActive: true,
       });
 
       // Send verification email if not in development
       if (!isDevelopment && emailVerificationToken) {
         try {
-          await emailService.sendVerificationEmail(email, emailVerificationToken, firstName);
+          await emailService.sendVerificationEmail(email, emailVerificationToken, firstName || undefined);
         } catch (error) {
           console.error("Failed to send verification email:", error);
         }
@@ -315,7 +317,7 @@ export function setupAuth(app: Express) {
 
       // Send verification email
       try {
-        await emailService.sendVerificationEmail(email, newToken, user.firstName);
+        await emailService.sendVerificationEmail(email, newToken, user.firstName || undefined);
       } catch (error) {
         console.error("Failed to send verification email:", error);
         return res.status(500).json({ message: "Failed to send verification email" });
@@ -351,7 +353,7 @@ export function setupAuth(app: Express) {
 
       // Send password reset email
       try {
-        await emailService.sendPasswordResetEmail(email, resetToken, user.firstName);
+        await emailService.sendPasswordResetEmail(email, resetToken, user.firstName || undefined);
       } catch (error) {
         console.error("Failed to send password reset email:", error);
         return res.status(500).json({ message: "Failed to send password reset email" });
