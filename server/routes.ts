@@ -197,6 +197,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update program (User only - for their own programs)
+  app.patch('/api/programs/:id', requireUserRole, async (req: any, res) => {
+    try {
+      const programId = parseInt(req.params.id);
+      const userId = req.user.id;
+      const updateData = req.body;
+      
+      const existingProgram = await storage.getProgram(programId);
+      if (!existingProgram) {
+        return res.status(404).json({ message: "Program not found" });
+      }
+      
+      if (existingProgram.createdBy !== userId) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+      
+      const updatedProgram = await storage.updateProgram(programId, updateData);
+      res.json(updatedProgram);
+    } catch (error) {
+      console.error("Error updating program:", error);
+      res.status(500).json({ message: "Failed to update program" });
+    }
+  });
+
   // Update program status (Admin only)
   app.patch('/api/programs/:id/status', requireAdminRole, async (req: any, res) => {
     try {

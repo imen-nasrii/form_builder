@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'wouter';
+import { apiRequest } from '@/lib/queryClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -3272,10 +3273,10 @@ export default function FormBuilderFixed() {
         })
       };
 
-      const url = formData.id ? `/api/forms/${formData.id}` : '/api/forms';
+      const url = formData.id ? `/api/programs/${formData.id}` : '/api/programs/create';
       const method = formData.id ? 'PATCH' : 'POST';
 
-      const response = await fetch(url, {
+      const savedProgram = await apiRequest(url, {
         method: method,
         headers: {
           'Content-Type': 'application/json',
@@ -3283,11 +3284,7 @@ export default function FormBuilderFixed() {
         body: JSON.stringify(formToSave),
       });
 
-      if (!response.ok) {
-        throw new Error('Erreur lors de la sauvegarde');
-      }
-
-      return response.json();
+      return savedProgram;
     },
     onSuccess: (savedForm) => {
       // Update the form ID if it was a new form
@@ -3295,7 +3292,7 @@ export default function FormBuilderFixed() {
         setFormData(prev => ({ ...prev, id: savedForm.id }));
       }
       
-      queryClient.invalidateQueries({ queryKey: ['/api/forms'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/programs'] });
     },
     onError: (error) => {
       console.error('Error saving form:', error);
