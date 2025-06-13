@@ -45,7 +45,7 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Form definitions table
+// Program definitions table (renamed from forms)
 export const forms = pgTable("forms", {
   id: serial("id").primaryKey(),
   menuId: varchar("menu_id").notNull().unique(),
@@ -56,6 +56,8 @@ export const forms = pgTable("forms", {
   actions: jsonb("actions").notNull().default("[]"),
   validations: jsonb("validations").notNull().default("[]"),
   formDefinition: text("form_definition"),
+  status: varchar("status").notNull().default("draft"), // draft, pending, accepted, rejected, in_progress, completed, stopped
+  assignedTo: varchar("assigned_to"), // Admin can assign programs to users
   createdBy: varchar("created_by").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
