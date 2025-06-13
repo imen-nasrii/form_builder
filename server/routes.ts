@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, requireAuth, requireAdmin } from "./auth";
-import { setupEnhancedAuth, requireAuth as requireAuthEnhanced, requireAdmin as requireAdminEnhanced, requireUser } from "./auth-enhanced";
+import { requireEmailVerification, requireAdmin as requireAdminStrict, requireUser, checkPermission } from "./roleAuth";
 import { insertFormSchema, insertTemplateSchema } from "@shared/schema";
 import { apiService, type ApiDataSource } from "./services/apiService";
 import crypto from "crypto";
@@ -91,31 +91,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Form management routes
-  app.get('/api/forms', requireAuth, async (req: any, res) => {
+  // Program management routes with role-based access
+  app.get('/api/programs', requireEmailVerification, async (req: any, res) => {
     try {
       const userId = req.user.id;
-      const forms = await storage.getForms(userId);
-      res.json(forms);
+      const userRole = req.user.role;
+      
+      let programs;
+      if (userRole === 'admin') {
+        // Admins can view all programs
+        programs = await storage.getAllPrograms();
+      } else {
+        // Users can only view their own programs
+        programs = await storage.getPrograms(userId);
+      }
+      
+      res.json(programs);
     } catch (error) {
-      console.error("Error fetching forms:", error);
-      res.status(500).json({ message: "Failed to fetch forms" });
+      console.error("Error fetching programs:", error);
+      res.status(500).json({ message: "Failed to fetch programs" });
     }
   });
 
-  app.get('/api/forms/:id', requireAuth, async (req: any, res) => {
+  app.get('/api/programs/:id', requireEmailVerification, async (req: any, res) => {
     try {
-      const formId = parseInt(req.params.id);
-      const form = await storage.getForm(formId);
+      const programId = parseInt(req.params.id);
+      const program = await storage.getProgram(programId);
       
-      if (!form) {
-        return res.status(404).json({ message: "Form not found" });
+      if (!program) {
+        return res.status(404).json({ message: "Program not found" });
       }
 
-      res.json(form);
+      // Users can only view their own programs, admins can view any
+      if (req.user.role !== 'admin' && program.createdBy !== req.user.id) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      res.json(program);
     } catch (error) {
-      console.error("Error fetching form:", error);
-      res.status(500).json({ message: "Failed to fetch form" });
+      console.error("Error fetching program:", error);
+      res.status(500).json({ message: "Failed to fetch program" });
     }
   });
 

@@ -41,13 +41,22 @@ export interface IStorage {
   updatePassword(userId: string, hashedPassword: string): Promise<void>;
   clearPasswordResetToken(userId: string): Promise<void>;
   
-  // Form operations
+  // Form/Program operations
   getForms(userId: string): Promise<Form[]>;
   getForm(id: number): Promise<Form | undefined>;
   getFormByMenuId(menuId: string): Promise<Form | undefined>;
   createForm(form: InsertForm): Promise<Form>;
   updateForm(id: number, form: Partial<InsertForm>): Promise<Form>;
   deleteForm(id: number): Promise<void>;
+  
+  // Program operations (aliases for forms with additional functionality)
+  getPrograms(userId: string): Promise<Form[]>;
+  getAllPrograms(): Promise<Form[]>;
+  getProgram(id: number): Promise<Form | undefined>;
+  createProgram(program: InsertForm): Promise<Form>;
+  updateProgram(id: number, program: Partial<InsertForm>): Promise<Form>;
+  deleteProgram(id: number): Promise<void>;
+  updateProgramStatus(id: number, status: string, assignedTo?: string): Promise<void>;
   
   // Template operations
   getTemplates(userId?: string): Promise<FormTemplate[]>;
@@ -257,6 +266,50 @@ export class DatabaseStorage implements IStorage {
 
   async deleteForm(id: number): Promise<void> {
     await db.delete(forms).where(eq(forms.id, id));
+  }
+
+  // Program operations (aliases for forms with additional functionality)
+  async getPrograms(userId: string): Promise<Form[]> {
+    return this.getForms(userId);
+  }
+
+  async getAllPrograms(): Promise<Form[]> {
+    return await db
+      .select()
+      .from(forms)
+      .orderBy(desc(forms.updatedAt));
+  }
+
+  async getProgram(id: number): Promise<Form | undefined> {
+    return this.getForm(id);
+  }
+
+  async createProgram(program: InsertForm): Promise<Form> {
+    return this.createForm(program);
+  }
+
+  async updateProgram(id: number, program: Partial<InsertForm>): Promise<Form> {
+    return this.updateForm(id, program);
+  }
+
+  async deleteProgram(id: number): Promise<void> {
+    return this.deleteForm(id);
+  }
+
+  async updateProgramStatus(id: number, status: string, assignedTo?: string): Promise<void> {
+    const updateData: any = { 
+      status,
+      updatedAt: new Date()
+    };
+    
+    if (assignedTo) {
+      updateData.assignedTo = assignedTo;
+    }
+
+    await db
+      .update(forms)
+      .set(updateData)
+      .where(eq(forms.id, id));
   }
 
   // Template operations
