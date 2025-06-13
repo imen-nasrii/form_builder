@@ -15,7 +15,7 @@ import VerifyEmailPage from "@/pages/verify-email-page";
 import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import AdminDashboard from "@/pages/admin-dashboard";
-import UserDashboard from "@/pages/user-dashboard";
+import UserDashboard from "@/pages/user-dashboard-fixed";
 import UserProfile from "@/pages/user-profile";
 import FormBuilderExact from "@/pages/form-builder-exact";
 import FormBuilderFixed from "@/pages/form-builder-fixed";
