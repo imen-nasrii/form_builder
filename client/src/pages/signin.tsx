@@ -100,7 +100,14 @@ export default function SignIn() {
               {isLoading ? 'Signing In...' : 'Sign In'}
             </Button>
 
-            <div className="text-center">
+            <div className="text-center space-y-2">
+              <button
+                type="button"
+                onClick={() => setLocation('/forgot-password')}
+                className="text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium"
+              >
+                Forgot your password?
+              </button>
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Don't have an account?{' '}
                 <button
