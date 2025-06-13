@@ -5,6 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { Plus, Play, Square, Clock, CheckCircle, XCircle, Eye } from 'lucide-react';
@@ -13,9 +17,60 @@ export default function UserDashboard() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [programConfig, setProgramConfig] = useState({
+    menuId: '',
+    label: '',
+    formWidth: '700px',
+    layout: 'PROCESS'
+  });
 
   const { data: programs = [], isLoading } = useQuery({
     queryKey: ['/api/programs'],
+  });
+
+  const createProgramMutation = useMutation({
+    mutationFn: async (config: typeof programConfig) => {
+      return apiRequest('/api/programs/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          menuId: config.menuId,
+          label: config.label,
+          formWidth: config.formWidth,
+          layout: config.layout,
+          formDefinition: JSON.stringify({
+            fields: [],
+            customComponents: []
+          })
+        }),
+      });
+    },
+    onSuccess: (program: any) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/programs'] });
+      setShowCreateDialog(false);
+      setProgramConfig({
+        menuId: '',
+        label: '',
+        formWidth: '700px',
+        layout: 'PROCESS'
+      });
+      toast({
+        title: "Success",
+        description: "Program created successfully",
+      });
+      // Navigate to the builder with the new program ID
+      setLocation(`/program-builder/${program.id}`);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create program",
+        variant: "destructive",
+      });
+    }
   });
 
   const stopProgramMutation = useMutation({
@@ -39,6 +94,18 @@ export default function UserDashboard() {
       });
     }
   });
+
+  const handleCreateProgram = () => {
+    if (!programConfig.menuId || !programConfig.label) {
+      toast({
+        title: "Error",
+        description: "Please fill in Menu ID and Label",
+        variant: "destructive",
+      });
+      return;
+    }
+    createProgramMutation.mutate(programConfig);
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -103,13 +170,90 @@ export default function UserDashboard() {
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">My Programs</h1>
             <p className="text-gray-600 dark:text-gray-400">Manage and track your program progress</p>
           </div>
-          <Button
-            onClick={() => setLocation('/program-builder')}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Create New Program
-          </Button>
+          <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+            <DialogTrigger asChild>
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                <Plus className="w-4 h-4 mr-2" />
+                Create New Program
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Create New Program</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="menuId">Menu ID</Label>
+                  <Input
+                    id="menuId"
+                    placeholder="e.g., PROG_001"
+                    value={programConfig.menuId}
+                    onChange={(e) => setProgramConfig(prev => ({ ...prev, menuId: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="label">Program Label</Label>
+                  <Input
+                    id="label"
+                    placeholder="e.g., Customer Management"
+                    value={programConfig.label}
+                    onChange={(e) => setProgramConfig(prev => ({ ...prev, label: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="formWidth">Form Width</Label>
+                  <Select
+                    value={programConfig.formWidth}
+                    onValueChange={(value) => setProgramConfig(prev => ({ ...prev, formWidth: value }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="500px">500px</SelectItem>
+                      <SelectItem value="600px">600px</SelectItem>
+                      <SelectItem value="700px">700px</SelectItem>
+                      <SelectItem value="800px">800px</SelectItem>
+                      <SelectItem value="900px">900px</SelectItem>
+                      <SelectItem value="1000px">1000px</SelectItem>
+                      <SelectItem value="100%">100%</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="layout">Layout</Label>
+                  <Select
+                    value={programConfig.layout}
+                    onValueChange={(value) => setProgramConfig(prev => ({ ...prev, layout: value }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="PROCESS">PROCESS</SelectItem>
+                      <SelectItem value="MASTER-MENU">MASTER-MENU</SelectItem>
+                      <SelectItem value="TRANSACTION">TRANSACTION</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="flex justify-end space-x-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowCreateDialog(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleCreateProgram}
+                  disabled={createProgramMutation.isPending}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  {createProgramMutation.isPending ? 'Creating...' : 'Create & Open Builder'}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
 
         <div className="grid gap-6 mb-8">
