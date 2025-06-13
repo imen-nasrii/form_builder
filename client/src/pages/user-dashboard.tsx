@@ -117,7 +117,7 @@ export default function UserDashboard() {
             <Card>
               <CardContent className="p-6">
                 <div className="text-2xl font-bold text-gray-600">
-                  {programs?.filter((p: any) => p.status === 'draft').length || 0}
+                  {(programs as any[]).filter((p: any) => p.status === 'draft').length || 0}
                 </div>
                 <p className="text-sm text-gray-600">Draft Programs</p>
               </CardContent>
@@ -125,7 +125,7 @@ export default function UserDashboard() {
             <Card>
               <CardContent className="p-6">
                 <div className="text-2xl font-bold text-yellow-600">
-                  {programs?.filter((p: any) => p.status === 'pending').length || 0}
+                  {(programs as any[]).filter((p: any) => p.status === 'pending').length || 0}
                 </div>
                 <p className="text-sm text-gray-600">Pending Review</p>
               </CardContent>
@@ -133,7 +133,7 @@ export default function UserDashboard() {
             <Card>
               <CardContent className="p-6">
                 <div className="text-2xl font-bold text-blue-600">
-                  {programs?.filter((p: any) => p.status === 'in_progress').length || 0}
+                  {(programs as any[]).filter((p: any) => p.status === 'in_progress').length || 0}
                 </div>
                 <p className="text-sm text-gray-600">In Progress</p>
               </CardContent>
@@ -141,7 +141,7 @@ export default function UserDashboard() {
             <Card>
               <CardContent className="p-6">
                 <div className="text-2xl font-bold text-green-600">
-                  {programs?.filter((p: any) => p.status === 'completed').length || 0}
+                  {(programs as any[]).filter((p: any) => p.status === 'completed').length || 0}
                 </div>
                 <p className="text-sm text-gray-600">Completed</p>
               </CardContent>
@@ -154,7 +154,7 @@ export default function UserDashboard() {
             <CardTitle>Your Programs</CardTitle>
           </CardHeader>
           <CardContent>
-            {programs?.length === 0 ? (
+            {(programs as any[]).length === 0 ? (
               <div className="text-center py-8">
                 <div className="mb-4">
                   <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full mx-auto flex items-center justify-center">
@@ -172,7 +172,7 @@ export default function UserDashboard() {
               </div>
             ) : (
               <div className="space-y-4">
-                {programs?.map((program: any) => (
+                {Array.isArray(programs) ? programs.map((program: any) => (
                   <div key={program.id} className="border rounded-lg p-4">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center space-x-4">
@@ -230,7 +230,7 @@ export default function UserDashboard() {
                       </div>
                     </div>
                   </div>
-                ))}
+                )) : null}
               </div>
             )}
           </CardContent>
