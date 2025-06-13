@@ -96,7 +96,7 @@ export default function AdminDashboard() {
             <Card>
               <CardContent className="p-6">
                 <div className="text-2xl font-bold text-blue-600">
-                  {programs?.filter((p: any) => p.status === 'pending').length || 0}
+                  {programs.filter((p: any) => p.status === 'pending').length || 0}
                 </div>
                 <p className="text-sm text-gray-600">Pending Programs</p>
               </CardContent>
@@ -104,7 +104,7 @@ export default function AdminDashboard() {
             <Card>
               <CardContent className="p-6">
                 <div className="text-2xl font-bold text-green-600">
-                  {programs?.filter((p: any) => p.status === 'accepted').length || 0}
+                  {programs.filter((p: any) => p.status === 'accepted').length || 0}
                 </div>
                 <p className="text-sm text-gray-600">Accepted Programs</p>
               </CardContent>
@@ -112,7 +112,7 @@ export default function AdminDashboard() {
             <Card>
               <CardContent className="p-6">
                 <div className="text-2xl font-bold text-blue-500">
-                  {programs?.filter((p: any) => p.status === 'in_progress').length || 0}
+                  {programs.filter((p: any) => p.status === 'in_progress').length || 0}
                 </div>
                 <p className="text-sm text-gray-600">In Progress</p>
               </CardContent>
@@ -120,7 +120,7 @@ export default function AdminDashboard() {
             <Card>
               <CardContent className="p-6">
                 <div className="text-2xl font-bold text-emerald-600">
-                  {programs?.filter((p: any) => p.status === 'completed').length || 0}
+                  {programs.filter((p: any) => p.status === 'completed').length || 0}
                 </div>
                 <p className="text-sm text-gray-600">Completed</p>
               </CardContent>
