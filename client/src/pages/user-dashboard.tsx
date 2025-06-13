@@ -230,7 +230,7 @@ export default function UserDashboard() {
                       </div>
                     </div>
                   </div>
-                )) : null}
+                )) : []}
               </div>
             )}
           </CardContent>
