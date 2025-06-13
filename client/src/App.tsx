@@ -16,6 +16,7 @@ import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import AdminDashboard from "@/pages/admin-dashboard";
 import UserDashboard from "@/pages/user-dashboard";
+import UserProfile from "@/pages/user-profile";
 import FormBuilderExact from "@/pages/form-builder-exact";
 import FormBuilderFixed from "@/pages/form-builder-fixed";
 import ComponentsOverview from "@/pages/components-overview";
@@ -73,6 +74,7 @@ function Router() {
               <Route path="/program-builder" component={FormBuilderFixed} />
               <Route path="/program-builder/:formId" component={FormBuilderFixed} />
               <Route path="/dashboard" component={UserDashboard} />
+              <Route path="/profile" component={UserProfile} />
             </>
           )}
           
