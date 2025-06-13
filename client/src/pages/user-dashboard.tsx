@@ -14,7 +14,7 @@ export default function UserDashboard() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: programs, isLoading } = useQuery({
+  const { data: programs = [], isLoading } = useQuery({
     queryKey: ['/api/programs'],
   });
 
