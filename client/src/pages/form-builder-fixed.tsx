@@ -2841,7 +2841,7 @@ export default function FormBuilderFixed() {
 
   // Load form data from API if formId is provided
   const { data: existingForm, isLoading: formLoading } = useQuery({
-    queryKey: [`/api/forms/${formId}`],
+    queryKey: [`/api/programs/${formId}`],
     enabled: !!formId,
   });
 
