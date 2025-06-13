@@ -4,6 +4,8 @@ import connectPg from "connect-pg-simple";
 import type { Express, Request, Response, NextFunction } from "express";
 import { storage } from "./storage";
 import { nanoid } from "nanoid";
+import { emailService } from "./emailService";
+import crypto from "crypto";
 
 export function setupAuth(app: Express) {
   // Session configuration
@@ -171,8 +173,10 @@ export function setupAuth(app: Express) {
       // Hash password
       const hashedPassword = await bcrypt.hash(password, 12);
 
-      // Create user - auto-verify email in development
+      // Create user with email verification
       const isDevelopment = process.env.NODE_ENV === 'development';
+      const emailVerificationToken = isDevelopment ? null : crypto.randomBytes(32).toString('hex');
+      
       const user = await storage.createUser({
         id: nanoid(),
         email,
@@ -184,9 +188,18 @@ export function setupAuth(app: Express) {
         twoFactorEnabled: false,
         twoFactorSecret: null,
         emailVerified: isDevelopment ? true : false,
-        emailVerificationToken: null,
+        emailVerificationToken,
         isActive: true,
       });
+
+      // Send verification email if not in development
+      if (!isDevelopment && emailVerificationToken) {
+        try {
+          await emailService.sendVerificationEmail(email, emailVerificationToken, firstName);
+        } catch (error) {
+          console.error("Failed to send verification email:", error);
+        }
+      }
 
       res.json({
         id: user.id,
@@ -195,7 +208,7 @@ export function setupAuth(app: Express) {
         lastName: user.lastName,
         role: user.role,
         emailVerified: user.emailVerified,
-        message: "Account created successfully"
+        message: isDevelopment ? "Account created successfully" : "Account created! Please check your email to verify your account."
       });
     } catch (error) {
       console.error("Signup error:", error);
