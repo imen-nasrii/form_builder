@@ -11,7 +11,9 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
-import { Plus, Play, Square, Clock, CheckCircle, XCircle, Eye } from 'lucide-react';
+import { Plus, Play, Square, Clock, CheckCircle, XCircle, Eye, User, LogOut, ChevronDown } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 export default function UserDashboard() {
   const [, setLocation] = useLocation();
@@ -27,6 +29,10 @@ export default function UserDashboard() {
 
   const { data: programs = [], isLoading } = useQuery({
     queryKey: ['/api/programs'],
+  });
+
+  const { data: user } = useQuery({
+    queryKey: ['/api/auth/user'],
   });
 
   const createProgramMutation = useMutation({
@@ -170,7 +176,34 @@ export default function UserDashboard() {
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">My Programs</h1>
             <p className="text-gray-600 dark:text-gray-400">Manage and track your program progress</p>
           </div>
-          <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+          <div className="flex items-center space-x-4">
+            {/* User Profile Menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="flex items-center space-x-2">
+                  <Avatar className="w-6 h-6">
+                    <AvatarFallback className="text-xs">
+                      {(user as any)?.firstName?.charAt(0) || 'U'}{(user as any)?.lastName?.charAt(0) || ''}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="hidden md:block">{(user as any)?.firstName || 'User'}</span>
+                  <ChevronDown className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setLocation('/profile')}>
+                  <User className="w-4 h-4 mr-2" />
+                  Profile
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => window.location.href = '/api/logout'}>
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
             <DialogTrigger asChild>
               <Button className="bg-blue-600 hover:bg-blue-700 text-white">
                 <Plus className="w-4 h-4 mr-2" />
@@ -254,6 +287,7 @@ export default function UserDashboard() {
               </div>
             </DialogContent>
           </Dialog>
+          </div>
         </div>
 
         <div className="grid gap-6 mb-8">
