@@ -7,6 +7,8 @@ import { useAuth } from "@/hooks/useAuth";
 import NotFound from "@/pages/not-found";
 import Login from "@/pages/login";
 import Register from "@/pages/register";
+import SignUp from "@/pages/signup";
+import SignIn from "@/pages/signin";
 import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import FormBuilderExact from "@/pages/form-builder-exact";
@@ -42,6 +44,8 @@ function Router() {
       {/* Public routes */}
       <Route path="/register" component={Register} />
       <Route path="/login" component={Login} />
+      <Route path="/signup" component={SignUp} />
+      <Route path="/signin" component={SignIn} />
       <Route path="/verify-email" component={VerifyEmail} />
       
       {/* Authenticated routes */}
@@ -56,7 +60,7 @@ function Router() {
       <Route path="/setup-2fa" component={Setup2FA} />
       
       {/* Root route */}
-      <Route path="/" component={isAuthenticated ? Dashboard : Landing} />
+      <Route path="/" component={isAuthenticated ? Dashboard : SignUp} />
       
       {/* 404 fallback */}
       <Route component={NotFound} />
