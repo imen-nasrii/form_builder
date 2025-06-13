@@ -65,23 +65,18 @@ export const requireAdminRole = async (req: Request, res: Response, next: NextFu
 export const requireUserRole = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = (req.session as any)?.userId;
-    console.log("Session data:", { userId, session: req.session });
     
     if (!userId) {
-      console.log("No userId in session");
       return res.status(401).json({ message: "Unauthorized" });
     }
 
     const user = await storage.getUser(userId);
-    console.log("User from database:", user);
     
     if (!user || !user.isActive) {
-      console.log("User not found or inactive");
       return res.status(401).json({ message: "Unauthorized" });
     }
 
     if (!user.emailVerified) {
-      console.log("Email not verified");
       return res.status(403).json({ 
         message: "Email verification required",
         requiresEmailVerification: true 
@@ -89,7 +84,6 @@ export const requireUserRole = async (req: Request, res: Response, next: NextFun
     }
 
     if (user.role !== 'user') {
-      console.log("User role is not 'user':", user.role);
       return res.status(403).json({ message: "User access required" });
     }
 
