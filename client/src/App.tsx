@@ -9,6 +9,9 @@ import Login from "@/pages/login";
 import Register from "@/pages/register";
 import SignUp from "@/pages/signup";
 import SignIn from "@/pages/signin";
+import ForgotPassword from "@/pages/forgot-password";
+import ResetPassword from "@/pages/reset-password";
+import VerifyEmailPage from "@/pages/verify-email-page";
 import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import FormBuilderExact from "@/pages/form-builder-exact";
@@ -46,6 +49,9 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/signup" component={SignUp} />
       <Route path="/signin" component={SignIn} />
+      <Route path="/forgot-password" component={ForgotPassword} />
+      <Route path="/reset-password/:token" component={ResetPassword} />
+      <Route path="/verify-email/:token" component={VerifyEmailPage} />
       <Route path="/verify-email" component={VerifyEmail} />
       
       {/* Authenticated routes */}
