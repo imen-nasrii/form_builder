@@ -505,33 +505,33 @@ export default function Dashboard() {
                     
                     {/* Front of the card */}
                     <div className={`flip-card-front absolute w-full h-full backface-hidden rounded-lg shadow-lg ${
-                      isAdmin ? 'bg-gradient-to-br from-orange-100 to-red-100 border-orange-200' : 'bg-gradient-to-br from-purple-100 to-indigo-100 border-purple-200'
+                      isAdmin ? 'bg-gradient-to-br from-blue-100 to-cyan-100 border-blue-200' : 'bg-gradient-to-br from-purple-100 to-indigo-100 border-purple-200'
                     } border-2`}>
                       <div className="p-6 h-full flex flex-col justify-between">
                         <div>
                           <div className="flex items-center justify-between mb-4">
-                            <h3 className={`text-lg font-bold ${isAdmin ? 'text-orange-900' : 'text-purple-900'}`}>
+                            <h3 className={`text-lg font-bold ${isAdmin ? 'text-blue-900' : 'text-purple-900'}`}>
                               {form.label || 'Untitled Form'}
                             </h3>
                             <Badge variant="secondary" className={`${
-                              isAdmin ? 'bg-orange-200 text-orange-800' : 'bg-purple-200 text-purple-800'
+                              isAdmin ? 'bg-blue-200 text-blue-800' : 'bg-purple-200 text-purple-800'
                             }`}>
                               {form.layout}
                             </Badge>
                           </div>
-                          <p className={`text-sm ${isAdmin ? 'text-orange-700' : 'text-purple-700'} mb-2`}>
+                          <p className={`text-sm ${isAdmin ? 'text-blue-700' : 'text-purple-700'} mb-2`}>
                             Menu ID: {form.menuId}
                           </p>
                           {isAdmin && form.createdBy && (
-                            <p className="text-orange-600 text-sm mb-2">
+                            <p className="text-blue-600 text-sm mb-2">
                               Créé par: {form.createdBy}
                             </p>
                           )}
                         </div>
                         
                         <div className="flex items-center justify-between text-sm">
-                          <span className={`${isAdmin ? 'text-orange-600' : 'text-purple-600'}`}>Mis à jour:</span>
-                          <span className={`font-medium ${isAdmin ? 'text-orange-800' : 'text-purple-800'}`}>
+                          <span className={`${isAdmin ? 'text-blue-600' : 'text-purple-600'}`}>Mis à jour:</span>
+                          <span className={`font-medium ${isAdmin ? 'text-blue-800' : 'text-purple-800'}`}>
                             {formatDate(form.updatedAt)}
                           </span>
                         </div>
@@ -544,14 +544,14 @@ export default function Dashboard() {
 
                     {/* Back of the card */}
                     <div className={`flip-card-back absolute w-full h-full backface-hidden rounded-lg shadow-lg rotate-y-180 ${
-                      isAdmin ? 'bg-gradient-to-br from-orange-200 to-red-200 border-orange-300' : 'bg-gradient-to-br from-purple-200 to-indigo-200 border-purple-300'
+                      isAdmin ? 'bg-gradient-to-br from-blue-200 to-cyan-200 border-blue-300' : 'bg-gradient-to-br from-purple-200 to-indigo-200 border-purple-300'
                     } border-2`}>
                       <div className="p-6 h-full flex flex-col justify-center space-y-3">
                         <Button
                           variant="outline"
                           className={`w-full ${
                             isAdmin 
-                              ? 'border-orange-400 text-orange-800 hover:bg-orange-300 bg-white/80' 
+                              ? 'border-blue-400 text-blue-800 hover:bg-blue-300 bg-white/80' 
                               : 'border-purple-400 text-purple-800 hover:bg-purple-300 bg-white/80'
                           }`}
                           onClick={() => {
@@ -598,7 +598,7 @@ export default function Dashboard() {
                         {isAdmin && (
                           <Button
                             variant="outline"
-                            className="w-full border-blue-400 text-blue-800 hover:bg-blue-300 bg-white/80"
+                            className="w-full border-cyan-400 text-cyan-800 hover:bg-cyan-300 bg-white/80"
                           >
                             <Users className="w-4 h-4 mr-2" />
                             Affecter
