@@ -95,7 +95,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/forms', requireAuth, async (req: any, res) => {
     try {
       const userId = req.user.id;
-      const forms = await storage.getForms(userId);
+      const user = await storage.getUser(userId);
+      
+      let forms;
+      if (user?.role === 'admin') {
+        // Admin sees all forms
+        forms = await storage.getAllForms();
+      } else {
+        // User sees only their forms
+        forms = await storage.getForms(userId);
+      }
+      
       res.json(forms);
     } catch (error) {
       console.error("Error fetching forms:", error);
