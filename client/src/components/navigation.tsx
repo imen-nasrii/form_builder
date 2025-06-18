@@ -69,15 +69,7 @@ export default function Navigation() {
             </button>
           </Link>
           
-          <Link href="/components">
-            <button className={`px-4 py-2 rounded-lg transition-all ${
-              isActive("/components") 
-                ? "bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300 font-medium" 
-                : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
-            }`}>
-              Components
-            </button>
-          </Link>
+
 
           {user?.role !== 'admin' && (
             <Link href="/ultra-grid">
