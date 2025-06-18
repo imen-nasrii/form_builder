@@ -411,8 +411,6 @@ export default function Dashboard() {
 
         {/* Magical 3D Search Bar */}
         <div className="relative mb-8">
-          {/* Animated background gradient */}
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-400 via-pink-500 to-blue-500 rounded-2xl opacity-75 blur-sm animate-pulse"></div>
           
           <div className="relative bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/30 p-6 transform hover:scale-[1.02] transition-all duration-300">
             {/* Floating particles effect */}
