@@ -79,6 +79,16 @@ export default function Navigation() {
             </button>
           </Link>
 
+          <Link href="/advanced-grid">
+            <button className={`px-4 py-2 rounded-lg transition-all ${
+              isActive("/advanced-grid") 
+                ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 font-medium" 
+                : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+            }`}>
+              Grid Builder
+            </button>
+          </Link>
+
           <Link href="/ai-bot">
             <button className={`px-4 py-2 rounded-lg transition-all ${
               isActive("/ai-bot") 
