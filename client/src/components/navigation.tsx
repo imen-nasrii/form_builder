@@ -83,6 +83,16 @@ export default function Navigation() {
             </Link>
           )}
 
+          <Link href="/analytics">
+            <button className={`px-4 py-2 rounded-lg transition-all ${
+              isActive("/analytics") 
+                ? "bg-gradient-to-r from-orange-100 to-red-100 dark:from-orange-900/30 dark:to-red-900/30 text-orange-700 dark:text-orange-300 font-medium" 
+                : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+            }`}>
+              Analytics
+            </button>
+          </Link>
+
           <Link href="/ai-bot">
             <button className={`px-4 py-2 rounded-lg transition-all ${
               isActive("/ai-bot") 
