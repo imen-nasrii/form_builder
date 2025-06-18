@@ -108,13 +108,12 @@ export default function Navigation() {
               <Link href="/admin">
                 <button className={`px-4 py-2 rounded-lg transition-all ${
                   isActive("/admin") 
-                    ? "bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 font-medium" 
+                    ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 font-medium" 
                     : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
                 }`}>
-                  Analytics
+                  Super Admin
                 </button>
               </Link>
-
             </>
           )}
         </div>
