@@ -127,6 +127,12 @@ export default function Dashboard() {
   // Check if user is admin
   const isAdmin = Boolean(user && (user as any).role === 'admin');
 
+  // Helper function to format date
+  const formatDate = (dateString: string | Date | null | undefined) => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleDateString('fr-FR');
+  };
+
   const { data: forms = [] } = useQuery<Form[]>({
     queryKey: ["/api/forms"],
   });
@@ -314,10 +320,7 @@ export default function Dashboard() {
     form.menuId.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const formatDate = (date: string | Date | null) => {
-    if (!date) return "N/A";
-    return new Date(date).toLocaleDateString();
-  };
+
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -491,93 +494,120 @@ export default function Dashboard() {
             </Dialog>
           </div>
 
-          {/* Forms List */}
+          {/* Forms List - 3D Flip Cards */}
           {forms.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {forms.map((form) => (
-                <Card key={form.id} className="hover:shadow-lg transition-shadow duration-300">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg">{form.label || 'Untitled Form'}</CardTitle>
-                      <div className="flex items-center space-x-2">
-                        <Badge variant="outline">{form.layout}</Badge>
-                        {isAdmin ? (
-                          <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
-                            Admin
-                          </Badge>
-                        ) : null}
+              {forms
+                .sort((a, b) => (a.label || 'Untitled Form').localeCompare(b.label || 'Untitled Form')) // Sort by name
+                .map((form) => (
+                <div key={form.id} className="flip-card group perspective-1000 h-64">
+                  <div className="flip-card-inner relative w-full h-full transition-transform duration-700 transform-style-preserve-3d group-hover:rotate-y-180">
+                    
+                    {/* Front of the card */}
+                    <div className={`flip-card-front absolute w-full h-full backface-hidden rounded-lg shadow-lg ${
+                      isAdmin ? 'bg-gradient-to-br from-orange-100 to-red-100 border-orange-200' : 'bg-gradient-to-br from-purple-100 to-indigo-100 border-purple-200'
+                    } border-2`}>
+                      <div className="p-6 h-full flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-center justify-between mb-4">
+                            <h3 className={`text-lg font-bold ${isAdmin ? 'text-orange-900' : 'text-purple-900'}`}>
+                              {form.label || 'Untitled Form'}
+                            </h3>
+                            <Badge variant="secondary" className={`${
+                              isAdmin ? 'bg-orange-200 text-orange-800' : 'bg-purple-200 text-purple-800'
+                            }`}>
+                              {form.layout}
+                            </Badge>
+                          </div>
+                          <p className={`text-sm ${isAdmin ? 'text-orange-700' : 'text-purple-700'} mb-2`}>
+                            Menu ID: {form.menuId}
+                          </p>
+                          {isAdmin && form.createdBy && (
+                            <p className="text-orange-600 text-sm mb-2">
+                              Créé par: {form.createdBy}
+                            </p>
+                          )}
+                        </div>
+                        
+                        <div className="flex items-center justify-between text-sm">
+                          <span className={`${isAdmin ? 'text-orange-600' : 'text-purple-600'}`}>Mis à jour:</span>
+                          <span className={`font-medium ${isAdmin ? 'text-orange-800' : 'text-purple-800'}`}>
+                            {formatDate(form.updatedAt)}
+                          </span>
+                        </div>
+                        
+                        <div className="text-center text-xs text-gray-500 mt-2">
+                          Survoler pour plus d'options
+                        </div>
                       </div>
                     </div>
-                    <CardDescription>
-                      Menu ID: {form.menuId}
-                      {isAdmin ? (
-                        <div className="text-xs text-orange-600 mt-1">
-                          Créé par: {form.createdBy}
-                        </div>
-                      ) : null}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-slate-600">Mis à jour:</span>
-                        <span className="font-medium">{formatDate(form.updatedAt)}</span>
-                      </div>
-                      
-                      <div className="flex items-center space-x-2 pt-4">
-                        <Button 
-                          variant="outline" 
-                          className="flex-1"
-                          onClick={() => window.location.href = `/form-builder/${form.id}`}
+
+                    {/* Back of the card */}
+                    <div className={`flip-card-back absolute w-full h-full backface-hidden rounded-lg shadow-lg rotate-y-180 ${
+                      isAdmin ? 'bg-gradient-to-br from-orange-200 to-red-200 border-orange-300' : 'bg-gradient-to-br from-purple-200 to-indigo-200 border-purple-300'
+                    } border-2`}>
+                      <div className="p-6 h-full flex flex-col justify-center space-y-3">
+                        <Button
+                          variant="outline"
+                          className={`w-full ${
+                            isAdmin 
+                              ? 'border-orange-400 text-orange-800 hover:bg-orange-300 bg-white/80' 
+                              : 'border-purple-400 text-purple-800 hover:bg-purple-300 bg-white/80'
+                          }`}
+                          onClick={() => {
+                            window.location.href = `/form-builder/${form.id}`;
+                          }}
                         >
-                          {isAdmin ? (
-                            <>
-                              <Eye className="w-4 h-4 mr-2" />
-                              Consulter
-                            </>
-                          ) : (
-                            <>
-                              <Edit3 className="w-4 h-4 mr-2" />
-                              Éditer
-                            </>
-                          )}
+                          <Eye className="w-4 h-4 mr-2" />
+                          {isAdmin ? 'Consulter' : 'Éditer'}
                         </Button>
                         
                         {!isAdmin && (
                           <>
                             <Button
                               variant="outline"
-                              size="sm"
-                              className="text-blue-600 hover:text-blue-700"
+                              className="w-full border-green-400 text-green-800 hover:bg-green-300 bg-white/80"
+                              onClick={() => {
+                                navigator.clipboard.writeText(JSON.stringify(form, null, 2));
+                                toast({
+                                  title: "Formulaire copié",
+                                  description: "Le JSON du formulaire a été copié dans le presse-papiers",
+                                });
+                              }}
                             >
-                              <Copy className="w-4 h-4" />
+                              <Copy className="w-4 h-4 mr-2" />
+                              Copier JSON
                             </Button>
+                            
                             <Button
                               variant="outline"
-                              size="sm"
-                              onClick={() => deleteFormMutation.mutate(form.id)}
-                              className="text-red-600 hover:text-red-700"
+                              className="w-full border-red-400 text-red-800 hover:bg-red-300 bg-white/80"
+                              onClick={() => {
+                                if (confirm('Êtes-vous sûr de vouloir supprimer ce formulaire ?')) {
+                                  deleteFormMutation.mutate(form.id);
+                                }
+                              }}
                               disabled={deleteFormMutation.isPending}
                             >
-                              <Trash2 className="w-4 h-4" />
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              Supprimer
                             </Button>
                           </>
                         )}
                         
-                        {isAdmin ? (
+                        {isAdmin && (
                           <Button
                             variant="outline"
-                            size="sm"
-                            className="text-blue-600 hover:text-blue-700"
+                            className="w-full border-blue-400 text-blue-800 hover:bg-blue-300 bg-white/80"
                           >
-                            <Users className="w-4 h-4 mr-1" />
+                            <Users className="w-4 h-4 mr-2" />
                             Affecter
                           </Button>
-                        ) : null}
+                        )}
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               ))}
             </div>
           ) : (
