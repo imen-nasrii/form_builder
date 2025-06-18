@@ -375,7 +375,6 @@ export default function Dashboard() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-slate-900">Dashboard</h1>
-            <p className="text-slate-600 mt-1">Manage your forms and templates</p>
           </div>
           <div className="flex gap-3">
             <DashboardGuide />
@@ -391,7 +390,7 @@ export default function Dashboard() {
                 <Button variant="outline" className="cursor-pointer" asChild>
                   <span>
                     <Upload className="w-4 h-4 mr-2" />
-                    Importer un Formulaire
+                    Import Program
                   </span>
                 </Button>
               </label>
@@ -420,10 +419,10 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-2xl font-bold text-slate-900">
-                {isAdmin ? 'Tous les Formulaires' : 'Mes Formulaires'}
+                {isAdmin ? 'All Programs' : 'My Programs'}
               </h2>
               <p className="text-slate-600">
-                {isAdmin ? 'Consulter et affecter les formulaires' : 'Créer et gérer vos formulaires personnalisés'}
+                {isAdmin ? 'View and assign programs' : 'Create and manage your custom programs'}
               </p>
             </div>
             <Dialog open={showNewFormDialog} onOpenChange={(open) => {
@@ -453,7 +452,7 @@ export default function Dashboard() {
                   </Badge>
                   <Button variant="outline" disabled>
                     <Eye className="w-4 h-4 mr-2" />
-                    Consultation uniquement
+                    View Only
                   </Button>
                 </div>
               ) : null}
@@ -603,7 +602,7 @@ export default function Dashboard() {
                           }}
                         >
                           <Eye className="w-4 h-4 mr-2" />
-                          {isAdmin ? 'Consulter' : 'Éditer'}
+                          {isAdmin ? 'View' : 'Edit'}
                         </Button>
                         
                         {!isAdmin && (
@@ -696,7 +695,7 @@ export default function Dashboard() {
                 </div>
 
                 <div className="border rounded-lg p-4">
-                  <h4 className="font-medium mb-3">Form Preview</h4>
+                  <h4 className="font-medium mb-3">Program Preview</h4>
                   <div className="space-y-2 max-h-60 overflow-y-auto">
                     {importedFormData.fields?.map((field: any, index: number) => (
                       <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
@@ -743,7 +742,7 @@ export default function Dashboard() {
                     ) : (
                       <>
                         <FileCheck className="w-4 h-4 mr-2" />
-                        Import & Edit Form
+                        Import & Edit Program
                       </>
                     )}
                   </Button>
