@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, requireAuth, requireAdmin } from "./auth";
-import { requireEmailVerification, requireAdminRole, requireUserRole } from "./roleAuth";
+import { setupEnhancedAuth, requireAuth as requireAuthEnhanced, requireAdmin as requireAdminEnhanced, requireUser } from "./auth-enhanced";
 import { insertFormSchema, insertTemplateSchema } from "@shared/schema";
 import { apiService, type ApiDataSource } from "./services/apiService";
 import crypto from "crypto";
@@ -91,50 +91,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Program management routes with role-based access
-  app.get('/api/programs', requireEmailVerification, async (req: any, res) => {
+  // Form management routes
+  app.get('/api/forms', requireAuth, async (req: any, res) => {
     try {
       const userId = req.user.id;
-      const userRole = req.user.role;
-      
-      let programs;
-      if (userRole === 'admin') {
-        // Admins can view all programs
-        programs = await storage.getAllPrograms();
-      } else {
-        // Users can only view their own programs
-        programs = await storage.getPrograms(userId);
-      }
-      
-      res.json(programs);
+      const forms = await storage.getForms(userId);
+      res.json(forms);
     } catch (error) {
-      console.error("Error fetching programs:", error);
-      res.status(500).json({ message: "Failed to fetch programs" });
+      console.error("Error fetching forms:", error);
+      res.status(500).json({ message: "Failed to fetch forms" });
     }
   });
 
-  app.get('/api/programs/:id', requireEmailVerification, async (req: any, res) => {
+  app.get('/api/forms/:id', requireAuth, async (req: any, res) => {
     try {
-      const programId = parseInt(req.params.id);
-      const program = await storage.getProgram(programId);
+      const formId = parseInt(req.params.id);
+      const form = await storage.getForm(formId);
       
-      if (!program) {
-        return res.status(404).json({ message: "Program not found" });
+      if (!form) {
+        return res.status(404).json({ message: "Form not found" });
       }
 
-      // Users can only view their own programs, admins can view any
-      if (req.user.role !== 'admin' && program.createdBy !== req.user.id) {
-        return res.status(403).json({ message: "Access denied" });
-      }
-
-      res.json(program);
+      res.json(form);
     } catch (error) {
-      console.error("Error fetching program:", error);
-      res.status(500).json({ message: "Failed to fetch program" });
+      console.error("Error fetching form:", error);
+      res.status(500).json({ message: "Failed to fetch form" });
     }
   });
 
-  app.get('/api/programs/menu/:menuId', requireEmailVerification, async (req: any, res) => {
+  app.get('/api/forms/menu/:menuId', requireAuth, async (req: any, res) => {
     try {
       const menuId = req.params.menuId;
       const form = await storage.getFormByMenuId(menuId);
@@ -150,19 +135,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Create a new program (renamed from form)
-  app.post('/api/programs/create', requireUserRole, async (req: any, res) => {
+  // Create a new form
+  app.post('/api/forms', requireAuth, async (req: any, res) => {
     try {
       const userId = req.user.id;
-      const programData = req.body;
+      const formData = req.body;
 
       // Process formDefinition if present
-      let processedData = { ...programData };
-      if (programData.formDefinition) {
+      let processedData = { ...formData };
+      if (formData.formDefinition) {
         try {
-          const definition = typeof programData.formDefinition === 'string' 
-            ? JSON.parse(programData.formDefinition) 
-            : programData.formDefinition;
+          const definition = typeof formData.formDefinition === 'string' 
+            ? JSON.parse(formData.formDefinition) 
+            : formData.formDefinition;
           
           processedData.fields = definition.fields || [];
           processedData.actions = definition.actions || [];
@@ -177,88 +162,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Ensure we have required fields
       if (!processedData.menuId) {
-        processedData.menuId = `PROG_${Date.now()}`;
+        processedData.menuId = `FORM_${Date.now()}`;
       }
       if (!processedData.label) {
-        processedData.label = "New Program";
+        processedData.label = "New Form";
       }
 
       const parsedData = insertFormSchema.parse({
         ...processedData,
-        createdBy: userId,
-        status: 'draft'
+        createdBy: userId
       });
 
-      const newProgram = await storage.createProgram(parsedData);
-      res.status(201).json(newProgram);
+      const newForm = await storage.createForm(parsedData);
+      res.status(201).json(newForm);
     } catch (error) {
-      console.error("Error creating program:", error);
-      res.status(500).json({ message: "Failed to create program" });
-    }
-  });
-
-  // Update program (User only - for their own programs)
-  app.patch('/api/programs/:id', requireUserRole, async (req: any, res) => {
-    try {
-      const programId = parseInt(req.params.id);
-      const userId = req.user.id;
-      const updateData = req.body;
-      
-      const existingProgram = await storage.getProgram(programId);
-      if (!existingProgram) {
-        return res.status(404).json({ message: "Program not found" });
-      }
-      
-      if (existingProgram.createdBy !== userId) {
-        return res.status(403).json({ message: "Access denied" });
-      }
-      
-      const updatedProgram = await storage.updateProgram(programId, updateData);
-      res.json(updatedProgram);
-    } catch (error) {
-      console.error("Error updating program:", error);
-      res.status(500).json({ message: "Failed to update program" });
-    }
-  });
-
-  // Update program status (Admin only)
-  app.patch('/api/programs/:id/status', requireAdminRole, async (req: any, res) => {
-    try {
-      const programId = parseInt(req.params.id);
-      const { status, assignedTo } = req.body;
-      
-      await storage.updateProgramStatus(programId, status, assignedTo);
-      
-      const updatedProgram = await storage.getProgram(programId);
-      res.json(updatedProgram);
-    } catch (error) {
-      console.error("Error updating program status:", error);
-      res.status(500).json({ message: "Failed to update program status" });
-    }
-  });
-
-  // Stop program (User only - for their own programs)
-  app.patch('/api/programs/:id/stop', requireUserRole, async (req: any, res) => {
-    try {
-      const programId = parseInt(req.params.id);
-      const userId = req.user.id;
-      
-      const program = await storage.getProgram(programId);
-      if (!program) {
-        return res.status(404).json({ message: "Program not found" });
-      }
-      
-      if (program.createdBy !== userId) {
-        return res.status(403).json({ message: "Access denied" });
-      }
-      
-      await storage.updateProgramStatus(programId, 'stopped');
-      
-      const updatedProgram = await storage.getProgram(programId);
-      res.json(updatedProgram);
-    } catch (error) {
-      console.error("Error stopping program:", error);
-      res.status(500).json({ message: "Failed to stop program" });
+      console.error("Error creating form:", error);
+      res.status(500).json({ message: "Failed to create form" });
     }
   });
 
