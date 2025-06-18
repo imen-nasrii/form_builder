@@ -98,8 +98,19 @@ FormBuilder Pro is a comprehensive visual form builder application that allows u
 - **Session Storage**: PostgreSQL-backed session store for production
 
 ## Changelog
-- June 18, 2025. Initial setup
+- June 18, 2025: Initial setup
+- June 18, 2025: Implemented ultra-advanced Construction Zone with Excel-like grid system
+- June 18, 2025: Added role-based permission system for admin/user access control
 
 ## User Preferences
 
-Preferred communication style: Simple, everyday language.
+Preferred communication style: Simple, everyday language (French).
+System Requirements: Admin users cannot access Construction Zone (read-only mode), users have full form building access.
+
+## Recent Changes
+
+✓ Ultra-professional Construction Zone with Excel-like grid capabilities integrated
+✓ Role-based permission system implemented (admin vs user roles)
+✓ Admin users see all forms with creator information and assignment capabilities
+✓ User users have full access to form creation and editing tools
+✓ Database schema updated to support form ownership and assignment tracking
