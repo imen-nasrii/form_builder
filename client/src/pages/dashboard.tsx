@@ -344,57 +344,120 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Clean Search and Filter Bar */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-8">
-          <div className="flex items-center gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <input
-                type="text"
-                placeholder="Search programs..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-              />
+        {/* Magical 3D Search Bar */}
+        <div className="relative mb-8">
+          <div className="relative bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/30 p-6 transform hover:scale-[1.02] transition-all duration-300">
+            {/* Floating particles effect */}
+            <div className="absolute top-0 left-0 w-full h-full overflow-hidden rounded-2xl pointer-events-none">
+              <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-purple-400 rounded-full opacity-60 animate-bounce"></div>
+              <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-pink-400 rounded-full opacity-40 animate-ping"></div>
+              <div className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-blue-400 rounded-full opacity-50 animate-pulse"></div>
             </div>
             
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500 font-medium">Filter:</span>
-              <select
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value)}
-                className="px-3 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white text-sm min-w-[140px]"
-              >
-                <option value="all">All Programs</option>
-                <option value="recent">Recent (7 days)</option>
-                <option value="process">Process Type</option>
-                <option value="form">Form Type</option>
-                {isAdmin && <option value="assigned">Assigned</option>}
-              </select>
-            </div>
+            <div className="flex items-center gap-4 relative z-10">
+              <div className="relative flex-1">
+                {/* Glowing search icon */}
+                <div className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20">
+                  <div className="relative">
+                    <Search className="h-5 w-5 text-purple-500 drop-shadow-sm" />
+                    <div className="absolute inset-0 h-5 w-5 bg-purple-400 rounded-full blur-sm opacity-30 animate-pulse"></div>
+                  </div>
+                </div>
+                
+                {/* 3D Search Input */}
+                <input
+                  type="text"
+                  placeholder="✨ Search programs with magic..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-14 pr-6 py-4 text-lg font-medium bg-gradient-to-r from-white to-purple-50 border-2 border-transparent rounded-xl 
+                           focus:border-gradient-to-r focus:from-purple-400 focus:to-pink-400 
+                           focus:bg-white focus:shadow-xl focus:shadow-purple-200/50
+                           outline-none transition-all duration-300 transform
+                           hover:shadow-lg hover:shadow-purple-100/30
+                           placeholder:text-purple-300 placeholder:font-normal
+                           backdrop-blur-sm"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(243,232,255,0.6) 100%)',
+                    boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.1), 0 8px 32px rgba(147,51,234,0.1)'
+                  }}
+                />
+                
+                {/* Magic sparkle trail */}
+                {searchQuery && (
+                  <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+                    <div className="flex space-x-1">
+                      <div className="w-1 h-1 bg-purple-400 rounded-full animate-ping"></div>
+                      <div className="w-1 h-1 bg-pink-400 rounded-full animate-ping" style={{animationDelay: '0.2s'}}></div>
+                      <div className="w-1 h-1 bg-blue-400 rounded-full animate-ping" style={{animationDelay: '0.4s'}}></div>
+                    </div>
+                  </div>
+                )}
+              </div>
             
-            {(searchQuery || filterType !== "all") && (
-              <button
-                onClick={() => {
-                  setSearchQuery("");
-                  setFilterType("all");
-                }}
-                className="px-3 py-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"
-              >
-                Clear
-              </button>
+              {/* 3D Filter Dropdown */}
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-semibold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                  Filter:
+                </span>
+                <div className="relative">
+                  <select
+                    value={filterType}
+                    onChange={(e) => setFilterType(e.target.value)}
+                    className="px-4 py-3 border-2 border-purple-200 rounded-xl focus:border-purple-400 outline-none 
+                             bg-gradient-to-r from-white to-purple-50 text-sm min-w-[150px] font-medium
+                             hover:shadow-lg hover:shadow-purple-100/50 transition-all duration-300
+                             cursor-pointer transform hover:scale-105"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(243,232,255,0.7) 100%)',
+                      boxShadow: '0 4px 15px rgba(147,51,234,0.1)'
+                    }}
+                  >
+                    <option value="all">✨ All Programs</option>
+                    <option value="recent">🕒 Recent (7 days)</option>
+                    <option value="process">⚙️ Process Type</option>
+                    <option value="form">📋 Form Type</option>
+                    {isAdmin && <option value="assigned">👥 Assigned</option>}
+                  </select>
+                  
+                  {/* Glowing border effect */}
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-400 to-pink-400 opacity-20 blur-sm -z-10"></div>
+                </div>
+              </div>
+            
+              {/* Magic Clear Button */}
+              {(searchQuery || filterType !== "all") && (
+                <button
+                  onClick={() => {
+                    setSearchQuery("");
+                    setFilterType("all");
+                  }}
+                  className="relative px-4 py-3 text-sm font-semibold text-white 
+                           bg-gradient-to-r from-red-400 to-pink-500 rounded-xl
+                           hover:from-red-500 hover:to-pink-600 
+                           transform hover:scale-110 transition-all duration-300
+                           shadow-lg hover:shadow-xl hover:shadow-pink-200/50
+                           active:scale-95"
+                >
+                  <span className="relative z-10">🗑️ Clear</span>
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-red-300 to-pink-300 opacity-30 blur-sm"></div>
+                </button>
+              )}
+            </div>
+          
+            {/* Magic Results Counter */}
+            {filteredForms.length !== forms.length && (
+              <div className="mt-4 pt-4 border-t border-gradient-to-r from-purple-200 to-pink-200">
+                <div className="text-center">
+                  <p className="text-sm font-medium bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                    ✨ Showing {filteredForms.length} of {forms.length} magical programs
+                    {searchQuery && <span className="block mt-1 text-xs">🔍 Matching "{searchQuery}"</span>}
+                    {filterType !== "all" && <span className="block mt-1 text-xs">📂 Filter: {filterType}</span>}
+                  </p>
+                </div>
+              </div>
             )}
           </div>
-          
-          {filteredForms.length !== forms.length && (
-            <div className="mt-3 pt-3 border-t border-gray-100">
-              <p className="text-sm text-gray-600">
-                Showing {filteredForms.length} of {forms.length} programs
-                {searchQuery && <span> matching "{searchQuery}"</span>}
-                {filterType !== "all" && <span> • Filter: {filterType}</span>}
-              </p>
-            </div>
-          )}
         </div>
 
         {/* Create New Form Section */}
