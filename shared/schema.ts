@@ -54,7 +54,8 @@ export const forms = pgTable("forms", {
   actions: jsonb("actions").notNull().default("[]"),
   validations: jsonb("validations").notNull().default("[]"),
   formDefinition: text("form_definition"),
-  createdBy: varchar("created_by").notNull(),
+  createdBy: varchar("created_by").notNull().references(() => users.id),
+  assignedTo: varchar("assigned_to").references(() => users.id),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
