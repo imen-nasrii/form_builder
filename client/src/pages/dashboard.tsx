@@ -124,7 +124,7 @@ export default function Dashboard() {
   const { user } = useAuth();
   
   // Check if user is admin
-  const isAdmin = user && (user as any).role === 'admin';
+  const isAdmin = Boolean(user && (user as any).role === 'admin');
 
   const { data: forms = [] } = useQuery<Form[]>({
     queryKey: ["/api/forms"],
@@ -453,7 +453,7 @@ export default function Dashboard() {
                   </Button>
                 </DialogTrigger>
               )}
-              {isAdmin && (
+              {isAdmin ? (
                 <div className="flex items-center space-x-2">
                   <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
                     Mode Administrateur
@@ -463,7 +463,7 @@ export default function Dashboard() {
                     Consultation uniquement
                   </Button>
                 </div>
-              )}
+              ) : null}
               <DialogContent className="sm:max-w-[700px]">
                 <DialogHeader>
                   <DialogTitle>Create New Form</DialogTitle>
@@ -555,20 +555,20 @@ export default function Dashboard() {
                       <CardTitle className="text-lg">{form.label || 'Untitled Form'}</CardTitle>
                       <div className="flex items-center space-x-2">
                         <Badge variant="outline">{form.layout}</Badge>
-                        {isAdmin && (
+                        {isAdmin ? (
                           <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
                             Admin
                           </Badge>
-                        )}
+                        ) : null}
                       </div>
                     </div>
                     <CardDescription>
                       Menu ID: {form.menuId}
-                      {isAdmin && (
+                      {isAdmin ? (
                         <div className="text-xs text-orange-600 mt-1">
                           Créé par: {form.createdBy}
                         </div>
-                      )}
+                      ) : null}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -618,7 +618,7 @@ export default function Dashboard() {
                           </>
                         )}
                         
-                        {isAdmin && (
+                        {isAdmin ? (
                           <Button
                             variant="outline"
                             size="sm"
@@ -627,7 +627,7 @@ export default function Dashboard() {
                             <Users className="w-4 h-4 mr-1" />
                             Affecter
                           </Button>
-                        )}
+                        ) : null}
                       </div>
                     </div>
                   </CardContent>
