@@ -104,7 +104,7 @@ export default function Analytics() {
   // Calculate form type distribution from real data
   const realFormUsageData = Array.isArray(forms) && forms.length > 0 ? [
     { 
-      name: 'Process Forms', 
+      name: 'Process Programs', 
       value: forms.filter((f: any) => f.layout === 'PROCESS').length, 
       color: '#3B82F6' 
     },
@@ -171,7 +171,7 @@ export default function Analytics() {
 
           <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 border-green-200 dark:border-green-800">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-green-700 dark:text-green-300">Total Forms</CardTitle>
+              <CardTitle className="text-sm font-medium text-green-700 dark:text-green-300">Total Programs</CardTitle>
               <FileText className="h-4 w-4 text-green-600" />
             </CardHeader>
             <CardContent>
@@ -216,7 +216,7 @@ export default function Analytics() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-blue-600" />
-                User & Form Growth
+                User & Program Growth
               </CardTitle>
               <CardDescription>Monthly growth trends over the last 6 months</CardDescription>
             </CardHeader>
@@ -239,9 +239,9 @@ export default function Analytics() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <PieChart className="h-5 w-5 text-green-600" />
-                Form Types Distribution
+                Program Types Distribution
               </CardTitle>
-              <CardDescription>Breakdown of form types in the system</CardDescription>
+              <CardDescription>Breakdown of program types in the system</CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -289,8 +289,8 @@ export default function Analytics() {
                 { category: 'Total Users', count: totalUsers },
                 { category: 'Admin Users', count: adminUsers },
                 { category: 'Regular Users', count: regularUsers },
-                { category: 'Total Forms', count: totalForms },
-                { category: 'Recent Forms', count: recentForms }
+                { category: 'Total Programs', count: totalForms },
+                { category: 'Recent Programs', count: recentForms }
               ]}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="category" />
@@ -367,7 +367,7 @@ export default function Analytics() {
                 <Badge variant="secondary">{regularUsers}</Badge>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Avg. forms per user</span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">Avg. programs per user</span>
                 <Badge variant="secondary">{totalUsers > 0 ? Math.round(totalForms / totalUsers) : 0}</Badge>
               </div>
             </CardContent>
