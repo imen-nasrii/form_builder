@@ -79,13 +79,13 @@ export default function Navigation() {
             </button>
           </Link>
 
-          <Link href="/advanced-grid">
+          <Link href="/ultra-grid">
             <button className={`px-4 py-2 rounded-lg transition-all ${
-              isActive("/advanced-grid") 
-                ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 font-medium" 
+              isActive("/ultra-grid") 
+                ? "bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/30 dark:to-blue-900/30 text-purple-700 dark:text-purple-300 font-medium" 
                 : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
             }`}>
-              Grid Builder
+              🏗️ Construction Zone
             </button>
           </Link>
 
