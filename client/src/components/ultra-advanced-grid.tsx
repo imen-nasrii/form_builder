@@ -694,11 +694,11 @@ export default function UltraAdvancedGrid() {
                       <Label className="text-sm font-medium mb-3 block">Cellule Sélectionnée</Label>
                       <div className="space-y-2">
                         <div className="grid grid-cols-2 gap-2">
-                          <Button size="sm" variant="outline" className="text-xs">
+                          <Button size="sm" variant="outline" className="text-xs" onClick={mergeCells}>
                             <Merge className="w-3 h-3 mr-1" />
                             Fusionner
                           </Button>
-                          <Button size="sm" variant="outline" className="text-xs">
+                          <Button size="sm" variant="outline" className="text-xs" onClick={splitCell}>
                             <Split className="w-3 h-3 mr-1" />
                             Diviser
                           </Button>
@@ -706,7 +706,7 @@ export default function UltraAdvancedGrid() {
                             <Copy className="w-3 h-3 mr-1" />
                             Copier
                           </Button>
-                          <Button size="sm" variant="outline" className="text-xs">
+                          <Button size="sm" variant="outline" className="text-xs" onClick={clearCell}>
                             <Trash2 className="w-3 h-3 mr-1" />
                             Vider
                           </Button>
