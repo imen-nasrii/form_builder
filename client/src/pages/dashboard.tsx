@@ -390,7 +390,6 @@ export default function Dashboard() {
 
           </div>
           <div className="flex gap-3">
-            <DashboardGuide />
             <input
               type="file"
               accept=".json"
