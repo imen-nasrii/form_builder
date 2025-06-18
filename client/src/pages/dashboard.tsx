@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import Navigation from "@/components/navigation";
 import JSONValidatorDialog from "@/components/form-builder/json-validator-dialog";
-import { Plus, Search, FileText, Calendar, User, Settings, Database, Menu, ArrowRightLeft, Upload, FileX, HelpCircle, Eye, Users, Edit3, Copy, Trash2, BarChart3 } from "lucide-react";
+import { Plus, Search, FileText, Calendar, User, FileCheck, Settings, Database, Menu, ArrowRightLeft, Upload, FileX, HelpCircle, Eye, Users, Edit3, Copy, Trash2, BarChart3 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import type { Form } from "@shared/schema";
 
