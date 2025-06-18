@@ -11,9 +11,9 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import Navigation from "@/components/navigation";
 import JSONValidatorDialog from "@/components/form-builder/json-validator-dialog";
-import { Plus, Search, FileText, Calendar, User, FileCheck, Settings, Database, Menu, ArrowRightLeft, Upload, FileX, HelpCircle, Eye, Users, Edit3, Copy, Trash2, BarChart3 } from "lucide-react";
+import { Plus, Search, FileText, Calendar, User, Settings, Database, Menu, ArrowRightLeft, Upload, FileX, HelpCircle, Eye, Users, Edit3, Copy, Trash2, BarChart3 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import type { Form, FormTemplate } from "@shared/schema";
+import type { Form } from "@shared/schema";
 
 // Dashboard Step-by-Step Guide Component
 function DashboardGuide() {
@@ -131,9 +131,7 @@ export default function Dashboard() {
     queryKey: ["/api/forms"],
   });
 
-  const { data: templates = [] } = useQuery<FormTemplate[]>({
-    queryKey: ["/api/templates"],
-  });
+
 
   const deleteFormMutation = useMutation({
     mutationFn: async (formId: number) => {
@@ -595,52 +593,7 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* Templates Section */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-slate-900">Form Templates</h2>
-            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-              {templates.length} templates
-            </Badge>
-          </div>
-          
-          {templates.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {templates.map((template) => (
-                <Card key={template.id} className="hover:shadow-lg transition-shadow duration-300 border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg text-blue-900">{template.name}</CardTitle>
-                      <Badge variant="secondary" className="bg-blue-100 text-blue-800">Template</Badge>
-                    </div>
-                    <CardDescription className="text-blue-700">{template.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-blue-600">Catégorie:</span>
-                        <span className="font-medium text-blue-800">{template.category}</span>
-                      </div>
-                      <div className="flex items-center space-x-2 pt-4">
-                        <Button variant="outline" className="flex-1 border-blue-300 text-blue-700 hover:bg-blue-100" onClick={() => {
-                          window.location.href = `/form-builder?template=${template.id}`;
-                        }}>
-                          Use this template
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8 bg-blue-50 rounded-lg border border-blue-200">
-              <FileCheck className="h-12 w-12 text-blue-400 mx-auto mb-3" />
-              <p className="text-blue-600 font-medium">No templates available</p>
-              <p className="text-blue-500 text-sm">Templates help you get started quickly with pre-configured forms</p>
-            </div>
-          )}
-        </div>
+
 
         {/* Import Form Dialog */}
         <Dialog open={showImportDialog} onOpenChange={setShowImportDialog}>
@@ -749,7 +702,7 @@ export default function Dashboard() {
               </div>
               
               <div className="grid grid-cols-2 gap-3">
-                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3">
+                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 col-span-1">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">Total Forms</p>
@@ -759,17 +712,9 @@ export default function Dashboard() {
                   </div>
                 </div>
                 
-                <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xs text-green-600 dark:text-green-400 font-medium">Templates</p>
-                      <p className="text-lg font-bold text-green-700 dark:text-green-300">{templates.length}</p>
-                    </div>
-                    <FileCheck className="h-4 w-4 text-green-500" />
-                  </div>
-                </div>
+
                 
-                <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3">
+                <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3 col-span-1">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-xs text-purple-600 dark:text-purple-400 font-medium">Ce Mois</p>
@@ -785,7 +730,7 @@ export default function Dashboard() {
                   </div>
                 </div>
                 
-                <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-3">
+                <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-3 col-span-1">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-xs text-orange-600 dark:text-orange-400 font-medium">Récent</p>
