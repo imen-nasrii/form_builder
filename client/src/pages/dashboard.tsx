@@ -121,6 +121,10 @@ export default function Dashboard() {
   });
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
+  
+  // Check if user is admin
+  const isAdmin = user && (user as any).role === 'admin';
 
   const { data: forms = [] } = useQuery<Form[]>({
     queryKey: ["/api/forms"],
@@ -336,15 +340,17 @@ export default function Dashboard() {
               className="hidden"
               id="file-upload"
             />
-            <label htmlFor="file-upload">
-              <Button variant="outline" className="cursor-pointer" asChild>
-                <span>
-                  <Upload className="w-4 h-4 mr-2" />
-                  Import Form
-                </span>
-              </Button>
-            </label>
-            <JSONValidatorDialog />
+            {!isAdmin && (
+              <label htmlFor="file-upload">
+                <Button variant="outline" className="cursor-pointer" asChild>
+                  <span>
+                    <Upload className="w-4 h-4 mr-2" />
+                    Importer un Formulaire
+                  </span>
+                </Button>
+              </label>
+            )}
+            {!isAdmin && <JSONValidatorDialog />}
           </div>
         </div>
 
@@ -420,8 +426,12 @@ export default function Dashboard() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-slate-900">My Forms</h2>
-              <p className="text-slate-600">Create and manage your custom forms</p>
+              <h2 className="text-2xl font-bold text-slate-900">
+                {isAdmin ? 'Tous les Formulaires' : 'Mes Formulaires'}
+              </h2>
+              <p className="text-slate-600">
+                {isAdmin ? 'Consulter et affecter les formulaires' : 'Créer et gérer vos formulaires personnalisés'}
+              </p>
             </div>
             <Dialog open={showNewFormDialog} onOpenChange={(open) => {
               setShowNewFormDialog(open);
@@ -435,12 +445,25 @@ export default function Dashboard() {
                 });
               }
             }}>
-              <DialogTrigger asChild>
-                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Form
-                </Button>
-              </DialogTrigger>
+              {!isAdmin && (
+                <DialogTrigger asChild>
+                  <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Créer un Formulaire
+                  </Button>
+                </DialogTrigger>
+              )}
+              {isAdmin && (
+                <div className="flex items-center space-x-2">
+                  <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
+                    Mode Administrateur
+                  </Badge>
+                  <Button variant="outline" disabled>
+                    <Eye className="w-4 h-4 mr-2" />
+                    Consultation uniquement
+                  </Button>
+                </div>
+              )}
               <DialogContent className="sm:max-w-[700px]">
                 <DialogHeader>
                   <DialogTitle>Create New Form</DialogTitle>
@@ -530,14 +553,28 @@ export default function Dashboard() {
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-lg">{form.label || 'Untitled Form'}</CardTitle>
-                      <Badge variant="outline">{form.layout}</Badge>
+                      <div className="flex items-center space-x-2">
+                        <Badge variant="outline">{form.layout}</Badge>
+                        {isAdmin && (
+                          <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
+                            Admin
+                          </Badge>
+                        )}
+                      </div>
                     </div>
-                    <CardDescription>Menu ID: {form.menuId}</CardDescription>
+                    <CardDescription>
+                      Menu ID: {form.menuId}
+                      {isAdmin && (
+                        <div className="text-xs text-orange-600 mt-1">
+                          Créé par: {form.createdBy}
+                        </div>
+                      )}
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-slate-600">Updated:</span>
+                        <span className="text-slate-600">Mis à jour:</span>
                         <span className="font-medium">{formatDate(form.updatedAt)}</span>
                       </div>
                       
@@ -547,16 +584,50 @@ export default function Dashboard() {
                           className="flex-1"
                           onClick={() => window.location.href = `/form-builder/${form.id}`}
                         >
-                          Edit
+                          {isAdmin ? (
+                            <>
+                              <Eye className="w-4 h-4 mr-2" />
+                              Consulter
+                            </>
+                          ) : (
+                            <>
+                              <Edit3 className="w-4 h-4 mr-2" />
+                              Éditer
+                            </>
+                          )}
                         </Button>
-                        <Button
-                          variant="outline"
-                          onClick={() => deleteFormMutation.mutate(form.id)}
-                          className="text-red-600 hover:text-red-700"
-                          disabled={deleteFormMutation.isPending}
-                        >
-                          Delete
-                        </Button>
+                        
+                        {!isAdmin && (
+                          <>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-blue-600 hover:text-blue-700"
+                            >
+                              <Copy className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => deleteFormMutation.mutate(form.id)}
+                              className="text-red-600 hover:text-red-700"
+                              disabled={deleteFormMutation.isPending}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </>
+                        )}
+                        
+                        {isAdmin && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-blue-600 hover:text-blue-700"
+                          >
+                            <Users className="w-4 h-4 mr-1" />
+                            Affecter
+                          </Button>
+                        )}
                       </div>
                     </div>
                   </CardContent>
@@ -566,8 +637,12 @@ export default function Dashboard() {
           ) : (
             <div className="text-center py-12 bg-slate-50 rounded-lg border border-slate-200">
               <FileText className="h-12 w-12 text-slate-400 mx-auto mb-3" />
-              <h3 className="text-lg font-medium text-slate-900 mb-2">No forms yet</h3>
-              <p className="text-slate-600 mb-6">Create your first form to get started</p>
+              <h3 className="text-lg font-medium text-slate-900 mb-2">
+                {isAdmin ? 'Aucun formulaire disponible' : 'Aucun formulaire encore'}
+              </h3>
+              <p className="text-slate-600 mb-6">
+                {isAdmin ? 'Aucun formulaire créé par les utilisateurs' : 'Créez votre premier formulaire pour commencer'}
+              </p>
             </div>
           )}
         </div>
