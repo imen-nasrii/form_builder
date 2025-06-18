@@ -580,7 +580,7 @@ export default function Dashboard() {
                         </div>
                         
                         <div className="text-center text-xs text-gray-500 mt-2">
-                          Survoler pour plus d'options
+                          Hover for more options
                         </div>
                       </div>
                     </div>
@@ -833,10 +833,10 @@ export default function Dashboard() {
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Users className="w-5 h-5 text-blue-600" />
-                Affecter le Formulaire
+                Assign Form
               </DialogTitle>
               <DialogDescription>
-                Affecter "{selectedFormForAssign?.label}" à un utilisateur
+                Assign "{selectedFormForAssign?.label}" to a user
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
