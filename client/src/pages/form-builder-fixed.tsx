@@ -2842,8 +2842,21 @@ export default function FormBuilderFixed() {
   const formBuilderRef = useRef<HTMLDivElement>(null);
 
   // Grid configuration state for ultra-advanced grid system
+  interface GridCell {
+    id: string;
+    row: number;
+    col: number;
+    width: number;
+    height: number;
+    colspan: number;
+    rowspan: number;
+    merged: boolean;
+    isEmpty: boolean;
+    component: { Type: string; Label: string } | null;
+  }
+
   const [gridConfig, setGridConfig] = useState(() => {
-    const initialCells = [];
+    const initialCells: GridCell[] = [];
     const rows = 4;
     const cols = 6;
     
@@ -3221,7 +3234,7 @@ export default function FormBuilderFixed() {
   const addGridRow = () => {
     setGridConfig(prev => {
       const newRows = prev.rows + 1;
-      const newCells = [...prev.cells];
+      const newCells: GridCell[] = [...prev.cells];
       
       for (let col = 0; col < prev.cols; col++) {
         newCells.push({
@@ -3259,7 +3272,7 @@ export default function FormBuilderFixed() {
   const addGridColumn = () => {
     setGridConfig(prev => {
       const newCols = prev.cols + 1;
-      const newCells = [...prev.cells];
+      const newCells: GridCell[] = [...prev.cells];
       
       for (let row = 0; row < prev.rows; row++) {
         newCells.push({
@@ -3345,7 +3358,7 @@ export default function FormBuilderFixed() {
       const cellIndex = prev.cells.findIndex(c => c.id === cellId);
       if (cellIndex === -1) return prev;
       
-      const updatedCells = [...prev.cells];
+      const updatedCells: GridCell[] = [...prev.cells];
       updatedCells[cellIndex] = {
         ...updatedCells[cellIndex],
         component: null,
@@ -3365,18 +3378,24 @@ export default function FormBuilderFixed() {
     
     const componentType = e.dataTransfer.getData('componentType');
     if (componentType) {
-      // Create new field from component type
-      const newField = createFieldFromType(componentType);
+      // Use the existing addField function to create the component
+      addField(componentType);
       
-      // Add to grid cell
+      // Get the newly created field (it will be the last one)
+      const newFieldId = `${componentType}_${Date.now()}`;
+      
+      // Add reference to grid cell
       setGridConfig(prev => {
         const cellIndex = prev.cells.findIndex(c => c.id === cellId);
         if (cellIndex === -1) return prev;
         
-        const updatedCells = [...prev.cells];
+        const updatedCells: GridCell[] = [...prev.cells];
         updatedCells[cellIndex] = {
           ...updatedCells[cellIndex],
-          component: newField,
+          component: { 
+            Type: componentType, 
+            Label: ComponentTypes[componentType as keyof typeof ComponentTypes]?.label || componentType 
+          },
           isEmpty: false
         };
         
@@ -3385,12 +3404,6 @@ export default function FormBuilderFixed() {
           cells: updatedCells
         };
       });
-
-      // Also add to main form fields
-      setFormData(prev => ({
-        ...prev,
-        fields: [...prev.fields, newField]
-      }));
     }
   };
 
@@ -4339,11 +4352,11 @@ export default function FormBuilderFixed() {
                         <div className="w-full h-full flex items-center justify-between">
                           <div className="flex items-center space-x-2">
                             <span className="text-lg">
-                              {getComponentIcon(cell.component.Type)}
+                              {getComponentIcon(cell.component.Type || 'UNKNOWN')}
                             </span>
                             <div>
-                              <div className="font-medium text-sm">{cell.component.Label}</div>
-                              <div className="text-xs text-gray-500">{cell.component.Type}</div>
+                              <div className="font-medium text-sm">{cell.component.Label || 'Component'}</div>
+                              <div className="text-xs text-gray-500">{cell.component.Type || 'UNKNOWN'}</div>
                             </div>
                           </div>
                           <div className="flex space-x-1">
@@ -4353,7 +4366,11 @@ export default function FormBuilderFixed() {
                               className="p-1 h-6 w-6"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                setSelectedField(cell.component);
+                                // Find the field in formData.fields and select it
+                                const matchingField = formData.fields.find(f => f.Type === cell.component?.Type);
+                                if (matchingField) {
+                                  setSelectedField(matchingField);
+                                }
                               }}
                             >
                               <Settings className="w-3 h-3" />
