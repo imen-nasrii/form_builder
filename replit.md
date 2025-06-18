@@ -123,3 +123,4 @@ System Requirements: Admin users cannot access Construction Zone (read-only mode
 ✓ Interface terminology changed from "Form" to "Program" (June 18, 2025)
 ✓ Statistics modal replaced with 3 floating data icons in top-right (June 18, 2025)
 ✓ Dashboard interface optimized and fully translated to English (June 18, 2025)
+✓ Statistics icons repositioned from right side to centered layout (June 18, 2025)
