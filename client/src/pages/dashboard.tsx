@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import Navigation from "@/components/navigation";
 import JSONValidatorDialog from "@/components/form-builder/json-validator-dialog";
-import { Plus, Search, FileText, Calendar, User, FileCheck, Settings, Database, Menu, ArrowRightLeft, Upload, FileX, HelpCircle, Eye, Users, Edit3, Copy, Trash2 } from "lucide-react";
+import { Plus, Search, FileText, Calendar, User, FileCheck, Settings, Database, Menu, ArrowRightLeft, Upload, FileX, HelpCircle, Eye, Users, Edit3, Copy, Trash2, BarChart3 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import type { Form, FormTemplate } from "@shared/schema";
 
@@ -113,6 +113,7 @@ export default function Dashboard() {
   const [showNewFormDialog, setShowNewFormDialog] = useState(false);
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [importedFormData, setImportedFormData] = useState<any>(null);
+  const [showStats, setShowStats] = useState(false);
   const [formConfig, setFormConfig] = useState({
     menuId: `FORM_${Date.now()}`,
     label: `Form ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(',', '')}`,
@@ -354,60 +355,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Forms</CardTitle>
-              <FileText className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{forms.length}</div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Templates</CardTitle>
-              <FileText className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{templates.length}</div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">This Month</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {forms.filter(form => {
-                  const created = new Date(form.createdAt || "");
-                  const now = new Date();
-                  return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear();
-                }).length}
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Recent Activity</CardTitle>
-              <User className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {forms.filter(form => {
-                  const updated = new Date(form.updatedAt || "");
-                  const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-                  return updated > dayAgo;
-                }).length}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+
 
         {/* Search and Filter */}
         <div className="flex items-center space-x-4 mb-6">
@@ -774,6 +722,88 @@ export default function Dashboard() {
           </DialogContent>
         </Dialog>
 
+      </div>
+
+      {/* Floating Stats Button */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <div className="relative group">
+          <Button
+            className="w-14 h-14 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300"
+            onClick={() => setShowStats(!showStats)}
+          >
+            <BarChart3 className="w-6 h-6 text-white" />
+          </Button>
+          
+          {showStats && (
+            <div className="absolute bottom-16 right-0 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-gray-900 dark:text-white">Statistiques</h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowStats(false)}
+                  className="h-6 w-6 p-0"
+                >
+                  ×
+                </Button>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">Total Forms</p>
+                      <p className="text-lg font-bold text-blue-700 dark:text-blue-300">{forms.length}</p>
+                    </div>
+                    <FileText className="h-4 w-4 text-blue-500" />
+                  </div>
+                </div>
+                
+                <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-green-600 dark:text-green-400 font-medium">Templates</p>
+                      <p className="text-lg font-bold text-green-700 dark:text-green-300">{templates.length}</p>
+                    </div>
+                    <FileCheck className="h-4 w-4 text-green-500" />
+                  </div>
+                </div>
+                
+                <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-purple-600 dark:text-purple-400 font-medium">Ce Mois</p>
+                      <p className="text-lg font-bold text-purple-700 dark:text-purple-300">
+                        {forms.filter(form => {
+                          const created = new Date(form.createdAt || "");
+                          const now = new Date();
+                          return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear();
+                        }).length}
+                      </p>
+                    </div>
+                    <Calendar className="h-4 w-4 text-purple-500" />
+                  </div>
+                </div>
+                
+                <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-orange-600 dark:text-orange-400 font-medium">Récent</p>
+                      <p className="text-lg font-bold text-orange-700 dark:text-orange-300">
+                        {forms.filter(form => {
+                          const updated = new Date(form.updatedAt || "");
+                          const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+                          return updated > dayAgo;
+                        }).length}
+                      </p>
+                    </div>
+                    <User className="h-4 w-4 text-orange-500" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
