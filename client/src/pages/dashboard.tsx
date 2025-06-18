@@ -505,21 +505,21 @@ export default function Dashboard() {
                     
                     {/* Front of the card */}
                     <div className={`flip-card-front absolute w-full h-full backface-hidden rounded-lg shadow-lg ${
-                      isAdmin ? 'bg-gradient-to-br from-blue-100 to-cyan-100 border-blue-200' : 'bg-gradient-to-br from-purple-100 to-indigo-100 border-purple-200'
+                      isAdmin ? 'bg-white border-gray-200' : 'bg-white border-gray-200'
                     } border-2`}>
                       <div className="p-6 h-full flex flex-col justify-between">
                         <div>
                           <div className="flex items-center justify-between mb-4">
-                            <h3 className={`text-lg font-bold ${isAdmin ? 'text-blue-900' : 'text-purple-900'}`}>
+                            <h3 className={`text-lg font-bold ${isAdmin ? 'text-gray-800' : 'text-gray-800'}`}>
                               {form.label || 'Untitled Form'}
                             </h3>
                             <Badge variant="secondary" className={`${
-                              isAdmin ? 'bg-blue-200 text-blue-800' : 'bg-purple-200 text-purple-800'
+                              isAdmin ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'
                             }`}>
                               {form.layout}
                             </Badge>
                           </div>
-                          <p className={`text-sm ${isAdmin ? 'text-blue-700' : 'text-purple-700'} mb-2`}>
+                          <p className={`text-sm ${isAdmin ? 'text-gray-600' : 'text-gray-600'} mb-2`}>
                             Menu ID: {form.menuId}
                           </p>
                           {isAdmin && form.createdBy && (
@@ -530,8 +530,8 @@ export default function Dashboard() {
                         </div>
                         
                         <div className="flex items-center justify-between text-sm">
-                          <span className={`${isAdmin ? 'text-blue-600' : 'text-purple-600'}`}>Mis à jour:</span>
-                          <span className={`font-medium ${isAdmin ? 'text-blue-800' : 'text-purple-800'}`}>
+                          <span className={`${isAdmin ? 'text-gray-500' : 'text-gray-500'}`}>Mis à jour:</span>
+                          <span className={`font-medium ${isAdmin ? 'text-gray-700' : 'text-gray-700'}`}>
                             {formatDate(form.updatedAt)}
                           </span>
                         </div>
@@ -544,15 +544,15 @@ export default function Dashboard() {
 
                     {/* Back of the card */}
                     <div className={`flip-card-back absolute w-full h-full backface-hidden rounded-lg shadow-lg rotate-y-180 ${
-                      isAdmin ? 'bg-gradient-to-br from-blue-200 to-cyan-200 border-blue-300' : 'bg-gradient-to-br from-purple-200 to-indigo-200 border-purple-300'
+                      isAdmin ? 'bg-gray-50 border-gray-200' : 'bg-gray-50 border-gray-200'
                     } border-2`}>
                       <div className="p-6 h-full flex flex-col justify-center space-y-3">
                         <Button
                           variant="outline"
                           className={`w-full ${
                             isAdmin 
-                              ? 'border-blue-400 text-blue-800 hover:bg-blue-300 bg-white/80' 
-                              : 'border-purple-400 text-purple-800 hover:bg-purple-300 bg-white/80'
+                              ? 'border-blue-300 text-blue-700 hover:bg-blue-50 bg-white' 
+                              : 'border-purple-300 text-purple-700 hover:bg-purple-50 bg-white'
                           }`}
                           onClick={() => {
                             window.location.href = `/form-builder/${form.id}`;
@@ -566,7 +566,7 @@ export default function Dashboard() {
                           <>
                             <Button
                               variant="outline"
-                              className="w-full border-green-400 text-green-800 hover:bg-green-300 bg-white/80"
+                              className="w-full border-green-300 text-green-700 hover:bg-green-50 bg-white"
                               onClick={() => {
                                 navigator.clipboard.writeText(JSON.stringify(form, null, 2));
                                 toast({
@@ -581,7 +581,7 @@ export default function Dashboard() {
                             
                             <Button
                               variant="outline"
-                              className="w-full border-red-400 text-red-800 hover:bg-red-300 bg-white/80"
+                              className="w-full border-red-300 text-red-700 hover:bg-red-50 bg-white"
                               onClick={() => {
                                 if (confirm('Êtes-vous sûr de vouloir supprimer ce formulaire ?')) {
                                   deleteFormMutation.mutate(form.id);
@@ -598,7 +598,7 @@ export default function Dashboard() {
                         {isAdmin && (
                           <Button
                             variant="outline"
-                            className="w-full border-cyan-400 text-cyan-800 hover:bg-cyan-300 bg-white/80"
+                            className="w-full border-gray-300 text-gray-700 hover:bg-gray-50 bg-white"
                           >
                             <Users className="w-4 h-4 mr-2" />
                             Affecter
