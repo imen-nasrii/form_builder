@@ -313,7 +313,7 @@ export default function Analytics() {
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Total forms</span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">Total programs</span>
                 <Badge variant="secondary">{totalForms}</Badge>
               </div>
               <div className="flex items-center justify-between">
