@@ -114,6 +114,11 @@ export default function Dashboard() {
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [importedFormData, setImportedFormData] = useState<any>(null);
   const [showStats, setShowStats] = useState(false);
+  const [showAssignDialog, setShowAssignDialog] = useState(false);
+  const [selectedFormForAssign, setSelectedFormForAssign] = useState<Form | null>(null);
+  const [selectedUser, setSelectedUser] = useState<string>("");
+  const [selectedPermission, setSelectedPermission] = useState<string>("read-write");
+  const [assignmentComment, setAssignmentComment] = useState<string>("");
   const [formConfig, setFormConfig] = useState({
     menuId: `FORM_${Date.now()}`,
     label: `Form ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(',', '')}`,
@@ -135,6 +140,12 @@ export default function Dashboard() {
 
   const { data: forms = [] } = useQuery<Form[]>({
     queryKey: ["/api/forms"],
+  });
+
+  // Fetch users for assignment (admin only)
+  const { data: allUsers = [] } = useQuery({
+    queryKey: ["/api/admin/users"],
+    enabled: isAdmin,
   });
 
 
@@ -599,6 +610,10 @@ export default function Dashboard() {
                           <Button
                             variant="outline"
                             className="w-full border-gray-300 text-gray-700 hover:bg-gray-50 bg-white"
+                            onClick={() => {
+                              setSelectedFormForAssign(form);
+                              setShowAssignDialog(true);
+                            }}
                           >
                             <Users className="w-4 h-4 mr-2" />
                             Affecter
@@ -779,6 +794,98 @@ export default function Dashboard() {
             </div>
           )}
         </div>
+
+        {/* Assign Form Dialog */}
+        <Dialog open={showAssignDialog} onOpenChange={setShowAssignDialog}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Users className="w-5 h-5 text-blue-600" />
+                Affecter le Formulaire
+              </DialogTitle>
+              <DialogDescription>
+                Affecter "{selectedFormForAssign?.label}" à un utilisateur
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Utilisateur</label>
+                <Select value={selectedUser} onValueChange={setSelectedUser}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner un utilisateur" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {allUsers.filter((u: any) => u.role === 'user').map((user: any) => (
+                      <SelectItem key={user.id} value={user.id}>
+                        {user.firstName && user.lastName 
+                          ? `${user.firstName} ${user.lastName} (${user.email})`
+                          : user.email
+                        }
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Permissions</label>
+                <Select value={selectedPermission} onValueChange={setSelectedPermission}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="read-only">Lecture seule</SelectItem>
+                    <SelectItem value="read-write">Lecture et modification</SelectItem>
+                    <SelectItem value="admin">Administration complète</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Commentaire (optionnel)</label>
+                <textarea 
+                  className="w-full p-2 border border-gray-300 rounded-md text-sm"
+                  placeholder="Ajouter un commentaire sur cette affectation..."
+                  rows={3}
+                  value={assignmentComment}
+                  onChange={(e) => setAssignmentComment(e.target.value)}
+                />
+              </div>
+              
+              <div className="flex justify-end space-x-2 pt-4">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowAssignDialog(false)}
+                >
+                  Annuler
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (!selectedUser) {
+                      toast({
+                        title: "Erreur",
+                        description: "Veuillez sélectionner un utilisateur.",
+                        variant: "destructive",
+                      });
+                      return;
+                    }
+                    
+                    assignFormMutation.mutate({
+                      formId: selectedFormForAssign?.id,
+                      userId: selectedUser,
+                      permission: selectedPermission,
+                      comment: assignmentComment,
+                    });
+                  }}
+                  disabled={assignFormMutation.isPending}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  {assignFormMutation.isPending ? 'Affectation...' : 'Affecter'}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
