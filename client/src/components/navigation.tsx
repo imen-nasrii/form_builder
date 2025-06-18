@@ -79,15 +79,17 @@ export default function Navigation() {
             </button>
           </Link>
 
-          <Link href="/ultra-grid">
-            <button className={`px-4 py-2 rounded-lg transition-all ${
-              isActive("/ultra-grid") 
-                ? "bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/30 dark:to-blue-900/30 text-purple-700 dark:text-purple-300 font-medium" 
-                : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
-            }`}>
-              🏗️ Construction Zone
-            </button>
-          </Link>
+          {user?.role !== 'admin' && (
+            <Link href="/ultra-grid">
+              <button className={`px-4 py-2 rounded-lg transition-all ${
+                isActive("/ultra-grid") 
+                  ? "bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/30 dark:to-blue-900/30 text-purple-700 dark:text-purple-300 font-medium" 
+                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+              }`}>
+                Form Builder
+              </button>
+            </Link>
+          )}
 
           <Link href="/ai-bot">
             <button className={`px-4 py-2 rounded-lg transition-all ${
