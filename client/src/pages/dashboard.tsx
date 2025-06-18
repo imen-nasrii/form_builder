@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -888,10 +888,9 @@ export default function Dashboard() {
                 >
                   {assignFormMutation.isPending ? 'Assigning...' : 'Assign'}
                 </Button>
-              </div>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </>
