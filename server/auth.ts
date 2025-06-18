@@ -69,8 +69,6 @@ export function setupAuth(app: Express) {
         twoFactorSecret: null,
         emailVerified: role === 'admin' || isDevelopment ? true : false,
         emailVerificationToken: null,
-        passwordResetToken: null,
-        passwordResetTokenExpiry: null,
         isActive: true,
       });
 
@@ -191,15 +189,13 @@ export function setupAuth(app: Express) {
         twoFactorSecret: null,
         emailVerified: isDevelopment ? true : false,
         emailVerificationToken,
-        passwordResetToken: null,
-        passwordResetTokenExpiry: null,
         isActive: true,
       });
 
       // Send verification email if not in development
       if (!isDevelopment && emailVerificationToken) {
         try {
-          await emailService.sendVerificationEmail(email, emailVerificationToken, firstName || undefined);
+          await emailService.sendVerificationEmail(email, emailVerificationToken, firstName);
         } catch (error) {
           console.error("Failed to send verification email:", error);
         }
@@ -265,156 +261,6 @@ export function setupAuth(app: Express) {
       });
     } catch (error) {
       console.error("Signin error:", error);
-      res.status(500).json({ message: "Internal server error" });
-    }
-  });
-
-  // Email verification endpoint
-  app.post("/api/auth/verify-email/:token", async (req: Request, res: Response) => {
-    try {
-      const { token } = req.params;
-      
-      if (!token) {
-        return res.status(400).json({ message: "Verification token is required" });
-      }
-
-      const user = await storage.getUserByVerificationToken(token);
-      if (!user) {
-        return res.status(400).json({ message: "Invalid or expired verification token" });
-      }
-
-      // Verify the user
-      await storage.verifyUserEmail(user.id);
-
-      res.json({ message: "Email verified successfully" });
-    } catch (error) {
-      console.error("Email verification error:", error);
-      res.status(500).json({ message: "Internal server error" });
-    }
-  });
-
-  // Resend verification email
-  app.post("/api/auth/resend-verification", async (req: Request, res: Response) => {
-    try {
-      const { email } = req.body;
-
-      if (!email) {
-        return res.status(400).json({ message: "Email is required" });
-      }
-
-      const user = await storage.getUserByEmail(email);
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-
-      if (user.emailVerified) {
-        return res.status(400).json({ message: "Email is already verified" });
-      }
-
-      // Generate new verification token
-      const newToken = crypto.randomBytes(32).toString('hex');
-      await storage.updateVerificationToken(user.id, newToken);
-
-      // Send verification email
-      try {
-        await emailService.sendVerificationEmail(email, newToken, user.firstName || undefined);
-      } catch (error) {
-        console.error("Failed to send verification email:", error);
-        return res.status(500).json({ message: "Failed to send verification email" });
-      }
-
-      res.json({ message: "Verification email sent successfully" });
-    } catch (error) {
-      console.error("Resend verification error:", error);
-      res.status(500).json({ message: "Internal server error" });
-    }
-  });
-
-  // Forgot password endpoint
-  app.post("/api/auth/forgot-password", async (req: Request, res: Response) => {
-    try {
-      const { email } = req.body;
-
-      if (!email) {
-        return res.status(400).json({ message: "Email is required" });
-      }
-
-      const user = await storage.getUserByEmail(email);
-      if (!user || !user.isActive) {
-        // Don't reveal if user exists for security
-        return res.json({ message: "If an account with this email exists, you will receive a password reset email." });
-      }
-
-      // Generate password reset token
-      const resetToken = crypto.randomBytes(32).toString('hex');
-      const resetTokenExpiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
-
-      await storage.setPasswordResetToken(user.id, resetToken, resetTokenExpiry);
-
-      // Send password reset email
-      try {
-        await emailService.sendPasswordResetEmail(email, resetToken, user.firstName || undefined);
-      } catch (error) {
-        console.error("Failed to send password reset email:", error);
-        return res.status(500).json({ message: "Failed to send password reset email" });
-      }
-
-      res.json({ message: "If an account with this email exists, you will receive a password reset email." });
-    } catch (error) {
-      console.error("Forgot password error:", error);
-      res.status(500).json({ message: "Internal server error" });
-    }
-  });
-
-  // Validate reset token endpoint
-  app.get("/api/auth/validate-reset-token/:token", async (req: Request, res: Response) => {
-    try {
-      const { token } = req.params;
-
-      if (!token) {
-        return res.status(400).json({ message: "Reset token is required" });
-      }
-
-      const user = await storage.getUserByResetToken(token);
-      if (!user || !user.passwordResetTokenExpiry || user.passwordResetTokenExpiry < new Date()) {
-        return res.status(400).json({ message: "Invalid or expired reset token" });
-      }
-
-      res.json({ message: "Token is valid" });
-    } catch (error) {
-      console.error("Validate reset token error:", error);
-      res.status(500).json({ message: "Internal server error" });
-    }
-  });
-
-  // Reset password endpoint
-  app.post("/api/auth/reset-password", async (req: Request, res: Response) => {
-    try {
-      const { token, password } = req.body;
-
-      if (!token || !password) {
-        return res.status(400).json({ message: "Token and password are required" });
-      }
-
-      if (password.length < 6) {
-        return res.status(400).json({ message: "Password must be at least 6 characters long" });
-      }
-
-      const user = await storage.getUserByResetToken(token);
-      if (!user || !user.passwordResetTokenExpiry || user.passwordResetTokenExpiry < new Date()) {
-        return res.status(400).json({ message: "Invalid or expired reset token" });
-      }
-
-      // Hash new password
-      const hashedPassword = await bcrypt.hash(password, 12);
-
-      // Update password and clear reset token
-      await storage.updatePassword(user.id, hashedPassword);
-      await storage.clearPasswordResetToken(user.id);
-
-      res.json({ message: "Password reset successfully" });
-    } catch (error) {
-      console.error("Reset password error:", error);
       res.status(500).json({ message: "Internal server error" });
     }
   });

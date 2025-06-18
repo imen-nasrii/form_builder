@@ -34,29 +34,14 @@ export interface IStorage {
   disableTwoFactor(userId: string): Promise<void>;
   verifyUserEmail(userId: string): Promise<void>;
   updateUserPassword(userId: string, hashedPassword: string): Promise<void>;
-  getUserByVerificationToken(token: string): Promise<User | undefined>;
-  updateVerificationToken(userId: string, token: string): Promise<void>;
-  getUserByResetToken(token: string): Promise<User | undefined>;
-  setPasswordResetToken(userId: string, token: string, expiry: Date): Promise<void>;
-  updatePassword(userId: string, hashedPassword: string): Promise<void>;
-  clearPasswordResetToken(userId: string): Promise<void>;
   
-  // Form/Program operations
+  // Form operations
   getForms(userId: string): Promise<Form[]>;
   getForm(id: number): Promise<Form | undefined>;
   getFormByMenuId(menuId: string): Promise<Form | undefined>;
   createForm(form: InsertForm): Promise<Form>;
   updateForm(id: number, form: Partial<InsertForm>): Promise<Form>;
   deleteForm(id: number): Promise<void>;
-  
-  // Program operations (aliases for forms with additional functionality)
-  getPrograms(userId: string): Promise<Form[]>;
-  getAllPrograms(): Promise<Form[]>;
-  getProgram(id: number): Promise<Form | undefined>;
-  createProgram(program: InsertForm): Promise<Form>;
-  updateProgram(id: number, program: Partial<InsertForm>): Promise<Form>;
-  deleteProgram(id: number): Promise<void>;
-  updateProgramStatus(id: number, status: string, assignedTo?: string): Promise<void>;
   
   // Template operations
   getTemplates(userId?: string): Promise<FormTemplate[]>;
@@ -173,64 +158,6 @@ export class DatabaseStorage implements IStorage {
       .where(eq(users.id, userId));
   }
 
-  async getUserByVerificationToken(token: string): Promise<User | undefined> {
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(eq(users.emailVerificationToken, token));
-    return user;
-  }
-
-  async updateVerificationToken(userId: string, token: string): Promise<void> {
-    await db
-      .update(users)
-      .set({ 
-        emailVerificationToken: token,
-        updatedAt: new Date()
-      })
-      .where(eq(users.id, userId));
-  }
-
-  async getUserByResetToken(token: string): Promise<User | undefined> {
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(eq(users.passwordResetToken, token));
-    return user;
-  }
-
-  async setPasswordResetToken(userId: string, token: string, expiry: Date): Promise<void> {
-    await db
-      .update(users)
-      .set({ 
-        passwordResetToken: token,
-        passwordResetTokenExpiry: expiry,
-        updatedAt: new Date()
-      })
-      .where(eq(users.id, userId));
-  }
-
-  async updatePassword(userId: string, hashedPassword: string): Promise<void> {
-    await db
-      .update(users)
-      .set({ 
-        password: hashedPassword,
-        updatedAt: new Date()
-      })
-      .where(eq(users.id, userId));
-  }
-
-  async clearPasswordResetToken(userId: string): Promise<void> {
-    await db
-      .update(users)
-      .set({ 
-        passwordResetToken: null,
-        passwordResetTokenExpiry: null,
-        updatedAt: new Date()
-      })
-      .where(eq(users.id, userId));
-  }
-
   // Form operations
   async getForms(userId: string): Promise<Form[]> {
     return await db
@@ -266,50 +193,6 @@ export class DatabaseStorage implements IStorage {
 
   async deleteForm(id: number): Promise<void> {
     await db.delete(forms).where(eq(forms.id, id));
-  }
-
-  // Program operations (aliases for forms with additional functionality)
-  async getPrograms(userId: string): Promise<Form[]> {
-    return this.getForms(userId);
-  }
-
-  async getAllPrograms(): Promise<Form[]> {
-    return await db
-      .select()
-      .from(forms)
-      .orderBy(desc(forms.updatedAt));
-  }
-
-  async getProgram(id: number): Promise<Form | undefined> {
-    return this.getForm(id);
-  }
-
-  async createProgram(program: InsertForm): Promise<Form> {
-    return this.createForm(program);
-  }
-
-  async updateProgram(id: number, program: Partial<InsertForm>): Promise<Form> {
-    return this.updateForm(id, program);
-  }
-
-  async deleteProgram(id: number): Promise<void> {
-    return this.deleteForm(id);
-  }
-
-  async updateProgramStatus(id: number, status: string, assignedTo?: string): Promise<void> {
-    const updateData: any = { 
-      status,
-      updatedAt: new Date()
-    };
-    
-    if (assignedTo) {
-      updateData.assignedTo = assignedTo;
-    }
-
-    await db
-      .update(forms)
-      .set(updateData)
-      .where(eq(forms.id, id));
   }
 
   // Template operations

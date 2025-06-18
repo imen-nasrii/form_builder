@@ -12,7 +12,5 @@ export function useAuth() {
     user,
     isLoading,
     isAuthenticated: !!user,
-    isEmailVerified: (user as any)?.emailVerified || false,
-    role: (user as any)?.role || 'user',
   };
 }

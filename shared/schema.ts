@@ -38,14 +38,12 @@ export const users = pgTable("users", {
   twoFactorSecret: varchar("two_factor_secret"),
   emailVerified: boolean("email_verified").notNull().default(false),
   emailVerificationToken: varchar("email_verification_token"),
-  passwordResetToken: varchar("password_reset_token"),
-  passwordResetTokenExpiry: timestamp("password_reset_token_expiry"),
   isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Program definitions table (renamed from forms)
+// Form definitions table
 export const forms = pgTable("forms", {
   id: serial("id").primaryKey(),
   menuId: varchar("menu_id").notNull().unique(),
@@ -56,8 +54,6 @@ export const forms = pgTable("forms", {
   actions: jsonb("actions").notNull().default("[]"),
   validations: jsonb("validations").notNull().default("[]"),
   formDefinition: text("form_definition"),
-  status: varchar("status").notNull().default("draft"), // draft, pending, accepted, rejected, in_progress, completed, stopped
-  assignedTo: varchar("assigned_to"), // Admin can assign programs to users
   createdBy: varchar("created_by").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
