@@ -109,6 +109,7 @@ function DashboardGuide() {
 
 export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [filterType, setFilterType] = useState("all");
   const [selectedFormType, setSelectedFormType] = useState("PROCESS");
   const [showNewFormDialog, setShowNewFormDialog] = useState(false);
   const [showImportDialog, setShowImportDialog] = useState(false);
@@ -358,10 +359,22 @@ export default function Dashboard() {
     }
   ];
 
-  const filteredForms = forms.filter(form =>
-    form.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    form.menuId.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredForms = forms.filter(form => {
+    const matchesSearch = form.label?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         form.menuId?.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesFilter = filterType === "all" || 
+                         (filterType === "recent" && (() => {
+                           const updated = new Date(form.updatedAt || "");
+                           const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+                           return updated > weekAgo;
+                         })()) ||
+                         (filterType === "process" && form.layout === "PROCESS") ||
+                         (filterType === "form" && form.layout === "FORM") ||
+                         (filterType === "assigned" && isAdmin && form.assignedTo);
+    
+    return matchesSearch && matchesFilter;
+  });
 
 
 
@@ -401,17 +414,57 @@ export default function Dashboard() {
 
 
 
-        {/* Search and Filter */}
-        <div className="flex items-center space-x-4 mb-6">
-          <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
-            <Input
-              placeholder="Search programs..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
+        {/* Elegant Search and Filter Bar */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-8">
+          <div className="flex items-center gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <input
+                type="text"
+                placeholder="Search programs..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+              />
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-500 font-medium">Filter:</span>
+              <select
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value)}
+                className="px-3 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white text-sm min-w-[140px]"
+              >
+                <option value="all">All Programs</option>
+                <option value="recent">Recent (7 days)</option>
+                <option value="process">Process Type</option>
+                <option value="form">Form Type</option>
+                {isAdmin && <option value="assigned">Assigned</option>}
+              </select>
+            </div>
+            
+            {(searchQuery || filterType !== "all") && (
+              <button
+                onClick={() => {
+                  setSearchQuery("");
+                  setFilterType("all");
+                }}
+                className="px-3 py-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                Clear
+              </button>
+            )}
           </div>
+          
+          {filteredForms.length !== forms.length && (
+            <div className="mt-3 pt-3 border-t border-gray-100">
+              <p className="text-sm text-gray-600">
+                Showing {filteredForms.length} of {forms.length} programs
+                {searchQuery && <span> matching "{searchQuery}"</span>}
+                {filterType !== "all" && <span> • Filter: {filterType}</span>}
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Create New Form Section */}
