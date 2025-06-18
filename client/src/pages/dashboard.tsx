@@ -15,6 +15,98 @@ import { Plus, Search, FileText, Calendar, User, FileCheck, Settings, Database, 
 import { useAuth } from "@/hooks/useAuth";
 import type { Form } from "@shared/schema";
 
+// Dashboard Step-by-Step Guide Component
+function DashboardGuide() {
+  const [currentStep, setCurrentStep] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  
+  const steps = {
+    welcome: {
+      title: "Welcome to FormBuilder Enterprise Dashboard",
+      content: "Your central hub for managing all forms. Let's walk through the key features.",
+      actions: [
+        { label: "Start Tour", action: () => setCurrentStep("forms-overview") },
+        { label: "Skip Tour", action: () => setIsOpen(false) }
+      ]
+    },
+    "forms-overview": {
+      title: "Step 1: Your Forms Overview",
+      content: "View all your forms here. Use the search bar to find specific forms quickly, or filter by type.",
+      actions: [
+        { label: "Next: Create New Form", action: () => setCurrentStep("create-form") },
+        { label: "Previous", action: () => setCurrentStep("welcome") }
+      ]
+    },
+    "create-form": {
+      title: "Step 2: Creating New Forms",
+      content: "Click 'Create New Form' to start building. You can also import existing forms from JSON files.",
+      actions: [
+        { label: "Next: Templates", action: () => setCurrentStep("templates") },
+        { label: "Previous", action: () => setCurrentStep("forms-overview") }
+      ]
+    },
+    "templates": {
+      title: "Step 3: Form Templates",
+      content: "Save time by using pre-built templates. Create your own templates from successful forms.",
+      actions: [
+        { label: "Finish Tour", action: () => setIsOpen(false) },
+        { label: "Previous", action: () => setCurrentStep("create-form") }
+      ]
+    }
+  };
+
+  const currentStepData = currentStep ? steps[currentStep as keyof typeof steps] : null;
+
+  const startGuide = () => {
+    setCurrentStep("welcome");
+    setIsOpen(true);
+  };
+
+  return (
+    <>
+      <Button 
+        variant="outline" 
+        size="sm" 
+        onClick={startGuide}
+        className="flex items-center space-x-2"
+      >
+        <HelpCircle className="w-4 h-4" />
+        <span>Guide</span>
+      </Button>
+      
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="max-w-lg">
+          {currentStepData && (
+            <>
+              <DialogHeader>
+                <DialogTitle>{currentStepData.title}</DialogTitle>
+              </DialogHeader>
+              
+              <div className="space-y-6">
+                <p className="text-base leading-relaxed text-gray-700">
+                  {currentStepData.content}
+                </p>
+                
+                <div className="flex justify-between items-center pt-4">
+                  {currentStepData.actions.map((action, index) => (
+                    <Button
+                      key={index}
+                      variant={index === 0 ? "default" : "outline"}
+                      onClick={action.action}
+                    >
+                      {action.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
+
 export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState("all");
@@ -22,105 +114,46 @@ export default function Dashboard() {
   const [showNewFormDialog, setShowNewFormDialog] = useState(false);
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [importedFormData, setImportedFormData] = useState<any>(null);
-  const [showAssignDialog, setShowAssignDialog] = useState(false);
-  const [selectedFormForAssign, setSelectedFormForAssign] = useState<any>(null);
-  const [selectedUser, setSelectedUser] = useState("");
-  const [selectedPermission, setSelectedPermission] = useState("view");
-  const [assignmentComment, setAssignmentComment] = useState("");
 
+  const [showAssignDialog, setShowAssignDialog] = useState(false);
+  const [selectedFormForAssign, setSelectedFormForAssign] = useState<Form | null>(null);
+  const [selectedUser, setSelectedUser] = useState<string>("");
+  const [selectedPermission, setSelectedPermission] = useState<string>("read-write");
+  const [assignmentComment, setAssignmentComment] = useState<string>("");
+  const [formConfig, setFormConfig] = useState({
+    menuId: `FORM_${Date.now()}`,
+    label: `Form ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(',', '')}`,
+    formWidth: "Medium (700px)",
+    layout: "PROCESS"
+  });
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
-  const isAdmin = user?.role === 'admin';
+  
+  // Check if user is admin
+  const isAdmin = Boolean(user && (user as any).role === 'admin');
 
-  // Fetch forms
-  const { data: forms = [], isLoading: formsLoading } = useQuery({
-    queryKey: ["/api/forms"],
-  });
-
-  // Fetch all users for admin assignment
-  const { data: allUsers = [] } = useQuery({
-    queryKey: ["/api/admin/users"],
-    enabled: isAdmin,
-  });
-
-  const formatDate = (dateString: string) => {
+  // Helper function to format date
+  const formatDate = (dateString: string | Date | null | undefined) => {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleDateString('fr-FR');
   };
 
-  // Create new form mutation
-  const createFormMutation = useMutation({
-    mutationFn: async (formData: any) => {
-      const response = await fetch('/api/forms/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-      if (!response.ok) throw new Error('Failed to create form');
-      return response.json();
-    },
-    onSuccess: (newForm) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/forms"] });
-      setShowNewFormDialog(false);
-      toast({
-        title: "Success",
-        description: "Form created successfully",
-      });
-      window.location.href = `/form-builder/${newForm.id}`;
-    },
-    onError: () => {
-      toast({
-        title: "Error",
-        description: "Failed to create form",
-        variant: "destructive",
-      });
-    },
+  const { data: forms = [] } = useQuery<Form[]>({
+    queryKey: ["/api/forms"],
   });
 
-  // Assignment mutation
-  const assignFormMutation = useMutation({
-    mutationFn: async ({ formId, userId, permission, comment }: any) => {
-      const response = await apiRequest('/api/forms/assign', {
-        method: 'POST',
-        body: JSON.stringify({
-          formId,
-          userId,
-          permission,
-          comment
-        })
-      });
-      if (!response.ok) throw new Error('Failed to assign form');
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/forms"] });
-      setShowAssignDialog(false);
-      setSelectedFormForAssign(null);
-      setSelectedUser("");
-      setSelectedPermission("view");
-      setAssignmentComment("");
-      toast({
-        title: "Success",
-        description: "Form assigned successfully",
-      });
-    },
-    onError: () => {
-      toast({
-        title: "Error", 
-        description: "Failed to assign form",
-        variant: "destructive",
-      });
-    },
+  // Fetch users for assignment (admin only)
+  const { data: allUsers = [] } = useQuery<any[]>({
+    queryKey: ["/api/admin/users"],
+    enabled: isAdmin,
   });
+
+
 
   const deleteFormMutation = useMutation({
     mutationFn: async (formId: number) => {
-      const response = await fetch(`/api/forms/${formId}`, {
-        method: 'DELETE'
-      });
-      if (!response.ok) throw new Error('Failed to delete form');
-      return response.json();
+      await apiRequest(`/api/forms/${formId}`, { method: "DELETE" });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/forms"] });
@@ -133,6 +166,74 @@ export default function Dashboard() {
       toast({
         title: "Error",
         description: "Failed to delete form",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const assignFormMutation = useMutation({
+    mutationFn: async (assignmentData: any) => {
+      try {
+        return await apiRequest('/api/forms/assign', {
+          method: 'POST',
+          body: JSON.stringify(assignmentData),
+        });
+      } catch (error) {
+        console.error('Assignment error:', error);
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/forms"] });
+      toast({
+        title: "Form assigned",
+        description: `Form "${selectedFormForAssign?.label}" has been successfully assigned.`,
+      });
+      setShowAssignDialog(false);
+      setSelectedUser("");
+      setSelectedPermission("read-write");
+      setAssignmentComment("");
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Unable to assign form.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const createFormMutation = useMutation({
+    mutationFn: async () => {
+      const widthMap: { [key: string]: string } = {
+        "Small (500px)": "500px",
+        "Medium (700px)": "700px", 
+        "Large (900px)": "900px",
+        "Full Width": "100%"
+      };
+      
+      const response = await fetch('/api/forms/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          menuId: formConfig.menuId,
+          label: formConfig.label,
+          formWidth: widthMap[formConfig.formWidth] || "700px",
+          layout: formConfig.layout
+        })
+      });
+      if (!response.ok) throw new Error('Failed to create form');
+      return response.json();
+    },
+    onSuccess: (newForm) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/forms"] });
+      setShowNewFormDialog(false);
+      window.location.href = `/form-builder/${newForm.id}`;
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to create form",
         variant: "destructive",
       });
     },
@@ -183,14 +284,14 @@ export default function Dashboard() {
           } else {
             toast({
               title: "Invalid Format",
-              description: "JSON file must contain a 'fields' array",
+              description: "The file must contain a valid form definition with 'fields' array",
               variant: "destructive",
             });
           }
         } catch (error) {
           toast({
-            title: "Error",
-            description: "Invalid JSON file",
+            title: "Parse Error",
+            description: "Invalid JSON file format",
             variant: "destructive",
           });
         }
@@ -199,39 +300,34 @@ export default function Dashboard() {
     }
   };
 
-  const handleCreateForm = () => {
-    const menuId = `FORM_${Date.now()}`;
-    const formDefinition = {
-      menuId,
-      label: `New ${selectedFormType} Form`,
-      formWidth: "700px",
-      layout: selectedFormType,
-      fields: []
-    };
-    
-    const formData = {
-      menuId,
-      label: `New ${selectedFormType} Form`,
-      formWidth: "700px",
-      layout: selectedFormType,
-      formDefinition: JSON.stringify(formDefinition),
-    };
-    
-    createFormMutation.mutate(formData);
-  };
-
   const handleImportForm = () => {
     if (importedFormData) {
-      const menuId = `IMPORTED_${Date.now()}`;
+      // Process and normalize imported fields
+      const processedFields = (importedFormData.fields || []).map((field: any) => {
+        return {
+          Id: field.Id || field.id || `field_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          Type: field.Type || field.type || 'TEXT',
+          Label: field.Label || field.label || 'Imported Field',
+          DataField: field.DataField || field.dataField || field.Label || field.label || 'field',
+          Entity: field.Entity || field.entity || '',
+          Width: field.Width || field.width || '100%',
+          Spacing: field.Spacing || field.spacing || '4',
+          Required: Boolean(field.Required || field.required),
+          Inline: Boolean(field.Inline || field.inline),
+          Outlined: Boolean(field.Outlined || field.outlined),
+          Value: field.Value || field.value || '',
+          ChildFields: field.ChildFields || field.childFields || []
+        };
+      });
+
       const formDefinition = {
-        ...importedFormData,
-        menuId,
-        label: importedFormData.label || `Imported Form`,
+        fields: processedFields,
+        customComponents: importedFormData.customComponents || []
       };
-      
+
       const formData = {
-        menuId,
-        label: importedFormData.label || `Imported Form`,
+        menuId: `IMPORTED_${Date.now()}`,
+        label: `Imported Form ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(',', '')}`,
         formWidth: "700px",
         layout: "PROCESS",
         formDefinition: JSON.stringify(formDefinition),
@@ -280,11 +376,13 @@ export default function Dashboard() {
     return matchesSearch && matchesFilter;
   });
 
+
+
   return (
     <div className="min-h-screen bg-slate-50">
-      <Navigation />
-      
-      <div className="max-w-7xl mx-auto px-6 py-8">
+        <Navigation />
+        
+        <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Header */}
         <div className="flex items-center justify-end mb-8">
           <div className="flex gap-3">
@@ -309,43 +407,11 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Data Icons centered */}
-        <div className="flex justify-center mb-8">
-          <div className="flex gap-6">
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 min-w-[120px]">
-              <div className="flex flex-col items-center text-center">
-                <FileText className="h-6 w-6 text-blue-600 mb-2" />
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Programs</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{forms.length}</p>
-              </div>
-            </div>
-            
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 min-w-[120px]">
-              <div className="flex flex-col items-center text-center">
-                <Users className="h-6 w-6 text-green-600 mb-2" />
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Users</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{Array.isArray(allUsers) ? allUsers.length : 0}</p>
-              </div>
-            </div>
-            
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 min-w-[120px]">
-              <div className="flex flex-col items-center text-center">
-                <Clock className="h-6 w-6 text-orange-600 mb-2" />
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Recent</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  {forms.filter(form => {
-                    const updated = new Date(form.updatedAt || "");
-                    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-                    return updated > weekAgo;
-                  }).length}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+
 
         {/* Magical 3D Search Bar */}
         <div className="relative mb-8">
+          
           <div className="relative bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/30 p-6 transform hover:scale-[1.02] transition-all duration-300">
             {/* Floating particles effect */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden rounded-2xl pointer-events-none">
@@ -443,7 +509,7 @@ export default function Dashboard() {
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-red-300 to-pink-300 opacity-30 blur-sm"></div>
                 </button>
               )}
-            </div>
+          </div>
           
             {/* Magic Results Counter */}
             {filteredForms.length !== forms.length && (
@@ -457,7 +523,6 @@ export default function Dashboard() {
                 </div>
               </div>
             )}
-          </div>
         </div>
 
         {/* Create New Form Section */}
@@ -474,29 +539,124 @@ export default function Dashboard() {
             <Dialog open={showNewFormDialog} onOpenChange={(open) => {
               setShowNewFormDialog(open);
               if (open) {
-                setSelectedFormType("PROCESS");
+                // Generate fresh default values when dialog opens
+                setFormConfig({
+                  menuId: `FORM_${Date.now()}`,
+                  label: `Form ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(',', '')}`,
+                  formWidth: "Medium (700px)",
+                  layout: "PROCESS"
+                });
               }
             }}>
-              {isAdmin && (
-                <div className="flex items-center gap-3">
-                  <Badge className="bg-red-100 text-red-700 px-3 py-1">
-                    Admin Mode
+              {!isAdmin && (
+                <DialogTrigger asChild>
+                  <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create Program
+                  </Button>
+                </DialogTrigger>
+              )}
+              {isAdmin ? (
+                <div className="flex items-center space-x-2">
+                  <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
+                    Mode Administrateur
                   </Badge>
                   <Button variant="outline" disabled>
                     <Eye className="w-4 h-4 mr-2" />
                     View Only
                   </Button>
                 </div>
-              )}
+              ) : null}
+              <DialogContent className="sm:max-w-[700px]">
+                <DialogHeader>
+                  <DialogTitle>Create New Program</DialogTitle>
+                </DialogHeader>
+                <div className="grid gap-6 py-4">
+                  {/* Form Configuration */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Menu ID <span className="text-red-500">*</span></label>
+                      <Input
+                        value={formConfig.menuId}
+                        onChange={(e) => setFormConfig(prev => ({ ...prev, menuId: e.target.value }))}
+                        placeholder="ACCADJ"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Label <span className="text-red-500">*</span></label>
+                      <Input
+                        value={formConfig.label}
+                        onChange={(e) => setFormConfig(prev => ({ ...prev, label: e.target.value }))}
+                        placeholder="Program label"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Width</label>
+                      <Select 
+                        value={formConfig.formWidth} 
+                        onValueChange={(value) => setFormConfig(prev => ({ ...prev, formWidth: value }))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Small (500px)">Small (500px)</SelectItem>
+                          <SelectItem value="Medium (700px)">Medium (700px)</SelectItem>
+                          <SelectItem value="Large (900px)">Large (900px)</SelectItem>
+                          <SelectItem value="Full Width">Full Width</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Layout</label>
+                      <Select 
+                        value={formConfig.layout} 
+                        onValueChange={(value) => setFormConfig(prev => ({ ...prev, layout: value }))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="PROCESS">Process Form</SelectItem>
+                          <SelectItem value="MASTER_MENU">Master Menu</SelectItem>
+                          <SelectItem value="TRANSACTIONS">Transaction Form</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end space-x-2 pt-4">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setShowNewFormDialog(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={() => createFormMutation.mutate()}
+                      disabled={createFormMutation.isPending || !formConfig.menuId || !formConfig.label}
+                      className="bg-blue-600 hover:bg-blue-700"
+                    >
+                      {createFormMutation.isPending ? 'Creating...' : 'Create Form'}
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
             </Dialog>
           </div>
 
-          {/* Forms Grid */}
-          {filteredForms.length > 0 ? (
+          {/* Forms List - 3D Flip Cards */}
+          {forms.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredForms.map((form: any) => (
-                <div key={form.id} className="flip-card">
-                  <div className="flip-card-inner">
+              {forms
+                .sort((a, b) => (a.label || 'Untitled Form').localeCompare(b.label || 'Untitled Form')) // Sort by name
+                .map((form) => (
+                <div key={form.id} className="flip-card group perspective-1000 h-64">
+                  <div className="flip-card-inner relative w-full h-full transition-transform duration-700 transform-style-preserve-3d group-hover:rotate-y-180">
+                    
                     {/* Front of the card */}
                     <div className={`flip-card-front absolute w-full h-full backface-hidden rounded-lg shadow-lg ${
                       isAdmin ? 'bg-white border-gray-200' : 'bg-white border-gray-200'
@@ -620,18 +780,20 @@ export default function Dashboard() {
             <div className="text-center py-12 bg-slate-50 rounded-lg border border-slate-200">
               <FileText className="h-12 w-12 text-slate-400 mx-auto mb-3" />
               <h3 className="text-lg font-medium text-slate-900 mb-2">
-                No programs found
+                {isAdmin ? 'Aucun formulaire disponible' : 'Aucun formulaire encore'}
               </h3>
               <p className="text-slate-600 mb-6">
-                {searchQuery || filterType !== "all" ? "No programs match your search criteria." : "No programs found."} <Link href="/form-builder" className="text-blue-600 hover:underline">Create your first program</Link>
+                {isAdmin ? 'Aucun formulaire créé par les utilisateurs' : 'Créez votre premier formulaire pour commencer'}
               </p>
             </div>
           )}
         </div>
 
-        {/* Import Dialog */}
+
+
+        {/* Import Form Dialog */}
         <Dialog open={showImportDialog} onOpenChange={setShowImportDialog}>
-          <DialogContent className="sm:max-w-[700px]">
+          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <FileCheck className="w-5 h-5 text-green-600" />
@@ -679,8 +841,14 @@ export default function Dashboard() {
                   </pre>
                 </div>
 
-                <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => setShowImportDialog(false)}>
+                <div className="flex justify-end gap-3 pt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setShowImportDialog(false);
+                      setImportedFormData(null);
+                    }}
+                  >
                     Cancel
                   </Button>
                   <Button
@@ -703,48 +871,95 @@ export default function Dashboard() {
           </DialogContent>
         </Dialog>
 
-        {/* Assignment Dialog */}
-        <Dialog open={showAssignDialog} onOpenChange={setShowAssignDialog}>
-          <DialogContent className="sm:max-w-[500px]">
+      </div>
+
+      {/* Data Icons in top right */}
+      <div className="fixed top-20 right-6 z-40 flex flex-col gap-3">
+        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center gap-2">
+            <FileText className="h-5 w-5 text-blue-600" />
+            <div>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Programs</p>
+              <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{forms.length}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center gap-2">
+            <Users className="h-5 w-5 text-green-600" />
+            <div>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Users</p>
+              <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{Array.isArray(allUsers) ? allUsers.length : 0}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center gap-2">
+            <Clock className="h-5 w-5 text-orange-600" />
+            <div>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Recent</p>
+              <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                {forms.filter(form => {
+                  const updated = new Date(form.updatedAt || "");
+                  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+                  return updated > weekAgo;
+                }).length}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Assign Form Dialog */}
+      <Dialog open={showAssignDialog} onOpenChange={setShowAssignDialog}>
+          <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Assign Form to User</DialogTitle>
+              <DialogTitle className="flex items-center gap-2">
+                <Users className="w-5 h-5 text-blue-600" />
+                Assign Program
+              </DialogTitle>
               <DialogDescription>
-                Select a user and permission level for this form assignment.
+                Assign "{selectedFormForAssign?.label}" to a user
               </DialogDescription>
             </DialogHeader>
-            
             <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium mb-2 block">User</label>
-                <select 
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  value={selectedUser}
-                  onChange={(e) => setSelectedUser(e.target.value)}
-                >
-                  <option value="">Select a user...</option>
-                  {allUsers.map((user: any) => (
-                    <option key={user.id} value={user.id}>
-                      {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.email} ({user.email})
-                    </option>
-                  ))}
-                </select>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">User</label>
+                <Select value={selectedUser} onValueChange={setSelectedUser}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a user" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {allUsers.filter((u: any) => u.role === 'user').map((user: any) => (
+                      <SelectItem key={user.id} value={user.id}>
+                        {user.firstName && user.lastName 
+                          ? `${user.firstName} ${user.lastName} (${user.email})`
+                          : user.email
+                        }
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               
-              <div>
-                <label className="text-sm font-medium mb-2 block">Permission Level</label>
-                <select 
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  value={selectedPermission}
-                  onChange={(e) => setSelectedPermission(e.target.value)}
-                >
-                  <option value="view">View Only</option>
-                  <option value="edit">Edit Access</option>
-                  <option value="admin">Full Admin</option>
-                </select>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Permissions</label>
+                <Select value={selectedPermission} onValueChange={setSelectedPermission}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="read-only">Read only</SelectItem>
+                    <SelectItem value="read-write">Read and edit</SelectItem>
+                    <SelectItem value="admin">Full administration</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               
-              <div>
-                <label className="text-sm font-medium mb-2 block">Assignment Comment (Optional)</label>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Comment (optional)</label>
                 <textarea 
                   className="w-full p-2 border border-gray-300 rounded-md text-sm"
                   placeholder="Add a comment about this assignment..."
@@ -766,11 +981,19 @@ export default function Dashboard() {
                     if (!selectedUser) {
                       toast({
                         title: "Error",
-                        description: "Please select a user",
+                        description: "Please select a user.",
                         variant: "destructive",
                       });
                       return;
                     }
+                    
+                    console.log('Assigning form:', {
+                      formId: selectedFormForAssign?.id,
+                      userId: selectedUser,
+                      permission: selectedPermission,
+                      comment: assignmentComment,
+                    });
+                    
                     assignFormMutation.mutate({
                       formId: selectedFormForAssign?.id,
                       userId: selectedUser,
@@ -787,6 +1010,7 @@ export default function Dashboard() {
             </div>
           </DialogContent>
         </Dialog>
+        
       </div>
     </div>
   );
