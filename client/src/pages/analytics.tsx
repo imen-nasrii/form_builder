@@ -59,24 +59,7 @@ const generateRealGrowthData = (users: any[], forms: any[]) => {
   });
 };
 
-// Helper function to generate real activity data based on recent form interactions
-const generateRealActivityData = (forms: any[]) => {
-  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  const today = new Date();
-  
-  return days.map((day, index) => {
-    // Simulate realistic activity based on actual form count
-    const baseActivity = Math.max(1, Math.floor(forms.length * 0.1));
-    const dayVariation = index < 5 ? 1.2 : 0.6; // Weekdays higher than weekends
-    
-    return {
-      day,
-      views: Math.floor(baseActivity * dayVariation * 2),
-      edits: Math.floor(baseActivity * dayVariation),
-      creates: Math.max(0, Math.floor(baseActivity * dayVariation * 0.3))
-    };
-  });
-};
+// We don't track daily activity in the database yet, so we'll remove this chart
 
 export default function Analytics() {
   const { user, isAuthenticated } = useAuth();
@@ -144,7 +127,6 @@ export default function Analytics() {
 
   // Generate real data for charts
   const realUserGrowthData = generateRealGrowthData(Array.isArray(allUsers) ? allUsers : [], Array.isArray(forms) ? forms : []);
-  const realActivityData = generateRealActivityData(Array.isArray(forms) ? forms : []);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -215,13 +197,13 @@ export default function Analytics() {
 
           <Card className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 border-orange-200 dark:border-orange-800">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-orange-700 dark:text-orange-300">Active Sessions</CardTitle>
+              <CardTitle className="text-sm font-medium text-orange-700 dark:text-orange-300">System Users</CardTitle>
               <Activity className="h-4 w-4 text-orange-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-orange-900 dark:text-orange-100">{Math.max(1, Math.floor(totalUsers * 0.4))}</div>
+              <div className="text-2xl font-bold text-orange-900 dark:text-orange-100">{totalUsers}</div>
               <p className="text-xs text-orange-600 dark:text-orange-400">
-                Estimated active now
+                Registered users
               </p>
             </CardContent>
           </Card>
@@ -292,25 +274,29 @@ export default function Analytics() {
           </Card>
         </div>
 
-        {/* Activity Chart */}
+        {/* Database Summary Chart */}
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BarChart3 className="h-5 w-5 text-purple-600" />
-              Weekly Activity Overview
+              Database Overview
             </CardTitle>
-            <CardDescription>Form views, edits, and creation activity by day</CardDescription>
+            <CardDescription>Actual data from your system database</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={realActivityData}>
+              <BarChart data={[
+                { category: 'Total Users', count: totalUsers },
+                { category: 'Admin Users', count: adminUsers },
+                { category: 'Regular Users', count: regularUsers },
+                { category: 'Total Forms', count: totalForms },
+                { category: 'Recent Forms', count: recentForms }
+              ]}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="day" />
+                <XAxis dataKey="category" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="views" fill="#3B82F6" name="Views" />
-                <Bar dataKey="edits" fill="#10B981" name="Edits" />
-                <Bar dataKey="creates" fill="#F59E0B" name="Creates" />
+                <Bar dataKey="count" fill="#3B82F6" name="Count" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -327,16 +313,16 @@ export default function Analytics() {
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Forms accessed today</span>
-                <Badge variant="secondary">{Math.floor(totalForms * 0.3)}</Badge>
+                <span className="text-sm text-gray-600 dark:text-gray-400">Total forms</span>
+                <Badge variant="secondary">{totalForms}</Badge>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Forms edited today</span>
-                <Badge variant="secondary">{Math.floor(totalForms * 0.1)}</Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Recent forms</span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">Recent updates</span>
                 <Badge variant="secondary">{recentForms}</Badge>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-600 dark:text-gray-400">Active users</span>
+                <Badge variant="secondary">{totalUsers}</Badge>
               </div>
             </CardContent>
           </Card>
