@@ -13,6 +13,7 @@ import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import FormBuilderExact from "@/pages/form-builder-exact";
 import FormBuilderFixed from "@/pages/form-builder-fixed";
+import AdvancedGridPage from "@/pages/advanced-grid-page";
 import ComponentsOverview from "@/pages/components-overview";
 import DFMToJSONBotStable from "@/components/ai-bot/dfm-to-json-bot-stable";
 import AdminPage from "@/pages/admin";
@@ -51,6 +52,7 @@ function Router() {
       {/* Authenticated routes */}
       <Route path="/form-builder" component={FormBuilderFixed} />
       <Route path="/form-builder/:formId" component={FormBuilderFixed} />
+      <Route path="/advanced-grid" component={AdvancedGridPage} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/components" component={ComponentsOverview} />
       <Route path="/ai-bot" component={DFMToJSONBotStable} />
