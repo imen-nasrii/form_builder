@@ -167,6 +167,13 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(forms.updatedAt));
   }
 
+  async getAllForms(): Promise<Form[]> {
+    return await db
+      .select()
+      .from(forms)
+      .orderBy(desc(forms.updatedAt));
+  }
+
   async getForm(id: number): Promise<Form | undefined> {
     const [form] = await db.select().from(forms).where(eq(forms.id, id));
     return form;

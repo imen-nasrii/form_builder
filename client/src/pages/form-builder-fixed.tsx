@@ -4264,12 +4264,11 @@ export default function FormBuilderFixed() {
                   <h3 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                     {isAdmin ? 'Vue Consultation' : 'Construction Zone'}
                   </h3>
-                  {!isAdmin && (
+                  {!isAdmin ? (
                     <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-xs">
                       Excel-like
                     </Badge>
-                  )}
-                  {isAdmin && (
+                  ) : (
                     <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
                       Lecture seule
                     </Badge>
