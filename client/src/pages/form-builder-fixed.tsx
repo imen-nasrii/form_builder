@@ -4253,92 +4253,39 @@ export default function FormBuilderFixed() {
           </div>
         </div>
 
-        <div className="flex-1 p-6">
-          <div className={`rounded-lg border h-full ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
-            <div className={`p-4 border-b ${isDarkMode ? 'border-gray-700' : ''}`}>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-600 rounded-lg flex items-center justify-center">
-                    {isAdmin ? <Eye className="w-4 h-4 text-white" /> : <Grid3X3 className="w-4 h-4 text-white" />}
-                  </div>
-                  <h3 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                    {isAdmin ? 'Vue Consultation' : 'Construction Zone'}
-                  </h3>
-                  {!isAdmin ? (
+        {!isAdmin && (
+          <div className="flex-1 p-6">
+            <div className={`rounded-lg border h-full ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
+              <div className={`p-4 border-b ${isDarkMode ? 'border-gray-700' : ''}`}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-600 rounded-lg flex items-center justify-center">
+                      <Grid3X3 className="w-4 h-4 text-white" />
+                    </div>
+                    <h3 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                      Construction Zone
+                    </h3>
                     <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-xs">
                       Excel-like
                     </Badge>
-                  ) : (
-                    <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
-                      Lecture seule
-                    </Badge>
-                  )}
-                </div>
-                <div className="flex items-center space-x-2">
-                  {!isAdmin && (
+                  </div>
+                  <div className="flex items-center space-x-2">
                     <Badge variant="outline" className="text-xs">
                       {gridConfig.rows}×{gridConfig.cols}
                     </Badge>
-                  )}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setIsDragZoneCollapsed(!isDragZoneCollapsed)}
-                    className={`h-6 w-6 p-0 ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
-                  >
-                    {isDragZoneCollapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronUp className="w-3 h-3" />}
-                  </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setIsDragZoneCollapsed(!isDragZoneCollapsed)}
+                      className={`h-6 w-6 p-0 ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+                    >
+                      {isDragZoneCollapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronUp className="w-3 h-3" />}
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-            {!isDragZoneCollapsed && (
-              <div className="p-6">
-                {isAdmin ? (
-                  // Vue lecture seule pour les admins
-                  <div className="space-y-4">
-                    <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <AlertTriangle className="w-5 h-5 text-orange-600" />
-                        <h4 className="font-medium text-orange-800">Mode Consultation Administrateur</h4>
-                      </div>
-                      <p className="text-sm text-orange-700">
-                        En tant qu'administrateur, vous pouvez consulter tous les formulaires mais ne pouvez pas les modifier. 
-                        Utilisez le panneau des propriétés pour affecter ce formulaire à un utilisateur.
-                      </p>
-                    </div>
-                    
-                    {/* Affichage en lecture seule des champs */}
-                    {formData.fields.length === 0 ? (
-                      <div className="text-center py-16 border-2 border-dashed border-orange-300 rounded-lg bg-orange-50">
-                        <Eye className="w-12 h-12 mx-auto mb-4 text-orange-400" />
-                        <p className="text-lg font-medium text-orange-800 mb-2">Formulaire vide</p>
-                        <p className="text-sm text-orange-600">Ce formulaire ne contient aucun composant</p>
-                      </div>
-                    ) : (
-                      <div className="space-y-3">
-                        <h4 className="font-medium text-gray-700 border-b pb-2">Composants du formulaire (lecture seule)</h4>
-                        {formData.fields.map((field, index) => (
-                          <div key={field.Id} className="p-3 border border-gray-200 rounded-lg bg-gray-50">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center space-x-3">
-                                <span className="text-lg">{getComponentIcon(field.Type)}</span>
-                                <div>
-                                  <div className="font-medium text-sm">{field.Label}</div>
-                                  <div className="text-xs text-gray-500">{field.Type} • {field.DataField}</div>
-                                </div>
-                              </div>
-                              <Badge variant="outline" className="text-xs">
-                                #{index + 1}
-                              </Badge>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  // Construction Zone normale pour les utilisateurs
-                  <>
+              {!isDragZoneCollapsed && (
+                <div className="p-6">
                     {/* Contrôles rapides de grille */}
                     <div className="flex items-center justify-between mb-4 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
                       <div className="flex items-center space-x-4">
@@ -4487,12 +4434,11 @@ export default function FormBuilderFixed() {
                         </div>
                       </div>
                     )}
-                  </>
-                )}
-              </div>
-            )}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         <div className={`w-80 border-l overflow-y-auto ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
           <Tabs defaultValue="properties" className="h-full">
