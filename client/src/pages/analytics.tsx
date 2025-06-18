@@ -67,6 +67,9 @@ const activityData = [
 export default function Analytics() {
   const { user, isAuthenticated } = useAuth();
   const [timeRange, setTimeRange] = useState("7d");
+  
+  // Type guard for user object
+  const typedUser = user as { role?: string } | null;
 
   // Fetch real data
   const { data: forms = [] } = useQuery({
@@ -76,7 +79,7 @@ export default function Analytics() {
 
   const { data: allUsers = [] } = useQuery({
     queryKey: ["/api/admin/users"],
-    enabled: user?.role === 'admin',
+    enabled: isAuthenticated && typedUser?.role === 'admin',
   });
 
   if (!isAuthenticated) {
