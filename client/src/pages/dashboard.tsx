@@ -567,7 +567,15 @@ export default function Dashboard() {
                           </p>
                           {isAdmin && form.createdBy && (
                             <p className="text-blue-600 text-sm mb-2">
-                              Created by: {form.createdBy}
+                              Created by: {(() => {
+                                const creator = allUsers.find((user: any) => user.id === form.createdBy);
+                                if (creator) {
+                                  return creator.firstName && creator.lastName 
+                                    ? `${creator.firstName} ${creator.lastName}` 
+                                    : creator.email;
+                                }
+                                return form.createdBy;
+                              })()}
                             </p>
                           )}
                         </div>
