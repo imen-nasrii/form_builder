@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -143,7 +143,7 @@ export default function Dashboard() {
   });
 
   // Fetch users for assignment (admin only)
-  const { data: allUsers = [] } = useQuery({
+  const { data: allUsers = [] } = useQuery<any[]>({
     queryKey: ["/api/admin/users"],
     enabled: isAdmin,
   });
@@ -165,6 +165,36 @@ export default function Dashboard() {
       toast({
         title: "Error",
         description: "Failed to delete form",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const assignFormMutation = useMutation({
+    mutationFn: async (assignmentData: any) => {
+      const response = await fetch('/api/forms/assign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(assignmentData)
+      });
+      if (!response.ok) throw new Error('Failed to assign form');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/forms"] });
+      toast({
+        title: "Formulaire affecté",
+        description: `Le formulaire "${selectedFormForAssign?.label}" a été affecté avec succès.`,
+      });
+      setShowAssignDialog(false);
+      setSelectedUser("");
+      setSelectedPermission("read-write");
+      setAssignmentComment("");
+    },
+    onError: () => {
+      toast({
+        title: "Erreur",
+        description: "Impossible d'affecter le formulaire.",
         variant: "destructive",
       });
     },
