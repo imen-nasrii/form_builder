@@ -406,7 +406,7 @@ export default function Dashboard() {
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
             <Input
-              placeholder="Search forms..."
+              placeholder="Search programs..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
@@ -441,7 +441,7 @@ export default function Dashboard() {
                 <DialogTrigger asChild>
                   <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
                     <Plus className="w-4 h-4 mr-2" />
-                    Créer un Formulaire
+                    Create Program
                   </Button>
                 </DialogTrigger>
               )}
@@ -458,7 +458,7 @@ export default function Dashboard() {
               ) : null}
               <DialogContent className="sm:max-w-[700px]">
                 <DialogHeader>
-                  <DialogTitle>Create New Form</DialogTitle>
+                  <DialogTitle>Create New Program</DialogTitle>
                 </DialogHeader>
                 <div className="grid gap-6 py-4">
                   {/* Form Configuration */}
@@ -476,7 +476,7 @@ export default function Dashboard() {
                       <Input
                         value={formConfig.label}
                         onChange={(e) => setFormConfig(prev => ({ ...prev, label: e.target.value }))}
-                        placeholder="Form label"
+                        placeholder="Program label"
                       />
                     </div>
                   </div>
@@ -833,7 +833,7 @@ export default function Dashboard() {
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Users className="w-5 h-5 text-blue-600" />
-                Assign Form
+                Assign Program
               </DialogTitle>
               <DialogDescription>
                 Assign "{selectedFormForAssign?.label}" to a user
