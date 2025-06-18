@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import Navigation from "@/components/navigation";
 import JSONValidatorDialog from "@/components/form-builder/json-validator-dialog";
-import { Plus, Search, FileText, Calendar, User, FileCheck, Settings, Database, Menu, ArrowRightLeft, Upload, FileX, HelpCircle, Eye, Users, Edit3, Copy, Trash2, BarChart3 } from "lucide-react";
+import { Plus, Search, FileText, Calendar, User, FileCheck, Settings, Database, Menu, ArrowRightLeft, Upload, FileX, HelpCircle, Eye, Users, Edit3, Copy, Trash2, BarChart3, Clock } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import type { Form } from "@shared/schema";
 
@@ -113,7 +113,7 @@ export default function Dashboard() {
   const [showNewFormDialog, setShowNewFormDialog] = useState(false);
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [importedFormData, setImportedFormData] = useState<any>(null);
-  const [showStats, setShowStats] = useState(false);
+
   const [showAssignDialog, setShowAssignDialog] = useState(false);
   const [selectedFormForAssign, setSelectedFormForAssign] = useState<Form | null>(null);
   const [selectedUser, setSelectedUser] = useState<string>("");
@@ -754,81 +754,47 @@ export default function Dashboard() {
 
       </div>
 
-      {/* Floating Stats Button */}
-      <div className="fixed bottom-6 right-6 z-50">
-        <div className="relative group">
-          <Button
-            className="w-14 h-14 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300"
-            onClick={() => setShowStats(!showStats)}
-          >
-            <BarChart3 className="w-6 h-6 text-white" />
-          </Button>
-          
-          {showStats && (
-            <div className="absolute bottom-16 right-0 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 p-4">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-gray-900 dark:text-white">Statistiques</h3>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowStats(false)}
-                  className="h-6 w-6 p-0"
-                >
-                  ×
-                </Button>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 col-span-1">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">Total Forms</p>
-                      <p className="text-lg font-bold text-blue-700 dark:text-blue-300">{forms.length}</p>
-                    </div>
-                    <FileText className="h-4 w-4 text-blue-500" />
-                  </div>
-                </div>
-                
-
-                
-                <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3 col-span-1">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xs text-purple-600 dark:text-purple-400 font-medium">Ce Mois</p>
-                      <p className="text-lg font-bold text-purple-700 dark:text-purple-300">
-                        {forms.filter(form => {
-                          const created = new Date(form.createdAt || "");
-                          const now = new Date();
-                          return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear();
-                        }).length}
-                      </p>
-                    </div>
-                    <Calendar className="h-4 w-4 text-purple-500" />
-                  </div>
-                </div>
-                
-                <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-3 col-span-1">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xs text-orange-600 dark:text-orange-400 font-medium">Recent</p>
-                      <p className="text-lg font-bold text-orange-700 dark:text-orange-300">
-                        {forms.filter(form => {
-                          const updated = new Date(form.updatedAt || "");
-                          const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-                          return updated > dayAgo;
-                        }).length}
-                      </p>
-                    </div>
-                    <User className="h-4 w-4 text-orange-500" />
-                  </div>
-                </div>
-              </div>
+      {/* Data Icons in top right */}
+      <div className="fixed top-20 right-6 z-40 flex flex-col gap-3">
+        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center gap-2">
+            <FileText className="h-5 w-5 text-blue-600" />
+            <div>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Programs</p>
+              <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{forms.length}</p>
             </div>
-          )}
+          </div>
         </div>
+        
+        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center gap-2">
+            <Users className="h-5 w-5 text-green-600" />
+            <div>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Users</p>
+              <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{Array.isArray(allUsers) ? allUsers.length : 0}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center gap-2">
+            <Clock className="h-5 w-5 text-orange-600" />
+            <div>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Recent</p>
+              <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                {forms.filter(form => {
+                  const updated = new Date(form.updatedAt || "");
+                  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+                  return updated > weekAgo;
+                }).length}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        {/* Assign Form Dialog */}
-        <Dialog open={showAssignDialog} onOpenChange={setShowAssignDialog}>
+      {/* Assign Form Dialog */}
+      <Dialog open={showAssignDialog} onOpenChange={setShowAssignDialog}>
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
