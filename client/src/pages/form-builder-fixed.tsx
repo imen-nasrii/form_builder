@@ -46,8 +46,13 @@ import {
   Eye,
   ChevronDown,
   ChevronUp,
-  Home
+  Home,
+  Grid3X3,
+  Minus,
+  Maximize2,
+  Minimize2
 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 // Model Dropdown Selector Component
 function ModelDropdownSelector({ 
@@ -2836,6 +2841,38 @@ export default function FormBuilderFixed() {
   const [isDragZoneCollapsed, setIsDragZoneCollapsed] = useState(false);
   const formBuilderRef = useRef<HTMLDivElement>(null);
 
+  // Grid configuration state for ultra-advanced grid system
+  const [gridConfig, setGridConfig] = useState(() => {
+    const initialCells = [];
+    const rows = 4;
+    const cols = 6;
+    
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < cols; col++) {
+        initialCells.push({
+          id: `cell-${row}-${col}`,
+          row,
+          col,
+          width: 1,
+          height: 1,
+          colspan: 1,
+          rowspan: 1,
+          merged: false,
+          isEmpty: true,
+          component: null
+        });
+      }
+    }
+    
+    return {
+      rows,
+      cols,
+      cells: initialCells
+    };
+  });
+
+  const [selectedGridCell, setSelectedGridCell] = useState<string | null>(null);
+
   // Load form data from API if formId is provided
   const { data: existingForm, isLoading: formLoading } = useQuery({
     queryKey: [`/api/forms/${formId}`],
@@ -3178,6 +3215,201 @@ export default function FormBuilderFixed() {
       options: ''
     } as typeof newComponentConfig);
     setComponentCreationStep(1);
+  };
+
+  // Grid management functions
+  const addGridRow = () => {
+    setGridConfig(prev => {
+      const newRows = prev.rows + 1;
+      const newCells = [...prev.cells];
+      
+      for (let col = 0; col < prev.cols; col++) {
+        newCells.push({
+          id: `cell-${prev.rows}-${col}`,
+          row: prev.rows,
+          col,
+          width: 1,
+          height: 1,
+          colspan: 1,
+          rowspan: 1,
+          merged: false,
+          isEmpty: true,
+          component: null
+        });
+      }
+      
+      return {
+        ...prev,
+        rows: newRows,
+        cells: newCells
+      };
+    });
+  };
+
+  const removeGridRow = () => {
+    if (gridConfig.rows <= 1) return;
+    
+    setGridConfig(prev => ({
+      ...prev,
+      rows: prev.rows - 1,
+      cells: prev.cells.filter(cell => cell.row < prev.rows - 1)
+    }));
+  };
+
+  const addGridColumn = () => {
+    setGridConfig(prev => {
+      const newCols = prev.cols + 1;
+      const newCells = [...prev.cells];
+      
+      for (let row = 0; row < prev.rows; row++) {
+        newCells.push({
+          id: `cell-${row}-${prev.cols}`,
+          row,
+          col: prev.cols,
+          width: 1,
+          height: 1,
+          colspan: 1,
+          rowspan: 1,
+          merged: false,
+          isEmpty: true,
+          component: null
+        });
+      }
+      
+      return {
+        ...prev,
+        cols: newCols,
+        cells: newCells
+      };
+    });
+  };
+
+  const removeGridColumn = () => {
+    if (gridConfig.cols <= 1) return;
+    
+    setGridConfig(prev => ({
+      ...prev,
+      cols: prev.cols - 1,
+      cells: prev.cells.filter(cell => cell.col < prev.cols - 1)
+    }));
+  };
+
+  const mergeGridCells = () => {
+    if (!selectedGridCell) return;
+    
+    setGridConfig(prev => {
+      const cellIndex = prev.cells.findIndex(c => c.id === selectedGridCell);
+      if (cellIndex === -1) return prev;
+      
+      const cell = prev.cells[cellIndex];
+      const updatedCells = [...prev.cells];
+      
+      updatedCells[cellIndex] = {
+        ...cell,
+        colspan: Math.min(cell.colspan + 1, prev.cols - cell.col),
+        rowspan: Math.min(cell.rowspan + 1, prev.rows - cell.row)
+      };
+      
+      return {
+        ...prev,
+        cells: updatedCells
+      };
+    });
+  };
+
+  const splitGridCell = () => {
+    if (!selectedGridCell) return;
+    
+    setGridConfig(prev => {
+      const cellIndex = prev.cells.findIndex(c => c.id === selectedGridCell);
+      if (cellIndex === -1) return prev;
+      
+      const cell = prev.cells[cellIndex];
+      const updatedCells = [...prev.cells];
+      
+      updatedCells[cellIndex] = {
+        ...cell,
+        colspan: Math.max(cell.colspan - 1, 1),
+        rowspan: Math.max(cell.rowspan - 1, 1)
+      };
+      
+      return {
+        ...prev,
+        cells: updatedCells
+      };
+    });
+  };
+
+  const clearGridCell = (cellId: string) => {
+    setGridConfig(prev => {
+      const cellIndex = prev.cells.findIndex(c => c.id === cellId);
+      if (cellIndex === -1) return prev;
+      
+      const updatedCells = [...prev.cells];
+      updatedCells[cellIndex] = {
+        ...updatedCells[cellIndex],
+        component: null,
+        isEmpty: true
+      };
+      
+      return {
+        ...prev,
+        cells: updatedCells
+      };
+    });
+  };
+
+  const handleGridCellDrop = (e: React.DragEvent, cellId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const componentType = e.dataTransfer.getData('componentType');
+    if (componentType) {
+      // Create new field from component type
+      const newField = createFieldFromType(componentType);
+      
+      // Add to grid cell
+      setGridConfig(prev => {
+        const cellIndex = prev.cells.findIndex(c => c.id === cellId);
+        if (cellIndex === -1) return prev;
+        
+        const updatedCells = [...prev.cells];
+        updatedCells[cellIndex] = {
+          ...updatedCells[cellIndex],
+          component: newField,
+          isEmpty: false
+        };
+        
+        return {
+          ...prev,
+          cells: updatedCells
+        };
+      });
+
+      // Also add to main form fields
+      setFormData(prev => ({
+        ...prev,
+        fields: [...prev.fields, newField]
+      }));
+    }
+  };
+
+  const getComponentIcon = (type: string) => {
+    const iconMap: Record<string, string> = {
+      'TEXT': '📝',
+      'TEXTAREA': '📄',
+      'SELECT': '🔽',
+      'CHECKBOX': '☑️',
+      'RADIOGRP': '🔘',
+      'DATEPICKER': '📅',
+      'FILEUPLOAD': '📁',
+      'GRIDLKP': '🗂️',
+      'LSTLKP': '📋',
+      'GROUP': '📦',
+      'ACTION': '⚡',
+      'DATAMODEL': '🏗️'
+    };
+    return iconMap[type] || '🔲';
   };
 
   // Method 2: Form-based Component Creator
@@ -4006,70 +4238,176 @@ export default function FormBuilderFixed() {
           <div className={`rounded-lg border h-full ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
             <div className={`p-4 border-b ${isDarkMode ? 'border-gray-700' : ''}`}>
               <div className="flex items-center justify-between">
-                <h3 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Construction Zone</h3>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setIsDragZoneCollapsed(!isDragZoneCollapsed)}
-                  className={`h-6 w-6 p-0 ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
-                >
-                  {isDragZoneCollapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronUp className="w-3 h-3" />}
-                </Button>
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-600 rounded-lg flex items-center justify-center">
+                    <Grid3X3 className="w-4 h-4 text-white" />
+                  </div>
+                  <h3 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Construction Zone</h3>
+                  <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-xs">
+                    Excel-like
+                  </Badge>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Badge variant="outline" className="text-xs">
+                    {gridConfig.rows}×{gridConfig.cols}
+                  </Badge>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsDragZoneCollapsed(!isDragZoneCollapsed)}
+                    className={`h-6 w-6 p-0 ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+                  >
+                    {isDragZoneCollapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronUp className="w-3 h-3" />}
+                  </Button>
+                </div>
               </div>
             </div>
             {!isDragZoneCollapsed && (
-              <div 
-                ref={formBuilderRef}
-                className="p-6"
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  
-                  // Check if the drop event originated from a group drop zone
-                  const target = e.target as HTMLElement;
-                  const isDroppedOnGroup = target.closest('[data-group-drop]') || 
-                                          target.hasAttribute('data-group-drop') ||
-                                          target.closest('.group-drop-zone');
-                  
-                  console.log('Construction zone drop - target:', target, 'isDroppedOnGroup:', isDroppedOnGroup);
-                  
-                  // Only add to main form if NOT dropped on a group
-                  if (!isDroppedOnGroup) {
-                    const componentType = e.dataTransfer.getData('componentType');
-                    if (componentType) {
-                      console.log('Adding component to main form:', componentType);
-                      addField(componentType);
-                    }
-                  }
-                }}
-              >
-              {formData.fields.length === 0 ? (
-                <div className={`text-center py-16 border-2 border-dashed rounded-lg ${isDarkMode ? 'text-gray-400 border-gray-600' : 'text-gray-400 border-gray-300'}`}>
-                  <Type className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p className="text-lg font-medium mb-2">Start Building</p>
-                  <p className="text-sm">Drag components here to create your form</p>
+              <div className="p-6">
+                {/* Contrôles rapides de grille */}
+                <div className="flex items-center justify-between mb-4 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2">
+                      <Label className="text-sm font-medium">Rangées:</Label>
+                      <Button size="sm" variant="outline" onClick={removeGridRow} disabled={gridConfig.rows <= 1}>
+                        <Minus className="w-3 h-3" />
+                      </Button>
+                      <span className="text-sm font-mono">{gridConfig.rows}</span>
+                      <Button size="sm" variant="outline" onClick={addGridRow}>
+                        <Plus className="w-3 h-3" />
+                      </Button>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Label className="text-sm font-medium">Colonnes:</Label>
+                      <Button size="sm" variant="outline" onClick={removeGridColumn} disabled={gridConfig.cols <= 1}>
+                        <Minus className="w-3 h-3" />
+                      </Button>
+                      <span className="text-sm font-mono">{gridConfig.cols}</span>
+                      <Button size="sm" variant="outline" onClick={addGridColumn}>
+                        <Plus className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Badge variant="secondary" className="text-xs">
+                      {gridConfig.cells.filter(c => !c.isEmpty).length} Éléments
+                    </Badge>
+                    {selectedGridCell && (
+                      <Badge variant="outline" className="text-xs">
+                        Sélectionnée: {selectedGridCell}
+                      </Badge>
+                    )}
+                  </div>
                 </div>
-              ) : (
-                <div className="space-y-2">
-                  {formData.fields.map((field, index) => (
-                    <FieldComponent
-                      key={field.Id}
-                      field={field}
-                      onSelect={() => setSelectedField(field)}
-                      onRemove={() => removeField(field.Id)}
-                      onMoveUp={() => moveField(index, index - 1)}
-                      onMoveDown={() => moveField(index, index + 1)}
-                      isSelected={selectedField?.Id === field.Id}
-                      addField={addField}
-                      isDarkMode={isDarkMode}
-                      selectedField={selectedField}
-                      setSelectedField={setSelectedField}
-                      removeChildField={removeChildField}
-                      updateFieldInFormData={updateFieldInFormData}
-                    />
+
+                {/* Grille principale */}
+                <div 
+                  className="grid gap-2 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600"
+                  style={{
+                    gridTemplateColumns: `repeat(${gridConfig.cols}, 1fr)`,
+                    gridTemplateRows: `repeat(${gridConfig.rows}, minmax(80px, auto))`,
+                    minHeight: '400px'
+                  }}
+                >
+                  {gridConfig.cells.map(cell => (
+                    <div
+                      key={cell.id}
+                      onClick={() => setSelectedGridCell(cell.id)}
+                      className={`
+                        min-h-[80px] border-2 rounded-lg p-2 cursor-pointer transition-all duration-200
+                        ${selectedGridCell === cell.id ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30 ring-2 ring-blue-200' : 'border-gray-200 dark:border-gray-700'}
+                        ${cell.component ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-900/50'}
+                        hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-sm
+                      `}
+                      style={{
+                        gridColumn: `span ${cell.colspan}`,
+                        gridRow: `span ${cell.rowspan}`
+                      }}
+                      onDrop={(e) => handleGridCellDrop(e, cell.id)}
+                      onDragOver={(e) => e.preventDefault()}
+                    >
+                      {/* Indicateur de position */}
+                      <div className="text-xs text-gray-400 mb-1">
+                        {cell.row},{cell.col}
+                        {(cell.colspan > 1 || cell.rowspan > 1) && (
+                          <span className="ml-1 text-blue-500">({cell.colspan}×{cell.rowspan})</span>
+                        )}
+                      </div>
+
+                      {/* Contenu de la cellule */}
+                      {cell.component ? (
+                        <div className="w-full h-full flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-lg">
+                              {getComponentIcon(cell.component.Type)}
+                            </span>
+                            <div>
+                              <div className="font-medium text-sm">{cell.component.Label}</div>
+                              <div className="text-xs text-gray-500">{cell.component.Type}</div>
+                            </div>
+                          </div>
+                          <div className="flex space-x-1">
+                            <Button 
+                              size="sm" 
+                              variant="ghost" 
+                              className="p-1 h-6 w-6"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedField(cell.component);
+                              }}
+                            >
+                              <Settings className="w-3 h-3" />
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="ghost" 
+                              className="p-1 h-6 w-6"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                clearGridCell(cell.id);
+                              }}
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400">
+                          <div className="text-center">
+                            <Grid3X3 className="w-6 h-6 mx-auto mb-1 opacity-50" />
+                            <div className="text-xs">Déposer ici</div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </div>
-              )}
+
+                {/* Contrôles de cellule sélectionnée */}
+                {selectedGridCell && (
+                  <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <Label className="text-sm font-medium">Cellule sélectionnée:</Label>
+                        <Badge variant="outline" className="text-xs">{selectedGridCell}</Badge>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Button size="sm" variant="outline" className="text-xs" onClick={mergeGridCells}>
+                          <Maximize2 className="w-3 h-3 mr-1" />
+                          Étendre
+                        </Button>
+                        <Button size="sm" variant="outline" className="text-xs" onClick={splitGridCell}>
+                          <Minimize2 className="w-3 h-3 mr-1" />
+                          Réduire
+                        </Button>
+                        <Button size="sm" variant="outline" className="text-xs" onClick={() => clearGridCell(selectedGridCell)}>
+                          <Trash2 className="w-3 h-3 mr-1" />
+                          Vider
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
