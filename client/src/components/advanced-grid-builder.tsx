@@ -118,8 +118,8 @@ function DroppableCell({
         hover:border-blue-300 dark:hover:border-blue-600
       `}
       style={{
-        gridColumn: `span ${cell.width}`,
-        gridRow: `span ${cell.height}`
+        gridColumn: `span ${cell.colspan}`,
+        gridRow: `span ${cell.rowspan}`
       }}
     >
       {hasComponent && cell.component && componentType ? (
@@ -302,7 +302,10 @@ export default function AdvancedGridBuilder({
           row,
           col: prev.cols,
           width: 1,
-          height: 1
+          height: 1,
+          colspan: 1,
+          rowspan: 1,
+          merged: false
         });
       }
       
@@ -405,6 +408,25 @@ export default function AdvancedGridBuilder({
                         </Button>
                       </div>
                     </div>
+
+                    {selectedCell && (
+                      <div className="pt-2 border-t dark:border-gray-700">
+                        <Label className="text-sm font-medium mb-2 block">Cell Controls</Label>
+                        <div className="space-y-2">
+                          <div className="flex space-x-2">
+                            <Button size="sm" variant="outline" className="text-xs">
+                              Merge →
+                            </Button>
+                            <Button size="sm" variant="outline" className="text-xs">
+                              Split
+                            </Button>
+                          </div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                            Selected: {selectedCell}
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
                     <div className="pt-2 border-t dark:border-gray-700">
                       <div className="text-xs text-gray-500 dark:text-gray-400">
