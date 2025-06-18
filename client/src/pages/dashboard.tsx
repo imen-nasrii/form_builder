@@ -374,7 +374,7 @@ export default function Dashboard() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Dashboard</h1>
+
           </div>
           <div className="flex gap-3">
             <DashboardGuide />
