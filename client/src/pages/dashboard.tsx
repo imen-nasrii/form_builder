@@ -888,10 +888,10 @@ export default function Dashboard() {
                 >
                   {assignFormMutation.isPending ? 'Assigning...' : 'Assign'}
                 </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </>
   );
