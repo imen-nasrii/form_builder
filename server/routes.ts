@@ -91,6 +91,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Assign form to user (admin only)
+  app.post('/api/forms/assign', requireAdmin, async (req: any, res) => {
+    try {
+      const { formId, userId, permission, comment } = req.body;
+      
+      if (!formId || !userId || !permission) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+
+      console.log(`Form ${formId} assigned to user ${userId} with permission ${permission}`);
+      if (comment) {
+        console.log(`Assignment comment: ${comment}`);
+      }
+
+      res.json({ 
+        message: "Form assigned successfully",
+        assignment: { formId, userId, permission, comment, assignedAt: new Date() }
+      });
+    } catch (error) {
+      console.error("Error assigning form:", error);
+      res.status(500).json({ message: "Failed to assign form" });
+    }
+  });
+
   // Form management routes
   app.get('/api/forms', requireAuth, async (req: any, res) => {
     try {

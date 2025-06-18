@@ -172,13 +172,15 @@ export default function Dashboard() {
 
   const assignFormMutation = useMutation({
     mutationFn: async (assignmentData: any) => {
-      const response = await fetch('/api/forms/assign', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(assignmentData)
-      });
-      if (!response.ok) throw new Error('Failed to assign form');
-      return response.json();
+      try {
+        return await apiRequest('/api/forms/assign', {
+          method: 'POST',
+          body: JSON.stringify(assignmentData),
+        });
+      } catch (error) {
+        console.error('Assignment error:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/forms"] });
@@ -899,6 +901,13 @@ export default function Dashboard() {
                       });
                       return;
                     }
+                    
+                    console.log('Assigning form:', {
+                      formId: selectedFormForAssign?.id,
+                      userId: selectedUser,
+                      permission: selectedPermission,
+                      comment: assignmentComment,
+                    });
                     
                     assignFormMutation.mutate({
                       formId: selectedFormForAssign?.id,
