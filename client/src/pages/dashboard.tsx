@@ -185,8 +185,8 @@ export default function Dashboard() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/forms"] });
       toast({
-        title: "Formulaire affecté",
-        description: `Le formulaire "${selectedFormForAssign?.label}" a été affecté avec succès.`,
+        title: "Form assigned",
+        description: `Form "${selectedFormForAssign?.label}" has been successfully assigned.`,
       });
       setShowAssignDialog(false);
       setSelectedUser("");
@@ -195,8 +195,8 @@ export default function Dashboard() {
     },
     onError: () => {
       toast({
-        title: "Erreur",
-        description: "Impossible d'affecter le formulaire.",
+        title: "Error",
+        description: "Unable to assign form.",
         variant: "destructive",
       });
     },
@@ -567,13 +567,13 @@ export default function Dashboard() {
                           </p>
                           {isAdmin && form.createdBy && (
                             <p className="text-blue-600 text-sm mb-2">
-                              Créé par: {form.createdBy}
+                              Created by: {form.createdBy}
                             </p>
                           )}
                         </div>
                         
                         <div className="flex items-center justify-between text-sm">
-                          <span className={`${isAdmin ? 'text-gray-500' : 'text-gray-500'}`}>Mis à jour:</span>
+                          <span className={`${isAdmin ? 'text-gray-500' : 'text-gray-500'}`}>Updated:</span>
                           <span className={`font-medium ${isAdmin ? 'text-gray-700' : 'text-gray-700'}`}>
                             {formatDate(form.updatedAt)}
                           </span>
@@ -613,27 +613,27 @@ export default function Dashboard() {
                               onClick={() => {
                                 navigator.clipboard.writeText(JSON.stringify(form, null, 2));
                                 toast({
-                                  title: "Formulaire copié",
-                                  description: "Le JSON du formulaire a été copié dans le presse-papiers",
+                                  title: "Form copied",
+                                  description: "Form JSON has been copied to clipboard",
                                 });
                               }}
                             >
                               <Copy className="w-4 h-4 mr-2" />
-                              Copier JSON
+                              Copy JSON
                             </Button>
                             
                             <Button
                               variant="outline"
                               className="w-full border-red-300 text-red-700 hover:bg-red-50 bg-white"
                               onClick={() => {
-                                if (confirm('Êtes-vous sûr de vouloir supprimer ce formulaire ?')) {
+                                if (confirm('Are you sure you want to delete this form?')) {
                                   deleteFormMutation.mutate(form.id);
                                 }
                               }}
                               disabled={deleteFormMutation.isPending}
                             >
                               <Trash2 className="w-4 h-4 mr-2" />
-                              Supprimer
+                              Delete
                             </Button>
                           </>
                         )}
@@ -648,7 +648,7 @@ export default function Dashboard() {
                             }}
                           >
                             <Users className="w-4 h-4 mr-2" />
-                            Affecter
+                            Assign
                           </Button>
                         )}
                       </div>
@@ -810,7 +810,7 @@ export default function Dashboard() {
                 <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-3 col-span-1">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs text-orange-600 dark:text-orange-400 font-medium">Récent</p>
+                      <p className="text-xs text-orange-600 dark:text-orange-400 font-medium">Recent</p>
                       <p className="text-lg font-bold text-orange-700 dark:text-orange-300">
                         {forms.filter(form => {
                           const updated = new Date(form.updatedAt || "");
@@ -841,10 +841,10 @@ export default function Dashboard() {
             </DialogHeader>
             <div className="space-y-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Utilisateur</label>
+                <label className="text-sm font-medium">User</label>
                 <Select value={selectedUser} onValueChange={setSelectedUser}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner un utilisateur" />
+                    <SelectValue placeholder="Select a user" />
                   </SelectTrigger>
                   <SelectContent>
                     {allUsers.filter((u: any) => u.role === 'user').map((user: any) => (
@@ -866,18 +866,18 @@ export default function Dashboard() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="read-only">Lecture seule</SelectItem>
-                    <SelectItem value="read-write">Lecture et modification</SelectItem>
-                    <SelectItem value="admin">Administration complète</SelectItem>
+                    <SelectItem value="read-only">Read only</SelectItem>
+                    <SelectItem value="read-write">Read and edit</SelectItem>
+                    <SelectItem value="admin">Full administration</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               
               <div className="space-y-2">
-                <label className="text-sm font-medium">Commentaire (optionnel)</label>
+                <label className="text-sm font-medium">Comment (optional)</label>
                 <textarea 
                   className="w-full p-2 border border-gray-300 rounded-md text-sm"
-                  placeholder="Ajouter un commentaire sur cette affectation..."
+                  placeholder="Add a comment about this assignment..."
                   rows={3}
                   value={assignmentComment}
                   onChange={(e) => setAssignmentComment(e.target.value)}
@@ -889,14 +889,14 @@ export default function Dashboard() {
                   variant="outline" 
                   onClick={() => setShowAssignDialog(false)}
                 >
-                  Annuler
+                  Cancel
                 </Button>
                 <Button
                   onClick={() => {
                     if (!selectedUser) {
                       toast({
-                        title: "Erreur",
-                        description: "Veuillez sélectionner un utilisateur.",
+                        title: "Error",
+                        description: "Please select a user.",
                         variant: "destructive",
                       });
                       return;
@@ -919,7 +919,7 @@ export default function Dashboard() {
                   disabled={assignFormMutation.isPending}
                   className="bg-blue-600 hover:bg-blue-700"
                 >
-                  {assignFormMutation.isPending ? 'Affectation...' : 'Affecter'}
+                  {assignFormMutation.isPending ? 'Assigning...' : 'Assign'}
                 </Button>
               </div>
             </div>
