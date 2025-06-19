@@ -289,20 +289,19 @@ export class DatabaseStorage implements IStorage {
     return !!updated;
   }
 
-  async markAllNotificationsAsRead(userId: string): Promise<boolean> {
-    await db
-      .update(notifications)
-      .set({ read: true, readAt: new Date() })
-      .where(and(eq(notifications.userId, userId), eq(notifications.read, false)));
-    return true;
+  async createNotification(notificationData: InsertNotification): Promise<Notification> {
+    const [notification] = await db
+      .insert(notifications)
+      .values(notificationData)
+      .returning();
+    return notification;
   }
 
-  async getUnreadNotificationCount(userId: string): Promise<number> {
-    const [result] = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(notifications)
-      .where(and(eq(notifications.userId, userId), eq(notifications.read, false)));
-    return result?.count || 0;
+  async createBulkNotifications(notificationsData: InsertNotification[]): Promise<Notification[]> {
+    return await db
+      .insert(notifications)
+      .values(notificationsData)
+      .returning();
   }
 
   // Form status update operations
