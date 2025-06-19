@@ -344,17 +344,13 @@ export default function AdminManagement() {
                 programs={programs}
                 users={users}
                 onViewProgram={(programId) => {
-                  // Navigate to program view or open in modal
                   window.open(`/form-builder/${programId}`, '_blank');
                 }}
                 onEditProgram={(programId) => {
-                  // Navigate to edit program
                   window.open(`/form-builder/${programId}`, '_blank');
                 }}
                 onAssignProgram={(programId, userId) => {
-                  setSelectedProgram(programId);
-                  setSelectedUser(userId);
-                  handleAssignProgram();
+                  assignProgramMutation.mutate({ programId, userId });
                 }}
               />
             )}
@@ -362,12 +358,16 @@ export default function AdminManagement() {
 
           {/* Assignment Management */}
           <TabsContent value="assignments" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Assign Programs to Users</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Assignment Form */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <CheckCircle2 className="w-5 h-5" />
+                    Assign Programs to Users
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium mb-2">Select User</label>
                     <Select value={selectedUser} onValueChange={setSelectedUser}>
@@ -399,17 +399,58 @@ export default function AdminManagement() {
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
-                
-                <Button 
-                  onClick={handleAssignProgram}
-                  disabled={!selectedUser || !selectedProgram || assignProgramMutation.isPending}
-                  className="w-full"
-                >
-                  {assignProgramMutation.isPending ? 'Assigning...' : 'Assign Program'}
-                </Button>
-              </CardContent>
-            </Card>
+                  
+                  <Button 
+                    onClick={handleAssignProgram}
+                    disabled={!selectedUser || !selectedProgram || assignProgramMutation.isPending}
+                    className="w-full"
+                  >
+                    {assignProgramMutation.isPending ? 'Assigning...' : 'Assign Program'}
+                  </Button>
+
+                  {assignProgramMutation.isSuccess && (
+                    <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+                      Program assigned successfully!
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Current Assignments */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Current Assignments</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {programs.filter(p => p.assignedTo).map((program: Program) => {
+                      const assignee = users.find(u => u.id === program.assignedTo);
+                      return (
+                        <div key={program.id} className="flex items-center justify-between p-3 border rounded-lg">
+                          <div>
+                            <div className="font-medium">{program.label}</div>
+                            <div className="text-sm text-gray-500">
+                              Assigned to: {assignee?.firstName ? `${assignee.firstName} ${assignee.lastName}` : assignee?.email}
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-sm font-medium">{calculateCompletion(program.fields)}%</div>
+                            <div className="text-xs text-gray-500">Complete</div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                    
+                    {programs.filter(p => p.assignedTo).length === 0 && (
+                      <div className="text-center py-8 text-gray-500">
+                        <CheckCircle2 className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                        <p>No programs assigned yet</p>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           {/* Activity & Notifications */}
