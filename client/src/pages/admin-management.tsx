@@ -9,8 +9,9 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
-import { Users, Settings, Bell, Eye, UserPlus, Trash2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Users, Settings, Bell, Eye, UserPlus, Trash2, CheckCircle2, AlertCircle, BarChart3, Edit } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
+import ProgramCompletionTracker from '@/components/program-completion-tracker';
 
 interface User {
   id: string;
@@ -68,7 +69,8 @@ export default function AdminManagement() {
   // Fetch notifications
   const { data: notifications = [] } = useQuery({
     queryKey: ['/api/notifications'],
-    enabled: user?.role === 'admin'
+    enabled: user?.role === 'admin',
+    refetchInterval: 5000 // Refresh every 5 seconds
   });
 
   // Calculate program completion percentage
@@ -127,6 +129,8 @@ export default function AdminManagement() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/forms'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/notifications'] });
     }
   });
 
@@ -181,8 +185,8 @@ export default function AdminManagement() {
               Users Management
             </TabsTrigger>
             <TabsTrigger value="programs" className="flex items-center gap-2">
-              <Settings className="w-4 h-4" />
-              Programs Overview
+              <BarChart3 className="w-4 h-4" />
+              Program Tracker
             </TabsTrigger>
             <TabsTrigger value="assignments" className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4" />
@@ -249,75 +253,27 @@ export default function AdminManagement() {
             </Card>
           </TabsContent>
 
-          {/* Programs Overview */}
+          {/* Program Tracker */}
           <TabsContent value="programs" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Settings className="w-5 h-5" />
-                  Programs Overview
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-4">
-                  {programsLoading ? (
-                    <div className="text-center py-8">Loading programs...</div>
-                  ) : (
-                    programs.map((program: Program) => {
-                      const completion = calculateCompletion(program.fields);
-                      const creator = users.find(u => u.id === program.createdBy);
-                      const assignee = users.find(u => u.id === program.assignedTo);
-                      
-                      return (
-                        <div key={program.id} className="p-4 border rounded-lg">
-                          <div className="flex items-center justify-between mb-4">
-                            <div>
-                              <h3 className="font-semibold text-lg">{program.label}</h3>
-                              <p className="text-sm text-gray-500">ID: {program.menuId}</p>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <Badge className={getCompletionColor(completion)}>
-                                {completion}% Complete
-                              </Badge>
-                              <Button size="sm" variant="outline">
-                                <Eye className="w-4 h-4" />
-                              </Button>
-                            </div>
-                          </div>
-                          
-                          <div className="space-y-3">
-                            <div>
-                              <div className="flex justify-between text-sm mb-1">
-                                <span>Components Progress</span>
-                                <span>{program.fields?.length || 0}/10 components</span>
-                              </div>
-                              <Progress value={completion} className="h-2" />
-                            </div>
-                            
-                            <div className="grid grid-cols-2 gap-4 text-sm">
-                              <div>
-                                <span className="font-medium">Created by:</span>
-                                <p>{creator?.firstName ? `${creator.firstName} ${creator.lastName}` : creator?.email || 'Unknown'}</p>
-                              </div>
-                              <div>
-                                <span className="font-medium">Assigned to:</span>
-                                <p>{assignee ? (assignee.firstName ? `${assignee.firstName} ${assignee.lastName}` : assignee.email) : 'Unassigned'}</p>
-                              </div>
-                            </div>
-                            
-                            <div className="grid grid-cols-3 gap-2 text-xs">
-                              <div>Width: {program.formWidth}</div>
-                              <div>Layout: {program.layout}</div>
-                              <div>Updated: {new Date(program.updatedAt).toLocaleDateString()}</div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+            {programsLoading ? (
+              <div className="text-center py-8">Loading programs...</div>
+            ) : (
+              <ProgramCompletionTracker
+                programs={programs}
+                users={users}
+                onViewProgram={(programId) => {
+                  // Navigate to program view or open in modal
+                  window.open(`/form-builder/${programId}`, '_blank');
+                }}
+                onEditProgram={(programId) => {
+                  // Navigate to edit program
+                  window.open(`/form-builder/${programId}`, '_blank');
+                }}
+                onAssignProgram={(programId, userId) => {
+                  assignProgramMutation.mutate({ programId, userId });
+                }}
+              />
+            )}
           </TabsContent>
 
           {/* Assignment Management */}
@@ -383,21 +339,33 @@ export default function AdminManagement() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {notifications.map((notification: Notification) => (
-                    <div key={notification.id} className={`p-4 border rounded-lg ${notification.read ? 'bg-gray-50' : 'bg-blue-50 border-blue-200'}`}>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <div className="font-medium">{notification.message}</div>
-                          <div className="text-sm text-gray-500">
-                            Program: {notification.programLabel} • {new Date(notification.createdAt).toLocaleString()}
+                  {notifications.map((notification: Notification) => {
+                    const user = users.find(u => u.id === notification.userId);
+                    const userName = user?.firstName ? `${user.firstName} ${user.lastName}` : user?.email || 'Unknown User';
+                    
+                    return (
+                      <div key={notification.id} className={`p-4 border rounded-lg ${notification.read ? 'bg-gray-50' : 'bg-blue-50 border-blue-200'}`}>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="font-medium">{notification.message}</div>
+                            <div className="text-sm text-gray-500">
+                              User: {userName} • Program: {notification.programLabel} • {new Date(notification.createdAt).toLocaleString()}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Badge 
+                              variant={notification.type === 'assignment' ? 'default' : notification.type === 'completion' ? 'secondary' : 'outline'}
+                            >
+                              {notification.type}
+                            </Badge>
+                            <Badge variant={notification.read ? 'secondary' : 'default'}>
+                              {notification.read ? 'Read' : 'Unread'}
+                            </Badge>
                           </div>
                         </div>
-                        <Badge variant={notification.read ? 'secondary' : 'default'}>
-                          {notification.read ? 'Read' : 'Unread'}
-                        </Badge>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                   
                   {notifications.length === 0 && (
                     <div className="text-center py-8 text-gray-500">
