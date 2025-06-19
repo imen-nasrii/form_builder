@@ -13,7 +13,10 @@ import {
   RadioIcon, 
   Hash,
   Type,
-  Grid3X3
+  Grid3X3,
+  FileText,
+  FolderOpen,
+  Play
 } from "lucide-react";
 import type { FormField } from "@/lib/form-types";
 
@@ -192,7 +195,7 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
     <div className="space-y-4">
       {/* Main Title */}
       <div className="text-center">
-        <h2 className="text-lg font-bold text-black dark:text-white">COMPONENTS</h2>
+        <h2 className="text-lg font-bold text-black dark:text-white">Components</h2>
       </div>
 
       {/* Input Controls Section */}
