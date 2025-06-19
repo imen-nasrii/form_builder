@@ -462,40 +462,7 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* Data Icons centered */}
-        <div className="flex justify-center mb-8">
-          <div className="flex gap-6">
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 min-w-[120px]">
-              <div className="flex flex-col items-center text-center">
-                <FileText className="h-6 w-6 text-blue-600 mb-2" />
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Programs</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{forms.length}</p>
-              </div>
-            </div>
-            
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 min-w-[120px]">
-              <div className="flex flex-col items-center text-center">
-                <Users className="h-6 w-6 text-green-600 mb-2" />
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Users</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{Array.isArray(allUsers) ? allUsers.length : 0}</p>
-              </div>
-            </div>
-            
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 min-w-[120px]">
-              <div className="flex flex-col items-center text-center">
-                <Clock className="h-6 w-6 text-orange-600 mb-2" />
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Recent</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  {forms.filter(form => {
-                    const updated = new Date(form.updatedAt || "");
-                    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-                    return updated > weekAgo;
-                  }).length}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+
 
         {/* Create New Form Section */}
         <div className="mb-8">
