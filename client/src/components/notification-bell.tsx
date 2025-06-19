@@ -25,8 +25,18 @@ export default function NotificationBell() {
   // Fetch notifications
   const { data: notifications = [], isLoading } = useQuery({
     queryKey: ['/api/notifications'],
-    refetchInterval: 30000, // Refresh every 30 seconds
+    refetchInterval: 5000, // Refresh every 5 seconds for real-time updates
+    retry: 3,
   });
+
+  // Get unread count
+  const { data: unreadCountData } = useQuery({
+    queryKey: ['/api/notifications/unread-count'],
+    refetchInterval: 5000,
+    retry: 3,
+  });
+
+  const unreadCount = unreadCountData?.count || notifications.filter((n: Notification) => !n.read).length;
 
   // Mark notification as read mutation
   const markAsReadMutation = useMutation({
@@ -37,10 +47,22 @@ export default function NotificationBell() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/notifications/unread-count'] });
     }
   });
 
-  const unreadCount = notifications.filter((n: Notification) => !n.read).length;
+  // Mark all as read mutation
+  const markAllAsReadMutation = useMutation({
+    mutationFn: async () => {
+      return apiRequest('/api/notifications/read-all', {
+        method: 'PATCH'
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/notifications/unread-count'] });
+    }
+  });
 
   const handleMarkAsRead = (notificationId: string, e: React.MouseEvent) => {
     e.stopPropagation();
