@@ -164,48 +164,50 @@ export default function AdminManagement() {
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Admin Management</h1>
-            <p className="text-gray-600">Manage users, programs, and system notifications with real-time data</p>
+            <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+            <p className="text-gray-600">Complete administration panel with real-time system management</p>
+          </div>
+          <div className="flex items-center space-x-4">
+            <Badge variant="outline" className="bg-blue-50 text-blue-700">
+              {users.length} Users
+            </Badge>
+            <Badge variant="outline" className="bg-green-50 text-green-700">
+              {programs.length} Programs
+            </Badge>
+            <Badge variant="outline" className="bg-orange-50 text-orange-700">
+              {notifications.filter(n => !n.read).length} Unread Notifications
+            </Badge>
           </div>
         </div>
 
 
 
-        <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="overview" className="flex items-center gap-2">
-              <BarChart3 className="w-4 h-4" />
-              Overview
-            </TabsTrigger>
+        {/* Dashboard Overview Cards */}
+        <div className="mb-8">
+          <RealTimeStats />
+        </div>
+
+        <Tabs defaultValue="users" className="w-full">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="users" className="flex items-center gap-2">
               <Users className="w-4 h-4" />
-              Users
+              Users Management
             </TabsTrigger>
             <TabsTrigger value="programs" className="flex items-center gap-2">
               <Settings className="w-4 h-4" />
-              Programs
+              Programs Tracker
             </TabsTrigger>
             <TabsTrigger value="assignments" className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4" />
-              Assignments
+              Assignment Center
             </TabsTrigger>
-            <TabsTrigger value="notifications" className="flex items-center gap-2">
+            <TabsTrigger value="activity" className="flex items-center gap-2">
               <Bell className="w-4 h-4" />
-              Notifications
+              Activity & Notifications
             </TabsTrigger>
           </TabsList>
 
-          {/* Overview Dashboard */}
-          <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
-                <RealTimeStats />
-              </div>
-              <div>
-                <ActivityFeed />
-              </div>
-            </div>
-          </TabsContent>
+
 
           {/* Users Management */}
           <TabsContent value="users" className="space-y-6">
@@ -344,7 +346,63 @@ export default function AdminManagement() {
             </Card>
           </TabsContent>
 
-          {/* Notifications */}
+          {/* Activity & Notifications */}
+          <TabsContent value="activity" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Real-time Activity Feed */}
+              <div>
+                <ActivityFeed />
+              </div>
+              
+              {/* System Notifications */}
+              <Card className="h-[600px] flex flex-col">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Bell className="w-5 h-5" />
+                    System Notifications
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="flex-1 overflow-hidden">
+                  <div className="space-y-4 overflow-y-auto h-full">
+                    {notifications.map((notification: Notification) => {
+                      const user = users.find(u => u.id === notification.userId);
+                      const userName = user?.firstName ? `${user.firstName} ${user.lastName}` : user?.email || 'Unknown User';
+                      
+                      return (
+                        <div key={notification.id} className={`p-4 border rounded-lg ${notification.read ? 'bg-gray-50' : 'bg-blue-50 border-blue-200'}`}>
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <div className="font-medium">{notification.message}</div>
+                              <div className="text-sm text-gray-500">
+                                User: {userName} • Program: {notification.programLabel} • {new Date(notification.createdAt).toLocaleString()}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Badge 
+                                variant={notification.type === 'assignment' ? 'default' : notification.type === 'completion' ? 'secondary' : 'outline'}
+                              >
+                                {notification.type}
+                              </Badge>
+                              <Badge variant={notification.read ? 'secondary' : 'default'}>
+                                {notification.read ? 'Read' : 'Unread'}
+                              </Badge>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                    
+                    {notifications.length === 0 && (
+                      <div className="text-center py-8 text-gray-500">
+                        <Bell className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                        <p>No notifications found</p>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
           <TabsContent value="notifications" className="space-y-6">
             <Card>
               <CardHeader>
