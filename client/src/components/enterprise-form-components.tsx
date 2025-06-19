@@ -331,6 +331,20 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       type: 'text',
       defaultValue: '',
       description: 'Placeholder text'
+    },
+    {
+      id: 'maxLength',
+      label: 'Max Length',
+      type: 'number',
+      defaultValue: 255,
+      description: 'Maximum character length'
+    },
+    {
+      id: 'minLength',
+      label: 'Min Length',
+      type: 'number',
+      defaultValue: 0,
+      description: 'Minimum character length'
     }
   ],
   'NUMERIC': [
@@ -423,8 +437,33 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       description: 'Show secondary property'
     }
   ],
-  'DATEPKR': [],
-  'DATEPICKER': [],
+  'DATEPKR': [
+    {
+      id: 'format',
+      label: 'Date Format',
+      type: 'select',
+      defaultValue: 'DD/MM/YYYY',
+      options: ['DD/MM/YYYY', 'MM/DD/YYYY', 'YYYY-MM-DD'],
+      description: 'Date display format'
+    },
+    {
+      id: 'minDate',
+      label: 'Minimum Date',
+      type: 'date',
+      defaultValue: '',
+      description: 'Earliest selectable date'
+    }
+  ],
+  'DATEPICKER': [
+    {
+      id: 'format',
+      label: 'Date Format',
+      type: 'select',
+      defaultValue: 'DD/MM/YYYY',
+      options: ['DD/MM/YYYY', 'MM/DD/YYYY', 'YYYY-MM-DD'],
+      description: 'Date display format'
+    }
+  ],
   'SELECT': [
     {
       id: 'UserIntKey',
@@ -443,7 +482,22 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       description: 'Default checkbox state'
     }
   ],
-  'RADIOGRP': [],
+  'RADIOGRP': [
+    {
+      id: 'options',
+      label: 'Options',
+      type: 'textarea',
+      defaultValue: '',
+      description: 'Options separated by new lines (key:value format)'
+    },
+    {
+      id: 'inline',
+      label: 'Inline Layout',
+      type: 'boolean',
+      defaultValue: false,
+      description: 'Display options horizontally'
+    }
+  ],
   'GRID': [
     {
       id: 'Endpoint',
