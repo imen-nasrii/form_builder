@@ -373,6 +373,14 @@ export class DatabaseStorage implements IStorage {
 
   async deleteUser(userId: string): Promise<void> {
     try {
+      // First, delete or reassign forms created by this user
+      await db.delete(forms).where(eq(forms.createdBy, userId));
+      
+      // Delete notifications for this user
+      const { notifications } = await import("@shared/schema");
+      await db.delete(notifications).where(eq(notifications.userId, userId));
+      
+      // Finally, delete the user
       await db.delete(users).where(eq(users.id, userId));
     } catch (error) {
       console.error("Error deleting user:", error);
