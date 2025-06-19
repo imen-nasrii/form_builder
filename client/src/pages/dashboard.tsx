@@ -409,56 +409,19 @@ export default function Dashboard() {
 
 
 
-        {/* Magical 3D Search Bar */}
-        <div className="relative mb-8">
-          
-          <div className="relative bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/30 p-6 transform hover:scale-[1.02] transition-all duration-300">
-            {/* Floating particles effect */}
-            <div className="absolute top-0 left-0 w-full h-full overflow-hidden rounded-2xl pointer-events-none">
-              <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-purple-400 rounded-full opacity-60 animate-bounce"></div>
-              <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-pink-400 rounded-full opacity-40 animate-ping"></div>
-              <div className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-blue-400 rounded-full opacity-50 animate-pulse"></div>
+        {/* Search and Filter Bar */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-8">
+          <div className="flex items-center gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <input
+                type="text"
+                placeholder="Search programs..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+              />
             </div>
-            
-            <div className="flex items-center gap-4 relative z-10">
-              <div className="relative flex-1">
-                {/* Glowing search icon */}
-                <div className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20">
-                  <div className="relative">
-                    <Search className="h-5 w-5 text-purple-500 drop-shadow-sm" />
-                    <div className="absolute inset-0 h-5 w-5 bg-purple-400 rounded-full blur-sm opacity-30 animate-pulse"></div>
-                  </div>
-                </div>
-                
-                {/* 3D Search Input */}
-                <input
-                  type="text"
-                  placeholder="✨ Search programs with magic..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-14 pr-6 py-4 text-lg font-medium bg-gradient-to-r from-white to-purple-50 border-2 border-transparent rounded-xl 
-                           focus:border-gradient-to-r focus:from-purple-400 focus:to-pink-400 
-                           focus:bg-white focus:shadow-xl focus:shadow-purple-200/50
-                           outline-none transition-all duration-300 transform
-                           hover:shadow-lg hover:shadow-purple-100/30
-                           placeholder:text-purple-300 placeholder:font-normal
-                           backdrop-blur-sm"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(243,232,255,0.6) 100%)'
-                  }}
-                />
-                
-                {/* Magic sparkle trail */}
-                {searchQuery && (
-                  <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-                    <div className="flex space-x-1">
-                      <div className="w-1 h-1 bg-purple-400 rounded-full animate-ping"></div>
-                      <div className="w-1 h-1 bg-pink-400 rounded-full animate-ping" style={{animationDelay: '0.2s'}}></div>
-                      <div className="w-1 h-1 bg-blue-400 rounded-full animate-ping" style={{animationDelay: '0.4s'}}></div>
-                    </div>
-                  </div>
-                )}
-              </div>
             
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-500 font-medium">Filter:</span>
@@ -497,6 +460,41 @@ export default function Dashboard() {
               </p>
             </div>
           )}
+        </div>
+
+        {/* Data Icons centered */}
+        <div className="flex justify-center mb-8">
+          <div className="flex gap-6">
+            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 min-w-[120px]">
+              <div className="flex flex-col items-center text-center">
+                <FileText className="h-6 w-6 text-blue-600 mb-2" />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Programs</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{forms.length}</p>
+              </div>
+            </div>
+            
+            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 min-w-[120px]">
+              <div className="flex flex-col items-center text-center">
+                <Users className="h-6 w-6 text-green-600 mb-2" />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Users</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{Array.isArray(allUsers) ? allUsers.length : 0}</p>
+              </div>
+            </div>
+            
+            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 min-w-[120px]">
+              <div className="flex flex-col items-center text-center">
+                <Clock className="h-6 w-6 text-orange-600 mb-2" />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Recent</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                  {forms.filter(form => {
+                    const updated = new Date(form.updatedAt || "");
+                    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+                    return updated > weekAgo;
+                  }).length}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Create New Form Section */}
@@ -984,7 +982,7 @@ export default function Dashboard() {
             </div>
           </DialogContent>
         </Dialog>
-        
+        </div>
       </div>
     </div>
   );
