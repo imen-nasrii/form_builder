@@ -1,0 +1,173 @@
+
+
+{
+  "MenuID": "PRIMNT",
+  "Label": "PRIMNT",
+  "Layout": "MASTERMENU",
+  "LoadDataDetails": {
+    "DataModel": "Prihst",
+    "ColumnsDefinition":
+     [
+      {
+        "DataField": "FUND",
+        
+        "Caption": "Fund ID",
+        "DataType": "STRING",
+        "Visible": true
+      },
+      {
+        "DataField": "TKR",
+        "Caption": "Ticker",
+        "DataType": "STRING",
+        "Visible": true
+      },
+      {
+        "DataField": "PRCDATE",
+        "Caption": "Price Date",
+        "DataType": "DATE",         
+      
+        "Visible": true
+      },
+      {
+        "DataField": "SOURCE",
+        "Caption": "Source",
+        "DataType": "STRING",
+        "Visible": true
+      },
+      {
+        "DataField": "PRICE_TYPE",
+        "Caption": "Price Type",
+        "DataType": "STRING",
+        "Visible": true
+      },
+      {
+        "DataField": "PRICE",
+        "Caption": "Price",
+        "DataType": "NUMERIC",
+        "Visible": true
+      },
+      {
+        "DataField": "CUSIP",
+        "Caption": "CUSIP",
+        "DataType": "STRING",
+        "Visible": true
+      },
+      {
+        "DataField": "TKR_TYPE",
+        "Caption": "Security Type",
+        "DataType": "STRING",
+        "Visible": true
+      },
+      {
+        "DataField": "FACTOR",
+        "Caption": "Factor",
+        "DataType": "NUMERIC",
+        "Visible": true
+      },
+      {
+        "DataField": "DATE_CHNG",
+        "Caption": "Date Changed",
+        "DataType": "DATE",
+        "Visible": true
+      },
+      {
+        "DataField": "USER_ID",
+        "Caption": "User ID",
+        "DataType": "STRING",
+        "Visible": true
+      },
+      {
+        "DataField": "PRCMEMO",
+        "Caption": "Price Memo",
+        "DataType": "STRING",
+        "Visible": true
+      },
+      {
+        "DataField": "YIELD_CO",
+        "Caption": "Yield",
+        "DataType": "STRING",
+        "Visible": true
+      }
+    ]
+  },
+
+  "Fields": [
+    {
+      "id": "FundID",
+      "Label": "Fund",
+      "type": "GRIDLKP",
+      "DataField": "FUND",
+      "Inline": true,
+      "Width": "32",
+      "KeyColumn": "fund",
+      "LoadDataInfo": {
+        "DataModel": "Fndmas",
+        "ColumnsDefinition": [
+          {
+            "DataField": "fund",
+            "Caption": "Fund ID",
+            "DataType": "STRING",
+            "Visible": true
+          },
+          {
+            "DataField": "acnam1",
+            "Caption": "Fund Name",
+            "DataType": "STRING",
+            "Visible": true
+          }
+        ]
+      },
+      "Validations": [
+
+
+      ]
+    },
+    {
+      "Id": "Ticker",
+      "Label": "Ticker",
+      "Type": "GRIDLKP",
+      "Inline": true,
+      "Width": "32",
+      "KeyColumn": "tkr",
+      "LoadDataInfo": {
+        "DataModel": "Secrty",
+        "ColumnsDefinition": [
+          {
+            "DataField": "tkr",
+            "Caption": "Ticker",
+            "DataType": "STRING",
+            "Visible": true
+          },
+          {
+            "DataField": "tkr_DESC",
+            "Caption": "Description",
+            "DataType": "STRING",
+            "Visible": true
+          },
+          {
+            "DataField": "desc2",
+            "Caption": "Description - Second Line",
+            "DataType": "STRING"
+          },
+          {
+            "DataField": "cusip",
+            "Caption": "CUSIP",
+            "DataType": "STRING"
+          }
+        ]
+      }
+    }
+  ],
+                 
+
+  "Actions": [
+    {
+      "ID": "ADD",
+      "Label": "ADD"
+    }
+  ],
+  "Validations": [
+
+  ]
+
+}
