@@ -23,6 +23,7 @@ import Analytics from "@/pages/analytics";
 import Setup2FA from "@/pages/setup-2fa";
 import VerifyEmail from "@/pages/verify-email";
 import ApiIntegration from "@/pages/api-integration";
+import AdminManagement from "@/pages/admin-management";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -61,6 +62,7 @@ function Router() {
       <Route path="/ai-bot" component={DFMToJSONBotStable} />
       <Route path="/admin" component={AdminPage} />
       <Route path="/admin-panel" component={AdminPanel} />
+      <Route path="/admin-management" component={AdminManagement} />
       <Route path="/analytics" component={Analytics} />
       <Route path="/api-integration" component={ApiIntegration} />
       <Route path="/setup-2fa" component={Setup2FA} />
