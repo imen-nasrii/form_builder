@@ -212,7 +212,7 @@ const ComponentCategories = {
     icon: Calendar,
     color: 'purple',
     components: {
-      DATEPICKER: { icon: Calendar, label: 'Date Picker', color: 'purple' }
+      DATEPKR: { icon: Calendar, label: 'Date Picker', color: 'purple' }
     }
   },
   file: {
@@ -228,8 +228,8 @@ const ComponentCategories = {
     icon: Search,
     color: 'indigo',
     components: {
-      GRIDLKP: { icon: Table, label: 'Grid Lookup', color: 'indigo' },
-      LSTLKP: { icon: Search, label: 'List Lookup', color: 'teal' }
+      GRIDLKP: { icon: Database, label: 'Grid Lookup', color: 'indigo' },
+      LSTLKP: { icon: List, label: 'List Lookup', color: 'teal' }
     }
   },
   layout: {
@@ -2009,7 +2009,7 @@ function PropertiesPanel({ field, onUpdate }: {
           </div>
         );
 
-      case 'DATEPICKER':
+      case 'DATEPKR':
         return (
           <div className="space-y-3">
             <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">Date Picker Properties</h4>
@@ -3420,7 +3420,7 @@ export default function FormBuilderFixed() {
       'SELECT': '🔽',
       'CHECKBOX': '☑️',
       'RADIOGRP': '🔘',
-      'DATEPICKER': '📅',
+      'DATEPKR': '📅',
       'FILEUPLOAD': '📁',
       'GRIDLKP': '🗂️',
       'LSTLKP': '📋',
