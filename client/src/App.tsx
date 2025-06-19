@@ -25,6 +25,7 @@ import VerifyEmail from "@/pages/verify-email";
 import ApiIntegration from "@/pages/api-integration";
 import AdminManagement from "@/pages/admin-management";
 import UserTaskBoard from "@/pages/user-task-board";
+import Navigation from "@/components/navigation";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -45,9 +46,12 @@ function Router() {
   }
 
   return (
-    <Switch>
-      {/* Public routes */}
-      <Route path="/register" component={Register} />
+    <div className="min-h-screen bg-gray-50">
+      {isAuthenticated && <Navigation />}
+      <div className={isAuthenticated ? "pt-16" : ""}>
+        <Switch>
+          {/* Public routes */}
+          <Route path="/register" component={Register} />
       <Route path="/login" component={Login} />
       <Route path="/signup" component={SignUp} />
       <Route path="/signin" component={SignIn} />
@@ -73,8 +77,10 @@ function Router() {
       <Route path="/" component={isAuthenticated ? Dashboard : SignUp} />
       
       {/* 404 fallback */}
-      <Route component={NotFound} />
-    </Switch>
+          <Route component={NotFound} />
+        </Switch>
+      </div>
+    </div>
   );
 }
 

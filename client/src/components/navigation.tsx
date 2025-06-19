@@ -33,7 +33,7 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 px-6 py-3">
+    <nav className="bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 px-6 py-3 fixed top-0 left-0 right-0 z-50">
       <div className="flex items-center justify-between max-w-7xl mx-auto">
         {/* Modern Logo */}
         <Link href="/">

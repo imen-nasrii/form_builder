@@ -636,6 +636,7 @@ export default function AdminManagement() {
             </Card>
           </div>
         )}
+      </div>
     </div>
   );
 }
