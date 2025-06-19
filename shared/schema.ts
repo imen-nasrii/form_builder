@@ -136,7 +136,8 @@ export type EmailVerificationToken = typeof emailVerificationTokens.$inferSelect
 export type InsertPasswordResetToken = typeof passwordResetTokens.$inferInsert;
 export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
 
-// Form field types and validation schemas
+// Create insert schemas using drizzle-zod
+export const insertNotificationSchema = createInsertSchema(notifications);
 export const insertFormSchema = createInsertSchema(forms).omit({
   id: true,
   createdAt: true,
