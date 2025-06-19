@@ -444,8 +444,7 @@ export default function Dashboard() {
                            placeholder:text-purple-300 placeholder:font-normal
                            backdrop-blur-sm"
                   style={{
-                    background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(243,232,255,0.6) 100%)',
-                    boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.1), 0 8px 32px rgba(147,51,234,0.1)'
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(243,232,255,0.6) 100%)'
                   }}
                 />
                 
@@ -475,8 +474,7 @@ export default function Dashboard() {
                              hover:shadow-lg hover:shadow-purple-100/50 transition-all duration-300
                              cursor-pointer transform hover:scale-105"
                     style={{
-                      background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(243,232,255,0.7) 100%)',
-                      boxShadow: '0 4px 15px rgba(147,51,234,0.1)'
+                      background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(243,232,255,0.7) 100%)'
                     }}
                   >
                     <option value="all">✨ All Programs</option>
