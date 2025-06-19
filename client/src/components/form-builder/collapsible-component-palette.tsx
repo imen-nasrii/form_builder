@@ -77,8 +77,10 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
   const [expandedSections, setExpandedSections] = useState({
     input: true,
     selection: true,
-    data: true,
-    special: true
+    dateTime: false,
+    files: false,
+    lookup: true,
+    layout: false
   });
 
   const toggleSection = (section: keyof typeof expandedSections) => {
@@ -92,30 +94,16 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
     {
       type: "TEXT",
       icon: <Type className="w-5 h-5 text-white" />,
-      label: "Text Field",
+      label: "Text Input",
       description: "TEXT",
-      color: "bg-green-500"
+      color: "bg-blue-500"
     },
     {
-      type: "TEXTAREA",
+      type: "TEXTAREA", 
       icon: <FileText className="w-5 h-5 text-white" />,
       label: "Text Area",
-      description: "TEXTAREA", 
-      color: "bg-green-600"
-    },
-    {
-      type: "DATEPICKER",
-      icon: <Calendar className="w-5 h-5 text-white" />,
-      label: "Date Picker",
-      description: "DATEPICKER",
-      color: "bg-purple-500"
-    },
-    {
-      type: "FILEUPLOAD",
-      icon: <Upload className="w-5 h-5 text-white" />,
-      label: "File Upload",
-      description: "FILEUPLOAD",
-      color: "bg-indigo-500"
+      description: "TEXTAREA",
+      color: "bg-green-500"
     }
   ];
 
@@ -143,17 +131,30 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
     }
   ];
 
-  const dataComponents = [
+  const dateTimeComponents = [
     {
-      type: "GRID",
-      icon: <Grid3X3 className="w-5 h-5 text-white" />,
-      label: "Data Grid",
-      description: "GRID",
-      color: "bg-blue-600"
-    },
+      type: "DATEPKR",
+      icon: <Calendar className="w-5 h-5 text-white" />,
+      label: "Date Picker",
+      description: "DATEPKR",
+      color: "bg-purple-500"
+    }
+  ];
+
+  const filesComponents = [
+    {
+      type: "FILEUPLOAD",
+      icon: <FileText className="w-5 h-5 text-white" />,
+      label: "File Upload",
+      description: "FILEUPLOAD",
+      color: "bg-pink-500"
+    }
+  ];
+
+  const lookupComponents = [
     {
       type: "GRIDLKP",
-      icon: <Table className="w-5 h-5 text-white" />,
+      icon: <Database className="w-5 h-5 text-white" />,
       label: "Grid Lookup",
       description: "GRIDLKP",
       color: "bg-blue-500"
@@ -164,6 +165,16 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
       label: "List Lookup",
       description: "LSTLKP",
       color: "bg-teal-500"
+    }
+  ];
+
+  const layoutComponents = [
+    {
+      type: "GROUP",
+      icon: <Grid3X3 className="w-5 h-5 text-white" />,
+      label: "Group",
+      description: "GROUP",
+      color: "bg-purple-500"
     }
   ];
 
@@ -260,23 +271,23 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
         )}
       </div>
 
-      {/* Data Controls Section */}
+      {/* Date & Time Section */}
       <div>
         <div 
           className="flex items-center justify-between cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 p-3 rounded-lg transition-colors"
-          onClick={() => toggleSection('data')}
+          onClick={() => toggleSection('dateTime')}
         >
           <h3 className="text-sm font-semibold text-black dark:text-white">
-            DATA CONTROLS
+            Date & Time
           </h3>
-          {expandedSections.data ? 
-            <ChevronDown className="w-5 h-5 text-blue-500" /> : 
-            <ChevronRight className="w-5 h-5 text-blue-500" />
+          {expandedSections.dateTime ? 
+            <ChevronDown className="w-5 h-5 text-purple-500" /> : 
+            <ChevronRight className="w-5 h-5 text-purple-500" />
           }
         </div>
-        {expandedSections.data && (
+        {expandedSections.dateTime && (
           <div className="space-y-3 mt-3">
-            {dataComponents.map((component, index) => (
+            {dateTimeComponents.map((component, index) => (
               <DraggableComponent
                 key={index}
                 type={component.type}
@@ -291,23 +302,85 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
         )}
       </div>
 
-      {/* Special Controls Section */}
+      {/* Files Section */}
       <div>
         <div 
           className="flex items-center justify-between cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 p-3 rounded-lg transition-colors"
-          onClick={() => toggleSection('special')}
+          onClick={() => toggleSection('files')}
+        >
+          <h3 className="text-sm font-semibold text-black dark:text-white">
+            Files
+          </h3>
+          {expandedSections.files ? 
+            <ChevronDown className="w-5 h-5 text-pink-500" /> : 
+            <ChevronRight className="w-5 h-5 text-pink-500" />
+          }
+        </div>
+        {expandedSections.files && (
+          <div className="space-y-3 mt-3">
+            {filesComponents.map((component, index) => (
+              <DraggableComponent
+                key={index}
+                type={component.type}
+                icon={component.icon}
+                label={component.label}
+                description={component.description}
+                color={component.color}
+                onAddField={onAddField}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Lookup Section */}
+      <div>
+        <div 
+          className="flex items-center justify-between cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 p-3 rounded-lg transition-colors"
+          onClick={() => toggleSection('lookup')}
+        >
+          <h3 className="text-sm font-semibold text-black dark:text-white">
+            Lookup
+          </h3>
+          {expandedSections.lookup ? 
+            <ChevronDown className="w-5 h-5 text-blue-500" /> : 
+            <ChevronRight className="w-5 h-5 text-blue-500" />
+          }
+        </div>
+        {expandedSections.lookup && (
+          <div className="space-y-3 mt-3">
+            {lookupComponents.map((component, index) => (
+              <DraggableComponent
+                key={index}
+                type={component.type}
+                icon={component.icon}
+                label={component.label}
+                description={component.description}
+                color={component.color}
+                onAddField={onAddField}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Layout Section */}
+      <div>
+        <div 
+          className="flex items-center justify-between cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 p-3 rounded-lg transition-colors"
+          onClick={() => toggleSection('layout')}
         >
           <h3 className="text-sm font-semibold text-black dark:text-white">
             Layout
           </h3>
-          {expandedSections.special ? 
+          {expandedSections.layout ? 
             <ChevronDown className="w-5 h-5 text-purple-500" /> : 
             <ChevronRight className="w-5 h-5 text-purple-500" />
           }
         </div>
-        {expandedSections.special && (
+        {expandedSections.layout && (
           <div className="space-y-3 mt-3">
-            {specialComponents.map((component, index) => (
+            {layoutComponents.map((component, index) => (
               <DraggableComponent
                 key={index}
                 type={component.type}
