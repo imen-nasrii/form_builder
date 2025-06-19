@@ -153,14 +153,15 @@ export default function UserTaskBoard() {
   );
 
   // Fetch assigned programs for current user
-  const { data: assignedPrograms = [] } = useQuery({
+  const { data: assignedPrograms = [], isLoading: programsLoading } = useQuery({
     queryKey: ['/api/forms', 'assigned', user?.id],
     queryFn: async () => {
       const response = await apiRequest('/api/forms');
       const allForms = response;
       return allForms.filter((form: any) => form.assignedTo === user?.id);
     },
-    enabled: !!user?.id
+    enabled: !!user?.id,
+    refetchInterval: 5000 // Refresh every 5 seconds to keep data current
   });
 
   // Group tasks by status
@@ -177,24 +178,27 @@ export default function UserTaskBoard() {
       priority?: string; 
       comment?: string 
     }) => {
-      return await apiRequest(`/api/forms/${taskId}/status`, {
+      const response = await apiRequest(`/api/forms/${taskId}/status`, {
         method: 'PATCH',
         body: JSON.stringify({ status, priority, comment }),
       });
+      return response;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/forms'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/forms', 'assigned', user?.id] });
       toast({
         title: "Task Updated",
-        description: "Task has been updated successfully.",
+        description: "Task status has been updated successfully.",
       });
       setSelectedTask(null);
       setComment('');
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error('Task update error:', error);
       toast({
-        title: "Error",
-        description: "Failed to update task.",
+        title: "Update Failed",
+        description: error?.message || "Failed to update task status.",
         variant: "destructive",
       });
     },

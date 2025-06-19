@@ -143,6 +143,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update form status, priority, and comments (for task management)
+  app.patch('/api/forms/:id/status', requireAuth, async (req: any, res) => {
+    try {
+      const formId = parseInt(req.params.id);
+      const { status, priority, comment } = req.body;
+      const userId = req.user.id;
+      
+      console.log('Updating form status:', { formId, status, priority, comment, userId });
+      
+      // Build update object with only provided fields
+      const updateData: any = {};
+      if (status) updateData.status = status;
+      if (priority) updateData.priority = priority;
+      
+      const updatedForm = await storage.updateForm(formId, updateData);
+      
+      if (!updatedForm) {
+        return res.status(404).json({ message: "Form not found" });
+      }
+      
+      // Create notifications for status changes
+      if (status && updatedForm.assignedTo && updatedForm.createdBy) {
+        await notificationService.notifyTaskStatusChange(
+          updatedForm.assignedTo,
+          updatedForm.createdBy,
+          formId,
+          updatedForm.label,
+          status
+        );
+      }
+      
+      res.json(updatedForm);
+    } catch (error) {
+      console.error("Error updating form status:", error);
+      res.status(500).json({ message: "Failed to update form status" });
+    }
+  });
+
   // Assign form to user route (admin only)
   app.patch('/api/forms/:id/assign', requireAuth, requireAdmin, async (req: any, res) => {
     try {
