@@ -2889,6 +2889,37 @@ export default function FormBuilderFixed() {
     enabled: !!formId,
   });
 
+  // Update grid with form components when form data loads
+  useEffect(() => {
+    if (existingForm && formData.fields.length > 0) {
+      setGridConfig(prev => {
+        const updatedCells = [...prev.cells];
+        
+        // Reset all cells first
+        updatedCells.forEach(cell => {
+          cell.isEmpty = true;
+          cell.component = null;
+        });
+        
+        // Place components in grid cells
+        formData.fields.forEach((field, index) => {
+          if (index < updatedCells.length) {
+            updatedCells[index].isEmpty = false;
+            updatedCells[index].component = {
+              Type: field.Type,
+              Label: field.Label
+            };
+          }
+        });
+        
+        return {
+          ...prev,
+          cells: updatedCells
+        };
+      });
+    }
+  }, [existingForm, formData.fields]);
+
   // Type for existing form data
   interface ExistingFormData {
     id: number;
@@ -4303,7 +4334,7 @@ export default function FormBuilderFixed() {
                       </div>
                       <div className="flex items-center space-x-2">
                         <Badge variant="secondary" className="text-xs">
-                          {gridConfig.cells.filter(c => !c.isEmpty).length} Éléments
+                          {formData.fields.length} Éléments
                         </Badge>
                         {selectedGridCell && (
                           <Badge variant="outline" className="text-xs">
@@ -4381,6 +4412,11 @@ export default function FormBuilderFixed() {
                               className="p-1 h-6 w-6"
                               onClick={(e) => {
                                 e.stopPropagation();
+                                // Find and remove the corresponding field
+                                const fieldToRemove = formData.fields.find(f => f.Type === cell.component?.Type);
+                                if (fieldToRemove) {
+                                  removeField(fieldToRemove.Id);
+                                }
                                 clearGridCell(cell.id);
                               }}
                             >
