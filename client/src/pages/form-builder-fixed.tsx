@@ -56,6 +56,7 @@ import {
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { ComponentCategories as EnterpriseComponentCategories, ComponentSpecificProperties, CommonProperties, renderFormComponent } from '@/components/enterprise-form-components';
+import { FormFieldProperties } from '@/components/form-field-properties';
 
 // Model Dropdown Selector Component
 function ModelDropdownSelector({ 
@@ -4478,9 +4479,10 @@ export default function FormBuilderFixed() {
               ) : (
                 // Panneau propriétés normal pour les utilisateurs
                 selectedField ? (
-                  <PropertiesPanel
+                  <FormFieldProperties 
                     field={selectedField}
-                    onUpdate={(updates) => updateFieldInFormData(selectedField.Id, updates)}
+                    updateField={updateFieldInFormData}
+                    isDarkMode={isDarkMode}
                   />
                 ) : (
                   <div className={`p-6 text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
