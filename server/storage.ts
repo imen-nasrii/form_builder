@@ -22,7 +22,7 @@ import {
   type InsertNotification,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and, sql } from "drizzle-orm";
 
 // Interface for storage operations
 export interface IStorage {
@@ -253,20 +253,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Notification operations
-  async createNotification(notification: { userId: string; programId: number; programLabel: string; message: string; type: string }): Promise<Notification> {
-    console.log('Creating notification:', notification);
-    const notificationData = {
-      id: `notif_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      userId: notification.userId,
-      programId: notification.programId.toString(),
-      programLabel: notification.programLabel,
-      message: notification.message,
-      type: notification.type,
-      read: false
-    };
-    const [newNotification] = await db.insert(notifications).values(notificationData).returning();
-    return newNotification;
-  }
+
 
   async getNotifications(userId?: string): Promise<Notification[]> {
     if (userId) {
@@ -278,10 +265,29 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(notifications.createdAt));
   }
 
-  async markNotificationAsRead(notificationId: string): Promise<void> {
-    await db.update(notifications)
-      .set({ read: true })
-      .where(eq(notifications.id, notificationId));
+  async markNotificationAsRead(notificationId: number, userId: string): Promise<boolean> {
+    const [updated] = await db
+      .update(notifications)
+      .set({ read: true, readAt: new Date() })
+      .where(and(eq(notifications.id, notificationId), eq(notifications.userId, userId)))
+      .returning();
+    return !!updated;
+  }
+
+  async markAllNotificationsAsRead(userId: string): Promise<boolean> {
+    await db
+      .update(notifications)
+      .set({ read: true, readAt: new Date() })
+      .where(and(eq(notifications.userId, userId), eq(notifications.read, false)));
+    return true;
+  }
+
+  async getUnreadNotificationCount(userId: string): Promise<number> {
+    const [result] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(notifications)
+      .where(and(eq(notifications.userId, userId), eq(notifications.read, false)));
+    return result?.count || 0;
   }
 
   // Form status update operations
@@ -392,55 +398,35 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async getUserNotifications(userId: string): Promise<any[]> {
-    try {
-      const { notifications } = await import("@shared/schema");
-      const userNotifications = await db.select()
-        .from(notifications)
-        .where(eq(notifications.userId, userId))
-        .orderBy(notifications.createdAt);
-      return userNotifications;
-    } catch (error) {
-      console.error("Error getting user notifications:", error);
-      return [];
-    }
+  async getUserNotifications(userId: string, limit: number = 50, offset: number = 0): Promise<Notification[]> {
+    return await db
+      .select()
+      .from(notifications)
+      .where(eq(notifications.userId, userId))
+      .orderBy(desc(notifications.createdAt))
+      .limit(limit)
+      .offset(offset);
   }
 
-  async createNotification(notificationData: any): Promise<any> {
-    try {
-      const { notifications } = await import("@shared/schema");
-      const [notification] = await db
-        .insert(notifications)
-        .values({
-          id: `notif_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-          userId: notificationData.userId,
-          programId: notificationData.programId?.toString() || null,
-          programLabel: notificationData.programLabel || 'Unknown Program',
-          type: notificationData.type || 'assignment',
-          message: notificationData.message,
-          read: false,
-          createdAt: new Date()
-        })
-        .returning();
-      return notification;
-    } catch (error) {
-      console.error("Error creating notification:", error);
-      throw error;
-    }
+  async createNotification(notification: InsertNotification): Promise<Notification> {
+    const [newNotification] = await db
+      .insert(notifications)
+      .values(notification)
+      .returning();
+    return newNotification;
   }
 
-  async markNotificationAsRead(notificationId: string): Promise<void> {
-    try {
-      const { notifications } = await import("@shared/schema");
-      await db
-        .update(notifications)
-        .set({ read: true })
-        .where(eq(notifications.id, notificationId));
-    } catch (error) {
-      console.error("Error marking notification as read:", error);
-      throw error;
-    }
+  async createBulkNotifications(notificationList: InsertNotification[]): Promise<Notification[]> {
+    if (notificationList.length === 0) return [];
+    
+    const newNotifications = await db
+      .insert(notifications)
+      .values(notificationList)
+      .returning();
+    return newNotifications;
   }
+
+
 
   async deleteUser(userId: string): Promise<void> {
     try {
@@ -448,7 +434,6 @@ export class DatabaseStorage implements IStorage {
       await db.delete(forms).where(eq(forms.createdBy, userId));
       
       // Delete notifications for this user
-      const { notifications } = await import("@shared/schema");
       await db.delete(notifications).where(eq(notifications.userId, userId));
       
       // Finally, delete the user

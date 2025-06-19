@@ -105,14 +105,17 @@ export type User = typeof users.$inferSelect;
 
 // Notifications table for program assignments and updates
 export const notifications = pgTable("notifications", {
-  id: varchar("id").primaryKey().notNull(),
+  id: serial("id").primaryKey(),
   userId: varchar("user_id").notNull().references(() => users.id),
-  programId: varchar("program_id"),
-  programLabel: varchar("program_label"),
-  type: varchar("type").notNull(), // 'assignment', 'completion', 'reminder'
+  title: varchar("title").notNull(),
   message: text("message").notNull(),
+  type: varchar("type", { length: 50 }).notNull(), // 'assignment', 'task_accepted', 'task_completed', 'status_change', 'comment_added'
+  relatedFormId: integer("related_form_id"),
+  actionBy: varchar("action_by"), // User ID who performed the action
   read: boolean("read").default(false),
-  createdAt: timestamp("created_at").defaultNow(),
+  priority: varchar("priority", { length: 20 }).default("medium"), // 'low', 'medium', 'high', 'urgent'
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  readAt: timestamp("read_at"),
 });
 
 export type Notification = typeof notifications.$inferSelect;
