@@ -460,67 +460,43 @@ export default function Dashboard() {
                 )}
               </div>
             
-              {/* 3D Filter Dropdown */}
-              <div className="flex items-center gap-3">
-                <span className="text-sm font-semibold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                  Filter:
-                </span>
-                <div className="relative">
-                  <select
-                    value={filterType}
-                    onChange={(e) => setFilterType(e.target.value)}
-                    className="px-4 py-3 border-2 border-purple-200 rounded-xl focus:border-purple-400 outline-none 
-                             bg-gradient-to-r from-white to-purple-50 text-sm min-w-[150px] font-medium
-                             hover:shadow-lg hover:shadow-purple-100/50 transition-all duration-300
-                             cursor-pointer transform hover:scale-105"
-                    style={{
-                      background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(243,232,255,0.7) 100%)'
-                    }}
-                  >
-                    <option value="all">✨ All Programs</option>
-                    <option value="recent">🕒 Recent (7 days)</option>
-                    <option value="process">⚙️ Process Type</option>
-                    <option value="form">📋 Form Type</option>
-                    {isAdmin && <option value="assigned">👥 Assigned</option>}
-                  </select>
-                  
-                  {/* Glowing border effect */}
-                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-400 to-pink-400 opacity-20 blur-sm -z-10"></div>
-                </div>
-              </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-500 font-medium">Filter:</span>
+              <select
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value)}
+                className="px-3 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white text-sm min-w-[140px]"
+              >
+                <option value="all">All Programs</option>
+                <option value="recent">Recent (7 days)</option>
+                <option value="process">Process Type</option>
+                <option value="form">Form Type</option>
+                {isAdmin && <option value="assigned">Assigned</option>}
+              </select>
+            </div>
             
-              {/* Magic Clear Button */}
-              {(searchQuery || filterType !== "all") && (
-                <button
-                  onClick={() => {
-                    setSearchQuery("");
-                    setFilterType("all");
-                  }}
-                  className="relative px-4 py-3 text-sm font-semibold text-white 
-                           bg-gradient-to-r from-red-400 to-pink-500 rounded-xl
-                           hover:from-red-500 hover:to-pink-600 
-                           transform hover:scale-110 transition-all duration-300
-                           shadow-lg hover:shadow-xl hover:shadow-pink-200/50
-                           active:scale-95"
-                >
-                  <span className="relative z-10">🗑️ Clear</span>
-                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-red-300 to-pink-300 opacity-30 blur-sm"></div>
-                </button>
-              )}
+            {(searchQuery || filterType !== "all") && (
+              <button
+                onClick={() => {
+                  setSearchQuery("");
+                  setFilterType("all");
+                }}
+                className="px-3 py-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                Clear
+              </button>
+            )}
           </div>
           
-            {/* Magic Results Counter */}
-            {filteredForms.length !== forms.length && (
-              <div className="mt-4 pt-4 border-t border-gradient-to-r from-purple-200 to-pink-200">
-                <div className="text-center">
-                  <p className="text-sm font-medium bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                    ✨ Showing {filteredForms.length} of {forms.length} magical programs
-                    {searchQuery && <span className="block mt-1 text-xs">🔍 Matching "{searchQuery}"</span>}
-                    {filterType !== "all" && <span className="block mt-1 text-xs">📂 Filter: {filterType}</span>}
-                  </p>
-                </div>
-              </div>
-            )}
+          {filteredForms.length !== forms.length && (
+            <div className="mt-3 pt-3 border-t border-gray-100">
+              <p className="text-sm text-gray-600">
+                Showing {filteredForms.length} of {forms.length} programs
+                {searchQuery && <span> matching "{searchQuery}"</span>}
+                {filterType !== "all" && <span> • Filter: {filterType}</span>}
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Create New Form Section */}
