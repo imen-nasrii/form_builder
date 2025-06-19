@@ -430,11 +430,22 @@ export default function Dashboard() {
                 onChange={(e) => setFilterType(e.target.value)}
                 className="px-3 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white text-sm min-w-[140px]"
               >
-                <option value="all">All Programs</option>
-                <option value="recent">Recent (7 days)</option>
-                <option value="process">Process Type</option>
-                <option value="form">Form Type</option>
-                {isAdmin && <option value="assigned">Assigned</option>}
+                {isAdmin ? (
+                  <>
+                    <option value="all">All Programs</option>
+                    <option value="recent">Recent (7 days)</option>
+                    <option value="process">Process Type</option>
+                    <option value="form">Form Type</option>
+                    <option value="assigned">Assigned</option>
+                  </>
+                ) : (
+                  <>
+                    <option value="all">My Assigned Tasks</option>
+                    <option value="recent">Recent (7 days)</option>
+                    <option value="process">Process Type</option>
+                    <option value="form">Form Type</option>
+                  </>
+                )}
               </select>
             </div>
             
@@ -719,10 +730,10 @@ export default function Dashboard() {
             <div className="text-center py-12 bg-slate-50 rounded-lg border border-slate-200">
               <FileText className="h-12 w-12 text-slate-400 mx-auto mb-3" />
               <h3 className="text-lg font-medium text-slate-900 mb-2">
-                {isAdmin ? 'Aucun formulaire disponible' : 'Aucun formulaire encore'}
+                {isAdmin ? 'No programs available' : 'No assigned tasks yet'}
               </h3>
               <p className="text-slate-600 mb-6">
-                {isAdmin ? 'Aucun formulaire créé par les utilisateurs' : 'Créez votre premier formulaire pour commencer'}
+                {isAdmin ? 'No programs created by users' : 'You have no programs assigned to you yet. Contact your administrator if you need access to specific programs.'}
               </p>
             </div>
           )}
