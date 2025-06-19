@@ -284,6 +284,24 @@ export class DatabaseStorage implements IStorage {
       .where(eq(notifications.id, notificationId));
   }
 
+  // Form status update operations
+  async updateFormStatus(formId: number, updates: { status?: string; priority?: string; comment?: string }): Promise<void> {
+    const updateData: any = {
+      updatedAt: new Date()
+    };
+    
+    if (updates.status) updateData.status = updates.status;
+    if (updates.priority) updateData.priority = updates.priority;
+    if (updates.comment) {
+      // For now, we'll just log comments since we don't have a comments table
+      console.log(`Comment for form ${formId}: ${updates.comment}`);
+    }
+    
+    await db.update(forms)
+      .set(updateData)
+      .where(eq(forms.id, formId));
+  }
+
   // 2FA operations
   async createTwoFactorToken(token: InsertTwoFactorToken): Promise<TwoFactorToken> {
     const [newToken] = await db.insert(twoFactorTokens).values(token).returning();
