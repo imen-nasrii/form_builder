@@ -211,62 +211,128 @@ export default function AdminManagement() {
 
           {/* Users Management */}
           <TabsContent value="users" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="w-5 h-5" />
-                  User Management
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {usersLoading ? (
-                    <div className="text-center py-8">Loading users...</div>
-                  ) : (
-                    <div className="grid gap-4">
-                      {users.map((user: User) => (
-                        <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
-                          <div className="flex items-center space-x-4">
-                            <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
-                              {(user.firstName?.[0] || user.email[0]).toUpperCase()}
-                            </div>
-                            <div>
-                              <div className="font-medium">
-                                {user.firstName && user.lastName 
-                                  ? `${user.firstName} ${user.lastName}` 
-                                  : user.email}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* User Management Panel */}
+              <div className="lg:col-span-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Users className="w-5 h-5" />
+                        Users Management
+                      </div>
+                      <Button size="sm" className="flex items-center gap-2">
+                        <UserPlus className="w-4 h-4" />
+                        Add User
+                      </Button>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {usersLoading ? (
+                        <div className="text-center py-8">Loading users...</div>
+                      ) : (
+                        <div className="space-y-4">
+                          {users.map((user: User) => (
+                            <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg hover:shadow-sm transition-shadow">
+                              <div className="flex items-center space-x-4">
+                                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-semibold">
+                                  {(user.firstName?.[0] || user.email[0]).toUpperCase()}
+                                </div>
+                                <div>
+                                  <div className="font-medium">
+                                    {user.firstName && user.lastName 
+                                      ? `${user.firstName} ${user.lastName}` 
+                                      : user.email}
+                                  </div>
+                                  <div className="text-sm text-gray-500">{user.email}</div>
+                                  <div className="flex items-center gap-2 mt-1">
+                                    <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
+                                      {user.role}
+                                    </Badge>
+                                    <Badge variant="outline" className="text-xs">
+                                      {programs.filter(p => p.assignedTo === user.id).length} assigned
+                                    </Badge>
+                                  </div>
+                                </div>
                               </div>
-                              <div className="text-sm text-gray-500">{user.email}</div>
-                              <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
-                                {user.role}
-                              </Badge>
+                              <div className="flex items-center space-x-2">
+                                <Button variant="outline" size="sm">
+                                  <Eye className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                  variant="destructive"
+                                  size="sm"
+                                  onClick={() => {
+                                    if (confirm(`Are you sure you want to delete user ${user.email}? This will also delete all their programs and cannot be undone.`)) {
+                                      deleteUserMutation.mutate(user.id);
+                                    }
+                                  }}
+                                  disabled={user.role === 'admin' || deleteUserMutation.isPending}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </div>
                             </div>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Badge variant="outline">
-                              {programs.filter(p => p.assignedTo === user.id).length} Programs Assigned
-                            </Badge>
-                            <Button
-                              variant="destructive"
-                              size="sm"
-                              onClick={() => {
-                                if (confirm(`Are you sure you want to delete user ${user.email}? This will also delete all their programs and cannot be undone.`)) {
-                                  deleteUserMutation.mutate(user.id);
-                                }
-                              }}
-                              disabled={user.role === 'admin' || deleteUserMutation.isPending}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                              {deleteUserMutation.isPending ? 'Deleting...' : ''}
-                            </Button>
-                          </div>
+                          ))}
                         </div>
-                      ))}
+                      )}
                     </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Quick Stats */}
+              <div className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Quick Stats</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-blue-600">{users.length}</div>
+                      <div className="text-sm text-gray-500">Total Users</div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 text-center">
+                      <div>
+                        <div className="text-2xl font-bold text-green-600">
+                          {users.filter(u => u.role === 'user').length}
+                        </div>
+                        <div className="text-xs text-gray-500">Regular Users</div>
+                      </div>
+                      <div>
+                        <div className="text-2xl font-bold text-purple-600">
+                          {users.filter(u => u.role === 'admin').length}
+                        </div>
+                        <div className="text-xs text-gray-500">Administrators</div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Recent Activity</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3 text-sm">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span>Program assigned successfully</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        <span>Admin dashboard accessed</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                        <span>Real-time data refreshed</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
           </TabsContent>
 
           {/* Program Tracker */}
@@ -403,14 +469,6 @@ export default function AdminManagement() {
               </Card>
             </div>
           </TabsContent>
-          <TabsContent value="notifications" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Bell className="w-5 h-5" />
-                  System Notifications
-                </CardTitle>
-              </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {notifications.map((notification: Notification) => {

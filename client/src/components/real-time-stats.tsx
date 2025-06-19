@@ -47,8 +47,14 @@ export default function RealTimeStats() {
     activeUsers: users.filter((u: User) => u.role === 'user').length,
     adminUsers: users.filter((u: User) => u.role === 'admin').length,
     totalPrograms: programs.length,
-    completedPrograms: programs.filter((p: Program) => p.fields && p.fields.length >= 10).length,
-    inProgressPrograms: programs.filter((p: Program) => p.fields && p.fields.length > 0 && p.fields.length < 10).length,
+    completedPrograms: programs.filter((p: Program) => {
+      const completion = p.fields ? (p.fields.length / 10) * 100 : 0;
+      return completion >= 100 || p.status === 'completed';
+    }).length,
+    inProgressPrograms: programs.filter((p: Program) => {
+      const completion = p.fields ? (p.fields.length / 10) * 100 : 0;
+      return completion < 100 && (p.status === 'in_progress' || p.status === 'review');
+    }).length,
     assignedPrograms: programs.filter((p: Program) => p.assignedTo).length,
     unreadNotifications: notifications.filter((n: Notification) => !n.read).length,
     totalNotifications: notifications.length,
