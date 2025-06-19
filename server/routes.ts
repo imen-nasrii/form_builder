@@ -91,27 +91,81 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create new user (admin only)
+  app.post('/api/admin/users', requireAdmin, async (req: any, res) => {
+    try {
+      const { email, password, role } = req.body;
+      
+      console.log('Create user request:', { email, role });
+
+      if (!email || !password) {
+        return res.status(400).json({ message: 'Email and password are required' });
+      }
+
+      // Check if user already exists
+      const existingUser = await storage.getUserByEmail(email);
+      if (existingUser) {
+        return res.status(400).json({ message: 'User already exists' });
+      }
+
+      // Create user
+      const newUser = await storage.createUser({
+        email,
+        password,
+        role: role || 'user'
+      });
+
+      console.log('User created successfully:', newUser.id);
+
+      // Remove password from response
+      const { password: _, ...userResponse } = newUser;
+      res.status(201).json(userResponse);
+    } catch (error) {
+      console.error('Error creating user:', error);
+      res.status(500).json({ message: 'Failed to create user' });
+    }
+  });
+
+  // Delete user (admin only)
+  app.delete('/api/admin/users/:userId', requireAdmin, async (req: any, res) => {
+    try {
+      const { userId } = req.params;
+      
+      console.log('Delete user request:', userId);
+
+      await storage.deleteUser(userId);
+      res.json({ message: 'User deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      res.status(500).json({ message: 'Failed to delete user' });
+    }
+  });
+
   // Assign form to user (admin only)
   app.post('/api/forms/assign', requireAdmin, async (req: any, res) => {
     try {
-      const { formId, userId, permission, comment } = req.body;
+      const { programId, userId } = req.body;
       
-      if (!formId || !userId || !permission) {
-        return res.status(400).json({ message: "Missing required fields" });
+      console.log('Assign form request:', { programId, userId });
+
+      if (!programId || !userId) {
+        console.log('Missing fields - programId:', programId, 'userId:', userId);
+        return res.status(400).json({ message: 'Missing required fields' });
       }
 
-      console.log(`Form ${formId} assigned to user ${userId} with permission ${permission}`);
-      if (comment) {
-        console.log(`Assignment comment: ${comment}`);
-      }
+      // Update form assignment
+      await storage.assignFormToUser(programId, userId);
+      
+      console.log(`Form ${programId} assigned to user ${userId} successfully`);
 
       res.json({ 
-        message: "Form assigned successfully",
-        assignment: { formId, userId, permission, comment, assignedAt: new Date() }
+        message: 'Form assigned successfully',
+        formId: programId,
+        assignedTo: userId 
       });
     } catch (error) {
-      console.error("Error assigning form:", error);
-      res.status(500).json({ message: "Failed to assign form" });
+      console.error('Error assigning form:', error);
+      res.status(500).json({ message: 'Failed to assign form' });
     }
   });
 

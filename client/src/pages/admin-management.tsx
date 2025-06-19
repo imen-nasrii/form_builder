@@ -55,6 +55,12 @@ export default function AdminManagement() {
   const [selectedUser, setSelectedUser] = useState<string>('');
   const [selectedProgram, setSelectedProgram] = useState<number | null>(null);
   const [showNotificationDialog, setShowNotificationDialog] = useState(false);
+  
+  // Add user state
+  const [showAddUser, setShowAddUser] = useState(false);
+  const [newUserEmail, setNewUserEmail] = useState('');
+  const [newUserPassword, setNewUserPassword] = useState('');
+  const [newUserRole, setNewUserRole] = useState<'admin' | 'user'>('user');
 
   // Fetch all users
   const { data: users = [], isLoading: usersLoading } = useQuery({
@@ -263,7 +269,14 @@ export default function AdminManagement() {
                         <Users className="w-5 h-5" />
                         Users Management
                       </div>
-                      <Button size="sm" className="flex items-center gap-2">
+                      <Button 
+                        size="sm" 
+                        className="flex items-center gap-2"
+                        onClick={() => {
+                          console.log('Add User button clicked');
+                          setShowAddUser(true);
+                        }}
+                      >
                         <UserPlus className="w-4 h-4" />
                         Add User
                       </Button>

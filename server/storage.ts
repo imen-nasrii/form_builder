@@ -231,6 +231,24 @@ export class DatabaseStorage implements IStorage {
     await db.delete(formTemplates).where(eq(formTemplates.id, id));
   }
 
+  // Admin operations
+  async deleteUser(userId: string): Promise<void> {
+    // Delete user's forms first
+    await db.delete(forms).where(eq(forms.createdBy, userId));
+    // Delete the user
+    await db.delete(users).where(eq(users.id, userId));
+  }
+
+  async assignFormToUser(formId: number, userId: string): Promise<void> {
+    await db.update(forms)
+      .set({ 
+        assignedTo: userId,
+        status: 'todo',
+        updatedAt: new Date()
+      })
+      .where(eq(forms.id, formId));
+  }
+
   // 2FA operations
   async createTwoFactorToken(token: InsertTwoFactorToken): Promise<TwoFactorToken> {
     const [newToken] = await db.insert(twoFactorTokens).values(token).returning();
