@@ -882,10 +882,9 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Assign Form Dialog */}
-      <Dialog open={showAssignDialog} onOpenChange={setShowAssignDialog}>
+        {/* Assign Form Dialog */}
+        <Dialog open={showAssignDialog} onOpenChange={setShowAssignDialog}>
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
@@ -982,7 +981,7 @@ export default function Dashboard() {
             </div>
           </DialogContent>
         </Dialog>
-        </div>
+        
       </div>
     </div>
   );
