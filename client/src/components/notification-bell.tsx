@@ -134,8 +134,14 @@ export default function NotificationBell() {
                               {getNotificationIcon(notification.type)}
                             </span>
                             <span className="text-sm font-medium text-gray-900 truncate">
-                              {notification.programLabel}
+                              {notification.title}
                             </span>
+                            {notification.priority === 'high' && (
+                              <Badge variant="destructive" className="text-xs px-1 py-0">High</Badge>
+                            )}
+                            {notification.priority === 'urgent' && (
+                              <Badge variant="destructive" className="text-xs px-1 py-0">Urgent</Badge>
+                            )}
                           </div>
                           <p className="text-sm text-gray-600 leading-relaxed">
                             {notification.message}
