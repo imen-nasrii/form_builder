@@ -8,14 +8,17 @@ import { Bell, Check, X } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
 
 interface Notification {
-  id: string;
+  id: number;
   userId: string;
-  programId: number;
-  programLabel: string;
-  type: 'assignment' | 'completion' | 'reminder';
+  title: string;
   message: string;
+  type: string;
+  relatedFormId?: number;
+  actionBy?: string;
   read: boolean;
+  priority: string;
   createdAt: string;
+  readAt?: string;
 }
 
 export default function NotificationBell() {
@@ -40,7 +43,7 @@ export default function NotificationBell() {
 
   // Mark notification as read mutation
   const markAsReadMutation = useMutation({
-    mutationFn: async (notificationId: string) => {
+    mutationFn: async (notificationId: number) => {
       return apiRequest(`/api/notifications/${notificationId}/read`, {
         method: 'PATCH'
       });
@@ -64,7 +67,7 @@ export default function NotificationBell() {
     }
   });
 
-  const handleMarkAsRead = (notificationId: string, e: React.MouseEvent) => {
+  const handleMarkAsRead = (notificationId: number, e: React.MouseEvent) => {
     e.stopPropagation();
     markAsReadMutation.mutate(notificationId);
   };
