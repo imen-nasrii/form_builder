@@ -174,9 +174,9 @@ export default function Dashboard() {
   const assignFormMutation = useMutation({
     mutationFn: async (assignmentData: any) => {
       try {
-        return await apiRequest('/api/forms/assign', {
-          method: 'POST',
-          body: JSON.stringify(assignmentData),
+        return await apiRequest(`/api/forms/${assignmentData.formId}/assign`, {
+          method: 'PATCH',
+          body: JSON.stringify({ assignedTo: assignmentData.userId }),
         });
       } catch (error) {
         console.error('Assignment error:', error);

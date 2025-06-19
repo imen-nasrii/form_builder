@@ -1031,48 +1031,80 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/notifications', requireAuth, async (req: any, res) => {
     try {
       const userId = req.user.id;
-      const user = await storage.getUser(userId);
+      const limit = parseInt(req.query.limit as string) || 50;
+      const offset = parseInt(req.query.offset as string) || 0;
       
-      if (user?.role === 'admin') {
-        // Admin sees all notifications
-        const notifications = await storage.getAllNotifications();
-        res.json(notifications);
-      } else {
-        // Users see only their notifications
-        const notifications = await storage.getUserNotifications(userId);
-        res.json(notifications);
-      }
+      const notifications = await storage.getUserNotifications(userId, limit, offset);
+      res.json(notifications);
     } catch (error) {
       console.error("Error fetching notifications:", error);
       res.status(500).json({ message: "Failed to fetch notifications" });
     }
   });
 
-  app.post('/api/notifications', requireAuth, async (req: any, res) => {
+  // Get unread notification count
+  app.get('/api/notifications/unread-count', requireAuth, async (req: any, res) => {
     try {
-      const { userId, programId, message, type } = req.body;
-      const notification = await storage.createNotification({
-        userId,
-        programId,
-        message,
-        type: type || 'assignment'
-      });
-      res.json(notification);
+      const userId = req.user.id;
+      const count = await storage.getUnreadNotificationCount(userId);
+      res.json({ count });
+    } catch (error) {
+      console.error("Error fetching unread count:", error);
+      res.status(500).json({ message: "Failed to fetch unread count" });
+    }
+  });
+
+  app.post('/api/notifications', requireAuth, requireAdmin, async (req: any, res) => {
+    try {
+      const notificationData = insertNotificationSchema.parse(req.body);
+      const notification = await storage.createNotification(notificationData);
+      res.status(201).json(notification);
     } catch (error) {
       console.error("Error creating notification:", error);
       res.status(500).json({ message: "Failed to create notification" });
     }
   });
 
+  // Create system-wide announcement
+  app.post('/api/notifications/announcement', requireAuth, requireAdmin, async (req: any, res) => {
+    try {
+      const { title, message, priority } = req.body;
+      
+      await notificationService.notifySystemAnnouncement(title, message, priority);
+      res.json({ message: "Announcement sent to all users" });
+    } catch (error) {
+      console.error("Error creating announcement:", error);
+      res.status(500).json({ message: "Failed to create announcement" });
+    }
+  });
+
   // Mark notification as read
   app.patch('/api/notifications/:id/read', requireAuth, async (req: any, res) => {
     try {
-      const { id } = req.params;
-      await storage.markNotificationAsRead(id);
-      res.json({ message: "Notification marked as read" });
+      const notificationId = parseInt(req.params.id);
+      const userId = req.user.id;
+      
+      const success = await storage.markNotificationAsRead(notificationId, userId);
+      if (success) {
+        res.json({ message: "Notification marked as read" });
+      } else {
+        res.status(404).json({ message: "Notification not found" });
+      }
     } catch (error) {
       console.error("Error marking notification as read:", error);
       res.status(500).json({ message: "Failed to mark notification as read" });
+    }
+  });
+
+  // Mark all notifications as read
+  app.patch('/api/notifications/read-all', requireAuth, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      await storage.markAllNotificationsAsRead(userId);
+      res.json({ message: "All notifications marked as read" });
+    } catch (error) {
+      console.error("Error marking all notifications as read:", error);
+      res.status(500).json({ message: "Failed to mark all notifications as read" });
     }
   });
 
