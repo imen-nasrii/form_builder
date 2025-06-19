@@ -29,8 +29,6 @@ import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 
 // Droppable Zone Component
-import { useDroppable } from '@dnd-kit/core';
-
 function DroppableZone({ id, children }: { id: string; children: React.ReactNode }) {
   const { setNodeRef, isOver } = useDroppable({
     id: id,
@@ -39,8 +37,8 @@ function DroppableZone({ id, children }: { id: string; children: React.ReactNode
   return (
     <div 
       ref={setNodeRef}
-      className={`min-h-[400px] p-4 transition-colors ${
-        isOver ? 'bg-blue-50 border-blue-200' : ''
+      className={`min-h-[400px] p-4 transition-all duration-200 ${
+        isOver ? 'bg-blue-50 border-2 border-blue-300 border-dashed rounded-lg' : ''
       }`}
     >
       {children}
@@ -147,8 +145,17 @@ export default function UserTaskBoard() {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8,
+        distance: 3,
       },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
     })
   );
 
@@ -244,6 +251,7 @@ export default function UserTaskBoard() {
 
   // Handle drag start
   function handleDragStart(event: DragStartEvent) {
+    console.log('Drag started:', event.active.id);
     setActiveId(String(event.active.id));
   }
 
@@ -252,10 +260,15 @@ export default function UserTaskBoard() {
     const { active, over } = event;
     setActiveId(null);
 
-    if (!over) return;
+    console.log('Drag ended:', { activeId: active.id, overId: over?.id });
+
+    if (!over) {
+      console.log('No drop target');
+      return;
+    }
 
     const taskId = Number(active.id);
-    const newStatus = String(over.id);
+    const dropZoneId = String(over.id);
 
     // Map droppable zone IDs to status values
     const statusMap: { [key: string]: string } = {
@@ -265,13 +278,16 @@ export default function UserTaskBoard() {
       'completed-zone': 'completed'
     };
 
-    const mappedStatus = statusMap[newStatus] || newStatus;
+    const newStatus = statusMap[dropZoneId];
 
-    if (active.id !== over.id) {
+    if (newStatus) {
+      console.log('Updating task status:', { taskId, newStatus });
       updateTaskMutation.mutate({
         taskId,
-        status: mappedStatus,
+        status: newStatus,
       });
+    } else {
+      console.log('No valid status mapping found for:', dropZoneId);
     }
   }
 
