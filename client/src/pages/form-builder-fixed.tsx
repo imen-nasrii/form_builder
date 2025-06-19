@@ -51,9 +51,11 @@ import {
   Grid3X3,
   Minus,
   Maximize2,
-  Minimize2
+  Minimize2,
+  Hash
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { ComponentCategories as EnterpriseComponentCategories, ComponentSpecificProperties, CommonProperties, renderFormComponent } from '@/components/enterprise-form-components';
 
 // Model Dropdown Selector Component
 function ModelDropdownSelector({ 
@@ -187,74 +189,62 @@ interface FormField {
   ChildFields?: FormField[];
 }
 
+// Comprehensive ComponentCategories based on JSON analysis
 const ComponentCategories = {
-  text: {
-    name: 'Text Input',
+  inputFields: {
+    name: 'Input Fields',
     icon: Type,
     color: 'blue',
     components: {
       TEXT: { icon: Type, label: 'Text Input', color: 'blue' },
-      TEXTAREA: { icon: AlignLeft, label: 'Text Area', color: 'green' }
+      NUMERIC: { icon: Hash, label: 'Numeric Input', color: 'green' },
+      DATEPKR: { icon: Calendar, label: 'Date Picker', color: 'purple' },
+      DATEPICKER: { icon: Calendar, label: 'Date Picker Alt', color: 'purple' }
     }
   },
   selection: {
-    name: 'Selection',
+    name: 'Selection Controls',
     icon: List,
     color: 'orange',
     components: {
-      SELECT: { icon: List, label: 'Select', color: 'orange' },
+      SELECT: { icon: List, label: 'Select Dropdown', color: 'orange' },
       CHECKBOX: { icon: CheckSquare, label: 'Checkbox', color: 'cyan' },
       RADIOGRP: { icon: CheckSquare, label: 'Radio Group', color: 'purple' }
     }
   },
-  datetime: {
-    name: 'Date & Time',
-    icon: Calendar,
-    color: 'purple',
-    components: {
-      DATEPKR: { icon: Calendar, label: 'Date Picker', color: 'purple' }
-    }
-  },
-  file: {
-    name: 'Files',
-    icon: Upload,
-    color: 'red',
-    components: {
-      FILEUPLOAD: { icon: Upload, label: 'File Upload', color: 'pink' }
-    }
-  },
   lookup: {
-    name: 'Lookup',
+    name: 'Lookup Components',
     icon: Search,
     color: 'indigo',
     components: {
-      GRIDLKP: { icon: Database, label: 'Grid Lookup', color: 'indigo' },
-      LSTLKP: { icon: List, label: 'List Lookup', color: 'teal' }
+      GRIDLKP: { icon: Grid3X3, label: 'Grid Lookup', color: 'indigo' },
+      LSTLKP: { icon: Search, label: 'List Lookup', color: 'teal' }
     }
   },
-  layout: {
-    name: 'Layout',
-    icon: Square,
-    color: 'gray',
-    components: {
-      GROUP: { icon: Square, label: 'Group', color: 'violet' }
-    }
-  },
-  actions: {
-    name: 'Actions',
-    icon: Play,
-    color: 'red',
-    components: {
-      ACTION: { icon: Play, label: "Action Button", color: 'red' },
-      WARNING: { icon: AlertTriangle, label: 'Warning', color: 'yellow' }
-    }
-  },
-  models: {
-    name: 'Models',
-    icon: Database,
+  dataDisplay: {
+    name: 'Data & Display',
+    icon: Table,
     color: 'emerald',
     components: {
-      DATAMODEL: { icon: Database, label: 'Data Model', color: 'emerald' }
+      GRID: { icon: Table, label: 'Data Grid', color: 'emerald' },
+      LABEL: { icon: Type, label: 'Label', color: 'gray' }
+    }
+  },
+  containerLayout: {
+    name: 'Container & Layout',
+    icon: Square,
+    color: 'violet',
+    components: {
+      GROUP: { icon: Square, label: 'Group Container', color: 'violet' },
+      DIALOG: { icon: Settings, label: 'Dialog Container', color: 'pink' }
+    }
+  },
+  fileUpload: {
+    name: 'File & Upload',
+    icon: Upload,
+    color: 'red',
+    components: {
+      FILEUPLOAD: { icon: Upload, label: 'File Upload', color: 'red' }
     }
   }
 };
