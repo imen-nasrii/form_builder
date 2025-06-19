@@ -29,9 +29,20 @@ import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 
 // Droppable Zone Component
+import { useDroppable } from '@dnd-kit/core';
+
 function DroppableZone({ id, children }: { id: string; children: React.ReactNode }) {
+  const { setNodeRef, isOver } = useDroppable({
+    id: id,
+  });
+
   return (
-    <div className="min-h-[400px] p-4" data-droppable-id={id}>
+    <div 
+      ref={setNodeRef}
+      className={`min-h-[400px] p-4 transition-colors ${
+        isOver ? 'bg-blue-50 border-blue-200' : ''
+      }`}
+    >
       {children}
     </div>
   );
