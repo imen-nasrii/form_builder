@@ -949,7 +949,6 @@ export default function Dashboard() {
           </DialogContent>
         </Dialog>
         
-      </div>
     </div>
   );
 }
