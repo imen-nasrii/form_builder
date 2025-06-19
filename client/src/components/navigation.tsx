@@ -70,7 +70,7 @@ export default function Navigation() {
             </button>
           </Link>
           
-          {user?.role === 'admin' && (
+          {user?.role === 'admin' ? (
             <Link href="/admin-management">
               <button className={`px-4 py-2 rounded-lg transition-all ${
                 isActive("/admin-management") 
@@ -78,6 +78,16 @@ export default function Navigation() {
                   : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
               }`}>
                 Admin Panel
+              </button>
+            </Link>
+          ) : (
+            <Link href="/task-board">
+              <button className={`px-4 py-2 rounded-lg transition-all ${
+                isActive("/task-board") 
+                  ? "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 font-medium" 
+                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+              }`}>
+                My Tasks
               </button>
             </Link>
           )}
