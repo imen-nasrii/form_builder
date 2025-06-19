@@ -494,8 +494,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Notifications routes
   app.get('/api/notifications', requireAuth, async (req: any, res) => {
     try {
-      const userId = req.user.role === 'admin' ? undefined : req.user.id;
-      const notifications = await storage.getNotifications(userId);
+      const userId = req.user.id;
+      const limit = parseInt(req.query.limit as string) || 50;
+      const offset = parseInt(req.query.offset as string) || 0;
+      
+      const notifications = await storage.getUserNotifications(userId, limit, offset);
       res.json(notifications);
     } catch (error) {
       console.error("Error fetching notifications:", error);
@@ -503,11 +506,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/notifications/:id/read', requireAuth, async (req: any, res) => {
+  app.patch('/api/notifications/:id/read', requireAuth, async (req: any, res) => {
     try {
-      const notificationId = req.params.id;
-      await storage.markNotificationAsRead(notificationId);
-      res.json({ message: "Notification marked as read" });
+      const notificationId = parseInt(req.params.id);
+      const userId = req.user.id;
+      
+      const success = await storage.markNotificationAsRead(notificationId, userId);
+      if (success) {
+        res.json({ message: "Notification marked as read" });
+      } else {
+        res.status(404).json({ message: "Notification not found" });
+      }
     } catch (error) {
       console.error("Error marking notification as read:", error);
       res.status(500).json({ message: "Failed to mark notification as read" });
