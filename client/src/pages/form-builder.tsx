@@ -17,6 +17,8 @@ import PropertiesPanel from "@/components/form-builder/properties-panel-clean";
 import ExportDialog from "@/components/form-builder/export-dialog";
 import AdvancedValidator from "@/components/form-builder/advanced-validator";
 import MultiFrameworkExport from "@/components/form-builder/multi-framework-export";
+import IntelligentFieldSuggestions from "@/components/intelligent-field-suggestions";
+import ProfessionalFormComponents from "@/components/professional-form-components";
 
 import ComponentImportPanel from "@/components/form-builder/component-import-panel";
 import { DndProvider } from "react-dnd";
