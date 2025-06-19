@@ -934,6 +934,74 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   }, 60 * 60 * 1000); // Every hour
 
+  // Notifications endpoints
+  app.get('/api/notifications', requireAuth, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const user = await storage.getUser(userId);
+      
+      if (user?.role === 'admin') {
+        // Admin sees all notifications
+        const notifications = await storage.getAllNotifications();
+        res.json(notifications);
+      } else {
+        // Users see only their notifications
+        const notifications = await storage.getUserNotifications(userId);
+        res.json(notifications);
+      }
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+      res.status(500).json({ message: "Failed to fetch notifications" });
+    }
+  });
+
+  app.post('/api/notifications', requireAuth, async (req: any, res) => {
+    try {
+      const { userId, programId, message, type } = req.body;
+      const notification = await storage.createNotification({
+        userId,
+        programId,
+        message,
+        type: type || 'assignment'
+      });
+      res.json(notification);
+    } catch (error) {
+      console.error("Error creating notification:", error);
+      res.status(500).json({ message: "Failed to create notification" });
+    }
+  });
+
+  // Mark notification as read
+  app.patch('/api/notifications/:id/read', requireAuth, async (req: any, res) => {
+    try {
+      const { id } = req.params;
+      await storage.markNotificationAsRead(id);
+      res.json({ message: "Notification marked as read" });
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+      res.status(500).json({ message: "Failed to mark notification as read" });
+    }
+  });
+
+  // Admin delete user
+  app.delete('/api/admin/users/:id', requireAuth, async (req: any, res) => {
+    try {
+      const currentUserId = req.user.id;
+      const currentUser = await storage.getUser(currentUserId);
+      
+      if (currentUser?.role !== 'admin') {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      const { id } = req.params;
+      await storage.deleteUser(id);
+      res.json({ message: "User deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      res.status(500).json({ message: "Failed to delete user" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

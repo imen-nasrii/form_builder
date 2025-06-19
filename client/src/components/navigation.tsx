@@ -15,6 +15,7 @@ import { useAuth } from "@/hooks/useAuth";
 import type { User } from "@shared/schema";
 import { Bell, ChevronDown } from "lucide-react";
 import LanguageToggle from "@/components/language-toggle";
+import NotificationBell from "@/components/notification-bell";
 
 export default function Navigation() {
   const { user } = useAuth() as { user: User | null };
@@ -110,6 +111,8 @@ export default function Navigation() {
 
         {/* User Progress & Profile */}
         <div className="flex items-center gap-4">
+          {/* Notification Bell */}
+          <NotificationBell />
 
 
           

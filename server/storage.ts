@@ -308,6 +308,77 @@ export class DatabaseStorage implements IStorage {
       .set({ used: true })
       .where(eq(passwordResetTokens.token, token));
   }
+
+  // Notification operations
+  async getAllNotifications(): Promise<any[]> {
+    try {
+      const { notifications } = await import("@shared/schema");
+      const allNotifications = await db.select().from(notifications).orderBy(notifications.createdAt);
+      return allNotifications;
+    } catch (error) {
+      console.error("Error getting all notifications:", error);
+      return [];
+    }
+  }
+
+  async getUserNotifications(userId: string): Promise<any[]> {
+    try {
+      const { notifications } = await import("@shared/schema");
+      const userNotifications = await db.select()
+        .from(notifications)
+        .where(eq(notifications.userId, userId))
+        .orderBy(notifications.createdAt);
+      return userNotifications;
+    } catch (error) {
+      console.error("Error getting user notifications:", error);
+      return [];
+    }
+  }
+
+  async createNotification(notificationData: any): Promise<any> {
+    try {
+      const { notifications } = await import("@shared/schema");
+      const [notification] = await db
+        .insert(notifications)
+        .values({
+          id: `notif_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          userId: notificationData.userId,
+          programId: notificationData.programId?.toString() || null,
+          programLabel: notificationData.programLabel || 'Unknown Program',
+          type: notificationData.type || 'assignment',
+          message: notificationData.message,
+          read: false,
+          createdAt: new Date()
+        })
+        .returning();
+      return notification;
+    } catch (error) {
+      console.error("Error creating notification:", error);
+      throw error;
+    }
+  }
+
+  async markNotificationAsRead(notificationId: string): Promise<void> {
+    try {
+      const { notifications } = await import("@shared/schema");
+      await db
+        .update(notifications)
+        .set({ read: true })
+        .where(eq(notifications.id, notificationId));
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+      throw error;
+    }
+  }
+
+  async deleteUser(userId: string): Promise<void> {
+    try {
+      await db.delete(users).where(eq(users.id, userId));
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      throw error;
+    }
+  }
 }
 
 export const storage = new DatabaseStorage();
