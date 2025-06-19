@@ -156,6 +156,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Update form assignment
       await storage.assignFormToUser(programId, userId);
       
+      // Get form details for notification
+      const form = await storage.getForm(programId);
+      if (form) {
+        // Create notification for assigned user
+        await storage.createNotification({
+          userId: userId,
+          programId: programId,
+          programLabel: form.label,
+          message: `You have been assigned to work on program "${form.label}"`,
+          type: 'assignment'
+        });
+        console.log(`Notification created for user ${userId} about form ${programId}`);
+      }
+      
       console.log(`Form ${programId} assigned to user ${userId} successfully`);
 
       res.json({ 
@@ -450,6 +464,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred'
       });
+    }
+  });
+
+  // Notifications routes
+  app.get('/api/notifications', requireAuth, async (req: any, res) => {
+    try {
+      const userId = req.user.role === 'admin' ? undefined : req.user.id;
+      const notifications = await storage.getNotifications(userId);
+      res.json(notifications);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+      res.status(500).json({ message: "Failed to fetch notifications" });
+    }
+  });
+
+  app.post('/api/notifications/:id/read', requireAuth, async (req: any, res) => {
+    try {
+      const notificationId = req.params.id;
+      await storage.markNotificationAsRead(notificationId);
+      res.json({ message: "Notification marked as read" });
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+      res.status(500).json({ message: "Failed to mark notification as read" });
     }
   });
 

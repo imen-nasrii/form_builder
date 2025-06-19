@@ -5,6 +5,7 @@ import {
   twoFactorTokens,
   emailVerificationTokens,
   passwordResetTokens,
+  notifications,
   type User,
   type UpsertUser,
   type Form,
@@ -17,6 +18,8 @@ import {
   type InsertEmailVerificationToken,
   type PasswordResetToken,
   type InsertPasswordResetToken,
+  type Notification,
+  type InsertNotification,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
@@ -247,6 +250,38 @@ export class DatabaseStorage implements IStorage {
         updatedAt: new Date()
       })
       .where(eq(forms.id, formId));
+  }
+
+  // Notification operations
+  async createNotification(notification: { userId: string; programId: number; programLabel: string; message: string; type: string }): Promise<Notification> {
+    console.log('Creating notification:', notification);
+    const notificationData = {
+      id: `notif_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      userId: notification.userId,
+      programId: notification.programId.toString(),
+      programLabel: notification.programLabel,
+      message: notification.message,
+      type: notification.type,
+      read: false
+    };
+    const [newNotification] = await db.insert(notifications).values(notificationData).returning();
+    return newNotification;
+  }
+
+  async getNotifications(userId?: string): Promise<Notification[]> {
+    if (userId) {
+      return await db.select().from(notifications)
+        .where(eq(notifications.userId, userId))
+        .orderBy(desc(notifications.createdAt));
+    }
+    return await db.select().from(notifications)
+      .orderBy(desc(notifications.createdAt));
+  }
+
+  async markNotificationAsRead(notificationId: string): Promise<void> {
+    await db.update(notifications)
+      .set({ read: true })
+      .where(eq(notifications.id, notificationId));
   }
 
   // 2FA operations
