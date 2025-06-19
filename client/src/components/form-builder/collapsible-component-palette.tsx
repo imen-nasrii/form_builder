@@ -1,22 +1,19 @@
 import { useState } from "react";
 import { useDrag } from "react-dnd";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { 
-  Table, 
+  Database,
   List, 
   Calendar, 
   ChevronDown, 
   ChevronRight,
   CheckSquare, 
-  Radio, 
-  FolderOpen,
-  Play,
-  AlertTriangle,
-  Grid3X3,
-  MessageSquare,
+  RadioIcon, 
+  Hash,
   Type,
-  FileText,
-  Upload
+  Grid3X3
 } from "lucide-react";
 import type { FormField } from "@/lib/form-types";
 
@@ -123,7 +120,7 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
     {
       type: "SELECT",
       icon: <ChevronDown className="w-5 h-5 text-white" />,
-      label: "Dropdown Select",
+      label: "Select Dropdown",
       description: "SELECT",
       color: "bg-orange-500"
     },
@@ -132,11 +129,11 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
       icon: <CheckSquare className="w-5 h-5 text-white" />,
       label: "Checkbox",
       description: "CHECKBOX",
-      color: "bg-cyan-500"
+      color: "bg-indigo-500"
     },
     {
       type: "RADIOGRP",
-      icon: <Radio className="w-5 h-5 text-white" />,
+      icon: <RadioIcon className="w-5 h-5 text-white" />,
       label: "Radio Group",
       description: "RADIOGRP",
       color: "bg-pink-500"
@@ -205,7 +202,7 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
           onClick={() => toggleSection('input')}
         >
           <h3 className="text-sm font-semibold text-black dark:text-white">
-            INPUT CONTROLS
+            Text Input
           </h3>
           {expandedSections.input ? 
             <ChevronDown className="w-5 h-5 text-blue-500" /> : 
@@ -236,7 +233,7 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
           onClick={() => toggleSection('selection')}
         >
           <h3 className="text-sm font-semibold text-black dark:text-white">
-            SELECTION CONTROLS
+            Selection
           </h3>
           {expandedSections.selection ? 
             <ChevronDown className="w-5 h-5 text-green-500" /> : 
@@ -298,7 +295,7 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
           onClick={() => toggleSection('special')}
         >
           <h3 className="text-sm font-semibold text-black dark:text-white">
-            SPECIAL CONTROLS
+            Layout
           </h3>
           {expandedSections.special ? 
             <ChevronDown className="w-5 h-5 text-purple-500" /> : 
