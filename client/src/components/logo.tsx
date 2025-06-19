@@ -21,7 +21,7 @@ export default function Logo({ className = '', size = 'md', showText = true }: L
 
   return (
     <div className={`flex items-center gap-3 ${className}`}>
-      {/* Logo Icon - FormCraft style with modern light colors */}
+      {/* Logo Icon - FormBuilder style with blue and orange */}
       <div className={`${sizeClasses[size]} relative`}>
         <svg
           viewBox="0 0 100 100"
@@ -29,54 +29,35 @@ export default function Logo({ className = '', size = 'md', showText = true }: L
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          {/* Background form container */}
+          {/* Main blue rounded square background */}
           <rect
-            x="10"
+            x="15"
             y="15"
-            width="60"
+            width="70"
             height="70"
-            rx="8"
-            stroke="url(#gradient1)"
-            strokeWidth="3"
-            fill="white"
+            rx="16"
+            fill="url(#blueGradient)"
           />
           
-          {/* Form lines */}
-          <rect x="18" y="25" width="30" height="2.5" rx="1" fill="url(#gradient1)" />
-          <rect x="18" y="32" width="25" height="2.5" rx="1" fill="url(#gradient2)" />
-          <rect x="18" y="39" width="15" height="2.5" rx="1" fill="url(#gradient1)" />
-          
-          {/* Checkmark container */}
-          <rect
-            x="50"
-            y="45"
-            width="30"
-            height="30"
-            rx="6"
-            stroke="url(#gradient2)"
-            strokeWidth="2.5"
-            fill="white"
-          />
-          
-          {/* Checkmark */}
+          {/* White "D" shape in the center */}
           <path
-            d="M57 60 L62 65 L73 54"
-            stroke="url(#gradient1)"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
+            d="M35 35 L35 65 L55 65 C62 65 67 60 67 52.5 L67 47.5 C67 40 62 35 55 35 L35 35 Z M42 42 L55 42 C58 42 60 44 60 47.5 L60 52.5 C60 56 58 58 55 58 L42 58 L42 42 Z"
+            fill="white"
+          />
+          
+          {/* Orange circle accent */}
+          <circle
+            cx="75"
+            cy="25"
+            r="8"
+            fill="#FF6B35"
           />
           
           {/* Gradients */}
           <defs>
-            <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#3B82F6" />
-              <stop offset="100%" stopColor="#6366F1" />
-            </linearGradient>
-            <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#06B6D4" />
-              <stop offset="100%" stopColor="#3B82F6" />
+            <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#4285F4" />
+              <stop offset="100%" stopColor="#1976D2" />
             </linearGradient>
           </defs>
         </svg>
@@ -84,12 +65,9 @@ export default function Logo({ className = '', size = 'md', showText = true }: L
       
       {/* App Name */}
       {showText && (
-        <div className="flex flex-col">
-          <span className={`font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent ${textSizeClasses[size]}`}>
-            FormCraft
-          </span>
-          <span className="text-xs text-gray-500 -mt-1">Pro</span>
-        </div>
+        <span className={`font-semibold text-blue-600 ${textSizeClasses[size]}`}>
+          FormBuilder
+        </span>
       )}
     </div>
   );
@@ -105,46 +83,34 @@ export function LogoIcon({ className = '', size = 24 }: { className?: string; si
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* Simplified icon version */}
+        {/* Simplified FormBuilder icon */}
         <rect
-          x="15"
+          x="20"
           y="20"
-          width="50"
+          width="60"
           height="60"
-          rx="6"
-          stroke="url(#simpleGradient)"
-          strokeWidth="4"
-          fill="white"
+          rx="12"
+          fill="url(#iconGradient)"
         />
         
-        <rect x="22" y="30" width="25" height="3" rx="1" fill="url(#simpleGradient)" />
-        <rect x="22" y="38" width="20" height="3" rx="1" fill="url(#simpleGradient)" />
-        <rect x="22" y="46" width="12" height="3" rx="1" fill="url(#simpleGradient)" />
-        
-        <rect
-          x="55"
-          y="50"
-          width="25"
-          height="25"
-          rx="4"
-          stroke="url(#simpleGradient)"
-          strokeWidth="3"
-          fill="white"
-        />
-        
+        {/* White "D" shape */}
         <path
-          d="M61 62 L66 67 L75 58"
-          stroke="url(#simpleGradient)"
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          fill="none"
+          d="M35 35 L35 65 L50 65 C57 65 62 60 62 52.5 L62 47.5 C62 40 57 35 50 35 L35 35 Z M40 40 L50 40 C53 40 55 42 55 47.5 L55 52.5 C55 58 53 60 50 60 L40 60 L40 40 Z"
+          fill="white"
+        />
+        
+        {/* Orange accent */}
+        <circle
+          cx="70"
+          cy="30"
+          r="6"
+          fill="#FF6B35"
         />
         
         <defs>
-          <linearGradient id="simpleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#3B82F6" />
-            <stop offset="100%" stopColor="#6366F1" />
+          <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#4285F4" />
+            <stop offset="100%" stopColor="#1976D2" />
           </linearGradient>
         </defs>
       </svg>
