@@ -12,6 +12,8 @@ import { Progress } from '@/components/ui/progress';
 import { Users, Settings, Bell, Eye, UserPlus, Trash2, CheckCircle2, AlertCircle, BarChart3, Edit } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
 import ProgramCompletionTracker from '@/components/program-completion-tracker';
+import RealTimeStats from '@/components/real-time-stats';
+import ActivityFeed from '@/components/activity-feed';
 
 interface User {
   id: string;
@@ -163,30 +165,29 @@ export default function AdminManagement() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Admin Management</h1>
-            <p className="text-gray-600">Manage users, programs, and system notifications</p>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Badge variant="outline" className="bg-blue-50 text-blue-700">
-              {users.length} Users
-            </Badge>
-            <Badge variant="outline" className="bg-green-50 text-green-700">
-              {programs.length} Programs
-            </Badge>
-            <Badge variant="outline" className="bg-orange-50 text-orange-700">
-              {notifications.filter(n => !n.read).length} Unread Notifications
-            </Badge>
+            <p className="text-gray-600">Manage users, programs, and system notifications with real-time data</p>
           </div>
         </div>
 
-        <Tabs defaultValue="users" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+        {/* Real-time Statistics Dashboard */}
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">System Overview</h2>
+          <RealTimeStats />
+        </div>
+
+        <Tabs defaultValue="overview" className="w-full">
+          <TabsList className="grid w-full grid-cols-5">
+            <TabsTrigger value="overview" className="flex items-center gap-2">
+              <BarChart3 className="w-4 h-4" />
+              Overview
+            </TabsTrigger>
             <TabsTrigger value="users" className="flex items-center gap-2">
               <Users className="w-4 h-4" />
-              Users Management
+              Users
             </TabsTrigger>
             <TabsTrigger value="programs" className="flex items-center gap-2">
-              <BarChart3 className="w-4 h-4" />
-              Program Tracker
+              <Settings className="w-4 h-4" />
+              Programs
             </TabsTrigger>
             <TabsTrigger value="assignments" className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4" />
@@ -197,6 +198,18 @@ export default function AdminManagement() {
               Notifications
             </TabsTrigger>
           </TabsList>
+
+          {/* Overview Dashboard */}
+          <TabsContent value="overview" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2">
+                <RealTimeStats />
+              </div>
+              <div>
+                <ActivityFeed />
+              </div>
+            </div>
+          </TabsContent>
 
           {/* Users Management */}
           <TabsContent value="users" className="space-y-6">
@@ -238,10 +251,15 @@ export default function AdminManagement() {
                             <Button
                               variant="destructive"
                               size="sm"
-                              onClick={() => deleteUserMutation.mutate(user.id)}
-                              disabled={user.role === 'admin'}
+                              onClick={() => {
+                                if (confirm(`Are you sure you want to delete user ${user.email}? This will also delete all their programs and cannot be undone.`)) {
+                                  deleteUserMutation.mutate(user.id);
+                                }
+                              }}
+                              disabled={user.role === 'admin' || deleteUserMutation.isPending}
                             >
                               <Trash2 className="w-4 h-4" />
+                              {deleteUserMutation.isPending ? 'Deleting...' : ''}
                             </Button>
                           </div>
                         </div>
@@ -270,7 +288,9 @@ export default function AdminManagement() {
                   window.open(`/form-builder/${programId}`, '_blank');
                 }}
                 onAssignProgram={(programId, userId) => {
-                  assignProgramMutation.mutate({ programId, userId });
+                  setSelectedProgram(programId);
+                  setSelectedUser(userId);
+                  handleAssignProgram();
                 }}
               />
             )}
