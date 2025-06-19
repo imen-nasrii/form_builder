@@ -77,7 +77,7 @@ export default function Navigation() {
                   ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 font-medium" 
                   : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
               }`}>
-                Admin Panel
+                Admin Dashboard
               </button>
             </Link>
           ) : (
