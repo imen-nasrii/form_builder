@@ -1,0 +1,334 @@
+{
+  "MenuID": "SRCMNT",
+  "Label": "SRCMNT",
+  "Fields": [
+    {
+      "Id": "SourceGrid",
+      "type": "GRID",
+      "RecordActions": [
+        {
+          "id": "Edit",
+          "Label": "Edit",
+          "UpdateVarValues": [
+            {
+              "Name": "ShowDialog",
+              "Value": true
+            },
+            {
+              "Name": "RecordDetails",
+              "linkTo": "SourceDetails",
+              "linkToProperty": "Value",
+              "linkFrom": "SourceGrid",
+              "linkFromProperty": "SelectedRecord"
+            },
+            {
+              "Name": "Mode",
+              "Value": "EDIT"
+            }
+          ]
+        },
+        {
+          "id": "Copy",
+          "Label": "Copy",
+          "UpdateVarValues": [
+            {
+              "Name": "ShowDialog",
+              "Value": true
+            },
+            {
+              "Name": "RecordDetails",
+              "linkTo": "SourceDetails",
+              "linkToProperty": "Value",
+              "linkFrom": "SourceGrid",
+              "linkFromProperty": "SelectedRecord"
+            },
+            {
+              "Name": "Mode",
+              "Value": "COPY"
+            }
+          ]
+        },
+        {
+          "id": "Delete",
+          "Label": "Delete",
+          "UpdateVarValues": [
+            {
+              "Name": "Mode",
+              "Value": "DELETE"
+            }
+          ]
+        }
+      ],
+      "ColumnDefinitions": [
+        {
+          "DataField": "pSource",
+          "Caption": "Source",
+          "DataType": "STRING"
+        },
+        {
+          "DataField": "descr",
+          "Caption": "Description",
+          "DataType": "STRING"
+        }
+      ],
+      "Endpoint": "AllSources",
+      "Entity": "Source",
+      "EntityKeyField": "pSource",
+      "Events": [
+        {
+          "id": "onClickRow",
+          "UpdateVarValues": [
+            {
+              "Name": "ShowDialog",
+              "Value": true
+            },
+            {
+              "Name": "RecordDetails",
+              "linkTo": "SourceDetails",
+              "linkToProperty": "Value",
+              "linkFrom": "SourceGrid",
+              "linkFromProperty": "SelectedRecord"
+            }
+          ]
+        }
+      ]
+
+    },
+    {
+      "id": "SourceDetails",
+      "Label": "REC_DETAILS",
+      "Type": "DIALOG",
+      "isGroup": true,
+      "Entity": "Source",
+      "VisibleWhen": {
+        "Conditions": [
+          {
+            "VariableId": "ShowDialog",
+            "Operator": "IST",
+            "ValueType": "BOOL"
+          }
+        ]
+      },
+      "ChildFields": [
+        {
+          "id": "psource",
+          "Label": "SOURCE",
+          "type": "TEXT",
+          "DataField": "pSource",
+          "EnabledWhen": {
+            "LogicalOperator": "OR",
+            "Conditions": [
+              {
+                "VariableId": "Mode",
+                "Operator": "EQ",
+                "ValueType": "STRING",
+                "Value": "ADD"
+              },
+              {
+                "VariableId": "Mode",
+                "Operator": "EQ",
+                "ValueType": "STRING",
+                "Value": "COPY"
+              }
+            ]
+          },
+          "Validations": [
+            {
+              "Id": "4",
+              "Type": "ERROR",
+              "CondExpression": {
+                "LogicalOperator": "AND",
+                "Conditions": [
+                  {
+                    "RightField": "psource",
+                    "Operator": "ISN",
+                    "ValueType": "BOOL"
+                  },
+                  {
+                    "NestedCondExp": {
+                      "LogicalOperator": "OR",
+                      "Conditions": [
+                        {
+                          "VariableId": "Mode",
+                          "Operator": "EQ",
+                          "ValueType": "STRING",
+                          "Value": "COPY"
+                        },
+                        {
+                          "VariableId": "Mode",
+                          "Operator": "EQ",
+                          "ValueType": "STRING",
+                          "Value": "ADD"
+                        }
+                      ]
+
+                    }
+                  }
+                ]
+
+              }
+
+            }
+          ]
+        },
+        {
+          "id": "descr",
+          "Label": "DESC",
+          "type": "TEXT",
+          "DataField": "descr",
+          "EnabledWhen": {
+            "LogicalOperator": "OR",
+            "Conditions": [
+              {
+                "VariableId": "Mode",
+                "Operator": "EQ",
+                "ValueType": "STRING",
+                "Value": "ADD"
+              },
+              {
+                "VariableId": "Mode",
+                "Operator": "EQ",
+                "ValueType": "STRING",
+                "Value": "COPY"
+              },
+              {
+                "VariableId": "Mode",
+                "Operator": "EQ",
+                "ValueType": "STRING",
+                "Value": "EDIT"
+              }
+            ]
+
+          },
+          "Validations": [
+            {
+              "Id": "5",
+              "Type": "ERROR",
+              "CondExpression": {
+                "LogicalOperator": "AND",
+                "Conditions": [
+                  {
+                    "RightField": "descr",
+                    "Operator": "ISN",
+                    "ValueType": "BOOL"
+                  },
+                  {
+                    "NestedCondExp": {
+                      "LogicalOperator": "OR",
+                      "Conditions": [
+                        {
+                          "VariableId": "Mode",
+                          "Operator": "EQ",
+                          "ValueType": "STRING",
+                          "Value": "COPY"
+                        },
+                        {
+                          "VariableId": "Mode",
+                          "Operator": "EQ",
+                          "ValueType": "STRING",
+                          "Value": "ADD"
+                        },
+                        {
+                          "VariableId": "Mode",
+                          "Operator": "EQ",
+                          "ValueType": "STRING",
+                          "Value": "EDIT"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+
+            }
+          ]
+        }
+      ],
+      "Events": [
+        {
+          "id": "onClose",
+          "UpdateVarValues": [
+            {
+              "Name": "ShowDialog",
+              "Value": false
+            },
+            {
+              "Name": "RecordDetails",
+              "Value": null
+            },
+            {
+              "Name": "Mode",
+              "Value": "VIEW"
+            }
+          ]
+        },
+        {
+          "id": "onSubmit",
+          "MethodToInvoke": "Submit",
+          "UpdateVarValues": [
+            {
+              "Name": "ShowDialog",
+              "Value": false
+            },
+            {
+              "Name": "RecordDetails",
+              "Value": null
+            },
+            {
+              "Name": "Mode",
+              "Value": "VIEW"
+            }
+          ]
+        }
+
+      ]
+    }
+
+
+  ],
+  "Variables": [
+
+    {
+      "Name": "ShowDialog",
+      "Value": false,
+      "Type": "BOOL"
+    },
+    {
+      "Name": "RecordDetails",
+      "Type": "NOTSET"
+    },
+    {
+      "Name": "Mode",
+      "Value": "VIEW",
+      "Type": "STRING"
+    }
+  ],
+  "Actions": [
+    {
+      "id": "ADD",
+      "Label": "Add",
+      "UpdateVarValues": [
+        {
+          "Name": "ShowDialog",
+          "Value": true
+        },
+        {
+
+          "Name": "RecordDetails",
+          "linkTo": "SourceDetails",
+          "linkToProperty": "Value",
+          "Value": null
+
+        },
+        {
+          "Name": "Mode",
+          "Value": "ADD"
+        }
+      ]
+    }
+  ],
+  "Validations": [
+
+  ]
+
+}
