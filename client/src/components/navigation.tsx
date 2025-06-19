@@ -71,15 +71,7 @@ export default function Navigation() {
           
 
 
-          <Link href="/form-builder">
-            <button className={`px-4 py-2 rounded-lg transition-all ${
-              isActive("/form-builder") 
-                ? "bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/30 dark:to-blue-900/30 text-purple-700 dark:text-purple-300 font-medium" 
-                : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
-            }`}>
-              Builder
-            </button>
-          </Link>
+
 
           <Link href="/analytics">
             <button className={`px-4 py-2 rounded-lg transition-all ${
