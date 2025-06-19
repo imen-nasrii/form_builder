@@ -469,45 +469,6 @@ export default function AdminManagement() {
               </Card>
             </div>
           </TabsContent>
-              <CardContent>
-                <div className="space-y-4">
-                  {notifications.map((notification: Notification) => {
-                    const user = users.find(u => u.id === notification.userId);
-                    const userName = user?.firstName ? `${user.firstName} ${user.lastName}` : user?.email || 'Unknown User';
-                    
-                    return (
-                      <div key={notification.id} className={`p-4 border rounded-lg ${notification.read ? 'bg-gray-50' : 'bg-blue-50 border-blue-200'}`}>
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <div className="font-medium">{notification.message}</div>
-                            <div className="text-sm text-gray-500">
-                              User: {userName} • Program: {notification.programLabel} • {new Date(notification.createdAt).toLocaleString()}
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Badge 
-                              variant={notification.type === 'assignment' ? 'default' : notification.type === 'completion' ? 'secondary' : 'outline'}
-                            >
-                              {notification.type}
-                            </Badge>
-                            <Badge variant={notification.read ? 'secondary' : 'default'}>
-                              {notification.read ? 'Read' : 'Unread'}
-                            </Badge>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                  
-                  {notifications.length === 0 && (
-                    <div className="text-center py-8 text-gray-500">
-                      No notifications yet
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
         </Tabs>
       </div>
     </div>
