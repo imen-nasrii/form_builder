@@ -1,567 +1,664 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAuth } from '@/hooks/useAuth';
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, closestCorners, PointerSensor, useSensor, useSensors, DragOverEvent } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
-  Kanban, 
+  CheckCircle2, 
   Clock, 
-  CheckCircle, 
   AlertCircle, 
   Play, 
-  Pause, 
-  FileText, 
-  User, 
-  Calendar,
   MessageSquare,
-  Edit,
-  Eye
+  Calendar,
+  User,
+  Target,
+  Plus,
+  Upload,
+  FileText,
+  GripVertical
 } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 import { apiRequest } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
 
-interface Program {
-  id: number;
-  menuId: string;
-  label: string;
-  formWidth: string;
-  layout: string;
-  createdBy: string;
-  assignedTo?: string;
-  fields: any[];
-  createdAt: string;
-  updatedAt: string;
-  status?: 'todo' | 'in_progress' | 'review' | 'completed';
-  priority?: 'low' | 'medium' | 'high' | 'urgent';
-  description?: string;
-  comments?: string[];
-}
-
-interface TaskUpdate {
-  programId: number;
-  status?: string;
-  priority?: string;
-  comment?: string;
-}
-
-export default function UserTaskBoard() {
-  const { user } = useAuth();
-  const queryClient = useQueryClient();
-  const [selectedTask, setSelectedTask] = useState<Program | null>(null);
-  const [showTaskDialog, setShowTaskDialog] = useState(false);
-  const [taskComment, setTaskComment] = useState('');
-  const [taskStatus, setTaskStatus] = useState('');
-  const [taskPriority, setTaskPriority] = useState('');
-
-  // Fetch user's assigned programs
-  const { data: programs = [], isLoading } = useQuery({
-    queryKey: ['/api/forms'],
-    select: (data: Program[]) => data.filter(p => p.assignedTo === user?.id),
-    refetchInterval: 30000
-  });
-
-  // Fetch notifications for updates
-  const { data: notifications = [] } = useQuery({
-    queryKey: ['/api/notifications'],
-    refetchInterval: 10000
-  });
-
-  // Update task mutation
-  const updateTaskMutation = useMutation({
-    mutationFn: async (update: TaskUpdate) => {
-      return apiRequest(`/api/forms/${update.programId}`, {
-        method: 'PATCH',
-        body: JSON.stringify({
-          status: update.status,
-          priority: update.priority,
-          updatedAt: new Date()
-        })
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/forms'] });
-      setShowTaskDialog(false);
-      setTaskComment('');
-    }
-  });
-
-  // Add comment mutation
-  const addCommentMutation = useMutation({
-    mutationFn: async ({ programId, comment }: { programId: number; comment: string }) => {
-      return apiRequest('/api/notifications', {
-        method: 'POST',
-        body: JSON.stringify({
-          userId: user?.id,
-          programId,
-          message: `Comment on "${selectedTask?.label}": ${comment}`,
-          type: 'completion'
-        })
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/notifications'] });
-      setTaskComment('');
-    }
-  });
-
-  // Calculate completion percentage
-  const calculateCompletion = (fields: any[]) => {
-    if (!fields || fields.length === 0) return 0;
-    const maxComponents = 10;
-    const currentComponents = fields.length;
-    return Math.min((currentComponents / maxComponents) * 100, 100);
-  };
-
-  // Get status info
-  const getStatusInfo = (status: string, completion: number) => {
-    if (completion >= 100) {
-      return { 
-        status: 'completed', 
-        color: 'bg-green-500', 
-        textColor: 'text-green-700', 
-        bgColor: 'bg-green-50',
-        label: 'Completed' 
-      };
-    }
-    
-    switch (status) {
-      case 'in_progress':
-        return { 
-          status: 'in_progress', 
-          color: 'bg-blue-500', 
-          textColor: 'text-blue-700', 
-          bgColor: 'bg-blue-50',
-          label: 'In Progress' 
-        };
-      case 'review':
-        return { 
-          status: 'review', 
-          color: 'bg-yellow-500', 
-          textColor: 'text-yellow-700', 
-          bgColor: 'bg-yellow-50',
-          label: 'In Review' 
-        };
-      case 'completed':
-        return { 
-          status: 'completed', 
-          color: 'bg-green-500', 
-          textColor: 'text-green-700', 
-          bgColor: 'bg-green-50',
-          label: 'Completed' 
-        };
-      default:
-        return { 
-          status: 'todo', 
-          color: 'bg-gray-500', 
-          textColor: 'text-gray-700', 
-          bgColor: 'bg-gray-50',
-          label: 'To Do' 
-        };
-    }
-  };
-
-  // Get priority info
-  const getPriorityInfo = (priority: string) => {
-    switch (priority) {
-      case 'urgent':
-        return { color: 'bg-red-500', textColor: 'text-red-700', label: 'Urgent' };
-      case 'high':
-        return { color: 'bg-orange-500', textColor: 'text-orange-700', label: 'High' };
-      case 'medium':
-        return { color: 'bg-yellow-500', textColor: 'text-yellow-700', label: 'Medium' };
-      default:
-        return { color: 'bg-green-500', textColor: 'text-green-700', label: 'Low' };
-    }
-  };
-
-  // Group programs by status
-  const groupedPrograms = {
-    todo: programs.filter(p => {
-      const completion = calculateCompletion(p.fields);
-      return completion < 100 && (!p.status || p.status === 'todo');
-    }),
-    in_progress: programs.filter(p => {
-      const completion = calculateCompletion(p.fields);
-      return completion < 100 && p.status === 'in_progress';
-    }),
-    review: programs.filter(p => {
-      const completion = calculateCompletion(p.fields);
-      return completion < 100 && p.status === 'review';
-    }),
-    completed: programs.filter(p => {
-      const completion = calculateCompletion(p.fields);
-      return completion >= 100 || p.status === 'completed';
-    })
-  };
-
-  const handleTaskClick = (program: Program) => {
-    setSelectedTask(program);
-    const completion = calculateCompletion(program.fields);
-    const statusInfo = getStatusInfo(program.status || 'todo', completion);
-    setTaskStatus(statusInfo.status);
-    setTaskPriority(program.priority || 'medium');
-    setShowTaskDialog(true);
-  };
-
-  const handleUpdateTask = () => {
-    if (selectedTask) {
-      updateTaskMutation.mutate({
-        programId: selectedTask.id,
-        status: taskStatus,
-        priority: taskPriority
-      });
-
-      if (taskComment.trim()) {
-        addCommentMutation.mutate({
-          programId: selectedTask.id,
-          comment: taskComment
-        });
-      }
-    }
-  };
-
-  if (user?.role === 'admin') {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Card className="w-96">
-          <CardContent className="pt-6 text-center">
-            <Kanban className="w-12 h-12 text-blue-500 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold mb-2">Task Board Access</h2>
-            <p className="text-gray-600">This board is for regular users to manage their assigned tasks. Administrators can manage assignments from the Admin Panel.</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
+// Droppable Zone Component
+function DroppableZone({ id, children }: { id: string; children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-              <Kanban className="w-8 h-8 text-blue-600" />
-              My Task Board
-            </h1>
-            <p className="text-gray-600">Manage your assigned programs and track progress</p>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Badge variant="outline" className="bg-blue-50 text-blue-700">
-              {programs.length} Total Tasks
-            </Badge>
-            <Badge variant="outline" className="bg-green-50 text-green-700">
-              {groupedPrograms.completed.length} Completed
-            </Badge>
-            <Badge variant="outline" className="bg-orange-50 text-orange-700">
-              {notifications.filter(n => !n.read).length} Updates
-            </Badge>
-          </div>
-        </div>
-
-        {/* Kanban Board */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* To Do Column */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 pb-4 border-b">
-              <Clock className="w-5 h-5 text-gray-600" />
-              <h2 className="text-lg font-semibold">To Do</h2>
-              <Badge variant="secondary">{groupedPrograms.todo.length}</Badge>
-            </div>
-            <div className="space-y-3">
-              {groupedPrograms.todo.map((program) => (
-                <TaskCard
-                  key={program.id}
-                  program={program}
-                  onClick={() => handleTaskClick(program)}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* In Progress Column */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 pb-4 border-b">
-              <Play className="w-5 h-5 text-blue-600" />
-              <h2 className="text-lg font-semibold">In Progress</h2>
-              <Badge variant="secondary">{groupedPrograms.in_progress.length}</Badge>
-            </div>
-            <div className="space-y-3">
-              {groupedPrograms.in_progress.map((program) => (
-                <TaskCard
-                  key={program.id}
-                  program={program}
-                  onClick={() => handleTaskClick(program)}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Review Column */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 pb-4 border-b">
-              <Eye className="w-5 h-5 text-yellow-600" />
-              <h2 className="text-lg font-semibold">Review</h2>
-              <Badge variant="secondary">{groupedPrograms.review.length}</Badge>
-            </div>
-            <div className="space-y-3">
-              {groupedPrograms.review.map((program) => (
-                <TaskCard
-                  key={program.id}
-                  program={program}
-                  onClick={() => handleTaskClick(program)}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Completed Column */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 pb-4 border-b">
-              <CheckCircle className="w-5 h-5 text-green-600" />
-              <h2 className="text-lg font-semibold">Completed</h2>
-              <Badge variant="secondary">{groupedPrograms.completed.length}</Badge>
-            </div>
-            <div className="space-y-3">
-              {groupedPrograms.completed.map((program) => (
-                <TaskCard
-                  key={program.id}
-                  program={program}
-                  onClick={() => handleTaskClick(program)}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Empty State */}
-        {programs.length === 0 && !isLoading && (
-          <div className="text-center py-12">
-            <Kanban className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-600 mb-2">No Tasks Assigned</h3>
-            <p className="text-gray-500">You don't have any programs assigned yet. Check back later or contact your administrator.</p>
-          </div>
-        )}
-
-        {/* Task Detail Dialog */}
-        <Dialog open={showTaskDialog} onOpenChange={setShowTaskDialog}>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <FileText className="w-5 h-5" />
-                {selectedTask?.label}
-              </DialogTitle>
-            </DialogHeader>
-            
-            {selectedTask && (
-              <div className="space-y-6">
-                {/* Task Info */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>Progress</Label>
-                    <div className="mt-1">
-                      <Progress value={calculateCompletion(selectedTask.fields)} className="h-3" />
-                      <p className="text-sm text-gray-600 mt-1">
-                        {selectedTask.fields?.length || 0}/10 components ({calculateCompletion(selectedTask.fields)}%)
-                      </p>
-                    </div>
-                  </div>
-                  <div>
-                    <Label>Program ID</Label>
-                    <p className="text-sm text-gray-600 mt-1">{selectedTask.menuId}</p>
-                  </div>
-                </div>
-
-                {/* Status and Priority */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>Status</Label>
-                    <Select value={taskStatus} onValueChange={setTaskStatus}>
-                      <SelectTrigger className="mt-1">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="todo">To Do</SelectItem>
-                        <SelectItem value="in_progress">In Progress</SelectItem>
-                        <SelectItem value="review">Review</SelectItem>
-                        <SelectItem value="completed">Completed</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label>Priority</Label>
-                    <Select value={taskPriority} onValueChange={setTaskPriority}>
-                      <SelectTrigger className="mt-1">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="low">Low</SelectItem>
-                        <SelectItem value="medium">Medium</SelectItem>
-                        <SelectItem value="high">High</SelectItem>
-                        <SelectItem value="urgent">Urgent</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                {/* Add Comment */}
-                <div>
-                  <Label>Add Update Comment</Label>
-                  <Textarea
-                    placeholder="Describe your progress, blockers, or questions..."
-                    value={taskComment}
-                    onChange={(e) => setTaskComment(e.target.value)}
-                    className="mt-1"
-                  />
-                </div>
-
-                {/* Actions */}
-                <div className="flex justify-between">
-                  <Button
-                    variant="outline"
-                    onClick={() => window.open(`/form-builder/${selectedTask.id}`, '_blank')}
-                  >
-                    <Edit className="w-4 h-4 mr-2" />
-                    Edit Program
-                  </Button>
-                  <div className="space-x-2">
-                    <Button variant="outline" onClick={() => setShowTaskDialog(false)}>
-                      Cancel
-                    </Button>
-                    <Button onClick={handleUpdateTask} disabled={updateTaskMutation.isPending}>
-                      {updateTaskMutation.isPending ? 'Updating...' : 'Update Task'}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </DialogContent>
-        </Dialog>
-      </div>
+    <div className="min-h-[400px] p-4" data-droppable-id={id}>
+      {children}
     </div>
   );
 }
 
-// Task Card Component
-function TaskCard({ program, onClick }: { program: Program; onClick: () => void }) {
-  const completion = calculateCompletion(program.fields);
-  const statusInfo = getStatusInfo(program.status || 'todo', completion);
-  const priorityInfo = getPriorityInfo(program.priority || 'medium');
+// Sortable Task Card Component
+function SortableTaskCard({ task, onTaskClick }: { task: any; onTaskClick: (task: any) => void }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: task.id.toString() });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'high': return 'bg-red-100 text-red-800 border-red-200';
+      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'low': return 'bg-green-100 text-green-800 border-green-200';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'todo': return <Clock className="w-4 h-4" />;
+      case 'in_progress': return <Play className="w-4 h-4" />;
+      case 'review': return <AlertCircle className="w-4 h-4" />;
+      case 'completed': return <CheckCircle2 className="w-4 h-4" />;
+      default: return <Clock className="w-4 h-4" />;
+    }
+  };
 
   return (
-    <Card 
-      className="cursor-pointer hover:shadow-md transition-shadow border-l-4"
-      style={{ borderLeftColor: statusInfo.color.replace('bg-', '#') }}
-      onClick={onClick}
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="mb-3 cursor-grab active:cursor-grabbing"
+      {...attributes}
+      {...listeners}
     >
-      <CardContent className="p-4">
-        <div className="space-y-3">
-          {/* Header */}
-          <div className="flex items-start justify-between">
-            <h3 className="font-semibold text-sm leading-tight">{program.label}</h3>
-            <Badge 
-              className={`${priorityInfo.color} text-white text-xs`}
-            >
-              {priorityInfo.label}
-            </Badge>
-          </div>
-
-          {/* ID */}
-          <p className="text-xs text-gray-500">{program.menuId}</p>
-
-          {/* Progress */}
-          <div>
-            <div className="flex justify-between text-xs mb-1">
-              <span>Progress</span>
-              <span>{completion}%</span>
-            </div>
-            <Progress value={completion} className="h-2" />
-          </div>
-
-          {/* Footer */}
+      <Card className="hover:shadow-md transition-shadow border-l-4 border-l-blue-500">
+        <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
-            <Badge variant="outline" className={statusInfo.bgColor}>
-              {statusInfo.label}
-            </Badge>
-            <div className="flex items-center gap-1 text-xs text-gray-500">
-              <Calendar className="w-3 h-3" />
-              {new Date(program.updatedAt).toLocaleDateString()}
+            <div className="flex items-center gap-2">
+              <GripVertical className="w-4 h-4 text-gray-400" />
+              <CardTitle className="text-sm font-medium truncate">{task.label}</CardTitle>
             </div>
+            {getStatusIcon(task.status)}
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
+            <span>ID: {task.menuId}</span>
+            <Badge className={`text-xs px-2 py-1 ${getPriorityColor(task.priority || 'medium')}`}>
+              {task.priority || 'Medium'}
+            </Badge>
+          </div>
+          {task.description && (
+            <p className="text-xs text-gray-600 truncate mb-2">{task.description}</p>
+          )}
+          <div className="flex items-center gap-2 text-xs text-gray-500">
+            <Calendar className="w-3 h-3" />
+            <span>{new Date(task.createdAt).toLocaleDateString()}</span>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-full mt-2 text-xs h-7"
+            onClick={(e) => {
+              e.stopPropagation();
+              onTaskClick(task);
+            }}
+          >
+            View Details
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
 
-function calculateCompletion(fields: any[]) {
-  if (!fields || fields.length === 0) return 0;
-  const maxComponents = 10;
-  const currentComponents = fields.length;
-  return Math.round(Math.min((currentComponents / maxComponents) * 100, 100));
-}
+export default function UserTaskBoard() {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [selectedTask, setSelectedTask] = useState<any>(null);
+  const [comment, setComment] = useState('');
+  const [newPriority, setNewPriority] = useState<'low' | 'medium' | 'high'>('medium');
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [resultFile, setResultFile] = useState<File | null>(null);
+  const [resultDescription, setResultDescription] = useState('');
 
-function getStatusInfo(status: string, completion: number) {
-  if (completion >= 100) {
-    return { 
-      status: 'completed', 
-      color: 'bg-green-500', 
-      textColor: 'text-green-700', 
-      bgColor: 'bg-green-50',
-      label: 'Completed' 
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
+
+  // Fetch assigned programs for current user
+  const { data: assignedPrograms = [] } = useQuery({
+    queryKey: ['/api/forms', 'assigned', user?.id],
+    queryFn: async () => {
+      const response = await apiRequest('/api/forms');
+      const allForms = response;
+      return allForms.filter((form: any) => form.assignedTo === user?.id);
+    },
+    enabled: !!user?.id
+  });
+
+  // Group tasks by status
+  const todoTasks = assignedPrograms.filter((task: any) => task.status === 'todo' || !task.status);
+  const inProgressTasks = assignedPrograms.filter((task: any) => task.status === 'in_progress');
+  const reviewTasks = assignedPrograms.filter((task: any) => task.status === 'review');
+  const completedTasks = assignedPrograms.filter((task: any) => task.status === 'completed');
+
+  // Update task status/priority mutation
+  const updateTaskMutation = useMutation({
+    mutationFn: async ({ taskId, status, priority, comment }: { 
+      taskId: number; 
+      status?: string; 
+      priority?: string; 
+      comment?: string 
+    }) => {
+      return await apiRequest(`/api/forms/${taskId}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status, priority, comment }),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/forms'] });
+      toast({
+        title: "Task Updated",
+        description: "Task has been updated successfully.",
+      });
+      setSelectedTask(null);
+      setComment('');
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to update task.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Submit task result mutation
+  const submitResultMutation = useMutation({
+    mutationFn: async ({ taskId, resultDescription, file }: { 
+      taskId: number; 
+      resultDescription: string; 
+      file?: File 
+    }) => {
+      const formData = new FormData();
+      formData.append('resultDescription', resultDescription);
+      formData.append('status', 'review');
+      if (file) {
+        formData.append('resultFile', file);
+      }
+      
+      return await apiRequest(`/api/forms/${taskId}/result`, {
+        method: 'POST',
+        body: formData,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/forms'] });
+      toast({
+        title: "Result Submitted",
+        description: "Your work has been submitted for review.",
+      });
+      setSelectedTask(null);
+      setResultDescription('');
+      setResultFile(null);
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to submit result.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Handle drag start
+  function handleDragStart(event: DragStartEvent) {
+    setActiveId(String(event.active.id));
+  }
+
+  // Handle drag end - update task status based on drop zone
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    setActiveId(null);
+
+    if (!over) return;
+
+    const taskId = Number(active.id);
+    const newStatus = String(over.id);
+
+    // Map droppable zone IDs to status values
+    const statusMap: { [key: string]: string } = {
+      'todo-zone': 'todo',
+      'in_progress-zone': 'in_progress', 
+      'review-zone': 'review',
+      'completed-zone': 'completed'
     };
-  }
-  
-  switch (status) {
-    case 'in_progress':
-      return { 
-        status: 'in_progress', 
-        color: 'bg-blue-500', 
-        textColor: 'text-blue-700', 
-        bgColor: 'bg-blue-50',
-        label: 'In Progress' 
-      };
-    case 'review':
-      return { 
-        status: 'review', 
-        color: 'bg-yellow-500', 
-        textColor: 'text-yellow-700', 
-        bgColor: 'bg-yellow-50',
-        label: 'In Review' 
-      };
-    case 'completed':
-      return { 
-        status: 'completed', 
-        color: 'bg-green-500', 
-        textColor: 'text-green-700', 
-        bgColor: 'bg-green-50',
-        label: 'Completed' 
-      };
-    default:
-      return { 
-        status: 'todo', 
-        color: 'bg-gray-500', 
-        textColor: 'text-gray-700', 
-        bgColor: 'bg-gray-50',
-        label: 'To Do' 
-      };
-  }
-}
 
-function getPriorityInfo(priority: string) {
-  switch (priority) {
-    case 'urgent':
-      return { color: 'bg-red-500', textColor: 'text-red-700', label: 'Urgent' };
-    case 'high':
-      return { color: 'bg-orange-500', textColor: 'text-orange-700', label: 'High' };
-    case 'medium':
-      return { color: 'bg-yellow-500', textColor: 'text-yellow-700', label: 'Medium' };
-    default:
-      return { color: 'bg-green-500', textColor: 'text-green-700', label: 'Low' };
+    const mappedStatus = statusMap[newStatus] || newStatus;
+
+    if (active.id !== over.id) {
+      updateTaskMutation.mutate({
+        taskId,
+        status: mappedStatus,
+      });
+    }
   }
+
+  // Get the dragged task for overlay
+  const activeTask = activeId ? assignedPrograms.find(task => String(task.id) === activeId) : null;
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'completed': return 'bg-green-100 text-green-800';
+      case 'review': return 'bg-orange-100 text-orange-800';
+      case 'in_progress': return 'bg-blue-100 text-blue-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'high': return 'bg-red-100 text-red-800';
+      case 'medium': return 'bg-yellow-100 text-yellow-800';
+      case 'low': return 'bg-green-100 text-green-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  return (
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCorners}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">My Task Board</h1>
+            <p className="text-gray-600">Drag and drop tasks to update their status</p>
+          </div>
+
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center">
+                  <Clock className="w-8 h-8 text-blue-500" />
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">To Do</p>
+                    <p className="text-2xl font-bold text-gray-900">{todoTasks.length}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center">
+                  <Play className="w-8 h-8 text-yellow-500" />
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">In Progress</p>
+                    <p className="text-2xl font-bold text-gray-900">{inProgressTasks.length}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center">
+                  <AlertCircle className="w-8 h-8 text-orange-500" />
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">Review</p>
+                    <p className="text-2xl font-bold text-gray-900">{reviewTasks.length}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center">
+                  <CheckCircle2 className="w-8 h-8 text-green-500" />
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">Completed</p>
+                    <p className="text-2xl font-bold text-gray-900">{completedTasks.length}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Kanban Task Board */}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* To Do Column */}
+            <div className="bg-white rounded-lg shadow-sm border">
+              <div className="p-4 border-b bg-blue-50">
+                <div className="flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-blue-600" />
+                  <h3 className="font-semibold text-blue-900">To Do</h3>
+                  <Badge variant="secondary" className="ml-auto">{todoTasks.length}</Badge>
+                </div>
+              </div>
+              <SortableContext items={todoTasks.map(task => task.id.toString())} strategy={verticalListSortingStrategy}>
+                <DroppableZone id="todo-zone">
+                  {todoTasks.map(task => (
+                    <SortableTaskCard 
+                      key={task.id} 
+                      task={task} 
+                      onTaskClick={setSelectedTask}
+                    />
+                  ))}
+                  {todoTasks.length === 0 && (
+                    <div className="flex items-center justify-center h-32 text-gray-400 border-2 border-dashed border-gray-200 rounded-lg">
+                      <div className="text-center">
+                        <Clock className="w-8 h-8 mx-auto mb-2" />
+                        <p className="text-sm">Drop tasks here</p>
+                      </div>
+                    </div>
+                  )}
+                </DroppableZone>
+              </SortableContext>
+            </div>
+
+            {/* In Progress Column */}
+            <div className="bg-white rounded-lg shadow-sm border">
+              <div className="p-4 border-b bg-yellow-50">
+                <div className="flex items-center gap-2">
+                  <Play className="w-5 h-5 text-yellow-600" />
+                  <h3 className="font-semibold text-yellow-900">In Progress</h3>
+                  <Badge variant="secondary" className="ml-auto">{inProgressTasks.length}</Badge>
+                </div>
+              </div>
+              <SortableContext items={inProgressTasks.map(task => task.id.toString())} strategy={verticalListSortingStrategy}>
+                <DroppableZone id="in_progress-zone">
+                  {inProgressTasks.map(task => (
+                    <SortableTaskCard 
+                      key={task.id} 
+                      task={task} 
+                      onTaskClick={setSelectedTask}
+                    />
+                  ))}
+                  {inProgressTasks.length === 0 && (
+                    <div className="flex items-center justify-center h-32 text-gray-400 border-2 border-dashed border-gray-200 rounded-lg">
+                      <div className="text-center">
+                        <Play className="w-8 h-8 mx-auto mb-2" />
+                        <p className="text-sm">Drop tasks here</p>
+                      </div>
+                    </div>
+                  )}
+                </DroppableZone>
+              </SortableContext>
+            </div>
+
+            {/* Review Column */}
+            <div className="bg-white rounded-lg shadow-sm border">
+              <div className="p-4 border-b bg-orange-50">
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="w-5 h-5 text-orange-600" />
+                  <h3 className="font-semibold text-orange-900">Review</h3>
+                  <Badge variant="secondary" className="ml-auto">{reviewTasks.length}</Badge>
+                </div>
+              </div>
+              <SortableContext items={reviewTasks.map(task => task.id.toString())} strategy={verticalListSortingStrategy}>
+                <DroppableZone id="review-zone">
+                  {reviewTasks.map(task => (
+                    <SortableTaskCard 
+                      key={task.id} 
+                      task={task} 
+                      onTaskClick={setSelectedTask}
+                    />
+                  ))}
+                  {reviewTasks.length === 0 && (
+                    <div className="flex items-center justify-center h-32 text-gray-400 border-2 border-dashed border-gray-200 rounded-lg">
+                      <div className="text-center">
+                        <AlertCircle className="w-8 h-8 mx-auto mb-2" />
+                        <p className="text-sm">Drop tasks here</p>
+                      </div>
+                    </div>
+                  )}
+                </DroppableZone>
+              </SortableContext>
+            </div>
+
+            {/* Completed Column */}
+            <div className="bg-white rounded-lg shadow-sm border">
+              <div className="p-4 border-b bg-green-50">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-green-600" />
+                  <h3 className="font-semibold text-green-900">Completed</h3>
+                  <Badge variant="secondary" className="ml-auto">{completedTasks.length}</Badge>
+                </div>
+              </div>
+              <SortableContext items={completedTasks.map(task => task.id.toString())} strategy={verticalListSortingStrategy}>
+                <DroppableZone id="completed-zone">
+                  {completedTasks.map(task => (
+                    <SortableTaskCard 
+                      key={task.id} 
+                      task={task} 
+                      onTaskClick={setSelectedTask}
+                    />
+                  ))}
+                  {completedTasks.length === 0 && (
+                    <div className="flex items-center justify-center h-32 text-gray-400 border-2 border-dashed border-gray-200 rounded-lg">
+                      <div className="text-center">
+                        <CheckCircle2 className="w-8 h-8 mx-auto mb-2" />
+                        <p className="text-sm">Drop tasks here</p>
+                      </div>
+                    </div>
+                  )}
+                </DroppableZone>
+              </SortableContext>
+            </div>
+          </div>
+
+          {/* Drag Overlay */}
+          <DragOverlay>
+            {activeTask ? (
+              <div className="opacity-90">
+                <SortableTaskCard task={activeTask} onTaskClick={() => {}} />
+              </div>
+            ) : null}
+          </DragOverlay>
+
+          {/* Task Detail Modal */}
+          {selectedTask && (
+            <Dialog open={!!selectedTask} onOpenChange={() => setSelectedTask(null)}>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <Target className="w-5 h-5" />
+                    {selectedTask.label}
+                  </DialogTitle>
+                </DialogHeader>
+                
+                <div className="space-y-6">
+                  {/* Task Info */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Menu ID</label>
+                      <p className="text-sm text-gray-900">{selectedTask.menuId}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Status</label>
+                      <Badge className={getStatusColor(selectedTask.status)}>
+                        {selectedTask.status || 'To Do'}
+                      </Badge>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Priority</label>
+                      <Badge className={getPriorityColor(selectedTask.priority)}>
+                        {selectedTask.priority || 'Medium'}
+                      </Badge>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Created</label>
+                      <p className="text-sm text-gray-900">
+                        {new Date(selectedTask.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  {selectedTask.description && (
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Description</label>
+                      <p className="text-sm text-gray-900 mt-1">{selectedTask.description}</p>
+                    </div>
+                  )}
+
+                  {/* Submit Result Section */}
+                  {(selectedTask.status === 'in_progress' || selectedTask.status === 'todo') && (
+                    <div className="bg-blue-50 p-4 rounded-lg space-y-4">
+                      <h4 className="font-medium text-blue-900 flex items-center gap-2">
+                        <Upload className="w-4 h-4" />
+                        Submit Work Result
+                      </h4>
+                      
+                      <div>
+                        <label className="text-sm font-medium text-gray-700">Result Description</label>
+                        <Textarea
+                          value={resultDescription}
+                          onChange={(e) => setResultDescription(e.target.value)}
+                          placeholder="Describe your work and results..."
+                          className="mt-1"
+                          rows={4}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-sm font-medium text-gray-700">Attach File (Optional)</label>
+                        <Input
+                          type="file"
+                          onChange={(e) => setResultFile(e.target.files?.[0] || null)}
+                          className="mt-1"
+                          accept=".pdf,.doc,.docx,.txt,.zip,.png,.jpg,.jpeg"
+                        />
+                        {resultFile && (
+                          <p className="text-xs text-gray-600 mt-1">
+                            Selected: {resultFile.name}
+                          </p>
+                        )}
+                      </div>
+
+                      <Button
+                        onClick={() => submitResultMutation.mutate({
+                          taskId: selectedTask.id,
+                          resultDescription,
+                          file: resultFile || undefined
+                        })}
+                        disabled={!resultDescription.trim() || submitResultMutation.isPending}
+                        className="w-full"
+                      >
+                        <FileText className="w-4 h-4 mr-2" />
+                        Submit for Review
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* Quick Status Update */}
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Quick Status Update</label>
+                      <div className="grid grid-cols-2 gap-2 mt-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => updateTaskMutation.mutate({ 
+                            taskId: selectedTask.id, 
+                            status: 'in_progress' 
+                          })}
+                          className="flex items-center gap-1"
+                        >
+                          <Play className="w-3 h-3" />
+                          Start Work
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => updateTaskMutation.mutate({ 
+                            taskId: selectedTask.id, 
+                            status: 'review' 
+                          })}
+                          className="flex items-center gap-1"
+                        >
+                          <AlertCircle className="w-3 h-3" />
+                          Send to Review
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Update Priority</label>
+                      <Select 
+                        value={selectedTask.priority || 'medium'} 
+                        onValueChange={(value: 'low' | 'medium' | 'high') => {
+                          updateTaskMutation.mutate({ 
+                            taskId: selectedTask.id, 
+                            priority: value 
+                          });
+                        }}
+                      >
+                        <SelectTrigger className="mt-1">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="low">Low Priority</SelectItem>
+                          <SelectItem value="medium">Medium Priority</SelectItem>
+                          <SelectItem value="high">High Priority</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Add Comment */}
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Add Comment</label>
+                      <Textarea
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        placeholder="Add a comment about this task..."
+                        className="mt-1"
+                        rows={3}
+                      />
+                      <Button 
+                        onClick={() => updateTaskMutation.mutate({ 
+                          taskId: selectedTask.id, 
+                          comment 
+                        })}
+                        className="mt-2"
+                        disabled={!comment.trim() || updateTaskMutation.isPending}
+                        variant="outline"
+                        size="sm"
+                      >
+                        <MessageSquare className="w-4 h-4 mr-2" />
+                        Add Comment
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+          )}
+        </div>
+      </div>
+    </DndContext>
+  );
 }
