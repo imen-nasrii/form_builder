@@ -96,16 +96,22 @@ export default function AdminManagement() {
   // Assign program mutation
   const assignProgramMutation = useMutation({
     mutationFn: async ({ programId, userId }: { programId: number; userId: string }) => {
-      return apiRequest(`/api/forms/assign`, {
+      console.log('Mutation called with:', { programId, userId });
+      const response = await apiRequest(`/api/forms/assign`, {
         method: 'POST',
         body: JSON.stringify({ programId, userId })
       });
+      console.log('Assignment response:', response);
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/forms'] });
       queryClient.invalidateQueries({ queryKey: ['/api/notifications'] });
       setSelectedUser('');
       setSelectedProgram(null);
+    },
+    onError: (error) => {
+      console.error('Assignment error:', error);
     }
   });
 
@@ -119,6 +125,27 @@ export default function AdminManagement() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/notifications'] });
+    }
+  });
+
+  // Add user mutation
+  const addUserMutation = useMutation({
+    mutationFn: async (userData: { email: string; password: string; role: 'admin' | 'user' }) => {
+      console.log('Adding user:', userData);
+      return apiRequest('/api/admin/users', {
+        method: 'POST',
+        body: JSON.stringify(userData)
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
+      setShowAddUser(false);
+      setNewUserEmail('');
+      setNewUserPassword('');
+      setNewUserRole('user');
+    },
+    onError: (error) => {
+      console.error('Add user error:', error);
     }
   });
 
@@ -136,12 +163,27 @@ export default function AdminManagement() {
     }
   });
 
+  const handleAddUser = () => {
+    console.log('handleAddUser called:', { newUserEmail, newUserPassword, newUserRole });
+    if (newUserEmail && newUserPassword) {
+      addUserMutation.mutate({
+        email: newUserEmail,
+        password: newUserPassword,
+        role: newUserRole
+      });
+    }
+  };
+
   const handleAssignProgram = () => {
+    console.log('handleAssignProgram called', { selectedUser, selectedProgram });
     if (selectedUser && selectedProgram) {
+      console.log('Executing assignment mutation...');
       assignProgramMutation.mutate({ 
         programId: selectedProgram, 
         userId: selectedUser 
       });
+    } else {
+      console.log('Missing data for assignment');
     }
   };
 
@@ -511,6 +553,76 @@ export default function AdminManagement() {
             </div>
           </TabsContent>
         </Tabs>
+
+        {/* Add User Modal */}
+        {showAddUser && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <Card className="w-96">
+              <CardHeader>
+                <CardTitle>Add New User</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Email</label>
+                  <input
+                    type="email"
+                    value={newUserEmail}
+                    onChange={(e) => setNewUserEmail(e.target.value)}
+                    className="w-full p-2 border rounded-lg"
+                    placeholder="user@example.com"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Password</label>
+                  <input
+                    type="password"
+                    value={newUserPassword}
+                    onChange={(e) => setNewUserPassword(e.target.value)}
+                    className="w-full p-2 border rounded-lg"
+                    placeholder="Enter password"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Role</label>
+                  <Select value={newUserRole} onValueChange={(value: 'admin' | 'user') => setNewUserRole(value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="user">User</SelectItem>
+                      <SelectItem value="admin">Admin</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={handleAddUser}
+                    disabled={!newUserEmail || !newUserPassword || addUserMutation.isPending}
+                    className="flex-1"
+                  >
+                    {addUserMutation.isPending ? 'Adding...' : 'Add User'}
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      console.log('Cancel button clicked');
+                      setShowAddUser(false);
+                    }}
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+
+                {addUserMutation.isSuccess && (
+                  <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+                    User added successfully!
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );
