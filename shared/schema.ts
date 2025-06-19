@@ -103,6 +103,21 @@ export const passwordResetTokens = pgTable("password_reset_tokens", {
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
 
+// Notifications table for program assignments and updates
+export const notifications = pgTable("notifications", {
+  id: varchar("id").primaryKey().notNull(),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  programId: varchar("program_id"),
+  programLabel: varchar("program_label"),
+  type: varchar("type").notNull(), // 'assignment', 'completion', 'reminder'
+  message: text("message").notNull(),
+  read: boolean("read").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export type Notification = typeof notifications.$inferSelect;
+export type InsertNotification = typeof notifications.$inferInsert;
+
 export type InsertForm = typeof forms.$inferInsert;
 export type Form = typeof forms.$inferSelect;
 
