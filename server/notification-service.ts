@@ -75,6 +75,18 @@ export class NotificationService {
     }
   }
 
+  // Create notification for task status changes (alias for compatibility)
+  async notifyTaskStatusChange(
+    assignedUserId: string,
+    createdByUserId: string,
+    programId: number,
+    programLabel: string,
+    newStatus: string
+  ) {
+    // Use the existing notifyStatusChange method
+    await this.notifyStatusChange(assignedUserId, programId, programLabel, '', newStatus);
+  }
+
   // Create notification for status changes
   async notifyStatusChange(
     userId: string,

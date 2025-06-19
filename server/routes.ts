@@ -164,10 +164,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Create notifications for status changes
-      if (status && updatedForm.assignedTo && updatedForm.createdBy) {
+      if (status && updatedForm.assignedTo) {
         await notificationService.notifyTaskStatusChange(
           updatedForm.assignedTo,
-          updatedForm.createdBy,
+          updatedForm.createdBy || userId,
           formId,
           updatedForm.label,
           status
