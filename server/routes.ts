@@ -143,36 +143,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Assign form to user (admin only)
+  // Assign form to user route (admin only)
+  app.patch('/api/forms/:id/assign', requireAuth, requireAdmin, async (req: any, res) => {
+    try {
+      const formId = parseInt(req.params.id);
+      const { assignedTo } = req.body;
+      const adminUserId = req.user.id;
+      
+      console.log('Assigning form:', { formId, assignedTo, adminUserId });
+      
+      await storage.assignFormToUser(formId, assignedTo);
+      
+      // Create comprehensive notifications for assignment
+      const form = await storage.getForm(formId);
+      if (form && assignedTo) {
+        await notificationService.notifyProgramAssignment(
+          assignedTo,
+          adminUserId,
+          formId,
+          form.label
+        );
+      }
+      
+      res.json({ message: "Form assigned successfully" });
+    } catch (error) {
+      console.error("Error assigning form:", error);
+      res.status(500).json({ message: "Failed to assign form" });
+    }
+  });
+
+  // Legacy route for backward compatibility
   app.post('/api/forms/assign', requireAdmin, async (req: any, res) => {
     try {
       const { programId, userId } = req.body;
+      const adminUserId = req.user.id;
       
-      console.log('Assign form request:', { programId, userId });
+      console.log('Legacy assign form request:', { programId, userId });
 
       if (!programId || !userId) {
-        console.log('Missing fields - programId:', programId, 'userId:', userId);
         return res.status(400).json({ message: 'Missing required fields' });
       }
 
-      // Update form assignment
       await storage.assignFormToUser(programId, userId);
       
-      // Get form details for notification
       const form = await storage.getForm(programId);
       if (form) {
-        // Create notification for assigned user
-        await storage.createNotification({
-          userId: userId,
-          programId: programId,
-          programLabel: form.label,
-          message: `You have been assigned to work on program "${form.label}"`,
-          type: 'assignment'
-        });
-        console.log(`Notification created for user ${userId} about form ${programId}`);
+        await notificationService.notifyProgramAssignment(
+          userId,
+          adminUserId,
+          programId,
+          form.label
+        );
       }
-      
-      console.log(`Form ${programId} assigned to user ${userId} successfully`);
 
       res.json({ 
         message: 'Form assigned successfully',
