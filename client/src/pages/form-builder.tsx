@@ -23,7 +23,7 @@ import ProfessionalFormComponents from "@/components/professional-form-component
 import ComponentImportPanel from "@/components/form-builder/component-import-panel";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { Save, Eye, Download, Upload, Code2, FileText, Settings, Copy, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Database } from "lucide-react";
+import { Save, Eye, Download, Upload, Code2, FileText, Settings, Copy, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Database, Lightbulb, Sparkles } from "lucide-react";
 import type { Form } from "@shared/schema";
 import type { FormField } from "@/lib/form-types";
 
@@ -48,16 +48,25 @@ export default function FormBuilder() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [leftPanelOpen, setLeftPanelOpen] = useState(true);
   const [rightPanelOpen, setRightPanelOpen] = useState(true);
+  const [showIntelligentSuggestions, setShowIntelligentSuggestions] = useState(false);
 
 
-  // Generate live JSON preview
+  // Generate professional JSON structure matching provided examples
   const generateLiveJson = () => {
     return {
-      MenuID: formData.menuId || "NEW_FORM",
-      FormWidth: formData.formWidth,
-      Layout: formData.layout,
-      Label: formData.label || "New Form",
-      Fields: formData.fields,
+      MenuID: formData.menuId || "PROGRAM",
+      Label: formData.label || "PROGRAM",
+      Layout: formData.layout || "PROCESS", 
+      FormWidth: formData.formWidth || "600px",
+      Fields: formData.fields.map((field, index) => {
+        // Convert to professional field structure
+        return {
+          Id: field.Id || field.id || `Field_${index + 1}`,
+          label: field.label || `FIELD_${index + 1}`,
+          type: field.type || "TEXT",
+          ...field
+        };
+      }),
       Actions: formData.actions.length > 0 ? formData.actions : [
         {
           ID: "PROCESS",
@@ -65,7 +74,7 @@ export default function FormBuilder() {
           MethodToInvoke: "ExecuteProcess"
         }
       ],
-      Validations: formData.validations
+      Validations: formData.validations || []
     };
   };
 
@@ -209,6 +218,28 @@ export default function FormBuilder() {
     }));
   };
 
+  const handleAddIntelligentField = (fieldConfig: any) => {
+    const newField = {
+      ...fieldConfig,
+      id: `field_${Date.now()}`,
+    };
+    
+    setFormData(prev => ({
+      ...prev,
+      fields: [...prev.fields, newField]
+    }));
+    
+    setShowIntelligentSuggestions(false);
+    toast({
+      title: "Field Added",
+      description: `${fieldConfig.label || fieldConfig.type} field added successfully`,
+    });
+  };
+
+  const handleDragStart = (component: any) => {
+    console.log('Professional component drag started:', component);
+  };
+
   const updateField = (fieldId: string, updates: Partial<FormField>) => {
     setFormData(prev => ({
       ...prev,
@@ -270,6 +301,16 @@ export default function FormBuilder() {
                 {saveFormMutation.isPending ? "Saving..." : "Sauvegarder"}
               </Button>
               
+              <Button
+                variant={showIntelligentSuggestions ? "default" : "outline"}
+                size="sm"
+                onClick={() => setShowIntelligentSuggestions(!showIntelligentSuggestions)}
+                className="text-black dark:text-white border-gray-300 dark:border-gray-600"
+              >
+                <Lightbulb className="w-4 h-4 mr-2 text-yellow-500" />
+                Smart Suggestions
+              </Button>
+
               <Button 
                 size="sm" 
                 className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
@@ -331,7 +372,20 @@ export default function FormBuilder() {
               {/* Panel Content */}
               {leftPanelOpen && (
                 <div className="flex-1 p-4 overflow-auto">
-                  <CollapsibleComponentPalette onAddField={addField} />
+                  {showIntelligentSuggestions && (
+                    <div className="mb-4">
+                      <IntelligentFieldSuggestions 
+                        onAddField={handleAddIntelligentField}
+                        existingFields={formData.fields}
+                      />
+                    </div>
+                  )}
+                  
+                  <ProfessionalFormComponents onDragStart={handleDragStart} />
+                  
+                  <div className="mt-4">
+                    <CollapsibleComponentPalette onAddField={addField} />
+                  </div>
                 </div>
               )}
             </div>

@@ -28,30 +28,30 @@ const PROFESSIONAL_COMPONENTS = [
     description: 'Data grid lookup with search',
     category: 'Lookup',
     template: {
-      Id: 'GridLookup',
-      label: 'LOOKUP',
+      Id: 'FundID',
+      label: 'FUND',
       type: 'GRIDLKP',
       required: true,
       Inline: true,
       Width: '32',
-      KeyColumn: 'id',
+      KeyColumn: 'fund',
       ItemInfo: {
-        MainProperty: 'id',
-        DescProperty: 'description',
+        MainProperty: 'fund',
+        DescProperty: 'acnam1',
         ShowDescription: true
       },
       LoadDataInfo: {
-        DataModel: 'DataSource',
+        DataModel: 'Fndmas',
         ColumnsDefinition: [
           {
-            DataField: 'id',
-            Caption: 'ID',
+            DataField: 'fund',
+            Caption: 'Fund ID',
             DataType: 'STRING',
             Visible: true
           },
           {
-            DataField: 'description',
-            Caption: 'Description',
+            DataField: 'acnam1',
+            Caption: 'Fund Name',
             DataType: 'STRING',
             Visible: true
           }
@@ -68,28 +68,28 @@ const PROFESSIONAL_COMPONENTS = [
     description: 'Dropdown list lookup',
     category: 'Lookup',
     template: {
-      Id: 'ListLookup',
-      label: 'LIST',
+      Id: 'SecCat',
+      label: 'SECCAT',
       type: 'LSTLKP',
       Inline: true,
       Width: '32',
-      KeyColumn: 'code',
+      KeyColumn: 'seccat',
       LoadDataInfo: {
-        DataModel: 'CodeList',
+        DataModel: 'Seccat',
         ColumnsDefinition: [
           {
-            DataField: 'code',
+            DataField: 'seccat',
             DataType: 'STRING'
           },
           {
-            DataField: 'description',
+            DataField: 'descr',
             DataType: 'STRING'
           }
         ]
       },
       ItemInfo: {
-        MainProperty: 'code',
-        DescProperty: 'description',
+        MainProperty: 'seccat',
+        DescProperty: 'descr',
         ShowDescription: true
       }
     }
@@ -103,8 +103,8 @@ const PROFESSIONAL_COMPONENTS = [
     description: 'Date selection with validation',
     category: 'Date & Time',
     template: {
-      Id: 'DatePicker',
-      label: 'DATE',
+      Id: 'TradeDate',
+      label: 'TRADEDATE',
       type: 'DATEPKR',
       Inline: true,
       Width: '32',
@@ -116,7 +116,7 @@ const PROFESSIONAL_COMPONENTS = [
           ConditionExpression: {
             Conditions: [
               {
-                RightField: 'DatePicker',
+                RightField: 'TradeDate',
                 Operator: 'ISN',
                 ValueType: 'DATE'
               }

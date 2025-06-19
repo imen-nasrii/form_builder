@@ -23,10 +23,10 @@ interface IntelligentFieldSuggestionsProps {
 const SMART_FIELD_SUGGESTIONS: FieldSuggestion[] = [
   {
     id: 'fund-lookup',
-    label: 'Fund Lookup',
+    label: 'Fund Lookup (GRIDLKP)',
     type: 'GRIDLKP',
-    description: 'Fund ID selector with description lookup',
-    commonUseCase: 'Financial applications requiring fund selection',
+    description: 'Financial fund ID selector with fund name lookup',
+    commonUseCase: 'Trading applications, fund management, portfolio tracking',
     category: 'Financial',
     example: {
       Id: 'FundID',
@@ -62,15 +62,15 @@ const SMART_FIELD_SUGGESTIONS: FieldSuggestion[] = [
   },
   {
     id: 'ticker-lookup',
-    label: 'Ticker Lookup',
+    label: 'Ticker Lookup (GRIDLKP)',
     type: 'GRIDLKP',
-    description: 'Security ticker selector with details',
-    commonUseCase: 'Trading and portfolio management',
+    description: 'Security ticker selector with description and CUSIP',
+    commonUseCase: 'Trading systems, security selection, portfolio management',
     category: 'Financial',
     example: {
       Id: 'Ticker',
-      Label: 'Ticker',
-      Type: 'GRIDLKP',
+      label: 'TKR',
+      type: 'GRIDLKP',
       required: true,
       Inline: true,
       Width: '32',
@@ -94,9 +94,48 @@ const SMART_FIELD_SUGGESTIONS: FieldSuggestion[] = [
             Caption: 'Description',
             DataType: 'STRING',
             Visible: true
+          },
+          {
+            DataField: 'cusip',
+            Caption: 'CUSIP',
+            DataType: 'STRING'
           }
         ]
       }
+    }
+  },
+  {
+    id: 'broker-lookup',
+    label: 'Broker Lookup (GRIDLKP)',
+    type: 'GRIDLKP',
+    description: 'Broker selection with firm details',
+    commonUseCase: 'Trade execution, broker assignment, commission tracking',
+    category: 'Financial',
+    example: {
+      Id: 'Broker',
+      label: 'BROKER',
+      type: 'GRIDLKP',
+      required: true,
+      EntitykeyField: 'broker',
+      Entity: 'Broker',
+      endpoint: 'AllBrokers',
+      ColumnDefinitions: [
+        {
+          DataField: 'name',
+          Caption: 'Broker Name',
+          DataType: 'STRING'
+        },
+        {
+          DataField: 'broker',
+          Caption: 'Broker ID',
+          DataType: 'STRING'
+        },
+        {
+          DataField: 'firm',
+          Caption: 'Firm Name',
+          DataType: 'STRING'
+        }
+      ]
     }
   },
   {
