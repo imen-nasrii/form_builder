@@ -169,11 +169,7 @@ export default function AdminManagement() {
           </div>
         </div>
 
-        {/* Real-time Statistics Dashboard */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">System Overview</h2>
-          <RealTimeStats />
-        </div>
+
 
         <Tabs defaultValue="overview" className="w-full">
           <TabsList className="grid w-full grid-cols-5">

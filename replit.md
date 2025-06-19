@@ -127,3 +127,8 @@ System Requirements: Admin users cannot access Construction Zone (read-only mode
 ✓ Form cards now display creator's actual name/email instead of user ID (June 18, 2025)
 ✓ Removed "Dashboard" word and implemented functional search with filtering capabilities (June 18, 2025)
 ✓ Removed Guide button for cleaner interface design (June 18, 2025)
+✓ System Overview section removed from admin panel per user request (June 19, 2025)
+✓ Created Jira-style task board for users to manage assigned programs (June 19, 2025)
+✓ Added status and priority fields to programs database schema (June 19, 2025)
+✓ Implemented Kanban board with To Do, In Progress, Review, and Completed columns (June 19, 2025)
+✓ Users can update task status, priority, and add comments on their assigned programs (June 19, 2025)
