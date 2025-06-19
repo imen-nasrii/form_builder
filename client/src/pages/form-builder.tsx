@@ -143,6 +143,8 @@ export default function FormBuilder() {
   }, [form]);
 
   const handleSave = () => {
+    console.log('Saving form with current state:', formData);
+    console.log('Current fields count:', formData.fields?.length || 0);
     saveFormMutation.mutate(formData);
   };
 
@@ -212,10 +214,15 @@ export default function FormBuilder() {
   };
 
   const addField = (field: FormField) => {
-    setFormData(prev => ({
-      ...prev,
-      fields: [...prev.fields, field]
-    }));
+    console.log('Adding field:', field);
+    setFormData(prev => {
+      const newFields = [...prev.fields, field];
+      console.log('New fields array:', newFields);
+      return {
+        ...prev,
+        fields: newFields
+      };
+    });
   };
 
   const handleAddIntelligentField = (fieldConfig: any) => {
@@ -241,12 +248,17 @@ export default function FormBuilder() {
   };
 
   const updateField = (fieldId: string, updates: Partial<FormField>) => {
-    setFormData(prev => ({
-      ...prev,
-      fields: prev.fields.map(field => 
+    console.log('Updating field:', fieldId, updates);
+    setFormData(prev => {
+      const updatedFields = prev.fields.map(field => 
         field.Id === fieldId ? { ...field, ...updates } : field
-      )
-    }));
+      );
+      console.log('Updated fields array:', updatedFields);
+      return {
+        ...prev,
+        fields: updatedFields
+      };
+    });
   };
 
   const removeField = (fieldId: string) => {
