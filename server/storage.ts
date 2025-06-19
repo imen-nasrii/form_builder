@@ -255,14 +255,29 @@ export class DatabaseStorage implements IStorage {
   // Notification operations
 
 
-  async getNotifications(userId?: string): Promise<Notification[]> {
-    if (userId) {
-      return await db.select().from(notifications)
-        .where(eq(notifications.userId, userId))
-        .orderBy(desc(notifications.createdAt));
-    }
+  async getUserNotifications(userId: string, limit: number = 50, offset: number = 0): Promise<Notification[]> {
+    return await db.select().from(notifications)
+      .where(eq(notifications.userId, userId))
+      .orderBy(desc(notifications.createdAt))
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async getAllNotifications(): Promise<Notification[]> {
     return await db.select().from(notifications)
       .orderBy(desc(notifications.createdAt));
+  }
+
+  async getUnreadNotificationCount(userId: string): Promise<number> {
+    const result = await db.select({ count: sql<number>`count(*)` }).from(notifications)
+      .where(and(eq(notifications.userId, userId), eq(notifications.read, false)));
+    return result[0]?.count || 0;
+  }
+
+  async markAllNotificationsAsRead(userId: string): Promise<void> {
+    await db.update(notifications)
+      .set({ read: true, readAt: new Date() })
+      .where(and(eq(notifications.userId, userId), eq(notifications.read, false)));
   }
 
   async markNotificationAsRead(notificationId: number, userId: string): Promise<boolean> {
