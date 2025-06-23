@@ -107,15 +107,37 @@ export default function Navigation() {
           </Link>
 
           {user?.role === 'admin' && (
-            <Link href="/ai-assistant">
-              <button className={`px-4 py-2 rounded-lg transition-all ${
-                isActive("/ai-assistant") 
-                  ? "bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-700 dark:text-blue-300 font-medium" 
-                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
-              }`}>
-                🤖 AI Assistant
-              </button>
-            </Link>
+            <>
+              <Link href="/ai-assistant">
+                <button className={`px-4 py-2 rounded-lg transition-all ${
+                  isActive("/ai-assistant") 
+                    ? "bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-700 dark:text-blue-300 font-medium" 
+                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+                }`}>
+                  🤖 AI Assistant
+                </button>
+              </Link>
+              
+              <Link href="/component-library">
+                <button className={`px-4 py-2 rounded-lg transition-all ${
+                  isActive("/component-library") 
+                    ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-medium" 
+                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+                }`}>
+                  📦 Composants
+                </button>
+              </Link>
+              
+              <Link href="/import-export">
+                <button className={`px-4 py-2 rounded-lg transition-all ${
+                  isActive("/import-export") 
+                    ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-medium" 
+                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+                }`}>
+                  📥📤 Import/Export
+                </button>
+              </Link>
+            </>
           )}
           
 

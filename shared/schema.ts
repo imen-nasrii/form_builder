@@ -103,6 +103,25 @@ export const passwordResetTokens = pgTable("password_reset_tokens", {
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
 
+// External components table
+export const externalComponents = pgTable("external_components", {
+  id: varchar("id").primaryKey().notNull(),
+  name: varchar("name").notNull(),
+  type: varchar("type").notNull(),
+  category: varchar("category").notNull(),
+  description: text("description"),
+  icon: varchar("icon").default("Package"),
+  properties: jsonb("properties").notNull(),
+  config: jsonb("config").notNull(),
+  createdBy: varchar("created_by").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  isActive: boolean("is_active").default(true),
+});
+
+export type ExternalComponent = typeof externalComponents.$inferSelect;
+export type InsertExternalComponent = typeof externalComponents.$inferInsert;
+
 // Notifications table for program assignments and updates
 export const notifications = pgTable("notifications", {
   id: serial("id").primaryKey(),
