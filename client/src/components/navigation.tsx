@@ -137,6 +137,16 @@ export default function Navigation() {
                   📥📤 Import/Export
                 </button>
               </Link>
+              
+              <Link href="/json-validator">
+                <button className={`px-4 py-2 rounded-lg transition-all ${
+                  isActive("/json-validator") 
+                    ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 font-medium" 
+                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+                }`}>
+                  ✅ Validateur JSON
+                </button>
+              </Link>
             </>
           )}
           

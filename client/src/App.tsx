@@ -28,6 +28,7 @@ import UserTaskBoard from "@/pages/user-task-board";
 import AIAssistant from "@/pages/ai-assistant";
 import ComponentLibrary from "@/pages/component-library";
 import ImportExport from "@/pages/import-export";
+import JSONValidator from "@/pages/json-validator";
 import Navigation from "@/components/navigation";
 
 function Router() {
@@ -75,6 +76,7 @@ function Router() {
       <Route path="/ai-assistant" component={AIAssistant} />
       <Route path="/component-library" component={ComponentLibrary} />
       <Route path="/import-export" component={ImportExport} />
+      <Route path="/json-validator" component={JSONValidator} />
       <Route path="/analytics" component={Analytics} />
       <Route path="/api-integration" component={ApiIntegration} />
       <Route path="/setup-2fa" component={Setup2FA} />
