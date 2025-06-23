@@ -7,6 +7,7 @@ import { insertFormSchema, insertTemplateSchema, insertNotificationSchema } from
 import { notificationService } from "./notification-service";
 import type { User } from "@shared/schema";
 import { apiService, type ApiDataSource } from "./services/apiService";
+import { nanoid } from "nanoid";
 import crypto from "crypto";
 import fs from "fs";
 import path from "path";
@@ -1197,7 +1198,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // External Components routes
-  app.get('/api/external-components', isAuthenticated, async (req, res) => {
+  app.get('/api/external-components', requireAuth, async (req, res) => {
     try {
       const components = await storage.getExternalComponents();
       res.json(components);
@@ -1207,9 +1208,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/external-components', isAuthenticated, async (req, res) => {
+  app.post('/api/external-components', requireAuth, async (req, res) => {
     try {
-      const userId = req.user?.claims?.sub;
+      const userId = req.user?.id;
       const componentData = {
         ...req.body,
         id: nanoid(),
@@ -1224,7 +1225,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete('/api/external-components/:id', isAuthenticated, async (req, res) => {
+  app.delete('/api/external-components/:id', requireAuth, async (req, res) => {
     try {
       await storage.deleteExternalComponent(req.params.id);
       res.json({ success: true });
@@ -1235,7 +1236,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Import/Export routes
-  app.post('/api/export/programs', isAuthenticated, async (req, res) => {
+  app.post('/api/export/programs', requireAuth, async (req, res) => {
     try {
       const { programIds, exportOptions } = req.body;
       const programs = await storage.exportPrograms(programIds);
@@ -1257,7 +1258,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/import/programs', isAuthenticated, async (req, res) => {
+  app.post('/api/import/programs', requireAuth, async (req, res) => {
     try {
       const importData = req.body;
       let programsToImport = [];
@@ -1284,7 +1285,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/export/templates', isAuthenticated, async (req, res) => {
+  app.get('/api/export/templates', requireAuth, async (req, res) => {
     try {
       const templates = await storage.getFormTemplates();
       res.json({
