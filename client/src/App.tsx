@@ -26,6 +26,8 @@ import ApiIntegration from "@/pages/api-integration";
 import AdminManagement from "@/pages/admin-management";
 import UserTaskBoard from "@/pages/user-task-board";
 import AIAssistant from "@/pages/ai-assistant";
+import ComponentLibrary from "@/pages/component-library";
+import ImportExport from "@/pages/import-export";
 import Navigation from "@/components/navigation";
 
 function Router() {
@@ -71,6 +73,8 @@ function Router() {
       <Route path="/admin-management" component={AdminManagement} />
       <Route path="/task-board" component={UserTaskBoard} />
       <Route path="/ai-assistant" component={AIAssistant} />
+      <Route path="/component-library" component={ComponentLibrary} />
+      <Route path="/import-export" component={ImportExport} />
       <Route path="/analytics" component={Analytics} />
       <Route path="/api-integration" component={ApiIntegration} />
       <Route path="/setup-2fa" component={Setup2FA} />

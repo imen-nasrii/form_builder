@@ -1196,6 +1196,107 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // External Components routes
+  app.get('/api/external-components', isAuthenticated, async (req, res) => {
+    try {
+      const components = await storage.getExternalComponents();
+      res.json(components);
+    } catch (error) {
+      console.error("Error fetching external components:", error);
+      res.status(500).json({ message: "Failed to fetch external components" });
+    }
+  });
+
+  app.post('/api/external-components', isAuthenticated, async (req, res) => {
+    try {
+      const userId = req.user?.claims?.sub;
+      const componentData = {
+        ...req.body,
+        id: nanoid(),
+        createdBy: userId,
+      };
+      
+      const component = await storage.createExternalComponent(componentData);
+      res.json(component);
+    } catch (error) {
+      console.error("Error creating external component:", error);
+      res.status(500).json({ message: "Failed to create external component" });
+    }
+  });
+
+  app.delete('/api/external-components/:id', isAuthenticated, async (req, res) => {
+    try {
+      await storage.deleteExternalComponent(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting external component:", error);
+      res.status(500).json({ message: "Failed to delete external component" });
+    }
+  });
+
+  // Import/Export routes
+  app.post('/api/export/programs', isAuthenticated, async (req, res) => {
+    try {
+      const { programIds, exportOptions } = req.body;
+      const programs = await storage.exportPrograms(programIds);
+      
+      let exportData = programs;
+      
+      if (!exportOptions.includeValidations) {
+        exportData = exportData.map(p => ({ ...p, validations: [] }));
+      }
+      
+      res.json({
+        exported_at: new Date().toISOString(),
+        export_options: exportOptions,
+        programs: exportData
+      });
+    } catch (error) {
+      console.error("Error exporting programs:", error);
+      res.status(500).json({ message: "Failed to export programs" });
+    }
+  });
+
+  app.post('/api/import/programs', isAuthenticated, async (req, res) => {
+    try {
+      const importData = req.body;
+      let programsToImport = [];
+      
+      if (importData.programs) {
+        programsToImport = importData.programs;
+      } else if (Array.isArray(importData)) {
+        programsToImport = importData;
+      } else {
+        programsToImport = [importData];
+      }
+      
+      const result = await storage.importPrograms(programsToImport);
+      
+      res.json({
+        totalPrograms: programsToImport.length,
+        importedPrograms: result.imported,
+        skippedPrograms: result.skipped,
+        errors: result.errors
+      });
+    } catch (error) {
+      console.error("Error importing programs:", error);
+      res.status(500).json({ message: "Failed to import programs" });
+    }
+  });
+
+  app.get('/api/export/templates', isAuthenticated, async (req, res) => {
+    try {
+      const templates = await storage.getFormTemplates();
+      res.json({
+        exported_at: new Date().toISOString(),
+        templates
+      });
+    } catch (error) {
+      console.error("Error exporting templates:", error);
+      res.status(500).json({ message: "Failed to export templates" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
