@@ -246,7 +246,7 @@ export default function ComponentLibrary() {
           
           <div className="flex gap-3">
             <Button onClick={() => fileInputRef.current?.click()}>
-              <Import className="w-4 h-4 mr-2" />
+              <ArrowUp className="w-4 h-4 mr-2" />
               Importer Fichier
             </Button>
             <Dialog open={isImportDialogOpen} onOpenChange={setIsImportDialogOpen}>
@@ -404,7 +404,7 @@ export default function ComponentLibrary() {
             </Dialog>
             
             <Button onClick={exportAllComponents} disabled={components.length === 0}>
-              <Export className="w-4 h-4 mr-2" />
+              <ArrowDown className="w-4 h-4 mr-2" />
               Exporter Tout
             </Button>
           </div>
