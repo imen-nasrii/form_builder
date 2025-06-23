@@ -20,6 +20,7 @@ import {
   type InsertPasswordResetToken,
   type Notification,
   type InsertNotification,
+  externalComponents,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, sql } from "drizzle-orm";
