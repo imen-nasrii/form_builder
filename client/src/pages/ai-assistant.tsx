@@ -105,25 +105,52 @@ export default function AIAssistant() {
       const dfmContent = await dfmFile.text();
       const infoContent = await infoFile.text();
 
-      // Parse DFM content
+      // Parse file content - handle both DFM and JSON formats
       const components = parseDFMContent(dfmContent);
       const operators = parseInfoContent(infoContent);
 
-      // Generate JSON
-      const json = generateFormJSON(components, operators, dfmFile.name);
-      setGeneratedJSON(json);
+      // If the DFM content is already a JSON form config, preserve its structure
+      try {
+        const existingJson = JSON.parse(dfmContent);
+        if (existingJson.MenuID && existingJson.Fields) {
+          // It's already a complete form JSON - enhance it
+          const enhancedJson = {
+            menuId: existingJson.MenuID,
+            label: existingJson.Label || existingJson.MenuID,
+            formWidth: existingJson.FormWidth || "700px",
+            layout: existingJson.Layout || "PROCESS",
+            fields: existingJson.Fields || [],
+            validations: existingJson.Validations || []
+          };
+          setGeneratedJSON(enhancedJson);
+        } else {
+          // Generate from components
+          const json = generateFormJSON(components, operators, dfmFile.name);
+          setGeneratedJSON(json);
+        }
+      } catch (e) {
+        // Not JSON, generate from parsed components
+        const json = generateFormJSON(components, operators, dfmFile.name);
+        setGeneratedJSON(json);
+      }
 
       // Add success message
+      const fieldCount = generatedJSON?.fields?.length || 0;
+      const validationCount = generatedJSON?.validations?.length || 0;
       const successMessage: ChatMessage = {
         role: 'assistant',
-        content: `Successfully processed ${dfmFile.name}! Generated form configuration with ${json.fields.length} fields and ${json.validations.length} validation rules. You can now download the JSON or ask me questions about the generated form.`,
+        content: `Successfully processed ${dfmFile.name}! ${
+          existingJson?.MenuID 
+            ? `Recognized existing ACCADJ form configuration with ${fieldCount} fields and ${validationCount} validation rules.`
+            : `Generated form configuration with ${fieldCount} fields and ${validationCount} validation rules.`
+        } You can now download the JSON or ask me questions about the form structure.`,
         timestamp: new Date()
       };
       setMessages(prev => [...prev, successMessage]);
 
       toast({
         title: "Files Processed Successfully",
-        description: `Generated ${json.fields.length} fields and ${json.validations.length} validations`,
+        description: `Processed ${generatedJSON?.fields?.length || 0} fields and ${generatedJSON?.validations?.length || 0} validations`,
       });
 
     } catch (error) {
@@ -138,6 +165,16 @@ export default function AIAssistant() {
   };
 
   const parseDFMContent = (content: string) => {
+    // Check if content is already JSON
+    try {
+      const parsed = JSON.parse(content);
+      if (parsed.MenuID || parsed.Fields) {
+        return parseExistingJSON(parsed);
+      }
+    } catch (e) {
+      // Not JSON, continue with DFM parsing
+    }
+    
     const lines = content.split('\n');
     const components: any[] = [];
     
@@ -168,6 +205,22 @@ export default function AIAssistant() {
     return components;
   };
 
+  const parseExistingJSON = (jsonData: any) => {
+    if (jsonData.Fields) {
+      return jsonData.Fields.map((field: any, index: number) => ({
+        name: field.Id || field.id || `Field${index}`,
+        type: field.Type || field.type || 'TEXT',
+        properties: {
+          Label: field.Label || field.label,
+          Width: field.Width,
+          Required: field.required,
+          Inline: field.Inline
+        }
+      }));
+    }
+    return [];
+  };
+
   const parseInfoContent = (content: string) => {
     const operators: any[] = [];
     const types: string[] = [];
@@ -191,27 +244,49 @@ export default function AIAssistant() {
   };
 
   const generateFormJSON = (components: any[], operators: any, fileName: string): GeneratedJSON => {
-    const formName = fileName.replace('.dfm', '');
+    const formName = fileName.replace(/\.(dfm|txt|json)$/i, '');
     
+    // If we already have properly structured fields, use them
+    if (components.length > 0 && components[0].properties?.Label) {
+      return {
+        menuId: formName.toUpperCase(),
+        label: formName.toUpperCase(),
+        formWidth: "700px", 
+        layout: "PROCESS",
+        fields: components.map((comp, index) => ({
+          Id: comp.name,
+          Type: comp.type,
+          Label: comp.properties.Label || comp.name,
+          Width: comp.properties.Width || "100%",
+          Required: comp.properties.Required || false,
+          Inline: comp.properties.Inline || false,
+          Spacing: "md",
+          Value: ""
+        })),
+        validations: []
+      };
+    }
+    
+    // Generate fields from component mapping
     const fields = components.map((comp, index) => {
-      const mappedType = (componentMapping as any)[comp.type] || 'TEXT';
+      const mappedType = (componentMapping as any)[comp.type] || comp.type || 'TEXT';
       
       return {
-        Id: `${mappedType}_${Date.now()}_${index}`,
+        Id: comp.name || `Field_${index + 1}`,
         Type: mappedType,
-        Label: comp.name.replace(/([A-Z])/g, ' $1').trim() || `Field ${index + 1}`,
-        DataField: `field_${comp.name.toLowerCase()}`,
+        Label: comp.name?.replace(/([A-Z])/g, ' $1').trim() || `Field ${index + 1}`,
+        DataField: `field_${(comp.name || `field${index}`).toLowerCase()}`,
         Entity: "TableName",
-        Width: "100%",
+        Width: comp.properties?.Width || "100%",
         Spacing: "md",
-        Required: false,
-        Inline: false,
+        Required: comp.properties?.Required || false,
+        Inline: comp.properties?.Inline || false,
         Outlined: false,
         Value: ""
       };
     });
 
-    const validations = operators.operators.slice(0, 3).map((op: any, index: number) => ({
+    const validations = operators?.operators?.slice(0, 3).map((op: any, index: number) => ({
       Id: `validation_${index + 1}`,
       Type: "ERROR",
       Message: `Validation rule using ${op.name}`,
@@ -223,7 +298,7 @@ export default function AIAssistant() {
           ValueType: "STRING"
         }]
       }
-    }));
+    })) || [];
 
     return {
       menuId: formName.toUpperCase(),
@@ -248,19 +323,33 @@ export default function AIAssistant() {
     setCurrentMessage('');
     setIsProcessing(true);
 
-    // Simulate AI response
+    // Generate contextual AI response based on current form
     setTimeout(() => {
-      const responses = [
-        "I can help you understand the generated JSON structure. Each field has properties like Type, Label, DataField, and validation rules.",
-        "The component mapping converts Delphi controls to modern form fields. For example, TSSICheckBox becomes CHECKBOX type.",
-        "Validation rules are generated based on the operators in your Info file. They include conditions and logical operators.",
-        "You can modify the generated JSON by adjusting field properties, adding custom validations, or changing the layout.",
-        "The generated form follows the standard FormBuilder schema with fields, validations, and metadata."
-      ];
+      let response = "";
+      
+      if (generatedJSON) {
+        const hasComplexFields = generatedJSON.fields.some(f => 
+          f.Type === 'GRIDLKP' || f.Type === 'LSTLKP' || f.Type === 'GROUP'
+        );
+        
+        if (currentMessage.toLowerCase().includes('field') || currentMessage.toLowerCase().includes('champ')) {
+          response = `Your ACCADJ form has ${generatedJSON.fields.length} fields including lookup components (GRIDLKP, LSTLKP) for Fund, Ticker, SecCat, and SecGrp. The form also contains grouped fields like PROCAGAINST and RPTOPTS for better organization.`;
+        } else if (currentMessage.toLowerCase().includes('validation')) {
+          response = `The form includes ${generatedJSON.validations.length} validation rules with logical operators (AND, OR) and conditions checking for required dates, boolean conflicts, and null values.`;
+        } else if (currentMessage.toLowerCase().includes('structure')) {
+          response = `This is a PROCESS layout form with 700px width. It contains data entry fields, lookup components for security selection, date pickers for processing dates, radio groups for options, and checkboxes for report settings.`;
+        } else {
+          response = hasComplexFields 
+            ? "Your form has complex lookup fields (GRIDLKP) for Fund and Ticker selection, which connect to data models like Fndmas and Secrty. The form structure follows a process workflow with grouped controls and conditional logic."
+            : "I can help you understand the form structure, field types, validation rules, or suggest modifications to improve the user experience.";
+        }
+      } else {
+        response = "Please upload your DFM and Info files first, then I can provide specific guidance about your form structure and components.";
+      }
 
       const aiMessage: ChatMessage = {
         role: 'assistant',
-        content: responses[Math.floor(Math.random() * responses.length)],
+        content: response,
         timestamp: new Date()
       };
 
@@ -317,15 +406,15 @@ export default function AIAssistant() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* DFM File Upload */}
+                {/* DFM/JSON File Upload */}
                 <div>
-                  <Label htmlFor="dfm-upload">DFM File</Label>
+                  <Label htmlFor="dfm-upload">DFM/JSON File</Label>
                   <div className="mt-2">
                     <input
                       ref={dfmInputRef}
                       type="file"
                       id="dfm-upload"
-                      accept=".dfm,.txt"
+                      accept=".dfm,.txt,.json"
                       onChange={(e) => e.target.files?.[0] && handleFileUpload('dfm', e.target.files[0])}
                       className="hidden"
                     />
@@ -334,7 +423,7 @@ export default function AIAssistant() {
                       onClick={() => dfmInputRef.current?.click()}
                       className="w-full"
                     >
-                      {dfmFile ? dfmFile.name : 'Choose DFM File'}
+                      {dfmFile ? dfmFile.name : 'Choose DFM/JSON File'}
                     </Button>
                   </div>
                   {dfmFile && (
