@@ -458,6 +458,95 @@ export class DatabaseStorage implements IStorage {
       throw error;
     }
   }
+  // External components operations
+  async getExternalComponents(): Promise<any[]> {
+    try {
+      return await db.select().from(externalComponents).where(eq(externalComponents.isActive, true));
+    } catch (error) {
+      console.log("External components table not available yet");
+      return [];
+    }
+  }
+
+  async createExternalComponent(component: any): Promise<any> {
+    try {
+      const [created] = await db
+        .insert(externalComponents)
+        .values(component)
+        .returning();
+      return created;
+    } catch (error) {
+      console.log("External components table not available yet");
+      throw error;
+    }
+  }
+
+  async deleteExternalComponent(id: string): Promise<void> {
+    try {
+      await db
+        .update(externalComponents)
+        .set({ isActive: false, updatedAt: new Date() })
+        .where(eq(externalComponents.id, id));
+    } catch (error) {
+      console.log("External components table not available yet");
+    }
+  }
+
+  // Import/Export operations
+  async exportPrograms(programIds: string[]): Promise<any[]> {
+    if (programIds.length === 0) {
+      return await db.select().from(forms);
+    }
+    
+    const programs = await db.select().from(forms).where(
+      sql`${forms.id}::text = ANY(${programIds})`
+    );
+    return programs;
+  }
+
+  async importPrograms(programsData: any[]): Promise<{ imported: number; skipped: number; errors: string[] }> {
+    let imported = 0;
+    let skipped = 0;
+    const errors: string[] = [];
+
+    for (const programData of programsData) {
+      try {
+        // Check if program exists
+        const existing = await db.select().from(forms).where(eq(forms.menuId, programData.menuId)).limit(1);
+        
+        if (existing.length > 0) {
+          // Update existing
+          await db
+            .update(forms)
+            .set({
+              label: programData.label,
+              fields: programData.fields,
+              validations: programData.validations,
+              updatedAt: new Date(),
+            })
+            .where(eq(forms.menuId, programData.menuId));
+          imported++;
+        } else {
+          // Create new
+          await db.insert(forms).values({
+            id: Math.floor(Math.random() * 1000000),
+            menuId: programData.menuId,
+            label: programData.label,
+            fields: programData.fields,
+            validations: programData.validations || [],
+            createdBy: programData.createdBy || 'import-system',
+            assignedTo: programData.assignedTo,
+          });
+          imported++;
+        }
+      } catch (error) {
+        errors.push(`Error importing ${programData.menuId}: ${error.message}`);
+        skipped++;
+      }
+    }
+
+    return { imported, skipped, errors };
+  }
 }
 
 export const storage = new DatabaseStorage();

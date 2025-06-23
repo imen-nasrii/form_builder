@@ -17,8 +17,8 @@ import {
   AlertCircle,
   Archive,
   FolderOpen,
-  ArrowUpFromLine,
-  ArrowDownToLine,
+  ArrowUp,
+  ArrowDown,
   Database,
   Settings
 } from 'lucide-react';
@@ -366,7 +366,7 @@ export default function ImportExport() {
                   disabled={isImporting}
                   className="w-full"
                 >
-                  <ArrowUpFromLine className="w-4 h-4 mr-2" />
+                  <ArrowUp className="w-4 h-4 mr-2" />
                   {isImporting ? 'Import en cours...' : 'Sélectionner un fichier'}
                 </Button>
                 
