@@ -107,13 +107,15 @@ export default function Navigation() {
           </Link>
 
           {user?.role === 'admin' && (
-            <button
-              onClick={() => window.open('http://localhost:8501', '_blank', 'width=1400,height=900,scrollbars=yes,resizable=yes')}
-              className="px-4 py-2 rounded-lg transition-all bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-700 dark:text-blue-300 font-medium hover:from-blue-200 hover:to-purple-200 dark:hover:from-blue-800/40 dark:hover:to-purple-800/40"
-              title="Open AI Form Assistant"
-            >
-              🤖 AI Assistant
-            </button>
+            <Link href="/ai-assistant">
+              <button className={`px-4 py-2 rounded-lg transition-all ${
+                isActive("/ai-assistant") 
+                  ? "bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-700 dark:text-blue-300 font-medium" 
+                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+              }`}>
+                🤖 AI Assistant
+              </button>
+            </Link>
           )}
           
 
@@ -121,20 +123,7 @@ export default function Navigation() {
 
         {/* User Progress & Profile */}
         <div className="flex items-center gap-4">
-          {/* AI Assistant for Admins - Quick Access */}
-          {user?.role === 'admin' && (
-            <button
-              onClick={() => window.open('http://localhost:8501', '_blank', 'width=1400,height=900,scrollbars=yes,resizable=yes')}
-              className="flex items-center gap-2 px-3 py-2 text-sm bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors border border-blue-200 dark:border-blue-800"
-              title="AI Form Assistant - Process DFM files"
-            >
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1H5C3.89 1 3 1.89 3 3V21C3 22.11 3.89 23 5 23H11V21H5V3H13V9H21Z"/>
-                <path d="M20 15V18H23V20H20V23H18V20H15V18H18V15H20Z"/>
-              </svg>
-              AI Assistant
-            </button>
-          )}
+
           
           {/* Notification Bell */}
           <NotificationBell />
