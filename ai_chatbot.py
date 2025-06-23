@@ -9,7 +9,8 @@ from datetime import datetime
 import io
 
 # Configure OpenAI
-openai.api_key = st.secrets.get("OPENAI_API_KEY", "")
+import os
+openai.api_key = os.getenv("OPENAI_API_KEY", st.secrets.get("OPENAI_API_KEY", ""))
 
 class DelphiFormParser:
     """Parser for Delphi DFM files to extract form components and properties"""
