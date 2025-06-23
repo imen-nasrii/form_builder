@@ -25,6 +25,7 @@ import VerifyEmail from "@/pages/verify-email";
 import ApiIntegration from "@/pages/api-integration";
 import AdminManagement from "@/pages/admin-management";
 import UserTaskBoard from "@/pages/user-task-board";
+import AIAssistant from "@/pages/ai-assistant";
 import Navigation from "@/components/navigation";
 
 function Router() {
@@ -69,6 +70,7 @@ function Router() {
       <Route path="/admin-panel" component={AdminPanel} />
       <Route path="/admin-management" component={AdminManagement} />
       <Route path="/task-board" component={UserTaskBoard} />
+      <Route path="/ai-assistant" component={AIAssistant} />
       <Route path="/analytics" component={Analytics} />
       <Route path="/api-integration" component={ApiIntegration} />
       <Route path="/setup-2fa" component={Setup2FA} />
