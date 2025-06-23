@@ -1,0 +1,211 @@
+{
+  "menuId": "popLoadMemData",
+  "label": "Interest Accrual Type",
+  "formWidth": "700px",
+  "layout": "PROCESS",
+  "fields": [
+    {
+      "Id": "CHECKBOX_1750682783516",
+      "Type": "CHECKBOX",
+      "Label": "Cbreportonly",
+      "DataField": "field_cbreportonly",
+      "Entity": "TableName",
+      "Width": "100%",
+      "Spacing": "md",
+      "Required": false,
+      "Inline": false,
+      "Outlined": false,
+      "Value": "",
+      "CheckboxValue": false
+    },
+    {
+      "Id": "GRIDLKP_1750682783516",
+      "Type": "GRIDLKP",
+      "Label": "Fndlkup1",
+      "DataField": "field_fndlkup1",
+      "Entity": "TableName",
+      "Width": "100%",
+      "Spacing": "md",
+      "Required": false,
+      "Inline": false,
+      "Outlined": false,
+      "Value": "",
+      "KeyColumn": "ID",
+      "showAliasBox": true
+    },
+    {
+      "Id": "LSTLKP_1750682783516",
+      "Type": "LSTLKP",
+      "Label": "Tkrlkup1",
+      "DataField": "field_tkrlkup1",
+      "Entity": "TableName",
+      "Width": "100%",
+      "Spacing": "md",
+      "Required": false,
+      "Inline": false,
+      "Outlined": false,
+      "Value": "",
+      "KeyColumn": "ID",
+      "showAliasBox": true
+    },
+    {
+      "Id": "LSTLKP_1750682783516",
+      "Type": "LSTLKP",
+      "Label": "Seccatlkup1",
+      "DataField": "field_seccatlkup1",
+      "Entity": "TableName",
+      "Width": "100%",
+      "Spacing": "md",
+      "Required": false,
+      "Inline": false,
+      "Outlined": false,
+      "Value": "",
+      "KeyColumn": "ID",
+      "showAliasBox": true
+    },
+    {
+      "Id": "LSTLKP_1750682783516",
+      "Type": "LSTLKP",
+      "Label": "Secgrplkup1",
+      "DataField": "field_secgrplkup1",
+      "Entity": "TableName",
+      "Width": "100%",
+      "Spacing": "md",
+      "Required": false,
+      "Inline": false,
+      "Outlined": false,
+      "Value": "",
+      "KeyColumn": "ID",
+      "showAliasBox": true
+    },
+    {
+      "Id": "BUTTON_1750682783516",
+      "Type": "BUTTON",
+      "Label": "View Record",
+      "DataField": "field_view_record",
+      "Entity": "TableName",
+      "Width": "100%",
+      "Spacing": "md",
+      "Required": false,
+      "Inline": false,
+      "Outlined": false,
+      "Value": ""
+    },
+    {
+      "Id": "CHECKBOX_1750682783516",
+      "Type": "CHECKBOX",
+      "Label": "Cbupdaterates",
+      "DataField": "field_cbupdaterates",
+      "Entity": "TableName",
+      "Width": "100%",
+      "Spacing": "md",
+      "Required": false,
+      "Inline": false,
+      "Outlined": false,
+      "Value": "",
+      "CheckboxValue": false
+    },
+    {
+      "Id": "SELECT_1750682783516",
+      "Type": "SELECT",
+      "Label": "Cbmbstype",
+      "DataField": "field_cbmbstype",
+      "Entity": "TableName",
+      "Width": "100%",
+      "Spacing": "md",
+      "Required": false,
+      "Inline": false,
+      "Outlined": false,
+      "Value": ""
+    },
+    {
+      "Id": "RADIOGRP_1750682783516",
+      "Type": "RADIOGRP",
+      "Label": "Rgaccrualflag",
+      "DataField": "field_rgaccrualflag",
+      "Entity": "TableName",
+      "Width": "100%",
+      "Spacing": "md",
+      "Required": false,
+      "Inline": false,
+      "Outlined": false,
+      "Value": ""
+    },
+    {
+      "Id": "DATEPKR_1750682783516",
+      "Type": "DATEPKR",
+      "Label": "Deaccrualdate",
+      "DataField": "field_deaccrualdate",
+      "Entity": "TableName",
+      "Width": "100%",
+      "Spacing": "md",
+      "Required": false,
+      "Inline": false,
+      "Outlined": false,
+      "Value": "",
+      "format": "DD/MM/YYYY"
+    },
+    {
+      "Id": "DATEPICKER_1750682783516",
+      "Type": "DATEPICKER",
+      "Label": "Gisafselect1",
+      "DataField": "field_gisafselect1",
+      "Entity": "TableName",
+      "Width": "100%",
+      "Spacing": "md",
+      "Required": false,
+      "Inline": false,
+      "Outlined": false,
+      "Value": "",
+      "format": "DD/MM/YYYY"
+    }
+  ],
+  "actions": [],
+  "validations": [
+    {
+      "Id": "validation_1",
+      "Type": "ERROR",
+      "Message": "Validation rule using EnumMember(Value = \"EQUAL\")] EQ",
+      "CondExpression": {
+        "LogicalOperator": "AND",
+        "Conditions": [
+          {
+            "Operator": "EnumMember(Value = \"EQUAL\")] EQ",
+            "Value": "sample_value",
+            "ValueType": "STRING"
+          }
+        ]
+      }
+    },
+    {
+      "Id": "validation_2",
+      "Type": "ERROR",
+      "Message": "Validation rule using NEQ",
+      "CondExpression": {
+        "LogicalOperator": "AND",
+        "Conditions": [
+          {
+            "Operator": "NEQUAL",
+            "Value": "sample_value",
+            "ValueType": "STRING"
+          }
+        ]
+      }
+    },
+    {
+      "Id": "validation_3",
+      "Type": "ERROR",
+      "Message": "Validation rule using CT",
+      "CondExpression": {
+        "LogicalOperator": "AND",
+        "Conditions": [
+          {
+            "Operator": "CONTAIN",
+            "Value": "sample_value",
+            "ValueType": "STRING"
+          }
+        ]
+      }
+    }
+  ]
+}

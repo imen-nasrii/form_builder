@@ -1,0 +1,14 @@
+[
+  {
+    "input": "How do I convert a TSSICheckBox to JSON?",
+    "output": "A TSSICheckBox maps to a CHECKBOX field type with properties like 'CheckboxValue' for the default state and 'Required' for validation."
+  },
+  {
+    "input": "What is the JSON structure for a lookup component?",
+    "output": "Lookup components (GRIDLKP/LSTLKP) include properties like 'KeyColumn' for the primary key, 'showAliasBox' for button display, and 'EntityKeyField' for data binding."
+  },
+  {
+    "input": "How are validation rules structured?",
+    "output": "Validation rules have an 'Id', 'Type' (ERROR/WARNING), 'Message', and 'CondExpression' with LogicalOperator and Conditions array using operators like EQ, NEQ, CT, etc."
+  }
+]

@@ -1,0 +1,85 @@
+{
+  "menuId": "frmACCADJ",
+  "label": "Process Report Only",
+  "formWidth": "700px",
+  "layout": "PROCESS",
+  "fields": [
+    {
+      "Id": "GRIDLKP_1750682783511",
+      "Type": "GRIDLKP",
+      "Label": "Fndlkup1",
+      "DataField": "field_fndlkup1",
+      "Entity": "TableName",
+      "Width": "100%",
+      "Spacing": "md",
+      "Required": false,
+      "Inline": false,
+      "Outlined": false,
+      "Value": "",
+      "KeyColumn": "ID",
+      "showAliasBox": true
+    },
+    {
+      "Id": "CHECKBOX_1750682783511",
+      "Type": "CHECKBOX",
+      "Label": "Cbreportonly",
+      "DataField": "field_cbreportonly",
+      "Entity": "TableName",
+      "Width": "100%",
+      "Spacing": "md",
+      "Required": false,
+      "Inline": false,
+      "Outlined": false,
+      "Value": "",
+      "CheckboxValue": false
+    }
+  ],
+  "actions": [],
+  "validations": [
+    {
+      "Id": "validation_1",
+      "Type": "ERROR",
+      "Message": "Validation rule using EQ",
+      "CondExpression": {
+        "LogicalOperator": "AND",
+        "Conditions": [
+          {
+            "Operator": "EQUAL",
+            "Value": "sample_value",
+            "ValueType": "STRING"
+          }
+        ]
+      }
+    },
+    {
+      "Id": "validation_2",
+      "Type": "ERROR",
+      "Message": "Validation rule using NEQ",
+      "CondExpression": {
+        "LogicalOperator": "AND",
+        "Conditions": [
+          {
+            "Operator": "NEQUAL",
+            "Value": "sample_value",
+            "ValueType": "STRING"
+          }
+        ]
+      }
+    },
+    {
+      "Id": "validation_3",
+      "Type": "ERROR",
+      "Message": "Validation rule using CT",
+      "CondExpression": {
+        "LogicalOperator": "AND",
+        "Conditions": [
+          {
+            "Operator": "CONTAIN",
+            "Value": "sample_value",
+            "ValueType": "STRING"
+          }
+        ]
+      }
+    }
+  ]
+}
