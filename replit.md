@@ -170,3 +170,5 @@ System Requirements: Admin users cannot access Construction Zone (read-only mode
 ✓ Added comprehensive Info file parser for validation rules, entities, and field metadata (June 24, 2025)
 ✓ Integrated real AI assistant with chat interface and automatic BUYTYP generation based on user files (June 24, 2025)
 ✓ Modified AI to display JSON in chat instead of automatic download per user preference (June 24, 2025)
+✓ Translated entire AI Assistant interface from French to English for better user experience (June 24, 2025)
+✓ Removed Components and Import/Export navigation items from admin menu for cleaner interface (June 24, 2025)
