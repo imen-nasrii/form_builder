@@ -25,7 +25,7 @@ import VerifyEmail from "@/pages/verify-email";
 import ApiIntegration from "@/pages/api-integration";
 import AdminManagement from "@/pages/admin-management";
 import UserTaskBoard from "@/pages/user-task-board";
-import AIAssistant from "@/pages/ai-assistant";
+import AIAssistant from "@/pages/ai-assistant-simple";
 
 import JSONValidator from "@/pages/json-validator";
 import Navigation from "@/components/navigation";
