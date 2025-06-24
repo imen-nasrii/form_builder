@@ -30,7 +30,7 @@ export default function AIAssistant() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: 'assistant',
-      content: '🤖 Bonjour ! Je suis votre Assistant IA FormBuilder Pro. Je peux analyser vos fichiers DFM/Delphi et générer n\'importe quel programme JSON (BUYTYP, ACCADJ, PRIMNT, etc.). Uploadez vos fichiers ou posez-moi des questions !',
+      content: 'Hello! I am your FormBuilder Pro AI Assistant. I can analyze your DFM/Delphi files and generate any JSON program (BUYTYP, ACCADJ, PRIMNT, etc.). Upload your files or ask me questions!',
       timestamp: new Date()
     }
   ]);
@@ -49,14 +49,14 @@ export default function AIAssistant() {
     if (type === 'dfm') {
       setDfmFile(file);
       toast({
-        title: "Fichier DFM uploadé",
-        description: `${file.name} prêt pour traitement`,
+        title: "DFM file uploaded",
+        description: `${file.name} ready for processing`,
       });
     } else {
       setInfoFile(file);
       toast({
-        title: "Fichier Info uploadé", 
-        description: `${file.name} prêt pour traitement`,
+        title: "Info file uploaded", 
+        description: `${file.name} ready for processing`,
       });
     }
   };
@@ -78,50 +78,50 @@ export default function AIAssistant() {
       let response = "";
       
       // IA contextuelle basée sur la question
-      if (currentMessage.toLowerCase().includes('buytyp') || currentMessage.toLowerCase().includes('génér')) {
-        response = `🤖 **Analyse IA pour BUYTYP :**
+      if (currentMessage.toLowerCase().includes('buytyp') || currentMessage.toLowerCase().includes('generat')) {
+        response = `**AI Analysis for BUYTYP:**
 
-Basé sur votre fichier de configuration, je peux générer un formulaire BUYTYP complet avec :
+Based on your configuration file, I can generate a complete BUYTYP form with:
 
-• **10 champs intelligents** : FundID, Ticker, TradeDate, Broker, Reason, Exchange, Subunit, OrigFace, Quantity
-• **Composants avancés** : GRIDLKP pour lookups, DATEPKR pour dates, LSTLKP pour listes
-• **Validations sophistiquées** : 28 règles de validation avec opérateurs logiques
-• **Entités liées** : Fndmas, Secrty, Broker, Reason, Exchang
-• **Conditions dynamiques** : EnabledWhen, VisibleWhen, EndpointDepend
+• **10 intelligent fields**: FundID, Ticker, TradeDate, Broker, Reason, Exchange, Subunit, OrigFace, Quantity
+• **Advanced components**: GRIDLKP for lookups, DATEPKR for dates, LSTLKP for lists
+• **Sophisticated validations**: 28 validation rules with logical operators
+• **Linked entities**: Fndmas, Secrty, Broker, Reason, Exchang
+• **Dynamic conditions**: EnabledWhen, VisibleWhen, EndpointDepend
 
-Voulez-vous que je génère la configuration complète maintenant ?`;
-      } else if (currentMessage.toLowerCase().includes('field') || currentMessage.toLowerCase().includes('champ')) {
-        response = `📋 **Analyse des champs :**
+Would you like me to generate the complete configuration now?`;
+      } else if (currentMessage.toLowerCase().includes('field')) {
+        response = `**Field Analysis:**
 
-Votre formulaire BUYTYP contient des champs sophistiqués :
-• **GRIDLKP** : Fund, Ticker, Broker avec recherche dynamique
-• **LSTLKP** : Reason, Exchange, Subunit avec listes déroulantes
-• **DATEPKR** : TradeDate avec validation de dates
-• **NUMERIC** : Quantity, OrigFace avec contrôles numériques
+Your BUYTYP form contains sophisticated fields:
+• **GRIDLKP**: Fund, Ticker, Broker with dynamic search
+• **LSTLKP**: Reason, Exchange, Subunit with dropdown lists
+• **DATEPKR**: TradeDate with date validation
+• **NUMERIC**: Quantity, OrigFace with numeric controls
 
-Chaque champ a des validations et dépendances intelligentes.`;
+Each field has intelligent validations and dependencies.`;
       } else if (currentMessage.toLowerCase().includes('validation')) {
-        response = `✅ **Système de validation IA :**
+        response = `**AI Validation System:**
 
-Le formulaire inclut 28+ validations automatiques :
-• Champs obligatoires (ISN/ISNN)
-• Validations de dates (GT SYSDATE)
-• Contrôles de fonds inactifs
-• Validations conditionnelles complexes
-• Messages d'erreur contextuels
+The form includes 28+ automatic validations:
+• Required fields (ISN/ISNN)
+• Date validations (GT SYSDATE)
+• Inactive fund controls
+• Complex conditional validations
+• Contextual error messages
 
-L'IA optimise les validations pour votre workflow.`;
+AI optimizes validations for your workflow.`;
       } else {
-        response = `🎯 **Assistant IA FormBuilder activé**
+        response = `**FormBuilder AI Assistant activated**
 
-Je peux vous aider avec :
-• Génération de formulaires BUYTYP, ACCADJ, PRIMNT
-• Analyse de fichiers DFM et composants Delphi  
-• Création de validations intelligentes
-• Optimisation de configurations JSON
-• Mapping automatique des entités
+I can help you with:
+• Generate BUYTYP, ACCADJ, PRIMNT forms
+• Analyze DFM files and Delphi components  
+• Create intelligent validations
+• Optimize JSON configurations
+• Automatic entity mapping
 
-Posez-moi une question spécifique ou demandez la génération d'un formulaire !`;
+Ask me a specific question or request form generation!`;
       }
 
       const aiMessage: ChatMessage = {
@@ -144,22 +144,22 @@ Posez-moi une question spécifique ou demandez la génération d'un formulaire !
       const fileName = dfmFile.name.toLowerCase();
       if (fileName.includes('buytyp')) {
         programType = "BUYTYP";
-        programLabel = "BUYTYP - Type d'Achat";
+        programLabel = "BUYTYP - Purchase Type";
       } else if (fileName.includes('accadj')) {
         programType = "ACCADJ";
-        programLabel = "ACCADJ - Ajustement de Compte";
+        programLabel = "ACCADJ - Account Adjustment";
       } else if (fileName.includes('primnt')) {
         programType = "PRIMNT";
-        programLabel = "PRIMNT - Maintenance Primaire";
+        programLabel = "PRIMNT - Primary Maintenance";
       } else if (fileName.includes('srcmnt')) {
         programType = "SRCMNT";
-        programLabel = "SRCMNT - Maintenance Source";
+        programLabel = "SRCMNT - Source Maintenance";
       }
     }
     
     const message: ChatMessage = {
       role: 'user',
-      content: `Générer ${programType}`,
+      content: `Generate ${programType}`,
       timestamp: new Date()
     };
     setMessages(prev => [...prev, message]);
@@ -241,7 +241,7 @@ Posez-moi une question spécifique ou demandez la génération d'un formulaire !
 ${jsonContent}
 \`\`\`
 
-Vous pouvez maintenant copier ce JSON ou utiliser le bouton de téléchargement si vous le souhaitez.`,
+You can now copy this JSON or use the download button if needed.`,
         timestamp: new Date()
       };
       
@@ -249,8 +249,8 @@ Vous pouvez maintenant copier ce JSON ou utiliser le bouton de téléchargement 
       setIsGenerating(false);
       
       toast({
-        title: `JSON ${programType} généré`,
-        description: "Configuration disponible dans le chat",
+        title: `JSON ${programType} generated`,
+        description: "Configuration available in chat",
       });
     }, 2000);
   };
@@ -409,49 +409,49 @@ Vous pouvez maintenant copier ce JSON ou utiliser le bouton de téléchargement 
     
     switch(type) {
       case "BUYTYP":
-        return `✅ JSON BUYTYP généré avec succès !
+        return `✅ JSON BUYTYP generated successfully!
 
-**Formulaire de type d'achat créé avec :**
-- ${fieldCount} champs spécialisés (Fund, Ticker, TradeDate, Broker, Reason)
-- ${validationCount} validations robustes
-- Composants GRIDLKP et LSTLKP pour les lookups
-- Validation des dates et champs obligatoires
-- Action spécialisée : ExecuteBUYTYP
+**Purchase type form created with:**
+- ${fieldCount} specialized fields (Fund, Ticker, TradeDate, Broker, Reason)
+- ${validationCount} robust validations
+- GRIDLKP and LSTLKP components for lookups
+- Date and required field validation
+- Specialized action: ExecuteBUYTYP
 
 📋 **Le JSON est affiché ci-dessous** pour copie ou téléchargement manuel.`;
 
       case "ACCADJ":
-        return `✅ JSON ACCADJ généré avec succès !
+        return `✅ JSON ACCADJ generated successfully!
 
-**Formulaire d'ajustement de compte créé avec :**
-- ${fieldCount} champs d'ajustement (Fund, Type, Amount, Date, Reason)
-- ${validationCount} validations financières
-- Contrôles débit/crédit automatiques
-- Validation des montants et dates
-- Action spécialisée : ExecuteACCADJ
+**Account adjustment form created with:**
+- ${fieldCount} adjustment fields (Fund, Type, Amount, Date, Reason)
+- ${validationCount} financial validations
+- Automatic debit/credit controls
+- Amount and date validation
+- Specialized action: ExecuteACCADJ
 
 📋 **Le JSON est affiché ci-dessous** pour copie ou téléchargement manuel.`;
 
       case "PRIMNT":
-        return `✅ JSON PRIMNT généré avec succès !
+        return `✅ JSON PRIMNT generated successfully!
 
-**Formulaire de maintenance primaire créé avec :**
-- ${fieldCount} champs de maintenance (Entity, Type, Date)
-- ${validationCount} validations système
-- Support pour Fund/Security/Broker
-- Opérations CRUD complètes
-- Action spécialisée : ExecutePRIMNT
+**Primary maintenance form created with:**
+- ${fieldCount} maintenance fields (Entity, Type, Date)
+- ${validationCount} system validations
+- Support for Fund/Security/Broker
+- Complete CRUD operations
+- Specialized action: ExecutePRIMNT
 
 📋 **Le JSON est affiché ci-dessous** pour copie ou téléchargement manuel.`;
 
       default:
-        return `✅ JSON ${type} généré avec succès !
+        return `✅ JSON ${type} generated successfully!
 
-**Formulaire auto-détecté créé avec :**
-- ${fieldCount} champs intelligents
-- ${validationCount} validations automatiques
-- Configuration optimisée par IA
-- Prêt pour intégration
+**Auto-detected form created with:**
+- ${fieldCount} intelligent fields
+- ${validationCount} automatic validations
+- AI-optimized configuration
+- Ready for integration
 
 📋 **Le JSON est affiché ci-dessous** pour copie ou téléchargement manuel.`;
     }
@@ -475,11 +475,11 @@ Vous pouvez maintenant copier ce JSON ou utiliser le bouton de téléchargement 
                 <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                   AI Form Assistant
                 </h1>
-                <p className="text-sm text-green-600 font-medium mt-1">En ligne</p>
+                <p className="text-sm text-green-600 font-medium mt-1">Online</p>
               </div>
             </div>
             <p className="text-gray-600 dark:text-gray-300 max-w-3xl mx-auto text-lg leading-relaxed">
-              Assistant intelligent pour convertir vos fichiers DFM en configurations JSON
+              Intelligent assistant to convert your DFM files into JSON configurations
             </p>
           </div>
 
@@ -492,8 +492,8 @@ Vous pouvez maintenant copier ce JSON ou utiliser le bouton de téléchargement 
                       <MessageCircle className="w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold">Interface de Chat IA</h3>
-                      <p className="text-blue-100 text-sm">Conversation en temps réel</p>
+                      <h3 className="text-xl font-semibold">AI Chat Interface</h3>
+                      <p className="text-blue-100 text-sm">Real-time conversation</p>
                     </div>
                   </CardTitle>
                 </CardHeader>
@@ -543,7 +543,7 @@ Vous pouvez maintenant copier ce JSON ou utiliser le bouton de téléchargement 
                         value={currentMessage}
                         onChange={(e) => setCurrentMessage(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                        placeholder="Tapez votre message ici..."
+                        placeholder="Type your message here..."
                         className="flex-1 px-5 py-4 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white placeholder-gray-400 dark:placeholder-gray-300 text-sm shadow-inner"
                       />
                       <Button
@@ -572,15 +572,15 @@ Vous pouvez maintenant copier ce JSON ou utiliser le bouton de téléchargement 
                       <Upload className="w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold">Upload de Fichiers</h3>
-                      <p className="text-emerald-100 text-sm">DFM et Info</p>
+                      <h3 className="text-xl font-semibold">File Upload</h3>
+                      <p className="text-emerald-100 text-sm">DFM and Info</p>
                     </div>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6 p-6">
                   <div className="space-y-3">
                     <Label className="text-base font-medium text-gray-700 dark:text-gray-200">
-                      Fichier DFM/JSON
+                      DFM/JSON File
                     </Label>
                     <div className="relative">
                       <input
@@ -597,14 +597,14 @@ Vous pouvez maintenant copier ce JSON ou utiliser le bouton de téléchargement 
                       >
                         <div className="flex flex-col items-center gap-1">
                           <FileText className="w-5 h-5 text-gray-400" />
-                          <span>{dfmFile ? dfmFile.name : 'Choisir fichier DFM/JSON'}</span>
+                          <span>{dfmFile ? dfmFile.name : 'Choose DFM/JSON file'}</span>
                         </div>
                       </Button>
                     </div>
                     {dfmFile && (
                       <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
                         <CheckCircle className="w-5 h-5 text-green-600" />
-                        <span className="text-sm text-green-700 dark:text-green-400 font-medium">Fichier prêt</span>
+                        <span className="text-sm text-green-700 dark:text-green-400 font-medium">File ready</span>
                       </div>
                     )}
                   </div>
@@ -619,55 +619,53 @@ Vous pouvez maintenant copier ce JSON ou utiliser le bouton de téléchargement 
                       {isGenerating ? (
                         <>
                           <Loader2 className="w-5 h-5 mr-2 animate-spin text-orange-600" />
-                          <span className="text-orange-700 dark:text-orange-400">Génération...</span>
+                          <span className="text-orange-700 dark:text-orange-400">Generating...</span>
                         </>
                       ) : (
                         <>
                           <TrendingUp className="w-5 h-5 mr-2 text-orange-600" />
-                          <span className="text-orange-700 dark:text-orange-400">Générer Programme</span>
+                          <span className="text-orange-700 dark:text-orange-400">Generate Program</span>
                         </>
                       )}
                     </Button>
                     
-                    <div className="text-xs text-gray-500 dark:text-gray-400 text-center px-2">
-                      Le JSON sera affiché dans le chat (pas de téléchargement automatique)
-                    </div>
+
                     
                     <Button
                       onClick={() => {
                         // Générer BUYTYP directement en attendant que Streamlit fonctionne
                         const message: ChatMessage = {
                           role: 'assistant',
-                          content: `🚀 Génération automatique intelligente :
+                          content: `🚀 Intelligent automatic generation:
 
-**L'IA analyse vos fichiers et génère automatiquement :**
-- BUYTYP pour les types d'achat
-- ACCADJ pour les ajustements de compte  
-- PRIMNT pour la maintenance primaire
-- SRCMNT pour la maintenance source
-- Ou tout autre type détecté dans vos fichiers
+**AI analyzes your files and automatically generates:**
+- BUYTYP for purchase types
+- ACCADJ for account adjustments  
+- PRIMNT for primary maintenance
+- SRCMNT for source maintenance
+- Or any other type detected in your files
 
-**Fonctionnalités IA :**
-- Auto-détection du type de programme
-- Champs adaptés au contexte métier
-- Validations spécialisées par type
-- Configuration optimisée automatiquement
+**AI Features:**
+- Auto-detection of program type
+- Fields adapted to business context
+- Specialized validations by type
+- Automatically optimized configuration
 
-Uploadez vos fichiers DFM/Info pour une génération précise !`,
+Upload your DFM/Info files for precise generation!`,
                           timestamp: new Date()
                         };
                         setMessages(prev => [...prev, message]);
                         
                         toast({
-                          title: "IA Intelligente activée",
-                          description: "Génération adaptative tous programmes",
+                          title: "Intelligent AI activated",
+                          description: "Adaptive generation for all programs",
                         });
                       }}
                       variant="outline"
                       className="w-full h-12 border-2 border-blue-300 hover:border-blue-400 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-800/30 rounded-xl font-medium"
                     >
                       <Bot className="w-5 h-5 mr-2 text-blue-600" />
-                      <span className="text-blue-700 dark:text-blue-400">IA Intelligente</span>
+                      <span className="text-blue-700 dark:text-blue-400">Intelligent AI</span>
                     </Button>
                   </div>
                 </CardContent>
