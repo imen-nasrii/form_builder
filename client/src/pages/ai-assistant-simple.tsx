@@ -458,6 +458,15 @@ Vous pouvez maintenant l'utiliser dans votre système FormBuilder ou le modifier
                         </>
                       )}
                     </Button>
+                    
+                    <Button
+                      onClick={() => window.open('http://localhost:8501', '_blank')}
+                      variant="outline"
+                      className="w-full h-12 border-2 border-blue-300 hover:border-blue-400 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-800/30 rounded-xl font-medium"
+                    >
+                      <Bot className="w-5 h-5 mr-2 text-blue-600" />
+                      <span className="text-blue-700 dark:text-blue-400">IA Python/Streamlit</span>
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
