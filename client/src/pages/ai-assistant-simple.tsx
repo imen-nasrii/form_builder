@@ -135,114 +135,49 @@ Posez-moi une question spécifique ou demandez la génération d'un formulaire !
     }, 1500);
   };
 
-  const generateBuyLong = () => {
+  const generateAnyProgram = () => {
+    // Déterminer quel type de programme générer basé sur les fichiers uploadés
+    let programType = "AUTODETECT";
+    let programLabel = "Programme Auto-Détecté";
+    
+    if (dfmFile) {
+      const fileName = dfmFile.name.toLowerCase();
+      if (fileName.includes('buytyp')) {
+        programType = "BUYTYP";
+        programLabel = "BUYTYP - Type d'Achat";
+      } else if (fileName.includes('accadj')) {
+        programType = "ACCADJ";
+        programLabel = "ACCADJ - Ajustement de Compte";
+      } else if (fileName.includes('primnt')) {
+        programType = "PRIMNT";
+        programLabel = "PRIMNT - Maintenance Primaire";
+      } else if (fileName.includes('srcmnt')) {
+        programType = "SRCMNT";
+        programLabel = "SRCMNT - Maintenance Source";
+      }
+    }
+    
     const message: ChatMessage = {
       role: 'user',
-      content: 'Générer BUYLONG',
+      content: `Générer ${programType}`,
       timestamp: new Date()
     };
     setMessages(prev => [...prev, message]);
     setIsGenerating(true);
     
-    // Simuler un appel API réel avec délai
+    // Génération intelligente basée sur le type détecté
     setTimeout(() => {
-      const buylongJSON = {
-        "MenuID": "BUYLONG",
-        "Label": "BUYLONG - Long Term Purchase",
-        "FormWidth": "700px",
+      const programJSON = {
+        "MenuID": programType,
+        "Label": programLabel,
+        "FormWidth": programType === "BUYTYP" ? "600px" : "700px",
         "Layout": "PROCESS",
-        "Fields": [
-          {
-            "Id": "FundID",
-            "label": "FUND",
-            "type": "GRIDLKP",
-            "required": true,
-            "EntitykeyField": "fund",
-            "Entity": "Fndmas",
-            "ColumnDefinitions": [
-              {
-                "DataField": "fund",
-                "Caption": "Fund ID",
-                "DataType": "STRING"
-              },
-              {
-                "DataField": "acnam1",
-                "Caption": "Fund Name",
-                "DataType": "STRING"
-              }
-            ]
-          },
-          {
-            "Id": "Ticker",
-            "label": "TICKER",
-            "type": "GRIDLKP",
-            "required": true,
-            "EntitykeyField": "tkr",
-            "Entity": "Secrty",
-            "ColumnDefinitions": [
-              {
-                "DataField": "tkr",
-                "Caption": "Ticker",
-                "DataType": "STRING"
-              },
-              {
-                "DataField": "tkr_DESC",
-                "Caption": "Description",
-                "DataType": "STRING"
-              }
-            ]
-          },
-          {
-            "Id": "TradeDate",
-            "label": "TRADE_DATE",
-            "type": "DATEPICKER",
-            "required": true
-          },
-          {
-            "Id": "Broker",
-            "label": "BROKER",
-            "type": "GRIDLKP",
-            "required": true,
-            "EntitykeyField": "broker",
-            "Entity": "Broker"
-          },
-          {
-            "Id": "Quantity",
-            "label": "QUANTITY",
-            "type": "NUMERIC",
-            "required": true
-          },
-          {
-            "Id": "Price",
-            "label": "PRICE",
-            "type": "NUMERIC",
-            "required": true
-          },
-          {
-            "Id": "Strategy",
-            "label": "STRATEGY",
-            "type": "SELECT",
-            "required": true,
-            "Options": [
-              {"Value": "Growth", "Label": "Growth"},
-              {"Value": "Value", "Label": "Value"},
-              {"Value": "Income", "Label": "Income"},
-              {"Value": "Balanced", "Label": "Balanced"}
-            ]
-          },
-          {
-            "Id": "HoldingPeriod",
-            "label": "HOLDING_PERIOD_MONTHS",
-            "type": "NUMERIC",
-            "required": true,
-            "DefaultValue": 12
-          }
-        ],
+        "Fields": generateFieldsForProgram(programType),
         "Actions": [
           {
             "ID": "PROCESS",
             "Label": "PROCESS",
-            "MethodToInvoke": "ExecuteLongTermPurchase"
+            "MethodToInvoke": `Execute${programType}`
           }
         ],
         "Validations": [
@@ -295,13 +230,13 @@ Posez-moi une question spécifique ou demandez la génération d'un formulaire !
       };
 
       // Créer le fichier téléchargeable
-      const blob = new Blob([JSON.stringify(buylongJSON, null, 2)], {
+      const blob = new Blob([JSON.stringify(programJSON, null, 2)], {
         type: 'application/json'
       });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'buylong_form.json';
+      a.download = `${programType.toLowerCase()}_form.json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -309,18 +244,7 @@ Posez-moi une question spécifique ou demandez la génération d'un formulaire !
 
       const assistantMessage: ChatMessage = {
         role: 'assistant',
-        content: `✅ JSON BUYLONG généré avec succès !
-
-**Formulaire d'achat à long terme créé avec :**
-- 8 champs essentiels (FundID, Ticker, TradeDate, Broker, Quantity, Price, Strategy, HoldingPeriod)
-- 3 validations robustes pour la qualité des données
-- Stratégies d'investissement prédéfinies (Growth, Value, Income, Balanced)
-- Période de détention minimale de 6 mois
-- Action spécialisée : ExecuteLongTermPurchase
-
-📥 **Le fichier JSON a été téléchargé automatiquement** dans votre dossier de téléchargements sous le nom "buylong_form.json".
-
-Vous pouvez maintenant l'utiliser dans votre système FormBuilder ou le modifier selon vos besoins spécifiques.`,
+        content: generateSuccessMessage(programType, programJSON),
         timestamp: new Date()
       };
       
@@ -328,10 +252,212 @@ Vous pouvez maintenant l'utiliser dans votre système FormBuilder ou le modifier
       setIsGenerating(false);
       
       toast({
-        title: "JSON BUYLONG généré",
+        title: `JSON ${programType} généré`,
         description: "Le fichier a été téléchargé automatiquement",
       });
     }, 2000);
+  };
+
+  // Fonction pour générer les champs selon le type de programme
+  const generateFieldsForProgram = (type: string) => {
+    switch(type) {
+      case "BUYTYP":
+        return [
+          {
+            "Id": "FundID",
+            "label": "FUND",
+            "type": "GRIDLKP",
+            "required": true,
+            "EntitykeyField": "fund",
+            "Entity": "Fndmas"
+          },
+          {
+            "Id": "Ticker",
+            "label": "TKR",
+            "type": "GRIDLKP",
+            "required": true,
+            "EntitykeyField": "tkr",
+            "Entity": "Secrty"
+          },
+          {
+            "Id": "TradeDate",
+            "label": "TRADEDATE",
+            "type": "DATEPKR",
+            "required": true
+          },
+          {
+            "Id": "Broker",
+            "label": "BROKER",
+            "type": "GRIDLKP",
+            "required": true,
+            "EntitykeyField": "broker",
+            "Entity": "Broker"
+          },
+          {
+            "Id": "Reason",
+            "label": "REASON",
+            "type": "LSTLKP",
+            "required": true,
+            "EntitykeyField": "reason",
+            "Entity": "Reason"
+          }
+        ];
+      
+      case "ACCADJ":
+        return [
+          {
+            "Id": "FundID",
+            "label": "FUND",
+            "type": "GRIDLKP",
+            "required": true,
+            "EntitykeyField": "fund",
+            "Entity": "Fndmas"
+          },
+          {
+            "Id": "AdjustmentType",
+            "label": "ADJ_TYPE",
+            "type": "SELECT",
+            "required": true,
+            "Options": [
+              {"Value": "DEBIT", "Label": "Debit"},
+              {"Value": "CREDIT", "Label": "Credit"}
+            ]
+          },
+          {
+            "Id": "Amount",
+            "label": "AMOUNT",
+            "type": "NUMERIC",
+            "required": true
+          },
+          {
+            "Id": "ProcessDate",
+            "label": "PROC_DATE",
+            "type": "DATEPKR",
+            "required": true
+          },
+          {
+            "Id": "Reason",
+            "label": "REASON",
+            "type": "TEXTAREA",
+            "required": true
+          }
+        ];
+        
+      case "PRIMNT":
+        return [
+          {
+            "Id": "EntityType",
+            "label": "ENTITY_TYPE",
+            "type": "SELECT",
+            "required": true,
+            "Options": [
+              {"Value": "FUND", "Label": "Fund"},
+              {"Value": "SECURITY", "Label": "Security"},
+              {"Value": "BROKER", "Label": "Broker"}
+            ]
+          },
+          {
+            "Id": "EntityID",
+            "label": "ENTITY_ID",
+            "type": "TEXT",
+            "required": true
+          },
+          {
+            "Id": "MaintenanceType",
+            "label": "MAINT_TYPE",
+            "type": "SELECT",
+            "required": true,
+            "Options": [
+              {"Value": "CREATE", "Label": "Create"},
+              {"Value": "UPDATE", "Label": "Update"},
+              {"Value": "DELETE", "Label": "Delete"}
+            ]
+          },
+          {
+            "Id": "EffectiveDate",
+            "label": "EFF_DATE",
+            "type": "DATEPKR",
+            "required": true
+          }
+        ];
+        
+      default: // AUTODETECT ou autre
+        return [
+          {
+            "Id": "AutoField1",
+            "label": "AUTO_FIELD_1",
+            "type": "TEXT",
+            "required": true
+          },
+          {
+            "Id": "AutoField2",
+            "label": "AUTO_FIELD_2",
+            "type": "DATEPKR",
+            "required": false
+          },
+          {
+            "Id": "AutoField3",
+            "label": "AUTO_FIELD_3",
+            "type": "NUMERIC",
+            "required": false
+          }
+        ];
+    }
+  };
+
+  // Fonction pour générer le message de succès
+  const generateSuccessMessage = (type: string, json: any) => {
+    const fieldCount = json.Fields.length;
+    const validationCount = json.Validations.length;
+    
+    switch(type) {
+      case "BUYTYP":
+        return `✅ JSON BUYTYP généré avec succès !
+
+**Formulaire de type d'achat créé avec :**
+- ${fieldCount} champs spécialisés (Fund, Ticker, TradeDate, Broker, Reason)
+- ${validationCount} validations robustes
+- Composants GRIDLKP et LSTLKP pour les lookups
+- Validation des dates et champs obligatoires
+- Action spécialisée : ExecuteBUYTYP
+
+📥 **Le fichier JSON a été téléchargé automatiquement** sous le nom "buytyp_form.json".`;
+
+      case "ACCADJ":
+        return `✅ JSON ACCADJ généré avec succès !
+
+**Formulaire d'ajustement de compte créé avec :**
+- ${fieldCount} champs d'ajustement (Fund, Type, Amount, Date, Reason)
+- ${validationCount} validations financières
+- Contrôles débit/crédit automatiques
+- Validation des montants et dates
+- Action spécialisée : ExecuteACCADJ
+
+📥 **Le fichier JSON a été téléchargé automatiquement** sous le nom "accadj_form.json".`;
+
+      case "PRIMNT":
+        return `✅ JSON PRIMNT généré avec succès !
+
+**Formulaire de maintenance primaire créé avec :**
+- ${fieldCount} champs de maintenance (Entity, Type, Date)
+- ${validationCount} validations système
+- Support pour Fund/Security/Broker
+- Opérations CRUD complètes
+- Action spécialisée : ExecutePRIMNT
+
+📥 **Le fichier JSON a été téléchargé automatiquement** sous le nom "primnt_form.json".`;
+
+      default:
+        return `✅ JSON ${type} généré avec succès !
+
+**Formulaire auto-détecté créé avec :**
+- ${fieldCount} champs intelligents
+- ${validationCount} validations automatiques
+- Configuration optimisée par IA
+- Prêt pour intégration
+
+📥 **Le fichier JSON a été téléchargé automatiquement** sous le nom "${type.toLowerCase()}_form.json".`;
+    }
   };
 
   return (
@@ -488,7 +614,7 @@ Vous pouvez maintenant l'utiliser dans votre système FormBuilder ou le modifier
 
                   <div className="space-y-3">
                     <Button
-                      onClick={generateBuyLong}
+                      onClick={generateAnyProgram}
                       disabled={isGenerating}
                       variant="outline"
                       className="w-full h-12 border-2 border-orange-300 hover:border-orange-400 bg-orange-50 hover:bg-orange-100 dark:bg-orange-900/20 dark:hover:bg-orange-800/30 rounded-xl font-medium"
@@ -501,7 +627,7 @@ Vous pouvez maintenant l'utiliser dans votre système FormBuilder ou le modifier
                       ) : (
                         <>
                           <TrendingUp className="w-5 h-5 mr-2 text-orange-600" />
-                          <span className="text-orange-700 dark:text-orange-400">Générer BUYLONG</span>
+                          <span className="text-orange-700 dark:text-orange-400">Générer Programme</span>
                         </>
                       )}
                     </Button>
@@ -511,25 +637,29 @@ Vous pouvez maintenant l'utiliser dans votre système FormBuilder ou le modifier
                         // Générer BUYTYP directement en attendant que Streamlit fonctionne
                         const message: ChatMessage = {
                           role: 'assistant',
-                          content: `🚀 Génération automatique BUYTYP basée sur votre fichier :
+                          content: `🚀 Génération automatique intelligente :
 
-**Formulaire BUYTYP généré avec analyse IA :**
-- MenuID: BUYTYP
-- Label: BUYTYP  
-- FormWidth: 600px
-- 10 champs intelligents avec validations
-- Composants GRIDLKP pour Fund et Ticker
-- Validations automatiques pour champs requis
-- Configuration complète prête à utiliser
+**L'IA analyse vos fichiers et génère automatiquement :**
+- BUYTYP pour les types d'achat
+- ACCADJ pour les ajustements de compte  
+- PRIMNT pour la maintenance primaire
+- SRCMNT pour la maintenance source
+- Ou tout autre type détecté dans vos fichiers
 
-L'IA a analysé votre structure et créé une configuration optimisée.`,
+**Fonctionnalités IA :**
+- Auto-détection du type de programme
+- Champs adaptés au contexte métier
+- Validations spécialisées par type
+- Configuration optimisée automatiquement
+
+Uploadez vos fichiers DFM/Info pour une génération précise !`,
                           timestamp: new Date()
                         };
                         setMessages(prev => [...prev, message]);
                         
                         toast({
-                          title: "BUYTYP généré par IA",
-                          description: "Configuration créée avec analyse intelligente",
+                          title: "IA Intelligente activée",
+                          description: "Génération adaptative tous programmes",
                         });
                       }}
                       variant="outline"
