@@ -68,10 +68,10 @@ export default function JSONValidator() {
       setValidationResult(result);
       
       toast({
-        title: result.isValid ? "Validation réussie" : "Problèmes détectés",
+        title: result.isValid ? "Validation Successful" : "Issues Detected",
         description: result.isValid 
-          ? `JSON valide avec un score de ${result.score}/100`
-          : `${result.errors.length} erreurs et ${result.warnings.length} avertissements trouvés`,
+          ? `Valid JSON with score of ${result.score}/100`
+          : `${result.errors.length} errors and ${result.warnings.length} warnings found`,
         variant: result.isValid ? "default" : "destructive",
       });
       
@@ -81,7 +81,7 @@ export default function JSONValidator() {
         errors: [{
           type: 'error',
           field: 'JSON',
-          message: 'JSON invalide: ' + error.message,
+          message: 'Invalid JSON: ' + error.message,
           autoFix: false
         }],
         warnings: [],
@@ -101,7 +101,7 @@ export default function JSONValidator() {
     let fixedJson = { ...json };
     
     console.log('🔍 VALIDATION DEBUG - Score initial:', score);
-    console.log('🔍 VALIDATION DEBUG - JSON à analyser:', json);
+    console.log('🔍 VALIDATION DEBUG - JSON to analyze:', json);
 
     // Validate required top-level fields
     const requiredFields = ['MenuID', 'Label', 'Fields'];
@@ -149,21 +149,21 @@ export default function JSONValidator() {
       } else {
         // Validate each field
         json.Fields.forEach((field: any, index: number) => {
-          console.log(`🔍 VALIDATION DEBUG - Analyse champ [${index}]:`, field.Id, field);
+          console.log(`🔍 VALIDATION DEBUG - Analyzing field [${index}]:`, field.Id, field);
           
           const fieldErrors = validateField(field, index);
-          console.log(`🔍 VALIDATION DEBUG - Champ [${index}] résultats:`, {
-            erreurs: fieldErrors.errors.length,
-            avertissements: fieldErrors.warnings.length,
+          console.log(`🔍 VALIDATION DEBUG - Field [${index}] results:`, {
+            errors: fieldErrors.errors.length,
+            warnings: fieldErrors.warnings.length,
             suggestions: fieldErrors.suggestions.length,
-            déduction: fieldErrors.scoreDeduction
+            deduction: fieldErrors.scoreDeduction
           });
           
           errors.push(...fieldErrors.errors);
           warnings.push(...fieldErrors.warnings);
           suggestions.push(...fieldErrors.suggestions);
           score -= fieldErrors.scoreDeduction;
-          console.log(`🔍 VALIDATION DEBUG - Score après champ [${index}]:`, score);
+          console.log(`🔍 VALIDATION DEBUG - Score after field [${index}]:`, score);
           
           if (autoFixEnabled && fieldErrors.fixedField) {
             fixedJson.Fields[index] = fieldErrors.fixedField;
@@ -171,23 +171,23 @@ export default function JSONValidator() {
           
           // Validate nested ChildFields for GROUP type
           if (field.ChildFields && Array.isArray(field.ChildFields)) {
-            console.log(`🔍 VALIDATION DEBUG - Analyse ChildFields pour [${index}]:`, field.ChildFields.length, 'enfants');
+            console.log(`🔍 VALIDATION DEBUG - Analyzing ChildFields for [${index}]:`, field.ChildFields.length, 'children');
             field.ChildFields.forEach((childField: any, childIndex: number) => {
-              console.log(`🔍 VALIDATION DEBUG - Analyse enfant [${index}.${childIndex}]:`, childField.Id, childField);
+              console.log(`🔍 VALIDATION DEBUG - Analyzing child [${index}.${childIndex}]:`, childField.Id, childField);
               
               const childErrors = validateField(childField, `${index}.${childIndex}`);
-              console.log(`🔍 VALIDATION DEBUG - Enfant [${index}.${childIndex}] résultats:`, {
-                erreurs: childErrors.errors.length,
-                avertissements: childErrors.warnings.length,
+              console.log(`🔍 VALIDATION DEBUG - Child [${index}.${childIndex}] results:`, {
+                errors: childErrors.errors.length,
+                warnings: childErrors.warnings.length,
                 suggestions: childErrors.suggestions.length,
-                déduction: childErrors.scoreDeduction
+                deduction: childErrors.scoreDeduction
               });
               
               errors.push(...childErrors.errors);
               warnings.push(...childErrors.warnings);
               suggestions.push(...childErrors.suggestions);
               score -= childErrors.scoreDeduction;
-              console.log(`🔍 VALIDATION DEBUG - Score après enfant [${index}.${childIndex}]:`, score);
+              console.log(`🔍 VALIDATION DEBUG - Score after child [${index}.${childIndex}]:`, score);
               
               if (autoFixEnabled && childErrors.fixedField) {
                 if (!fixedJson.Fields[index].ChildFields) {
@@ -294,8 +294,8 @@ export default function JSONValidator() {
       suggestions.push({
         type: 'info',
         field: 'Performance',
-        message: 'Formulaire avec plus de 50 champs - considérer la pagination',
-        suggestion: 'Diviser en plusieurs étapes ou sections'
+        message: 'Form with more than 50 fields - consider pagination',
+        suggestion: 'Divide into multiple steps or sections'
       });
     }
 
@@ -305,20 +305,20 @@ export default function JSONValidator() {
       if (fieldsWithoutLabels.length > 0) {
         suggestions.push({
           type: 'info',
-          field: 'Accessibilité',
-          message: `${fieldsWithoutLabels.length} champs sans label`,
-          suggestion: 'Ajouter des labels pour améliorer l\'accessibilité'
+          field: 'Accessibility',
+          message: `${fieldsWithoutLabels.length} fields without labels`,
+          suggestion: 'Add labels to improve accessibility'
         });
       }
     }
 
-    console.log('🔍 VALIDATION DEBUG - Résumé final:', {
-      erreurs: errors.length,
-      avertissements: warnings.length,
+    console.log('🔍 VALIDATION DEBUG - Final summary:', {
+      errors: errors.length,
+      warnings: warnings.length,
       suggestions: suggestions.length,
-      scoreFinal: Math.max(0, score),
-      détailErreurs: errors,
-      détailAvertissements: warnings
+      finalScore: Math.max(0, score),
+      errorDetails: errors,
+      warningDetails: warnings
     });
 
     return {
@@ -343,7 +343,7 @@ export default function JSONValidator() {
       errors.push({
         type: 'error',
         field: `Fields[${index}].Id`,
-        message: 'ID du champ manquant',
+        message: 'Field ID missing',
         autoFix: true
       });
       scoreDeduction += 5;
@@ -583,8 +583,8 @@ export default function JSONValidator() {
         suggestions.push({
           type: 'info',
           field: `Fields[${index}].Validations`,
-          message: 'Champ marqué requis mais sans validation correspondante',
-          suggestion: 'Ajouter une validation ERROR avec opérateur ISN pour vérifier le champ obligatoire'
+          message: 'Field marked as required but without corresponding validation',
+          suggestion: 'Add ERROR validation with ISN operator to check required field'
         });
       }
     }
@@ -809,7 +809,7 @@ export default function JSONValidator() {
                       onClick={loadSampleJSON}
                     >
                       <Eye className="w-4 h-4 mr-2" />
-                      ACCADJ
+                      Load ACCADJ
                     </Button>
                   </div>
                 </div>
@@ -818,7 +818,7 @@ export default function JSONValidator() {
                 <Textarea
                   value={jsonInput}
                   onChange={(e) => setJsonInput(e.target.value)}
-                  placeholder="Collez votre JSON ici ou importez un fichier..."
+                  placeholder="Paste your JSON here or import a file..."
                   rows={20}
                   className="font-mono text-sm"
                 />
@@ -950,8 +950,8 @@ export default function JSONValidator() {
                         {validationResult.errors.length === 0 ? (
                           <div className="text-center py-8 text-gray-500">
                             <CheckCircle2 className="w-12 h-12 mx-auto mb-2 text-green-500" />
-                            <div className="font-medium text-green-600">Aucune erreur critique détectée</div>
-                            <div className="text-sm text-gray-500 mt-1">JSON syntaxiquement valide</div>
+                            <div className="font-medium text-green-600">No critical errors detected</div>
+                            <div className="text-sm text-gray-500 mt-1">JSON syntactically valid</div>
                           </div>
                         ) : (
                           validationResult.errors.map((error, index) => (
