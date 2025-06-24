@@ -1,24 +1,18 @@
 import React, { useState, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
 import { 
   Bot, 
   Upload, 
-  Download, 
   FileText, 
-  MessageCircle, 
   Send, 
-  Loader2,
-  AlertCircle,
-  CheckCircle,
-  Code,
-  Zap,
-  TrendingUp
+  MessageCircle, 
+  CheckCircle, 
+  Loader2, 
+  TrendingUp 
 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -30,139 +24,94 @@ export default function AIAssistant() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: 'assistant',
-      content: 'Hello! I am your FormBuilder Pro AI Assistant. I can generate any program type you need - just say "hi" or ask me to "generate [PROGRAM_TYPE]" and I\'ll create it instantly!',
+      content: `Hello! I'm your AI assistant for generating program JSON configurations.
+
+I can help you:
+• Generate BUYTYP, ACCADJ, PRIMNT, SRCMNT programs
+• Convert DFM files to JSON configurations
+• Create any custom program type
+
+Just say "hi" or ask me to generate any program type!`,
       timestamp: new Date()
     }
   ]);
   
   const [currentMessage, setCurrentMessage] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [dfmFile, setDfmFile] = useState<File | null>(null);
-  const [infoFile, setInfoFile] = useState<File | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [dfmFile, setDfmFile] = useState<File | null>(null);
   
   const dfmInputRef = useRef<HTMLInputElement>(null);
-  const infoInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   const handleFileUpload = (type: 'dfm' | 'info', file: File) => {
     if (type === 'dfm') {
       setDfmFile(file);
       toast({
-        title: "DFM file uploaded",
-        description: `${file.name} ready for processing`,
-      });
-    } else {
-      setInfoFile(file);
-      toast({
-        title: "Info file uploaded", 
+        title: "DFM File Uploaded",
         description: `${file.name} ready for processing`,
       });
     }
   };
 
   const sendMessage = () => {
-    if (!currentMessage.trim() || isProcessing) return;
+    if (!currentMessage.trim()) return;
     
     const userMessage: ChatMessage = {
       role: 'user',
       content: currentMessage,
       timestamp: new Date()
     };
-
+    
     setMessages(prev => [...prev, userMessage]);
     setCurrentMessage('');
     setIsProcessing(true);
-
+    
     setTimeout(() => {
-      let response = "";
-      const message = currentMessage.toLowerCase();
+      let responseContent = '';
+      const lowerMessage = currentMessage.toLowerCase();
       
-      // Greeting responses
-      if (message.includes('hi') || message.includes('hello') || message.includes('hey')) {
-        response = `Hi! How are you? I'm your FormBuilder AI Assistant, ready to help you generate any program type you need. Just tell me what you'd like to create!`;
+      if (lowerMessage.includes('hi') || lowerMessage.includes('hello') || lowerMessage.includes('hey')) {
+        responseContent = "Hi! How are you! I'm here to help you generate any program type. You can ask me to create BUYTYP, ACCADJ, PRIMNT, SRCMNT, or any other program configuration. What would you like to generate?";
       }
-      // Generate any program type when requested
-      else if (message.includes('generate') || message.includes('create') || message.includes('build')) {
-        // Check for specific program types
-        if (message.includes('buytyp')) {
-          generateSpecificProgram('BUYTYP');
-          return;
-        } else if (message.includes('accadj')) {
-          generateSpecificProgram('ACCADJ');
-          return;
-        } else if (message.includes('primnt')) {
-          generateSpecificProgram('PRIMNT');
-          return;
-        } else if (message.includes('srcmnt')) {
-          generateSpecificProgram('SRCMNT');
-          return;
-        } else {
-          response = `**Program Generation Ready**
-
-I can generate any program type for you! Please specify which type you need:
-
-• **BUYTYP** - Purchase type forms
-• **ACCADJ** - Account adjustment forms  
-• **PRIMNT** - Primary maintenance forms
-• **SRCMNT** - Source maintenance forms
-• **Custom** - Any other program type you specify
-
-Just say "generate [PROGRAM_TYPE]" and I'll create it for you instantly!`;
-        }
+      else if (lowerMessage.includes('buytyp') || lowerMessage.includes('buy')) {
+        generateSpecificProgram('BUYTYP');
+        setIsProcessing(false);
+        return;
       }
-      // Field analysis
-      else if (message.includes('field')) {
-        response = `**Field Analysis:**
-
-I can analyze and create sophisticated fields:
-• **GRIDLKP**: Dynamic search grids with entity lookups
-• **LSTLKP**: Dropdown lists with filtered options
-• **DATEPKR**: Date pickers with validation rules
-• **NUMERIC**: Number inputs with range controls
-• **TEXT**: Text fields with pattern validation
-
-Each field includes intelligent validations and dependencies.`;
+      else if (lowerMessage.includes('accadj') || lowerMessage.includes('account')) {
+        generateSpecificProgram('ACCADJ');
+        setIsProcessing(false);
+        return;
       }
-      // Validation information
-      else if (message.includes('validation')) {
-        response = `**AI Validation System:**
-
-I create comprehensive validation systems:
-• Required field validations (ISN/ISNN)
-• Date range validations (GT SYSDATE)
-• Business rule validations
-• Cross-field dependency checks
-• Custom error messaging
-
-All validations are optimized for your specific workflow.`;
+      else if (lowerMessage.includes('primnt') || lowerMessage.includes('primary')) {
+        generateSpecificProgram('PRIMNT');
+        setIsProcessing(false);
+        return;
       }
-      // Default helpful response
+      else if (lowerMessage.includes('srcmnt') || lowerMessage.includes('source')) {
+        generateSpecificProgram('SRCMNT');
+        setIsProcessing(false);
+        return;
+      }
+      else if (lowerMessage.includes('generate') || lowerMessage.includes('create')) {
+        responseContent = "I can generate any program type for you! Please specify which type you'd like:\n\n• BUYTYP - Purchase type programs\n• ACCADJ - Account adjustment programs\n• PRIMNT - Primary maintenance programs\n• SRCMNT - Source maintenance programs\n\nOr just tell me the specific program name you need!";
+      }
       else {
-        response = `**FormBuilder AI Assistant**
-
-I can help you with:
-• Generate ANY program type (BUYTYP, ACCADJ, PRIMNT, SRCMNT, custom)
-• Analyze DFM files and Delphi components  
-• Create intelligent field validations
-• Optimize JSON configurations
-• Custom form generation
-
-Just ask me to generate any program and I'll create it instantly!`;
+        responseContent = "I understand you'd like help with program generation. I can create JSON configurations for BUYTYP, ACCADJ, PRIMNT, SRCMNT and other program types. What specific program would you like me to generate?";
       }
-
-      const aiMessage: ChatMessage = {
+      
+      const assistantMessage: ChatMessage = {
         role: 'assistant',
-        content: response,
+        content: responseContent,
         timestamp: new Date()
       };
-
-      setMessages(prev => [...prev, aiMessage]);
+      
+      setMessages(prev => [...prev, assistantMessage]);
       setIsProcessing(false);
     }, 1500);
   };
 
-  // Generate JSON for any program type
   const generateProgramJSON = (programType: string) => {
     const fields = generateFieldsForProgram(programType);
     const validations = generateValidationsForProgram(programType);
@@ -184,7 +133,6 @@ Just ask me to generate any program and I'll create it instantly!`;
     };
   };
 
-  // Get program label
   const getProgramLabel = (type: string) => {
     switch(type) {
       case "BUYTYP": return "Purchase Type";
@@ -195,7 +143,6 @@ Just ask me to generate any program and I'll create it instantly!`;
     }
   };
 
-  // Generate validations for program type
   const generateValidationsForProgram = (programType: string) => {
     const baseValidations = [
       {
@@ -215,12 +162,6 @@ Just ask me to generate any program and I'll create it instantly!`;
             "Expression": "Amount GT 0",
             "Message": "Amount must be greater than zero",
             "Type": "Error"
-          },
-          {
-            "Id": "3",
-            "Expression": "AdjustmentDate ISN",
-            "Message": "Adjustment date is required",
-            "Type": "Error"
           }
         ];
       case "BUYTYP":
@@ -231,12 +172,6 @@ Just ask me to generate any program and I'll create it instantly!`;
             "Expression": "TradeDate ISN",
             "Message": "Trade date is required",
             "Type": "Error"
-          },
-          {
-            "Id": "3",
-            "Expression": "Quantity GT 0",
-            "Message": "Quantity must be greater than zero",
-            "Type": "Error"
           }
         ];
       default:
@@ -244,7 +179,6 @@ Just ask me to generate any program and I'll create it instantly!`;
     }
   };
 
-  // Generate fields for different program types
   const generateFieldsForProgram = (programType: string) => {
     switch(programType) {
       case "BUYTYP":
@@ -379,7 +313,6 @@ Just ask me to generate any program and I'll create it instantly!`;
     }
   };
 
-  // Enhanced function to generate any specific program type
   const generateSpecificProgram = (programType: string) => {
     setIsGenerating(true);
     
@@ -418,7 +351,6 @@ Your ${programType} program is ready! You can copy this JSON configuration and u
   };
 
   const generateAnyProgram = () => {
-    // Auto-detect program type from uploaded files
     let programType = "AUTODETECT";
     
     if (dfmFile) {
@@ -436,79 +368,7 @@ Your ${programType} program is ready! You can copy this JSON configuration and u
     
     generateSpecificProgram(programType);
   };
-            "Type": "ERROR",
-            "Message": "Quantity must be greater than 0",
-            "CondExpression": {
-              "Conditions": [
-                {
-                  "RightField": "Quantity",
-                  "Operator": "LE",
-                  "Value": "0",
-                  "ValueType": "NUMERIC"
-                }
-              ]
-            }
-          },
-          {
-            "Id": "2",
-            "Type": "ERROR",
-            "Message": "Price must be greater than 0",
-            "CondExpression": {
-              "Conditions": [
-                {
-                  "RightField": "Price",
-                  "Operator": "LE",
-                  "Value": "0",
-                  "ValueType": "NUMERIC"
-                }
-              ]
-            }
-          },
-          {
-            "Id": "3",
-            "Type": "ERROR",
-            "Message": "Holding period must be at least 6 months",
-            "CondExpression": {
-              "Conditions": [
-                {
-                  "RightField": "HoldingPeriod",
-                  "Operator": "LT",
-                  "Value": "6",
-                  "ValueType": "NUMERIC"
-                }
-              ]
-            }
-          }
-        ]
-      };
 
-      // Stocker le JSON généré pour affichage
-      const jsonContent = JSON.stringify(programJSON, null, 2);
-
-      const assistantMessage: ChatMessage = {
-        role: 'assistant',
-        content: generateSuccessMessage(programType, programJSON) + `
-
-**Configuration JSON générée :**
-\`\`\`json
-${jsonContent}
-\`\`\`
-
-You can now copy this JSON or use the download button if needed.`,
-        timestamp: new Date()
-      };
-      
-      setMessages(prev => [...prev, assistantMessage]);
-      setIsGenerating(false);
-      
-      toast({
-        title: `JSON ${programType} generated`,
-        description: "Configuration available in chat",
-      });
-    }, 2000);
-  };
-
-  // Get program description
   const getProgramDescription = (type: string) => {
     switch(type) {
       case "BUYTYP":
@@ -523,7 +383,6 @@ You can now copy this JSON or use the download button if needed.`,
         return "✅ Program generated successfully!\n\n**Custom form created with intelligent field detection.**";
     }
   };
-
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900 pt-20">
@@ -596,7 +455,7 @@ You can now copy this JSON or use the download button if needed.`,
                               <p className={`text-xs mt-3 ${
                                 message.role === 'user' ? 'text-blue-100' : 'text-gray-500 dark:text-gray-400'
                               }`}>
-                                {message.timestamp.toLocaleTimeString('fr-FR')}
+                                {message.timestamp.toLocaleTimeString('en-US')}
                               </p>
                             </div>
                           </div>
@@ -697,11 +556,8 @@ You can now copy this JSON or use the download button if needed.`,
                       )}
                     </Button>
                     
-
-                    
                     <Button
                       onClick={() => {
-                        // Generate intelligent AI response
                         const message: ChatMessage = {
                           role: 'assistant',
                           content: `🚀 Intelligent automatic generation:
