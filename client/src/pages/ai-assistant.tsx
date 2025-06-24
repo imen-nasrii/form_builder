@@ -40,7 +40,7 @@ export default function AIAssistant() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: 'assistant',
-      content: '👋 Bonjour ! Je suis votre assistant IA FormBuilder. Uploadez vos fichiers DFM et Info pour générer des configurations JSON, ou posez-moi des questions sur la génération de formulaires.',
+      content: 'Bonjour ! Je suis votre assistant IA FormBuilder. Uploadez vos fichiers DFM et Info pour générer des configurations JSON, ou posez-moi des questions sur la génération de formulaires.',
       timestamp: new Date()
     }
   ]);
@@ -381,20 +381,31 @@ export default function AIAssistant() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 px-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-              <Bot className="w-7 h-7 text-white" />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900 pt-20">
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <div className="relative">
+                <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-xl">
+                  <Bot className="w-8 h-8 text-white" />
+                </div>
+                <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                  <span className="w-2 h-2 bg-white rounded-full"></span>
+                </div>
+              </div>
+              <div>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                  AI Form Assistant
+                </h1>
+                <p className="text-sm text-green-600 font-medium mt-1">● En ligne</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">AI Form Assistant</h1>
-              <p className="text-gray-600 dark:text-gray-400">Intelligent DFM to JSON converter with AI-powered assistance</p>
-            </div>
+            <p className="text-gray-600 dark:text-gray-300 max-w-3xl mx-auto text-lg leading-relaxed">
+              Assistant intelligent pour convertir vos fichiers DFM en configurations JSON avec assistance IA avancée
+            </p>
           </div>
-        </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Chat Interface */}
@@ -905,11 +916,11 @@ Générez un JSON propre, bien structuré et prêt à utiliser.`;
                     value={currentMessage}
                     onChange={(e) => setCurrentMessage(e.target.value)}
                     placeholder="Ask about form generation, JSON structure, or component mapping..."
-                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                    onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                     disabled={isProcessing}
                   />
                   <Button
-                    onClick={handleSendMessage}
+                    onClick={sendMessage}
                     disabled={!currentMessage.trim() || isProcessing}
                     size="icon"
                   >
