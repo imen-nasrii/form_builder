@@ -77,7 +77,7 @@ export default function AIAssistant() {
     setTimeout(() => {
       let response = "";
       
-      // IA contextuelle basée sur la question
+      // AI contextual responses based on question
       if (currentMessage.toLowerCase().includes('buytyp') || currentMessage.toLowerCase().includes('generat')) {
         response = `**AI Analysis for BUYTYP:**
 
@@ -633,7 +633,7 @@ You can now copy this JSON or use the download button if needed.`,
                     
                     <Button
                       onClick={() => {
-                        // Générer BUYTYP directement en attendant que Streamlit fonctionne
+                        // Generate intelligent AI response
                         const message: ChatMessage = {
                           role: 'assistant',
                           content: `🚀 Intelligent automatic generation:
