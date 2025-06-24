@@ -966,7 +966,7 @@ export default function JSONValidator() {
                                 </div>
                                 {error.autoFix && (
                                   <Badge variant="secondary" className="text-xs">
-                                    Auto-corrigeable
+                                    Auto-fixable
                                   </Badge>
                                 )}
                               </div>
@@ -994,7 +994,7 @@ export default function JSONValidator() {
                                 </div>
                                 {warning.autoFix && (
                                   <Badge variant="secondary" className="text-xs">
-                                    Auto-corrigeable
+                                    Auto-fixable
                                   </Badge>
                                 )}
                               </div>
