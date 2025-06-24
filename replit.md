@@ -160,6 +160,7 @@ System Requirements: Admin users cannot access Construction Zone (read-only mode
 ✓ Implemented External Component Library with two import methods: JSON validation and step-by-step form (June 23, 2025)
 ✓ Added component palette management system for custom external components (June 23, 2025)
 ✓ Enhanced navigation with Component Library and Import/Export access for administrators (June 23, 2025)
+✓ Removed "Composants" and "Import/Export" navigation items for cleaner admin interface (June 24, 2025)
 ✓ Created intelligent JSON validator with auto-correction and quality scoring system (June 23, 2025)
 ✓ Implemented comprehensive validation rules for form structure, field types, and data integrity (June 23, 2025)
 ✓ Added smart suggestions for performance optimization and accessibility improvements (June 23, 2025)
