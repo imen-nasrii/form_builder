@@ -141,7 +141,7 @@ export default function JSONValidator() {
         errors.push({
           type: 'error',
           field: 'Fields',
-          message: 'Fields doit être un tableau',
+          message: 'Fields must be an array',
           autoFix: true
         });
         score -= 15;
@@ -206,7 +206,7 @@ export default function JSONValidator() {
       warnings.push({
         type: 'warning',
         field: 'Validations',
-        message: 'Validations doit être un tableau',
+        message: 'Validations must be an array',
         autoFix: true
       });
       score -= 5;
@@ -218,8 +218,8 @@ export default function JSONValidator() {
           warnings.push({
             type: 'warning',
             field: `Validations[${vIndex}].Id`,
-            message: 'ID de validation manquant',
-            suggestion: 'Ajouter un ID unique pour chaque règle de validation'
+            message: 'Validation ID missing',
+            suggestion: 'Add a unique ID for each validation rule'
           });
           score -= 2;
         }
@@ -228,7 +228,7 @@ export default function JSONValidator() {
           errors.push({
             type: 'error',
             field: `Validations[${vIndex}].Type`,
-            message: 'Type de validation invalide (doit être ERROR, WARNING ou INFO)',
+            message: 'Invalid validation type (must be ERROR, WARNING or INFO)',
             autoFix: true
           });
           score -= 3;
@@ -242,8 +242,8 @@ export default function JSONValidator() {
           warnings.push({
             type: 'warning',
             field: `Validations[${vIndex}].CondExpression`,
-            message: 'Propriété "CondExpression" détectée, "ConditionExpression" recommandé',
-            suggestion: 'Utiliser "ConditionExpression" pour la cohérence',
+            message: '"CondExpression" property detected, "ConditionExpression" recommended',
+            suggestion: 'Use "ConditionExpression" for consistency',
             autoFix: true
           });
           score -= 1;
@@ -257,8 +257,8 @@ export default function JSONValidator() {
           errors.push({
             type: 'error',
             field: `Validations[${vIndex}].ConditionExpression`,
-            message: 'Expression de condition manquante',
-            suggestion: 'Ajouter ConditionExpression avec Conditions array'
+            message: 'Missing condition expression',
+            suggestion: 'Add ConditionExpression with Conditions array'
           });
           score -= 5;
         }
@@ -273,8 +273,8 @@ export default function JSONValidator() {
         errors.push({
           type: 'error',
           field: 'Fields',
-          message: `IDs de champs dupliqués: ${duplicates.join(', ')}`,
-          suggestion: 'Utiliser des IDs uniques pour chaque champ',
+          message: `Duplicate field IDs: ${duplicates.join(', ')}`,
+          suggestion: 'Use unique IDs for each field',
           autoFix: true
         });
         score -= 10;
@@ -355,7 +355,7 @@ export default function JSONValidator() {
       errors.push({
         type: 'error',
         field: `Fields[${index}].Type`,
-        message: 'Type du champ manquant',
+        message: 'Field type missing',
         autoFix: true
       });
       scoreDeduction += 5;
@@ -364,8 +364,8 @@ export default function JSONValidator() {
       warnings.push({
         type: 'warning',
         field: `Fields[${index}].type`,
-        message: 'Propriété "type" en minuscules détectée, "Type" recommandé',
-        suggestion: 'Utiliser "Type" au lieu de "type" pour la cohérence',
+        message: 'Lowercase "type" property detected, "Type" recommended',
+        suggestion: 'Use "Type" instead of "type" for consistency',
         autoFix: true
       });
       scoreDeduction += 2;
@@ -380,8 +380,8 @@ export default function JSONValidator() {
       warnings.push({
         type: 'warning',
         field: `Fields[${index}].label`,
-        message: 'Propriété "label" en minuscules détectée, "Label" recommandé',
-        suggestion: 'Utiliser "Label" au lieu de "label" pour la cohérence',
+        message: 'Lowercase "label" property detected, "Label" recommended',
+        suggestion: 'Use "Label" instead of "label" for consistency',
         autoFix: true
       });
       scoreDeduction += 1;
@@ -403,8 +403,8 @@ export default function JSONValidator() {
       warnings.push({
         type: 'warning',
         field: `Fields[${index}].Type`,
-        message: `Type de champ non standard: ${fieldType}`,
-        suggestion: `Types recommandés: ${validTypes.slice(0, 8).join(', ')}...`
+        message: `Non-standard field type: ${fieldType}`,
+        suggestion: `Recommended types: ${validTypes.slice(0, 8).join(', ')}...`
       });
       scoreDeduction += 2;
     }
@@ -415,8 +415,8 @@ export default function JSONValidator() {
         warnings.push({
           type: 'warning',
           field: `Fields[${index}].OptionValues`,
-          message: 'Options manquantes pour le champ de sélection',
-          suggestion: 'Ajouter OptionValues ou options',
+          message: 'Missing options for selection field',
+          suggestion: 'Add OptionValues or options',
           autoFix: true
         });
         scoreDeduction += 3;
@@ -430,8 +430,8 @@ export default function JSONValidator() {
         errors.push({
           type: 'error',
           field: `Fields[${index}].LoadDataInfo`,
-          message: 'Configuration LoadDataInfo obligatoire pour les champs lookup',
-          suggestion: 'Ajouter LoadDataInfo avec DataModel et ColumnsDefinition'
+          message: 'LoadDataInfo configuration required for lookup fields',
+          suggestion: 'Add LoadDataInfo with DataModel and ColumnsDefinition'
         });
         scoreDeduction += 5;
       } else {
@@ -440,7 +440,7 @@ export default function JSONValidator() {
           errors.push({
             type: 'error',
             field: `Fields[${index}].LoadDataInfo.DataModel`,
-            message: 'DataModel manquant dans LoadDataInfo',
+            message: 'DataModel missing in LoadDataInfo',
             autoFix: true
           });
           scoreDeduction += 3;
@@ -597,7 +597,7 @@ export default function JSONValidator() {
       setJsonInput(JSON.stringify(validationResult.fixedJson, null, 2));
       toast({
         title: "Corrections appliquées",
-        description: `${validationResult.errors.filter(e => e.autoFix).length} erreurs et ${validationResult.warnings.filter(w => w.autoFix).length} avertissements corrigés`,
+        description: `${validationResult.errors.filter(e => e.autoFix).length} errors and ${validationResult.warnings.filter(w => w.autoFix).length} warnings corrected`,
       });
       // Clear previous validation result and re-validate
       setValidationResult(null);
@@ -738,8 +738,8 @@ export default function JSONValidator() {
         const content = e.target?.result as string;
         setJsonInput(content);
         toast({
-          title: "Fichier importé",
-          description: `${file.name} chargé avec succès`,
+          title: "File imported",
+          description: `${file.name} loaded successfully`,
         });
       };
       reader.readAsText(file);
@@ -778,8 +778,8 @@ export default function JSONValidator() {
               <FileCheck className="w-7 h-7 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Validateur Intelligent JSON</h1>
-              <p className="text-gray-600 dark:text-gray-400">Validation, correction automatique et optimisation des programmes JSON</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Intelligent JSON Validator</h1>
+              <p className="text-gray-600 dark:text-gray-400">JSON validation, automatic correction and program optimization</p>
             </div>
           </div>
         </div>
@@ -792,7 +792,7 @@ export default function JSONValidator() {
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2">
                     <Code className="w-5 h-5" />
-                    JSON à valider
+                    JSON to Validate
                   </CardTitle>
                   <div className="flex gap-2">
                     <Button
@@ -894,18 +894,18 @@ export default function JSONValidator() {
                     <div className="mt-4 grid grid-cols-3 gap-4 text-center">
                       <div className="p-3 bg-red-50 rounded-lg">
                         <div className="text-2xl font-bold text-red-600">{validationResult.errors.length}</div>
-                        <div className="text-sm text-gray-700 font-medium">Erreurs critiques</div>
-                        <div className="text-xs text-red-500">Bloquent l'exécution</div>
+                        <div className="text-sm text-gray-700 font-medium">Critical errors</div>
+                        <div className="text-xs text-red-500">Block execution</div>
                       </div>
                       <div className="p-3 bg-yellow-50 rounded-lg">
                         <div className="text-2xl font-bold text-yellow-600">{validationResult.warnings.length}</div>
-                        <div className="text-sm text-gray-700 font-medium">Avertissements</div>
-                        <div className="text-xs text-yellow-600">À corriger</div>
+                        <div className="text-sm text-gray-700 font-medium">Warnings</div>
+                        <div className="text-xs text-yellow-600">To be fixed</div>
                       </div>
                       <div className="p-3 bg-blue-50 rounded-lg">
                         <div className="text-2xl font-bold text-blue-600">{validationResult.suggestions.length}</div>
                         <div className="text-sm text-gray-700 font-medium">Suggestions</div>
-                        <div className="text-xs text-blue-600">Optimisations</div>
+                        <div className="text-xs text-blue-600">Optimizations</div>
                       </div>
                     </div>
                     
@@ -913,7 +913,7 @@ export default function JSONValidator() {
                       <div className="mt-4 flex gap-2">
                         <Button onClick={applyAutoFix} className="flex-1">
                           <Zap className="w-4 h-4 mr-2" />
-                          Appliquer les corrections
+                          Apply corrections
                         </Button>
                         <Button variant="outline" onClick={downloadValidatedJSON}>
                           <Download className="w-4 h-4 mr-2" />
