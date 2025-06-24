@@ -16,7 +16,8 @@ import {
   AlertCircle,
   CheckCircle,
   Code,
-  Zap
+  Zap,
+  TrendingUp
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -395,7 +396,90 @@ export default function AIAssistant() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Chat Interface */}
+          <div className="lg:col-span-2">
+            <Card className="h-[650px] flex flex-col bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-0 shadow-2xl">
+              <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-t-lg">
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                    <MessageCircle className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold">Interface de Chat IA</h3>
+                    <p className="text-blue-100 text-sm">Conversation en temps réel</p>
+                  </div>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex-1 flex flex-col overflow-hidden p-0">
+                {/* Messages */}
+                <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-gradient-to-b from-gray-50/50 to-white/50 dark:from-slate-700/50 dark:to-slate-800/50">
+                  {messages.map((message, index) => (
+                    <div
+                      key={index}
+                      className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} animate-in slide-in-from-bottom-2 duration-300`}
+                    >
+                      <div
+                        className={`max-w-[85%] rounded-2xl px-5 py-4 shadow-lg ${
+                          message.role === 'user'
+                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white'
+                            : 'bg-white dark:bg-slate-700 text-gray-900 dark:text-white border border-gray-200 dark:border-slate-600'
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          {message.role === 'assistant' ? (
+                            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                              <Bot className="w-4 h-4 text-white" />
+                            </div>
+                          ) : (
+                            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                              <span className="text-sm font-medium">👤</span>
+                            </div>
+                          )}
+                          <div className="flex-1">
+                            <p className="whitespace-pre-wrap text-sm leading-relaxed">
+                              {message.content}
+                            </p>
+                            <p className={`text-xs mt-3 ${
+                              message.role === 'user' ? 'text-blue-100' : 'text-gray-500 dark:text-gray-400'
+                            }`}>
+                              {message.timestamp.toLocaleTimeString('fr-FR')}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {/* Chat Input */}
+                <div className="border-t border-gray-200 dark:border-gray-600 p-6 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+                  <div className="flex gap-3">
+                    <input
+                      type="text"
+                      value={currentMessage}
+                      onChange={(e) => setCurrentMessage(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                      placeholder="Tapez votre message ici..."
+                      className="flex-1 px-5 py-4 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white placeholder-gray-400 dark:placeholder-gray-300 text-sm shadow-inner"
+                    />
+                    <Button
+                      onClick={sendMessage}
+                      disabled={!currentMessage.trim() || isProcessing}
+                      size="lg"
+                      className="px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg rounded-xl"
+                    >
+                      {isProcessing ? (
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                      ) : (
+                        <Send className="w-5 h-5" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
           {/* File Upload Section */}
           <div className="lg:col-span-1">
             <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-0 shadow-2xl">
@@ -502,7 +586,222 @@ export default function AIAssistant() {
                   </div>
                   
                   <Button
-                    onClick={() => {/* Add generateBuyLong function */}}
+                    onClick={() => {
+                      const message: ChatMessage = {
+                        role: 'user',
+                        content: 'Générer BUYLONG',
+                        timestamp: new Date()
+                      };
+                      setMessages(prev => [...prev, message]);
+                      
+                      const prompt = `Basé sur la configuration BUYTYP fournie, générez un JSON "BUYLONG" simplifié pour les achats à long terme.
+
+Créez un JSON BUYLONG avec ces caractéristiques :
+
+1. **MenuID**: "BUYLONG"
+2. **Label**: "BUYLONG - Long Term Purchase"
+3. **FormWidth**: "700px"
+4. **Layout**: "PROCESS"
+
+5. **Champs principaux** (simplifiés par rapport à BUYTYP) :
+   - FundID (GRIDLKP) - Obligatoire, lookup vers Fndmas
+   - Ticker (GRIDLKP) - Obligatoire, lookup vers Secrty  
+   - TradeDate (DATEPICKER) - Obligatoire
+   - Broker (GRIDLKP) - Obligatoire, lookup vers Broker
+   - Quantity (NUMERIC) - Obligatoire, > 0
+   - Price (NUMERIC) - Obligatoire, > 0
+   - Strategy (SELECT) - Nouveau champ avec options : "Growth", "Value", "Income", "Balanced"
+   - HoldingPeriod (NUMERIC) - Nouveau champ en mois, défaut 12
+
+6. **Validations essentielles** :
+   - Champs obligatoires non vides
+   - Quantity et Price > 0
+   - TradeDate pas dans le futur
+   - HoldingPeriod >= 6 mois
+
+7. **Actions** :
+   - PROCESS avec MethodToInvoke: "ExecuteLongTermPurchase"
+
+Générez un JSON propre, bien structuré et prêt à utiliser.`;
+
+                      const assistantMessage: ChatMessage = {
+                        role: 'assistant',
+                        content: `Voici le JSON BUYLONG généré :
+
+\`\`\`json
+{
+  "MenuID": "BUYLONG",
+  "Label": "BUYLONG - Long Term Purchase",
+  "FormWidth": "700px",
+  "Layout": "PROCESS",
+  "Fields": [
+    {
+      "Id": "FundID",
+      "label": "FUND",
+      "type": "GRIDLKP",
+      "required": true,
+      "EntitykeyField": "fund",
+      "Entity": "Fndmas",
+      "ColumnDefinitions": [
+        {
+          "DataField": "fund",
+          "Caption": "Fund ID",
+          "DataType": "STRING"
+        },
+        {
+          "DataField": "acnam1",
+          "Caption": "Fund Name",
+          "DataType": "STRING"
+        }
+      ]
+    },
+    {
+      "Id": "Ticker",
+      "label": "TICKER",
+      "type": "GRIDLKP",
+      "required": true,
+      "EntitykeyField": "tkr",
+      "Entity": "Secrty",
+      "ColumnDefinitions": [
+        {
+          "DataField": "tkr",
+          "Caption": "Ticker",
+          "DataType": "STRING"
+        },
+        {
+          "DataField": "tkr_DESC",
+          "Caption": "Description",
+          "DataType": "STRING"
+        }
+      ]
+    },
+    {
+      "Id": "TradeDate",
+      "label": "TRADE_DATE",
+      "type": "DATEPICKER",
+      "required": true
+    },
+    {
+      "Id": "Broker",
+      "label": "BROKER",
+      "type": "GRIDLKP",
+      "required": true,
+      "EntitykeyField": "broker",
+      "Entity": "Broker",
+      "ColumnDefinitions": [
+        {
+          "DataField": "name",
+          "Caption": "Broker Name",
+          "DataType": "STRING"
+        },
+        {
+          "DataField": "broker",
+          "Caption": "Broker ID",
+          "DataType": "STRING"
+        }
+      ]
+    },
+    {
+      "Id": "Quantity",
+      "label": "QUANTITY",
+      "type": "NUMERIC",
+      "required": true
+    },
+    {
+      "Id": "Price",
+      "label": "PRICE",
+      "type": "NUMERIC",
+      "required": true
+    },
+    {
+      "Id": "Strategy",
+      "label": "STRATEGY",
+      "type": "SELECT",
+      "required": true,
+      "Options": [
+        {"Value": "Growth", "Label": "Growth"},
+        {"Value": "Value", "Label": "Value"},
+        {"Value": "Income", "Label": "Income"},
+        {"Value": "Balanced", "Label": "Balanced"}
+      ]
+    },
+    {
+      "Id": "HoldingPeriod",
+      "label": "HOLDING_PERIOD_MONTHS",
+      "type": "NUMERIC",
+      "required": true,
+      "DefaultValue": 12
+    }
+  ],
+  "Actions": [
+    {
+      "ID": "PROCESS",
+      "Label": "PROCESS",
+      "MethodToInvoke": "ExecuteLongTermPurchase"
+    }
+  ],
+  "Validations": [
+    {
+      "Id": "1",
+      "Type": "ERROR",
+      "Message": "Quantity must be greater than 0",
+      "CondExpression": {
+        "Conditions": [
+          {
+            "RightField": "Quantity",
+            "Operator": "LE",
+            "Value": "0",
+            "ValueType": "NUMERIC"
+          }
+        ]
+      }
+    },
+    {
+      "Id": "2",
+      "Type": "ERROR",
+      "Message": "Price must be greater than 0",
+      "CondExpression": {
+        "Conditions": [
+          {
+            "RightField": "Price",
+            "Operator": "LE",
+            "Value": "0",
+            "ValueType": "NUMERIC"
+          }
+        ]
+      }
+    },
+    {
+      "Id": "3",
+      "Type": "ERROR",
+      "Message": "Holding period must be at least 6 months",
+      "CondExpression": {
+        "Conditions": [
+          {
+            "RightField": "HoldingPeriod",
+            "Operator": "LT",
+            "Value": "6",
+            "ValueType": "NUMERIC"
+          }
+        ]
+      }
+    }
+  ]
+}
+\`\`\`
+
+✅ JSON BUYLONG généré avec succès ! Ce formulaire simplifie le processus d'achat à long terme avec :
+- 8 champs essentiels
+- Validations robustes
+- Stratégies d'investissement prédéfinies
+- Période de détention minimale de 6 mois`,
+                        timestamp: new Date()
+                      };
+                      
+                      setTimeout(() => {
+                        setMessages(prev => [...prev, assistantMessage]);
+                      }, 1000);
+                    }}
                     disabled={isGenerating}
                     variant="outline"
                     className="w-full h-12 border-2 border-orange-300 hover:border-orange-400 bg-orange-50 hover:bg-orange-100 dark:bg-orange-900/20 dark:hover:bg-orange-800/30 rounded-xl font-medium"
