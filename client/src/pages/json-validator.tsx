@@ -596,7 +596,7 @@ export default function JSONValidator() {
     if (validationResult?.fixedJson) {
       setJsonInput(JSON.stringify(validationResult.fixedJson, null, 2));
       toast({
-        title: "Corrections appliquées",
+        title: "Corrections Applied",
         description: `${validationResult.errors.filter(e => e.autoFix).length} errors and ${validationResult.warnings.filter(w => w.autoFix).length} warnings corrected`,
       });
       // Clear previous validation result and re-validate
@@ -801,7 +801,7 @@ export default function JSONValidator() {
                       onClick={() => fileInputRef.current?.click()}
                     >
                       <Upload className="w-4 h-4 mr-2" />
-                      Importer
+                      Import
                     </Button>
                     <Button
                       size="sm"
@@ -840,12 +840,12 @@ export default function JSONValidator() {
                     {isValidating ? (
                       <>
                         <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                        Validation...
+                        Validating...
                       </>
                     ) : (
                       <>
                         <Zap className="w-4 h-4 mr-2" />
-                        Valider JSON
+                        Validate JSON
                       </>
                     )}
                   </Button>
@@ -873,7 +873,7 @@ export default function JSONValidator() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center justify-between">
-                      <span>Score de qualité</span>
+                      <span>Quality Score</span>
                       <span className={`text-2xl font-bold ${getScoreColor(validationResult.score)}`}>
                         {validationResult.score}/100
                       </span>
@@ -917,7 +917,7 @@ export default function JSONValidator() {
                         </Button>
                         <Button variant="outline" onClick={downloadValidatedJSON}>
                           <Download className="w-4 h-4 mr-2" />
-                          Télécharger
+                          Download
                         </Button>
                       </div>
                     )}
@@ -927,18 +927,18 @@ export default function JSONValidator() {
                 {/* Issues */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Détails de validation</CardTitle>
+                    <CardTitle>Validation Details</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <Tabs defaultValue="errors">
                       <TabsList className="grid w-full grid-cols-3">
                         <TabsTrigger value="errors" className="flex items-center gap-2">
                           <XCircle className="w-4 h-4" />
-                          Erreurs ({validationResult.errors.length})
+                          Errors ({validationResult.errors.length})
                         </TabsTrigger>
                         <TabsTrigger value="warnings" className="flex items-center gap-2">
                           <AlertTriangle className="w-4 h-4" />
-                          Avertissements ({validationResult.warnings.length})
+                          Warnings ({validationResult.warnings.length})
                         </TabsTrigger>
                         <TabsTrigger value="suggestions" className="flex items-center gap-2">
                           <CheckCircle2 className="w-4 h-4" />
@@ -979,7 +979,7 @@ export default function JSONValidator() {
                         {validationResult.warnings.length === 0 ? (
                           <div className="text-center py-8 text-gray-500">
                             <CheckCircle2 className="w-12 h-12 mx-auto mb-2 text-green-500" />
-                            Aucun avertissement
+                            No warnings
                           </div>
                         ) : (
                           validationResult.warnings.map((warning, index) => (
@@ -1007,7 +1007,7 @@ export default function JSONValidator() {
                         {validationResult.suggestions.length === 0 ? (
                           <div className="text-center py-8 text-gray-500">
                             <CheckCircle2 className="w-12 h-12 mx-auto mb-2 text-green-500" />
-                            Aucune suggestion d'amélioration
+                            No improvement suggestions
                           </div>
                         ) : (
                           validationResult.suggestions.map((suggestion, index) => (
@@ -1034,10 +1034,10 @@ export default function JSONValidator() {
                 <CardContent className="text-center py-12">
                   <FileCheck className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                   <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                    Prêt pour la validation
+                    Ready for Validation
                   </h3>
                   <p className="text-gray-600 dark:text-gray-400">
-                    Importez ou saisissez votre JSON pour commencer la validation intelligente
+                    Import or enter your JSON to start intelligent validation
                   </p>
                 </CardContent>
               </Card>
