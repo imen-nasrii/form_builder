@@ -229,22 +229,19 @@ Posez-moi une question spécifique ou demandez la génération d'un formulaire !
         ]
       };
 
-      // Créer le fichier téléchargeable
-      const blob = new Blob([JSON.stringify(programJSON, null, 2)], {
-        type: 'application/json'
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${programType.toLowerCase()}_form.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      // Stocker le JSON généré pour affichage
+      const jsonContent = JSON.stringify(programJSON, null, 2);
 
       const assistantMessage: ChatMessage = {
         role: 'assistant',
-        content: generateSuccessMessage(programType, programJSON),
+        content: generateSuccessMessage(programType, programJSON) + `
+
+**Configuration JSON générée :**
+\`\`\`json
+${jsonContent}
+\`\`\`
+
+Vous pouvez maintenant copier ce JSON ou utiliser le bouton de téléchargement si vous le souhaitez.`,
         timestamp: new Date()
       };
       
@@ -253,7 +250,7 @@ Posez-moi une question spécifique ou demandez la génération d'un formulaire !
       
       toast({
         title: `JSON ${programType} généré`,
-        description: "Le fichier a été téléchargé automatiquement",
+        description: "Configuration disponible dans le chat",
       });
     }, 2000);
   };
@@ -421,7 +418,7 @@ Posez-moi une question spécifique ou demandez la génération d'un formulaire !
 - Validation des dates et champs obligatoires
 - Action spécialisée : ExecuteBUYTYP
 
-📥 **Le fichier JSON a été téléchargé automatiquement** sous le nom "buytyp_form.json".`;
+📋 **Le JSON est affiché ci-dessous** pour copie ou téléchargement manuel.`;
 
       case "ACCADJ":
         return `✅ JSON ACCADJ généré avec succès !
@@ -433,7 +430,7 @@ Posez-moi une question spécifique ou demandez la génération d'un formulaire !
 - Validation des montants et dates
 - Action spécialisée : ExecuteACCADJ
 
-📥 **Le fichier JSON a été téléchargé automatiquement** sous le nom "accadj_form.json".`;
+📋 **Le JSON est affiché ci-dessous** pour copie ou téléchargement manuel.`;
 
       case "PRIMNT":
         return `✅ JSON PRIMNT généré avec succès !
@@ -445,7 +442,7 @@ Posez-moi une question spécifique ou demandez la génération d'un formulaire !
 - Opérations CRUD complètes
 - Action spécialisée : ExecutePRIMNT
 
-📥 **Le fichier JSON a été téléchargé automatiquement** sous le nom "primnt_form.json".`;
+📋 **Le JSON est affiché ci-dessous** pour copie ou téléchargement manuel.`;
 
       default:
         return `✅ JSON ${type} généré avec succès !
@@ -456,7 +453,7 @@ Posez-moi une question spécifique ou demandez la génération d'un formulaire !
 - Configuration optimisée par IA
 - Prêt pour intégration
 
-📥 **Le fichier JSON a été téléchargé automatiquement** sous le nom "${type.toLowerCase()}_form.json".`;
+📋 **Le JSON est affiché ci-dessous** pour copie ou téléchargement manuel.`;
     }
   };
 
@@ -631,6 +628,10 @@ Posez-moi une question spécifique ou demandez la génération d'un formulaire !
                         </>
                       )}
                     </Button>
+                    
+                    <div className="text-xs text-gray-500 dark:text-gray-400 text-center px-2">
+                      Le JSON sera affiché dans le chat (pas de téléchargement automatique)
+                    </div>
                     
                     <Button
                       onClick={() => {
