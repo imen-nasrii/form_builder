@@ -445,6 +445,52 @@ export default function JSONValidator() {
       });
     }
 
+    // Validate boolean properties
+    const booleanProps = ['Inline', 'Required', 'required', 'Outlined', 'isGroup', 'ShowDescription', 'Visible'];
+    booleanProps.forEach(prop => {
+      if (field[prop] !== undefined) {
+        const value = field[prop];
+        if (typeof value !== 'boolean') {
+          errors.push({
+            type: 'error',
+            field: `Fields[${index}].${prop}`,
+            message: `Propriété ${prop} doit être un boolean (true/false), reçu: ${typeof value} (${value})`,
+            suggestion: `Remplacer ${value} par true ou false`,
+            autoFix: true
+          });
+          scoreDeduction += 3;
+          if (autoFixEnabled) {
+            // Convert to boolean based on common patterns
+            if (value === 1 || value === '1' || value === 'true' || value === 'yes') {
+              fixedField[prop] = true;
+            } else if (value === 0 || value === '0' || value === 'false' || value === 'no') {
+              fixedField[prop] = false;
+            } else {
+              fixedField[prop] = Boolean(value);
+            }
+          }
+        }
+      }
+    });
+
+    // Validate numeric properties that should be strings
+    const stringProps = ['Width', 'Spacing'];
+    stringProps.forEach(prop => {
+      if (field[prop] !== undefined && typeof field[prop] === 'number') {
+        warnings.push({
+          type: 'warning',
+          field: `Fields[${index}].${prop}`,
+          message: `Propriété ${prop} devrait être une chaîne de caractères`,
+          suggestion: `Convertir ${field[prop]} en "${field[prop]}"`,
+          autoFix: true
+        });
+        scoreDeduction += 1;
+        if (autoFixEnabled) {
+          fixedField[prop] = String(field[prop]);
+        }
+      }
+    });
+
     // Check for required field validation
     if (field.required === true || field.Required === true) {
       const hasValidation = field.Validations && field.Validations.some((v: any) => 
@@ -471,10 +517,11 @@ export default function JSONValidator() {
       setJsonInput(JSON.stringify(validationResult.fixedJson, null, 2));
       toast({
         title: "Corrections appliquées",
-        description: "Le JSON a été automatiquement corrigé",
+        description: `${validationResult.errors.filter(e => e.autoFix).length} erreurs et ${validationResult.warnings.filter(w => w.autoFix).length} avertissements corrigés`,
       });
-      // Re-validate after fixing
-      setTimeout(() => validateJSON(), 500);
+      // Clear previous validation result and re-validate
+      setValidationResult(null);
+      setTimeout(() => validateJSON(), 1000);
     }
   };
 
