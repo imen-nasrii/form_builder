@@ -95,49 +95,196 @@ export default function AIAssistant() {
       timestamp: new Date()
     };
     setMessages(prev => [...prev, message]);
+    setIsGenerating(true);
     
-    const assistantMessage: ChatMessage = {
-      role: 'assistant',
-      content: `JSON BUYLONG généré avec succès !
-
-{
-  "MenuID": "BUYLONG",
-  "Label": "BUYLONG - Long Term Purchase",
-  "FormWidth": "700px",
-  "Layout": "PROCESS",
-  "Fields": [
-    {
-      "Id": "FundID",
-      "label": "FUND",
-      "type": "GRIDLKP",
-      "required": true
-    },
-    {
-      "Id": "Ticker",
-      "label": "TICKER", 
-      "type": "GRIDLKP",
-      "required": true
-    },
-    {
-      "Id": "TradeDate",
-      "label": "TRADE_DATE",
-      "type": "DATEPICKER",
-      "required": true
-    },
-    {
-      "Id": "Strategy",
-      "label": "STRATEGY",
-      "type": "SELECT",
-      "Options": ["Growth", "Value", "Income", "Balanced"]
-    }
-  ]
-}`,
-      timestamp: new Date()
-    };
-    
+    // Simuler un appel API réel avec délai
     setTimeout(() => {
+      const buylongJSON = {
+        "MenuID": "BUYLONG",
+        "Label": "BUYLONG - Long Term Purchase",
+        "FormWidth": "700px",
+        "Layout": "PROCESS",
+        "Fields": [
+          {
+            "Id": "FundID",
+            "label": "FUND",
+            "type": "GRIDLKP",
+            "required": true,
+            "EntitykeyField": "fund",
+            "Entity": "Fndmas",
+            "ColumnDefinitions": [
+              {
+                "DataField": "fund",
+                "Caption": "Fund ID",
+                "DataType": "STRING"
+              },
+              {
+                "DataField": "acnam1",
+                "Caption": "Fund Name",
+                "DataType": "STRING"
+              }
+            ]
+          },
+          {
+            "Id": "Ticker",
+            "label": "TICKER",
+            "type": "GRIDLKP",
+            "required": true,
+            "EntitykeyField": "tkr",
+            "Entity": "Secrty",
+            "ColumnDefinitions": [
+              {
+                "DataField": "tkr",
+                "Caption": "Ticker",
+                "DataType": "STRING"
+              },
+              {
+                "DataField": "tkr_DESC",
+                "Caption": "Description",
+                "DataType": "STRING"
+              }
+            ]
+          },
+          {
+            "Id": "TradeDate",
+            "label": "TRADE_DATE",
+            "type": "DATEPICKER",
+            "required": true
+          },
+          {
+            "Id": "Broker",
+            "label": "BROKER",
+            "type": "GRIDLKP",
+            "required": true,
+            "EntitykeyField": "broker",
+            "Entity": "Broker"
+          },
+          {
+            "Id": "Quantity",
+            "label": "QUANTITY",
+            "type": "NUMERIC",
+            "required": true
+          },
+          {
+            "Id": "Price",
+            "label": "PRICE",
+            "type": "NUMERIC",
+            "required": true
+          },
+          {
+            "Id": "Strategy",
+            "label": "STRATEGY",
+            "type": "SELECT",
+            "required": true,
+            "Options": [
+              {"Value": "Growth", "Label": "Growth"},
+              {"Value": "Value", "Label": "Value"},
+              {"Value": "Income", "Label": "Income"},
+              {"Value": "Balanced", "Label": "Balanced"}
+            ]
+          },
+          {
+            "Id": "HoldingPeriod",
+            "label": "HOLDING_PERIOD_MONTHS",
+            "type": "NUMERIC",
+            "required": true,
+            "DefaultValue": 12
+          }
+        ],
+        "Actions": [
+          {
+            "ID": "PROCESS",
+            "Label": "PROCESS",
+            "MethodToInvoke": "ExecuteLongTermPurchase"
+          }
+        ],
+        "Validations": [
+          {
+            "Id": "1",
+            "Type": "ERROR",
+            "Message": "Quantity must be greater than 0",
+            "CondExpression": {
+              "Conditions": [
+                {
+                  "RightField": "Quantity",
+                  "Operator": "LE",
+                  "Value": "0",
+                  "ValueType": "NUMERIC"
+                }
+              ]
+            }
+          },
+          {
+            "Id": "2",
+            "Type": "ERROR",
+            "Message": "Price must be greater than 0",
+            "CondExpression": {
+              "Conditions": [
+                {
+                  "RightField": "Price",
+                  "Operator": "LE",
+                  "Value": "0",
+                  "ValueType": "NUMERIC"
+                }
+              ]
+            }
+          },
+          {
+            "Id": "3",
+            "Type": "ERROR",
+            "Message": "Holding period must be at least 6 months",
+            "CondExpression": {
+              "Conditions": [
+                {
+                  "RightField": "HoldingPeriod",
+                  "Operator": "LT",
+                  "Value": "6",
+                  "ValueType": "NUMERIC"
+                }
+              ]
+            }
+          }
+        ]
+      };
+
+      // Créer le fichier téléchargeable
+      const blob = new Blob([JSON.stringify(buylongJSON, null, 2)], {
+        type: 'application/json'
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'buylong_form.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      const assistantMessage: ChatMessage = {
+        role: 'assistant',
+        content: `✅ JSON BUYLONG généré avec succès !
+
+**Formulaire d'achat à long terme créé avec :**
+- 8 champs essentiels (FundID, Ticker, TradeDate, Broker, Quantity, Price, Strategy, HoldingPeriod)
+- 3 validations robustes pour la qualité des données
+- Stratégies d'investissement prédéfinies (Growth, Value, Income, Balanced)
+- Période de détention minimale de 6 mois
+- Action spécialisée : ExecuteLongTermPurchase
+
+📥 **Le fichier JSON a été téléchargé automatiquement** dans votre dossier de téléchargements sous le nom "buylong_form.json".
+
+Vous pouvez maintenant l'utiliser dans votre système FormBuilder ou le modifier selon vos besoins spécifiques.`,
+        timestamp: new Date()
+      };
+      
       setMessages(prev => [...prev, assistantMessage]);
-    }, 1000);
+      setIsGenerating(false);
+      
+      toast({
+        title: "JSON BUYLONG généré",
+        description: "Le fichier a été téléchargé automatiquement",
+      });
+    }, 2000);
   };
 
   return (
@@ -299,8 +446,17 @@ export default function AIAssistant() {
                       variant="outline"
                       className="w-full h-12 border-2 border-orange-300 hover:border-orange-400 bg-orange-50 hover:bg-orange-100 dark:bg-orange-900/20 dark:hover:bg-orange-800/30 rounded-xl font-medium"
                     >
-                      <TrendingUp className="w-5 h-5 mr-2 text-orange-600" />
-                      <span className="text-orange-700 dark:text-orange-400">Générer BUYLONG</span>
+                      {isGenerating ? (
+                        <>
+                          <Loader2 className="w-5 h-5 mr-2 animate-spin text-orange-600" />
+                          <span className="text-orange-700 dark:text-orange-400">Génération...</span>
+                        </>
+                      ) : (
+                        <>
+                          <TrendingUp className="w-5 h-5 mr-2 text-orange-600" />
+                          <span className="text-orange-700 dark:text-orange-400">Générer BUYLONG</span>
+                        </>
+                      )}
                     </Button>
                   </div>
                 </CardContent>
