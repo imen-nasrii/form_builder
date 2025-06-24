@@ -162,6 +162,223 @@ Just ask me to generate any program and I'll create it instantly!`;
     }, 1500);
   };
 
+  // Generate JSON for any program type
+  const generateProgramJSON = (programType: string) => {
+    const fields = generateFieldsForProgram(programType);
+    const validations = generateValidationsForProgram(programType);
+    
+    return {
+      "MenuID": programType,
+      "Label": `${programType} - ${getProgramLabel(programType)}`,
+      "FormWidth": programType === "BUYTYP" ? "600px" : "700px",
+      "Layout": "PROCESS",
+      "Fields": fields,
+      "Actions": [
+        {
+          "ID": "PROCESS",
+          "Label": "PROCESS",
+          "MethodToInvoke": `Execute${programType}`
+        }
+      ],
+      "Validations": validations
+    };
+  };
+
+  // Get program label
+  const getProgramLabel = (type: string) => {
+    switch(type) {
+      case "BUYTYP": return "Purchase Type";
+      case "ACCADJ": return "Account Adjustment";
+      case "PRIMNT": return "Primary Maintenance";
+      case "SRCMNT": return "Source Maintenance";
+      default: return "Custom Program";
+    }
+  };
+
+  // Generate validations for program type
+  const generateValidationsForProgram = (programType: string) => {
+    const baseValidations = [
+      {
+        "Id": "1",
+        "Expression": "Fund ISN",
+        "Message": "Fund is required",
+        "Type": "Error"
+      }
+    ];
+
+    switch(programType) {
+      case "ACCADJ":
+        return [
+          ...baseValidations,
+          {
+            "Id": "2",
+            "Expression": "Amount GT 0",
+            "Message": "Amount must be greater than zero",
+            "Type": "Error"
+          },
+          {
+            "Id": "3",
+            "Expression": "AdjustmentDate ISN",
+            "Message": "Adjustment date is required",
+            "Type": "Error"
+          }
+        ];
+      case "BUYTYP":
+        return [
+          ...baseValidations,
+          {
+            "Id": "2",
+            "Expression": "TradeDate ISN",
+            "Message": "Trade date is required",
+            "Type": "Error"
+          },
+          {
+            "Id": "3",
+            "Expression": "Quantity GT 0",
+            "Message": "Quantity must be greater than zero",
+            "Type": "Error"
+          }
+        ];
+      default:
+        return baseValidations;
+    }
+  };
+
+  // Generate fields for different program types
+  const generateFieldsForProgram = (programType: string) => {
+    switch(programType) {
+      case "BUYTYP":
+        return [
+          {
+            "Id": "Fund",
+            "Label": "Fund",
+            "FieldType": "GRIDLKP",
+            "Required": true,
+            "Entity": "Fndmas"
+          },
+          {
+            "Id": "Ticker",
+            "Label": "Ticker",
+            "FieldType": "GRIDLKP",
+            "Required": true,
+            "Entity": "Secrty"
+          },
+          {
+            "Id": "TradeDate",
+            "Label": "Trade Date",
+            "FieldType": "DATEPKR",
+            "Required": true
+          },
+          {
+            "Id": "Broker",
+            "Label": "Broker",
+            "FieldType": "LSTLKP",
+            "Required": true,
+            "Entity": "Broker"
+          },
+          {
+            "Id": "Quantity",
+            "Label": "Quantity",
+            "FieldType": "NUMERIC",
+            "Required": true
+          }
+        ];
+        
+      case "ACCADJ":
+        return [
+          {
+            "Id": "Fund",
+            "Label": "Fund",
+            "FieldType": "GRIDLKP",
+            "Required": true,
+            "Entity": "Fndmas"
+          },
+          {
+            "Id": "Amount",
+            "Label": "Amount",
+            "FieldType": "NUMERIC",
+            "Required": true
+          },
+          {
+            "Id": "AdjustmentType",
+            "Label": "Type",
+            "FieldType": "SELECT",
+            "Required": true,
+            "Options": ["Debit", "Credit"]
+          },
+          {
+            "Id": "AdjustmentDate",
+            "Label": "Date",
+            "FieldType": "DATEPKR",
+            "Required": true
+          },
+          {
+            "Id": "Reason",
+            "Label": "Reason",
+            "FieldType": "TEXT",
+            "Required": true
+          }
+        ];
+
+      case "PRIMNT":
+        return [
+          {
+            "Id": "Entity",
+            "Label": "Entity",
+            "FieldType": "SELECT",
+            "Required": true,
+            "Options": ["Fund", "Security", "Broker"]
+          },
+          {
+            "Id": "MaintenanceType",
+            "Label": "Type",
+            "FieldType": "SELECT",
+            "Required": true,
+            "Options": ["Create", "Update", "Delete"]
+          },
+          {
+            "Id": "EffectiveDate",
+            "Label": "Effective Date",
+            "FieldType": "DATEPKR",
+            "Required": true
+          }
+        ];
+
+      case "SRCMNT":
+        return [
+          {
+            "Id": "SourceName",
+            "Label": "Source Name",
+            "FieldType": "TEXT",
+            "Required": true
+          },
+          {
+            "Id": "ConnectionString",
+            "Label": "Connection",
+            "FieldType": "TEXT",
+            "Required": true
+          },
+          {
+            "Id": "SourceType",
+            "Label": "Type",
+            "FieldType": "SELECT",
+            "Required": true,
+            "Options": ["Database", "File", "API"]
+          }
+        ];
+        
+      default:
+        return [
+          {
+            "Id": "DefaultField",
+            "Label": "Field",
+            "FieldType": "TEXT",
+            "Required": true
+          }
+        ];
+    }
+  };
+
   // Enhanced function to generate any specific program type
   const generateSpecificProgram = (programType: string) => {
     setIsGenerating(true);
@@ -183,7 +400,7 @@ Just ask me to generate any program and I'll create it instantly!`;
         content: `${description}
 
 \`\`\`json
-${jsonContent}
+${JSON.stringify(jsonContent, null, 2)}
 \`\`\`
 
 Your ${programType} program is ready! You can copy this JSON configuration and use it in your project.`,
@@ -201,53 +418,24 @@ Your ${programType} program is ready! You can copy this JSON configuration and u
   };
 
   const generateAnyProgram = () => {
-    // Déterminer quel type de programme générer basé sur les fichiers uploadés
+    // Auto-detect program type from uploaded files
     let programType = "AUTODETECT";
-    let programLabel = "Programme Auto-Détecté";
     
     if (dfmFile) {
       const fileName = dfmFile.name.toLowerCase();
       if (fileName.includes('buytyp')) {
         programType = "BUYTYP";
-        programLabel = "BUYTYP - Purchase Type";
       } else if (fileName.includes('accadj')) {
         programType = "ACCADJ";
-        programLabel = "ACCADJ - Account Adjustment";
       } else if (fileName.includes('primnt')) {
         programType = "PRIMNT";
-        programLabel = "PRIMNT - Primary Maintenance";
       } else if (fileName.includes('srcmnt')) {
         programType = "SRCMNT";
-        programLabel = "SRCMNT - Source Maintenance";
       }
     }
     
-    const message: ChatMessage = {
-      role: 'user',
-      content: `Generate ${programType}`,
-      timestamp: new Date()
-    };
-    setMessages(prev => [...prev, message]);
-    setIsGenerating(true);
-    
-    // Génération intelligente basée sur le type détecté
-    setTimeout(() => {
-      const programJSON = {
-        "MenuID": programType,
-        "Label": programLabel,
-        "FormWidth": programType === "BUYTYP" ? "600px" : "700px",
-        "Layout": "PROCESS",
-        "Fields": generateFieldsForProgram(programType),
-        "Actions": [
-          {
-            "ID": "PROCESS",
-            "Label": "PROCESS",
-            "MethodToInvoke": `Execute${programType}`
-          }
-        ],
-        "Validations": [
-          {
-            "Id": "1",
+    generateSpecificProgram(programType);
+  };
             "Type": "ERROR",
             "Message": "Quantity must be greater than 0",
             "CondExpression": {
@@ -320,207 +508,22 @@ You can now copy this JSON or use the download button if needed.`,
     }, 2000);
   };
 
-  // Fonction pour générer les champs selon le type de programme
-  const generateFieldsForProgram = (type: string) => {
+  // Get program description
+  const getProgramDescription = (type: string) => {
     switch(type) {
       case "BUYTYP":
-        return [
-          {
-            "Id": "FundID",
-            "label": "FUND",
-            "type": "GRIDLKP",
-            "required": true,
-            "EntitykeyField": "fund",
-            "Entity": "Fndmas"
-          },
-          {
-            "Id": "Ticker",
-            "label": "TKR",
-            "type": "GRIDLKP",
-            "required": true,
-            "EntitykeyField": "tkr",
-            "Entity": "Secrty"
-          },
-          {
-            "Id": "TradeDate",
-            "label": "TRADEDATE",
-            "type": "DATEPKR",
-            "required": true
-          },
-          {
-            "Id": "Broker",
-            "label": "BROKER",
-            "type": "GRIDLKP",
-            "required": true,
-            "EntitykeyField": "broker",
-            "Entity": "Broker"
-          },
-          {
-            "Id": "Reason",
-            "label": "REASON",
-            "type": "LSTLKP",
-            "required": true,
-            "EntitykeyField": "reason",
-            "Entity": "Reason"
-          }
-        ];
-      
+        return "✅ BUYTYP program generated successfully!\n\n**Purchase type form created with specialized trading fields and validations.**";
       case "ACCADJ":
-        return [
-          {
-            "Id": "FundID",
-            "label": "FUND",
-            "type": "GRIDLKP",
-            "required": true,
-            "EntitykeyField": "fund",
-            "Entity": "Fndmas"
-          },
-          {
-            "Id": "AdjustmentType",
-            "label": "ADJ_TYPE",
-            "type": "SELECT",
-            "required": true,
-            "Options": [
-              {"Value": "DEBIT", "Label": "Debit"},
-              {"Value": "CREDIT", "Label": "Credit"}
-            ]
-          },
-          {
-            "Id": "Amount",
-            "label": "AMOUNT",
-            "type": "NUMERIC",
-            "required": true
-          },
-          {
-            "Id": "ProcessDate",
-            "label": "PROC_DATE",
-            "type": "DATEPKR",
-            "required": true
-          },
-          {
-            "Id": "Reason",
-            "label": "REASON",
-            "type": "TEXTAREA",
-            "required": true
-          }
-        ];
-        
+        return "✅ ACCADJ program generated successfully!\n\n**Account adjustment form created with financial controls and audit trail.**";
       case "PRIMNT":
-        return [
-          {
-            "Id": "EntityType",
-            "label": "ENTITY_TYPE",
-            "type": "SELECT",
-            "required": true,
-            "Options": [
-              {"Value": "FUND", "Label": "Fund"},
-              {"Value": "SECURITY", "Label": "Security"},
-              {"Value": "BROKER", "Label": "Broker"}
-            ]
-          },
-          {
-            "Id": "EntityID",
-            "label": "ENTITY_ID",
-            "type": "TEXT",
-            "required": true
-          },
-          {
-            "Id": "MaintenanceType",
-            "label": "MAINT_TYPE",
-            "type": "SELECT",
-            "required": true,
-            "Options": [
-              {"Value": "CREATE", "Label": "Create"},
-              {"Value": "UPDATE", "Label": "Update"},
-              {"Value": "DELETE", "Label": "Delete"}
-            ]
-          },
-          {
-            "Id": "EffectiveDate",
-            "label": "EFF_DATE",
-            "type": "DATEPKR",
-            "required": true
-          }
-        ];
-        
-      default: // AUTODETECT ou autre
-        return [
-          {
-            "Id": "AutoField1",
-            "label": "AUTO_FIELD_1",
-            "type": "TEXT",
-            "required": true
-          },
-          {
-            "Id": "AutoField2",
-            "label": "AUTO_FIELD_2",
-            "type": "DATEPKR",
-            "required": false
-          },
-          {
-            "Id": "AutoField3",
-            "label": "AUTO_FIELD_3",
-            "type": "NUMERIC",
-            "required": false
-          }
-        ];
-    }
-  };
-
-  // Fonction pour générer le message de succès
-  const generateSuccessMessage = (type: string, json: any) => {
-    const fieldCount = json.Fields.length;
-    const validationCount = json.Validations.length;
-    
-    switch(type) {
-      case "BUYTYP":
-        return `✅ JSON BUYTYP generated successfully!
-
-**Purchase type form created with:**
-- ${fieldCount} specialized fields (Fund, Ticker, TradeDate, Broker, Reason)
-- ${validationCount} robust validations
-- GRIDLKP and LSTLKP components for lookups
-- Date and required field validation
-- Specialized action: ExecuteBUYTYP
-
-📋 **Le JSON est affiché ci-dessous** pour copie ou téléchargement manuel.`;
-
-      case "ACCADJ":
-        return `✅ JSON ACCADJ generated successfully!
-
-**Account adjustment form created with:**
-- ${fieldCount} adjustment fields (Fund, Type, Amount, Date, Reason)
-- ${validationCount} financial validations
-- Automatic debit/credit controls
-- Amount and date validation
-- Specialized action: ExecuteACCADJ
-
-📋 **Le JSON est affiché ci-dessous** pour copie ou téléchargement manuel.`;
-
-      case "PRIMNT":
-        return `✅ JSON PRIMNT generated successfully!
-
-**Primary maintenance form created with:**
-- ${fieldCount} maintenance fields (Entity, Type, Date)
-- ${validationCount} system validations
-- Support for Fund/Security/Broker
-- Complete CRUD operations
-- Specialized action: ExecutePRIMNT
-
-📋 **Le JSON est affiché ci-dessous** pour copie ou téléchargement manuel.`;
-
+        return "✅ PRIMNT program generated successfully!\n\n**Primary maintenance form created with entity management capabilities.**";
+      case "SRCMNT":
+        return "✅ SRCMNT program generated successfully!\n\n**Source maintenance form created with connection management features.**";
       default:
-        return `✅ JSON ${type} generated successfully!
-
-**Auto-detected form created with:**
-- ${fieldCount} intelligent fields
-- ${validationCount} automatic validations
-- AI-optimized configuration
-- Ready for integration
-
-📋 **Le JSON est affiché ci-dessous** pour copie ou téléchargement manuel.`;
+        return "✅ Program generated successfully!\n\n**Custom form created with intelligent field detection.**";
     }
   };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900 pt-20">
