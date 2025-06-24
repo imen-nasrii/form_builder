@@ -39,7 +39,7 @@ export default function AIAssistant() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: 'assistant',
-      content: 'Hello! I\'m your AI Form Assistant. Upload your DFM and Info files to generate JSON configurations, or ask me anything about form generation.',
+      content: '👋 Bonjour ! Je suis votre assistant IA FormBuilder. Uploadez vos fichiers DFM et Info pour générer des configurations JSON, ou posez-moi des questions sur la génération de formulaires.',
       timestamp: new Date()
     }
   ]);
@@ -398,18 +398,25 @@ export default function AIAssistant() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* File Upload Section */}
           <div className="lg:col-span-1">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Upload className="w-5 h-5" />
-                  File Upload
+            <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-0 shadow-2xl">
+              <CardHeader className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-t-lg">
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                    <Upload className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold">Upload de Fichiers</h3>
+                    <p className="text-emerald-100 text-sm">DFM et Info</p>
+                  </div>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-6 p-6">
                 {/* DFM/JSON File Upload */}
-                <div>
-                  <Label htmlFor="dfm-upload">DFM/JSON File</Label>
-                  <div className="mt-2">
+                <div className="space-y-3">
+                  <Label htmlFor="dfm-upload" className="text-base font-medium text-gray-700 dark:text-gray-200">
+                    📄 Fichier DFM/JSON
+                  </Label>
+                  <div className="relative">
                     <input
                       ref={dfmInputRef}
                       type="file"
@@ -421,23 +428,28 @@ export default function AIAssistant() {
                     <Button
                       variant="outline"
                       onClick={() => dfmInputRef.current?.click()}
-                      className="w-full"
+                      className="w-full h-14 border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-blue-400 bg-gray-50 dark:bg-slate-700 hover:bg-blue-50 dark:hover:bg-slate-600 rounded-xl text-sm"
                     >
-                      {dfmFile ? dfmFile.name : 'Choose DFM/JSON File'}
+                      <div className="flex flex-col items-center gap-1">
+                        <FileText className="w-5 h-5 text-gray-400" />
+                        <span>{dfmFile ? dfmFile.name : 'Choisir fichier DFM/JSON'}</span>
+                      </div>
                     </Button>
                   </div>
                   {dfmFile && (
-                    <div className="flex items-center gap-2 mt-2 text-sm text-green-600">
-                      <CheckCircle className="w-4 h-4" />
-                      File ready
+                    <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                      <span className="text-sm text-green-700 dark:text-green-400 font-medium">Fichier prêt</span>
                     </div>
                   )}
                 </div>
 
                 {/* Info File Upload */}
-                <div>
-                  <Label htmlFor="info-upload">Info File</Label>
-                  <div className="mt-2">
+                <div className="space-y-3">
+                  <Label htmlFor="info-upload" className="text-base font-medium text-gray-700 dark:text-gray-200">
+                    ℹ️ Fichier Info
+                  </Label>
+                  <div className="relative">
                     <input
                       ref={infoInputRef}
                       type="file"
@@ -449,46 +461,70 @@ export default function AIAssistant() {
                     <Button
                       variant="outline"
                       onClick={() => infoInputRef.current?.click()}
-                      className="w-full"
+                      className="w-full h-14 border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-emerald-400 bg-gray-50 dark:bg-slate-700 hover:bg-emerald-50 dark:hover:bg-slate-600 rounded-xl text-sm"
                     >
-                      {infoFile ? infoFile.name : 'Choose Info File'}
+                      <div className="flex flex-col items-center gap-1">
+                        <FileText className="w-5 h-5 text-gray-400" />
+                        <span>{infoFile ? infoFile.name : 'Choisir fichier Info'}</span>
+                      </div>
                     </Button>
                   </div>
                   {infoFile && (
-                    <div className="flex items-center gap-2 mt-2 text-sm text-green-600">
-                      <CheckCircle className="w-4 h-4" />
-                      File ready
+                    <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                      <span className="text-sm text-green-700 dark:text-green-400 font-medium">Fichier prêt</span>
                     </div>
                   )}
                 </div>
 
                 {/* Process Button */}
-                <Button
-                  onClick={processFiles}
-                  disabled={!dfmFile || !infoFile || isGenerating}
-                  className="w-full"
-                >
-                  {isGenerating ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Processing...
-                    </>
-                  ) : (
-                    <>
-                      <Zap className="w-4 h-4 mr-2" />
-                      Generate JSON
-                    </>
-                  )}
-                </Button>
+                <div className="space-y-3">
+                  <Button
+                    onClick={processFiles}
+                    disabled={!dfmFile || !infoFile || isGenerating}
+                    className="w-full h-12 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg rounded-xl text-white font-semibold"
+                  >
+                    {isGenerating ? (
+                      <>
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        Génération en cours...
+                      </>
+                    ) : (
+                      <>
+                        <Zap className="w-5 h-5 mr-2" />
+                        Générer JSON
+                      </>
+                    )}
+                  </Button>
+                  
+                  <div className="text-center text-xs text-gray-500 dark:text-gray-400">
+                    ou utilisez les options ci-dessous
+                  </div>
+                  
+                  <Button
+                    onClick={() => {/* Add generateBuyLong function */}}
+                    disabled={isGenerating}
+                    variant="outline"
+                    className="w-full h-12 border-2 border-orange-300 hover:border-orange-400 bg-orange-50 hover:bg-orange-100 dark:bg-orange-900/20 dark:hover:bg-orange-800/30 rounded-xl font-medium"
+                  >
+                    <TrendingUp className="w-5 h-5 mr-2 text-orange-600" />
+                    <span className="text-orange-700 dark:text-orange-400">Générer BUYLONG</span>
+                  </Button>
+                </div>
 
                 {/* Component Mapping Reference */}
-                <div className="mt-6">
-                  <h3 className="font-medium text-sm mb-2">Component Mapping</h3>
-                  <div className="space-y-1 text-xs">
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-700 dark:to-slate-600 p-4 rounded-xl border border-blue-200 dark:border-slate-500">
+                  <h3 className="font-semibold text-sm mb-3 text-blue-800 dark:text-blue-200 flex items-center gap-2">
+                    <Code className="w-4 h-4" />
+                    Mapping des Composants
+                  </h3>
+                  <div className="space-y-2 text-xs">
                     {Object.entries(componentMapping).slice(0, 4).map(([delphi, modern]) => (
-                      <div key={delphi} className="flex justify-between">
-                        <span className="text-gray-600">{delphi}</span>
-                        <Badge variant="secondary" className="text-xs">{modern}</Badge>
+                      <div key={delphi} className="flex justify-between items-center p-2 bg-white/60 dark:bg-slate-800/60 rounded-lg">
+                        <span className="text-gray-700 dark:text-gray-300 font-mono">{delphi}</span>
+                        <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                          {modern}
+                        </Badge>
                       </div>
                     ))}
                   </div>
