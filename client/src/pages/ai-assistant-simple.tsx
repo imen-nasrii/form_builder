@@ -30,7 +30,7 @@ export default function AIAssistant() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: 'assistant',
-      content: 'Hello! I am your FormBuilder Pro AI Assistant. I can analyze your DFM/Delphi files and generate any JSON program (BUYTYP, ACCADJ, PRIMNT, etc.). Upload your files or ask me questions!',
+      content: 'Hello! I am your FormBuilder Pro AI Assistant. I can generate any program type you need - just say "hi" or ask me to "generate [PROGRAM_TYPE]" and I\'ll create it instantly!',
       timestamp: new Date()
     }
   ]);
@@ -76,52 +76,79 @@ export default function AIAssistant() {
 
     setTimeout(() => {
       let response = "";
+      const message = currentMessage.toLowerCase();
       
-      // AI contextual responses based on question
-      if (currentMessage.toLowerCase().includes('buytyp') || currentMessage.toLowerCase().includes('generat')) {
-        response = `**AI Analysis for BUYTYP:**
+      // Greeting responses
+      if (message.includes('hi') || message.includes('hello') || message.includes('hey')) {
+        response = `Hi! How are you? I'm your FormBuilder AI Assistant, ready to help you generate any program type you need. Just tell me what you'd like to create!`;
+      }
+      // Generate any program type when requested
+      else if (message.includes('generate') || message.includes('create') || message.includes('build')) {
+        // Check for specific program types
+        if (message.includes('buytyp')) {
+          generateSpecificProgram('BUYTYP');
+          return;
+        } else if (message.includes('accadj')) {
+          generateSpecificProgram('ACCADJ');
+          return;
+        } else if (message.includes('primnt')) {
+          generateSpecificProgram('PRIMNT');
+          return;
+        } else if (message.includes('srcmnt')) {
+          generateSpecificProgram('SRCMNT');
+          return;
+        } else {
+          response = `**Program Generation Ready**
 
-Based on your configuration file, I can generate a complete BUYTYP form with:
+I can generate any program type for you! Please specify which type you need:
 
-• **10 intelligent fields**: FundID, Ticker, TradeDate, Broker, Reason, Exchange, Subunit, OrigFace, Quantity
-• **Advanced components**: GRIDLKP for lookups, DATEPKR for dates, LSTLKP for lists
-• **Sophisticated validations**: 28 validation rules with logical operators
-• **Linked entities**: Fndmas, Secrty, Broker, Reason, Exchang
-• **Dynamic conditions**: EnabledWhen, VisibleWhen, EndpointDepend
+• **BUYTYP** - Purchase type forms
+• **ACCADJ** - Account adjustment forms  
+• **PRIMNT** - Primary maintenance forms
+• **SRCMNT** - Source maintenance forms
+• **Custom** - Any other program type you specify
 
-Would you like me to generate the complete configuration now?`;
-      } else if (currentMessage.toLowerCase().includes('field')) {
+Just say "generate [PROGRAM_TYPE]" and I'll create it for you instantly!`;
+        }
+      }
+      // Field analysis
+      else if (message.includes('field')) {
         response = `**Field Analysis:**
 
-Your BUYTYP form contains sophisticated fields:
-• **GRIDLKP**: Fund, Ticker, Broker with dynamic search
-• **LSTLKP**: Reason, Exchange, Subunit with dropdown lists
-• **DATEPKR**: TradeDate with date validation
-• **NUMERIC**: Quantity, OrigFace with numeric controls
+I can analyze and create sophisticated fields:
+• **GRIDLKP**: Dynamic search grids with entity lookups
+• **LSTLKP**: Dropdown lists with filtered options
+• **DATEPKR**: Date pickers with validation rules
+• **NUMERIC**: Number inputs with range controls
+• **TEXT**: Text fields with pattern validation
 
-Each field has intelligent validations and dependencies.`;
-      } else if (currentMessage.toLowerCase().includes('validation')) {
+Each field includes intelligent validations and dependencies.`;
+      }
+      // Validation information
+      else if (message.includes('validation')) {
         response = `**AI Validation System:**
 
-The form includes 28+ automatic validations:
-• Required fields (ISN/ISNN)
-• Date validations (GT SYSDATE)
-• Inactive fund controls
-• Complex conditional validations
-• Contextual error messages
+I create comprehensive validation systems:
+• Required field validations (ISN/ISNN)
+• Date range validations (GT SYSDATE)
+• Business rule validations
+• Cross-field dependency checks
+• Custom error messaging
 
-AI optimizes validations for your workflow.`;
-      } else {
-        response = `**FormBuilder AI Assistant activated**
+All validations are optimized for your specific workflow.`;
+      }
+      // Default helpful response
+      else {
+        response = `**FormBuilder AI Assistant**
 
 I can help you with:
-• Generate BUYTYP, ACCADJ, PRIMNT forms
+• Generate ANY program type (BUYTYP, ACCADJ, PRIMNT, SRCMNT, custom)
 • Analyze DFM files and Delphi components  
-• Create intelligent validations
+• Create intelligent field validations
 • Optimize JSON configurations
-• Automatic entity mapping
+• Custom form generation
 
-Ask me a specific question or request form generation!`;
+Just ask me to generate any program and I'll create it instantly!`;
       }
 
       const aiMessage: ChatMessage = {
@@ -133,6 +160,44 @@ Ask me a specific question or request form generation!`;
       setMessages(prev => [...prev, aiMessage]);
       setIsProcessing(false);
     }, 1500);
+  };
+
+  // Enhanced function to generate any specific program type
+  const generateSpecificProgram = (programType: string) => {
+    setIsGenerating(true);
+    
+    const userMessage: ChatMessage = {
+      role: 'user',
+      content: `Generate ${programType} program`,
+      timestamp: new Date()
+    };
+    
+    setMessages(prev => [...prev, userMessage]);
+    
+    setTimeout(() => {
+      const jsonContent = generateProgramJSON(programType);
+      const description = getProgramDescription(programType);
+      
+      const assistantMessage: ChatMessage = {
+        role: 'assistant',
+        content: `${description}
+
+\`\`\`json
+${jsonContent}
+\`\`\`
+
+Your ${programType} program is ready! You can copy this JSON configuration and use it in your project.`,
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, assistantMessage]);
+      setIsGenerating(false);
+      
+      toast({
+        title: `${programType} Generated Successfully!`,
+        description: "Program configuration ready for use",
+      });
+    }, 2000);
   };
 
   const generateAnyProgram = () => {
@@ -543,7 +608,7 @@ You can now copy this JSON or use the download button if needed.`,
                         value={currentMessage}
                         onChange={(e) => setCurrentMessage(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                        placeholder="Type your message here..."
+                        placeholder="Say hi, or ask me to generate any program type..."
                         className="flex-1 px-5 py-4 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white placeholder-gray-400 dark:placeholder-gray-300 text-sm shadow-inner"
                       />
                       <Button
