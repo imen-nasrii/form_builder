@@ -169,3 +169,4 @@ System Requirements: Admin users cannot access Construction Zone (read-only mode
 ✓ Created intelligent DFM parser that extracts Delphi components and converts them to JSON fields (June 24, 2025)
 ✓ Added comprehensive Info file parser for validation rules, entities, and field metadata (June 24, 2025)
 ✓ Integrated real AI assistant with chat interface and automatic BUYTYP generation based on user files (June 24, 2025)
+✓ Modified AI to display JSON in chat instead of automatic download per user preference (June 24, 2025)
