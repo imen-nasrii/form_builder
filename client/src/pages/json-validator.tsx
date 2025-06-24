@@ -169,6 +169,58 @@ export default function JSONValidator() {
       });
       score -= 5;
       if (autoFixEnabled) fixedJson.Validations = [];
+    } else if (json.Validations && Array.isArray(json.Validations)) {
+      // Validate each validation rule
+      json.Validations.forEach((validation: any, vIndex: number) => {
+        if (!validation.Id) {
+          warnings.push({
+            type: 'warning',
+            field: `Validations[${vIndex}].Id`,
+            message: 'ID de validation manquant',
+            suggestion: 'Ajouter un ID unique pour chaque règle de validation'
+          });
+          score -= 2;
+        }
+        
+        if (!validation.Type || !['ERROR', 'WARNING', 'INFO'].includes(validation.Type)) {
+          errors.push({
+            type: 'error',
+            field: `Validations[${vIndex}].Type`,
+            message: 'Type de validation invalide (doit être ERROR, WARNING ou INFO)',
+            autoFix: true
+          });
+          score -= 3;
+          if (autoFixEnabled && !validation.Type) {
+            fixedJson.Validations[vIndex].Type = 'ERROR';
+          }
+        }
+        
+        // Check for CondExpression vs ConditionExpression inconsistency
+        if (validation.CondExpression && !validation.ConditionExpression) {
+          warnings.push({
+            type: 'warning',
+            field: `Validations[${vIndex}].CondExpression`,
+            message: 'Propriété "CondExpression" détectée, "ConditionExpression" recommandé',
+            suggestion: 'Utiliser "ConditionExpression" pour la cohérence',
+            autoFix: true
+          });
+          score -= 1;
+          if (autoFixEnabled) {
+            fixedJson.Validations[vIndex].ConditionExpression = validation.CondExpression;
+            delete fixedJson.Validations[vIndex].CondExpression;
+          }
+        }
+        
+        if (!validation.ConditionExpression && !validation.CondExpression) {
+          errors.push({
+            type: 'error',
+            field: `Validations[${vIndex}].ConditionExpression`,
+            message: 'Expression de condition manquante',
+            suggestion: 'Ajouter ConditionExpression avec Conditions array'
+          });
+          score -= 5;
+        }
+      });
     }
 
     // Check for duplicate field IDs
@@ -247,7 +299,8 @@ export default function JSONValidator() {
       fixedField.Id = `Field_${index + 1}_${Date.now()}`;
     }
 
-    if (!field.Type) {
+    // Check for Type vs type inconsistency
+    if (!field.Type && !field.type) {
       errors.push({
         type: 'error',
         field: `Fields[${index}].Type`,
@@ -256,27 +309,57 @@ export default function JSONValidator() {
       });
       scoreDeduction += 5;
       fixedField.Type = 'TEXT';
+    } else if (field.type && !field.Type) {
+      warnings.push({
+        type: 'warning',
+        field: `Fields[${index}].type`,
+        message: 'Propriété "type" en minuscules détectée, "Type" recommandé',
+        suggestion: 'Utiliser "Type" au lieu de "type" pour la cohérence',
+        autoFix: true
+      });
+      scoreDeduction += 2;
+      if (autoFixEnabled) {
+        fixedField.Type = field.type;
+        delete fixedField.type;
+      }
+    }
+
+    // Check for Label vs label inconsistency
+    if (field.label && !field.Label) {
+      warnings.push({
+        type: 'warning',
+        field: `Fields[${index}].label`,
+        message: 'Propriété "label" en minuscules détectée, "Label" recommandé',
+        suggestion: 'Utiliser "Label" au lieu de "label" pour la cohérence',
+        autoFix: true
+      });
+      scoreDeduction += 1;
+      if (autoFixEnabled) {
+        fixedField.Label = field.label;
+        delete fixedField.label;
+      }
     }
 
     // Validate field types
     const validTypes = [
-      'TEXT', 'TEXTAREA', 'NUMBER', 'EMAIL', 'PASSWORD', 'DATE', 'DATEPICKER',
+      'TEXT', 'TEXTAREA', 'NUMBER', 'EMAIL', 'PASSWORD', 'DATE', 'DATEPICKER', 'DATEPKR',
       'SELECT', 'MULTISELECT', 'RADIO', 'RADIOGRP', 'CHECKBOX', 'SWITCH',
       'FILE', 'IMAGE', 'GRID', 'GRIDLKP', 'LSTLKP', 'GROUP', 'LABEL', 'BUTTON'
     ];
     
-    if (field.Type && !validTypes.includes(field.Type)) {
+    const fieldType = field.Type || field.type;
+    if (fieldType && !validTypes.includes(fieldType)) {
       warnings.push({
         type: 'warning',
         field: `Fields[${index}].Type`,
-        message: `Type de champ non standard: ${field.Type}`,
-        suggestion: `Types recommandés: ${validTypes.slice(0, 5).join(', ')}...`
+        message: `Type de champ non standard: ${fieldType}`,
+        suggestion: `Types recommandés: ${validTypes.slice(0, 8).join(', ')}...`
       });
       scoreDeduction += 2;
     }
 
     // Validate required properties based on type
-    if (field.Type === 'SELECT' || field.Type === 'RADIO') {
+    if (fieldType === 'SELECT' || fieldType === 'RADIOGRP') {
       if (!field.OptionValues && !field.options) {
         warnings.push({
           type: 'warning',
@@ -286,20 +369,97 @@ export default function JSONValidator() {
           autoFix: true
         });
         scoreDeduction += 3;
-        fixedField.OptionValues = { "option1": "Option 1", "option2": "Option 2" };
+        if (autoFixEnabled) fixedField.OptionValues = { "option1": "Option 1", "option2": "Option 2" };
       }
     }
 
     // Validate lookup fields
-    if (field.Type === 'GRIDLKP' || field.Type === 'LSTLKP') {
+    if (fieldType === 'GRIDLKP' || fieldType === 'LSTLKP') {
       if (!field.LoadDataInfo) {
-        warnings.push({
-          type: 'warning',
+        errors.push({
+          type: 'error',
           field: `Fields[${index}].LoadDataInfo`,
-          message: 'Configuration de données manquante pour le lookup',
+          message: 'Configuration LoadDataInfo obligatoire pour les champs lookup',
           suggestion: 'Ajouter LoadDataInfo avec DataModel et ColumnsDefinition'
         });
-        scoreDeduction += 3;
+        scoreDeduction += 5;
+      } else {
+        // Validate LoadDataInfo structure
+        if (!field.LoadDataInfo.DataModel) {
+          errors.push({
+            type: 'error',
+            field: `Fields[${index}].LoadDataInfo.DataModel`,
+            message: 'DataModel manquant dans LoadDataInfo',
+            autoFix: true
+          });
+          scoreDeduction += 3;
+          if (autoFixEnabled) fixedField.LoadDataInfo.DataModel = 'DefaultModel';
+        }
+        
+        if (!field.LoadDataInfo.ColumnsDefinition || !Array.isArray(field.LoadDataInfo.ColumnsDefinition)) {
+          errors.push({
+            type: 'error',
+            field: `Fields[${index}].LoadDataInfo.ColumnsDefinition`,
+            message: 'ColumnsDefinition manquant ou invalide',
+            autoFix: true
+          });
+          scoreDeduction += 3;
+          if (autoFixEnabled) fixedField.LoadDataInfo.ColumnsDefinition = [];
+        }
+      }
+
+      // Validate KeyColumn for lookup fields
+      if (!field.KeyColumn) {
+        warnings.push({
+          type: 'warning',
+          field: `Fields[${index}].KeyColumn`,
+          message: 'KeyColumn recommandé pour les champs lookup',
+          suggestion: 'Spécifier la colonne clé pour la liaison des données'
+        });
+        scoreDeduction += 2;
+      }
+    }
+
+    // Validate GROUP fields
+    if (fieldType === 'GROUP') {
+      if (!field.ChildFields || !Array.isArray(field.ChildFields)) {
+        errors.push({
+          type: 'error',
+          field: `Fields[${index}].ChildFields`,
+          message: 'ChildFields obligatoire pour les champs GROUP',
+          suggestion: 'Ajouter un tableau ChildFields avec les champs enfants',
+          autoFix: true
+        });
+        scoreDeduction += 5;
+        if (autoFixEnabled) fixedField.ChildFields = [];
+      }
+    }
+
+    // Validate DATEPICKER/DATEPKR consistency
+    if (fieldType === 'DATEPKR') {
+      suggestions.push({
+        type: 'info',
+        field: `Fields[${index}].Type`,
+        message: 'Type DATEPKR détecté, DATEPICKER est plus standard',
+        suggestion: 'Considérer utiliser DATEPICKER pour la cohérence'
+      });
+    }
+
+    // Check for required field validation
+    if (field.required === true || field.Required === true) {
+      const hasValidation = field.Validations && field.Validations.some((v: any) => 
+        v.Type === 'ERROR' && v.ConditionExpression?.Conditions?.some((c: any) => 
+          c.RightField === field.Id && (c.Operator === 'ISN' || c.Operator === 'ISEMPTY')
+        )
+      );
+      
+      if (!hasValidation) {
+        suggestions.push({
+          type: 'info',
+          field: `Fields[${index}].Validations`,
+          message: 'Champ marqué requis mais sans validation correspondante',
+          suggestion: 'Ajouter une validation ERROR avec opérateur ISN pour vérifier le champ obligatoire'
+        });
       }
     }
 
@@ -319,48 +479,120 @@ export default function JSONValidator() {
   };
 
   const loadSampleJSON = () => {
-    const sampleJSON = {
-      "MenuID": "SAMPLE_FORM",
+    const accadjJSON = {
+      "MenuID": "ACCADJ",
       "FormWidth": "700px",
       "Layout": "PROCESS",
-      "Label": "Formulaire d'exemple",
+      "Label": "ACCADJ",
       "Fields": [
         {
-          "Id": "Name",
-          "Label": "Nom complet",
-          "Type": "TEXT",
-          "Required": true,
-          "Width": "100%"
-        },
-        {
-          "Id": "Email",
-          "Label": "Email",
-          "Type": "EMAIL",
-          "Required": true,
-          "Width": "50%"
-        },
-        {
-          "Id": "Category",
-          "Label": "Catégorie",
-          "Type": "SELECT",
-          "Width": "50%",
-          "OptionValues": {
-            "cat1": "Catégorie 1",
-            "cat2": "Catégorie 2",
-            "cat3": "Catégorie 3"
+          "Id": "FundID",
+          "label": "FUND",
+          "type": "GRIDLKP",
+          "Inline": true,
+          "Width": "32",
+          "KeyColumn": "fund",
+          "ItemInfo": {
+            "MainProperty": "fund",
+            "DescProperty": "acnam1",
+            "ShowDescription": true
+          },
+          "LoadDataInfo": {
+            "DataModel": "Fndmas",
+            "ColumnsDefinition": [
+              {
+                "DataField": "fund",
+                "Caption": "Fund ID",
+                "DataType": "STRING",
+                "Visible": true
+              },
+              {
+                "DataField": "acnam1",
+                "Caption": "Fund Name",
+                "DataType": "STRING",
+                "Visible": true
+              }
+            ]
           }
+        },
+        {
+          "Id": "Ticker",
+          "Label": "Ticker",
+          "Type": "GRIDLKP",
+          "Inline": true,
+          "Width": "32",
+          "KeyColumn": "tkr",
+          "ItemInfo": {
+            "MainProperty": "tkr",
+            "DescProperty": "tkr_DESC",
+            "ShowDescription": true
+          },
+          "LoadDataInfo": {
+            "DataModel": "Secrty",
+            "ColumnsDefinition": [
+              {
+                "DataField": "tkr",
+                "Caption": "Ticker",
+                "DataType": "STRING",
+                "Visible": true
+              },
+              {
+                "DataField": "tkr_DESC",
+                "Caption": "Description",
+                "DataType": "STRING",
+                "Visible": true
+              }
+            ]
+          }
+        },
+        {
+          "Id": "AccrualDate",
+          "label": "PROCDATE",
+          "type": "DATEPICKER",
+          "Inline": true,
+          "Width": "32",
+          "Spacing": "30",
+          "required": true,
+          "Validations": [
+            {
+              "Id": "6",
+              "Type": "ERROR",
+              "ConditionExpression": {
+                "Conditions": [
+                  {
+                    "RightField": "AccrualDate",
+                    "Operator": "ISN",
+                    "ValueType": "DATE"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "Actions": [
+        {
+          "ID": "PROCESS",
+          "Label": "PROCESS",
+          "MethodToInvoke": "ExecuteProcess"
         }
       ],
       "Validations": [
         {
-          "Id": "email_validation",
+          "Id": "2",
           "Type": "ERROR",
           "CondExpression": {
+            "LogicalOperator": "AND",
             "Conditions": [
               {
-                "RightField": "Email",
-                "Operator": "ISN",
-                "ValueType": "STRING"
+                "RightField": "ReportOnly",
+                "Operator": "IST",
+                "ValueType": "BOOL"
+              },
+              {
+                "RightField": "UpdateRates",
+                "Operator": "IST",
+                "ValueType": "BOOL"
               }
             ]
           }
@@ -368,7 +600,7 @@ export default function JSONValidator() {
       ]
     };
     
-    setJsonInput(JSON.stringify(sampleJSON, null, 2));
+    setJsonInput(JSON.stringify(accadjJSON, null, 2));
   };
 
   const handleFileImport = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -450,7 +682,7 @@ export default function JSONValidator() {
                       onClick={loadSampleJSON}
                     >
                       <Eye className="w-4 h-4 mr-2" />
-                      Exemple
+                      ACCADJ
                     </Button>
                   </div>
                 </div>
