@@ -63,37 +63,8 @@ export default function AdvancedAIAssistant() {
   }, [messages]);
 
   useEffect(() => {
-    // Message de bienvenue
-    setMessages([{
-      id: '1',
-      type: 'assistant',
-      content: `🚀 **Bienvenue dans l'Assistant IA Avancé !**
-
-Je suis votre compagnon intelligent de programmation propulsé par Claude 4.0 Sonnet. Je peux vous aider avec :
-
-**🔧 Génération de Formulaires & Développement :**
-• Convertir les fichiers DFM (Delphi) en configurations JSON modernes
-• Générer tout type de programme (BUYTYP, ACCADJ, PRIMNT, SRCMNT, etc.)
-• Créer des règles de validation sophistiquées et de la logique métier
-
-**💻 Support Programmation & Technique :**
-• Écrire, analyser et déboguer du code dans n'importe quel langage
-• Fournir des conseils architecturaux et de meilleures pratiques
-• Résoudre des problèmes techniques complexes étape par étape
-
-**📚 Apprentissage & Explication :**
-• Expliquer les concepts de programmation à tout niveau
-• Fournir des tutoriels détaillés et des exemples
-• Répondre aux questions techniques de manière exhaustive
-
-**🔍 Analyse & Optimisation :**
-• Réviser la qualité et les performances du code
-• Suggérer des améliorations et optimisations
-• Identifier les vulnérabilités de sécurité
-
-Posez-moi n'importe quelle question ! Je suis là pour fournir une assistance avancée et complète pour tous vos besoins de développement.`,
-      timestamp: new Date()
-    }]);
+    // Interface propre au démarrage - pas de message automatique
+    setMessages([]);
   }, []);
 
   const addMessage = (type: 'user' | 'assistant', content: string, metadata?: any) => {
