@@ -27,6 +27,7 @@ import AdminManagement from "@/pages/admin-management";
 import UserTaskBoard from "@/pages/user-task-board";
 import AIAssistant from "@/pages/ai-assistant-simple";
 import AdvancedAIAssistant from "@/pages/ai-assistant-advanced";
+import AIChat from "@/pages/ai-chat";
 
 import JSONValidator from "@/pages/json-validator";
 import Navigation from "@/components/navigation";
@@ -73,7 +74,7 @@ function Router() {
       <Route path="/admin-panel" component={AdminPanel} />
       <Route path="/admin-management" component={AdminManagement} />
       <Route path="/task-board" component={UserTaskBoard} />
-      <Route path="/ai-assistant" component={AdvancedAIAssistant} />
+      <Route path="/ai-assistant" component={AIChat} />
 
       <Route path="/json-validator" component={JSONValidator} />
       <Route path="/analytics" component={Analytics} />
