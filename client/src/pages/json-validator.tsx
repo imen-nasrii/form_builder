@@ -37,92 +37,179 @@ interface ValidationResult {
   suggestions: ValidationError[];
   score: number;
   fixedJson?: any;
+  complexity: 'simple' | 'moderate' | 'complex' | 'very-complex';
+  performance: {
+    validationTime: number;
+    fileSize: number;
+    fieldCount: number;
+  };
 }
 
 export default function JSONValidator() {
   const [jsonInput, setJsonInput] = useState('');
   const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
   const [isValidating, setIsValidating] = useState(false);
+  const [isAutoCorrecting, setIsAutoCorrecting] = useState(false);
   const [autoFixEnabled, setAutoFixEnabled] = useState(true);
+  const [validationMode, setValidationMode] = useState<'strict' | 'standard' | 'permissive'>('standard');
+  const [realTimeValidation, setRealTimeValidation] = useState(false);
+  const [performanceMetrics, setPerformanceMetrics] = useState<{validationTime: number, fileSize: number} | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
 
-  const validateJSON = async () => {
-    if (!jsonInput.trim()) {
+  // Real-time validation with debouncing
+  const handleInputChange = (value: string) => {
+    setJsonInput(value);
+    
+    if (realTimeValidation && value.trim()) {
+      if (debounceTimeout.current) {
+        clearTimeout(debounceTimeout.current);
+      }
+      
+      debounceTimeout.current = setTimeout(() => {
+        validateJSON(value);
+      }, 1000);
+    }
+  };
+
+  const validateJSON = async (inputValue?: string) => {
+    const valueToValidate = inputValue || jsonInput;
+    
+    if (!valueToValidate.trim()) {
       toast({
-        title: "JSON requis",
-        description: "Veuillez saisir ou importer un JSON à valider",
+        title: "No JSON Input",
+        description: "Please enter JSON to validate",
         variant: "destructive",
       });
       return;
     }
 
     setIsValidating(true);
+    const startTime = performance.now();
     
     try {
       // Parse JSON
-      const parsed = JSON.parse(jsonInput);
+      const parsed = JSON.parse(valueToValidate);
+      const fileSize = new Blob([valueToValidate]).size;
       
-      // Perform comprehensive validation
-      const result = await performIntelligentValidation(parsed);
+      // Perform comprehensive validation with enhanced features
+      const result = await performIntelligentValidation(parsed, fileSize, startTime);
       setValidationResult(result);
+      
+      setPerformanceMetrics({
+        validationTime: result.performance.validationTime,
+        fileSize: result.performance.fileSize
+      });
       
       toast({
         title: result.isValid ? "Validation Successful" : "Issues Detected",
         description: result.isValid 
-          ? `Valid JSON with score of ${result.score}/100`
+          ? `Valid JSON with score ${result.score}/100 (${result.performance.validationTime}ms, ${result.complexity})`
           : `${result.errors.length} errors and ${result.warnings.length} warnings found`,
         variant: result.isValid ? "default" : "destructive",
       });
       
     } catch (error) {
+      const endTime = performance.now();
       setValidationResult({
         isValid: false,
         errors: [{
           type: 'error',
           field: 'JSON',
-          message: 'Invalid JSON: ' + error.message,
+          message: 'Invalid JSON: ' + (error as Error).message,
           autoFix: false
         }],
         warnings: [],
         suggestions: [],
-        score: 0
+        score: 0,
+        complexity: 'simple',
+        performance: {
+          validationTime: Math.round(endTime - startTime),
+          fileSize: new Blob([valueToValidate]).size,
+          fieldCount: 0
+        }
       });
     }
     
     setIsValidating(false);
   };
 
-  const performIntelligentValidation = async (json: any): Promise<ValidationResult> => {
+  const calculateComplexity = (json: any): 'simple' | 'moderate' | 'complex' | 'very-complex' => {
+    const fieldCount = json.Fields ? json.Fields.length : 0;
+    const hasChildFields = json.Fields?.some((f: any) => f.ChildFields?.length > 0);
+    const hasValidations = json.Validations?.length > 0;
+    const hasLoadData = json.Fields?.some((f: any) => f.LoadDataInfo);
+    
+    if (fieldCount > 100 || (hasChildFields && fieldCount > 50)) return 'very-complex';
+    if (fieldCount > 50 || (hasValidations && hasLoadData && fieldCount > 20)) return 'complex';
+    if (fieldCount > 20 || hasValidations || hasLoadData) return 'moderate';
+    return 'simple';
+  };
+
+  const performIntelligentValidation = async (json: any, fileSize: number, startTime: number): Promise<ValidationResult> => {
     const errors: ValidationError[] = [];
     const warnings: ValidationError[] = [];
     const suggestions: ValidationError[] = [];
     let score = 100;
     let fixedJson = { ...json };
     
-    console.log('🔍 VALIDATION DEBUG - Score initial:', score);
+    console.log('🔍 VALIDATION DEBUG - Initial score:', score);
     console.log('🔍 VALIDATION DEBUG - JSON to analyze:', json);
+    console.log('🔍 VALIDATION DEBUG - Validation mode:', validationMode);
 
-    // Validate required top-level fields
-    const requiredFields = ['MenuID', 'Label', 'Fields'];
+    // Apply validation mode strictness
+    const isStrict = validationMode === 'strict';
+    const isPermissive = validationMode === 'permissive';
+    
+    // Validate required top-level fields (adjusted by mode)
+    const requiredFields = isPermissive ? ['MenuID', 'Fields'] : ['MenuID', 'Label', 'Fields'];
     requiredFields.forEach(field => {
       if (!json[field]) {
-        errors.push({
-          type: 'error',
+        const severity = isStrict ? 'error' : (field === 'Fields' ? 'error' : 'warning');
+        const target = severity === 'error' ? errors : warnings;
+        
+        target.push({
+          type: severity as 'error' | 'warning',
           field: field,
-          message: `Champ obligatoire manquant: ${field}`,
-          suggestion: `Ajouter le champ ${field}`,
+          message: `Required field missing: ${field}`,
+          suggestion: `Add the ${field} field`,
           autoFix: true
         });
-        score -= 20;
+        score -= severity === 'error' ? 20 : 10;
         
         if (autoFixEnabled) {
           if (field === 'MenuID') fixedJson[field] = `FORM_${Date.now()}`;
-          if (field === 'Label') fixedJson[field] = 'Nouveau Formulaire';
+          if (field === 'Label') fixedJson[field] = 'New Form';
           if (field === 'Fields') fixedJson[field] = [];
         }
       }
     });
+    
+    // Additional strict mode validations
+    if (isStrict) {
+      // Require FormWidth in strict mode
+      if (!json.FormWidth) {
+        warnings.push({
+          type: 'warning',
+          field: 'FormWidth',
+          message: 'FormWidth recommended in strict mode',
+          suggestion: 'Add FormWidth property for better form control'
+        });
+        score -= 3;
+      }
+      
+      // Require Layout in strict mode
+      if (!json.Layout) {
+        warnings.push({
+          type: 'warning',
+          field: 'Layout',
+          message: 'Layout recommended in strict mode',
+          suggestion: 'Add Layout property to define form structure'
+        });
+        score -= 3;
+      }
+    }
 
     // Validate MenuID format
     if (json.MenuID && typeof json.MenuID !== 'string') {
@@ -321,13 +408,23 @@ export default function JSONValidator() {
       warningDetails: warnings
     });
 
+    const endTime = performance.now();
+    const fieldCount = json.Fields ? json.Fields.length : 0;
+    const complexity = calculateComplexity(json);
+    
     return {
       isValid: errors.length === 0,
       errors,
       warnings,
       suggestions,
       score: Math.max(0, score),
-      fixedJson: autoFixEnabled ? fixedJson : undefined
+      fixedJson: autoFixEnabled ? fixedJson : undefined,
+      complexity,
+      performance: {
+        validationTime: Math.round(endTime - startTime),
+        fileSize,
+        fieldCount
+      }
     };
   };
 
@@ -747,6 +844,81 @@ export default function JSONValidator() {
   };
 
   const downloadValidatedJSON = () => {
+    const jsonToDownload = validationResult?.fixedJson || (jsonInput ? JSON.parse(jsonInput) : null);
+    
+    if (!jsonToDownload) {
+      toast({
+        title: "No JSON to Download",
+        description: "Please validate JSON first",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    const dataStr = JSON.stringify(jsonToDownload, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+    
+    const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+    const filename = `validated-form-${timestamp}.json`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', filename);
+    linkElement.click();
+    
+    toast({
+      title: "Download Successful",
+      description: `Downloaded: ${filename}`,
+    });
+  };
+
+  const exportValidationReport = () => {
+    if (!validationResult) {
+      toast({
+        title: "No Validation Report",
+        description: "Please validate JSON first",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    const report = {
+      timestamp: new Date().toISOString(),
+      validationMode,
+      performance: validationResult.performance,
+      complexity: validationResult.complexity,
+      score: validationResult.score,
+      summary: {
+        isValid: validationResult.isValid,
+        errorsCount: validationResult.errors.length,
+        warningsCount: validationResult.warnings.length,
+        suggestionsCount: validationResult.suggestions.length
+      },
+      details: {
+        errors: validationResult.errors,
+        warnings: validationResult.warnings,
+        suggestions: validationResult.suggestions
+      }
+    };
+    
+    const dataStr = JSON.stringify(report, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+    
+    const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+    const filename = `validation-report-${timestamp}.json`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', filename);
+    linkElement.click();
+    
+    toast({
+      title: "Report Exported", 
+      description: `Validation report saved: ${filename}`,
+    });
+  };
+
+  const oldDownloadValidatedJSON = () => {
     const jsonToDownload = validationResult?.fixedJson || JSON.parse(jsonInput);
     const blob = new Blob([JSON.stringify(jsonToDownload, null, 2)], {
       type: 'application/json'
@@ -817,7 +989,7 @@ export default function JSONValidator() {
               <CardContent>
                 <Textarea
                   value={jsonInput}
-                  onChange={(e) => setJsonInput(e.target.value)}
+                  onChange={(e) => handleInputChange(e.target.value)}
                   placeholder="Paste your JSON here or import a file..."
                   rows={20}
                   className="font-mono text-sm"
@@ -860,6 +1032,30 @@ export default function JSONValidator() {
                     />
                     <Label htmlFor="autofix" className="text-sm">Auto-correction</Label>
                   </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="realtime"
+                      checked={realTimeValidation}
+                      onChange={(e) => setRealTimeValidation(e.target.checked)}
+                      className="rounded"
+                    />
+                    <Label htmlFor="realtime" className="text-sm">Real-time Validation</Label>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Label className="text-sm">Mode:</Label>
+                    <select 
+                      value={validationMode} 
+                      onChange={(e) => setValidationMode(e.target.value as 'strict' | 'standard' | 'permissive')}
+                      className="text-xs border rounded px-2 py-1"
+                    >
+                      <option value="permissive">Permissive</option>
+                      <option value="standard">Standard</option>
+                      <option value="strict">Strict</option>
+                    </select>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -869,7 +1065,7 @@ export default function JSONValidator() {
           <div className="space-y-6">
             {validationResult && (
               <>
-                {/* Score Card */}
+                {/* Enhanced Score Card */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center justify-between">
@@ -879,6 +1075,32 @@ export default function JSONValidator() {
                       </span>
                     </CardTitle>
                   </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="text-gray-600">Complexity:</span>
+                        <span className={`ml-2 font-medium ${
+                          validationResult.complexity === 'simple' ? 'text-green-600' :
+                          validationResult.complexity === 'moderate' ? 'text-yellow-600' :
+                          validationResult.complexity === 'complex' ? 'text-orange-600' : 'text-red-600'
+                        }`}>
+                          {validationResult.complexity.charAt(0).toUpperCase() + validationResult.complexity.slice(1)}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-gray-600">Fields:</span>
+                        <span className="ml-2 font-medium">{validationResult.performance.fieldCount}</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-600">Validation Time:</span>
+                        <span className="ml-2 font-medium">{validationResult.performance.validationTime}ms</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-600">File Size:</span>
+                        <span className="ml-2 font-medium">{(validationResult.performance.fileSize / 1024).toFixed(1)}KB</span>
+                      </div>
+                    </div>
+                  </CardContent>
                   <CardContent>
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div 
@@ -917,7 +1139,11 @@ export default function JSONValidator() {
                         </Button>
                         <Button variant="outline" onClick={downloadValidatedJSON}>
                           <Download className="w-4 h-4 mr-2" />
-                          Download
+                          Download JSON
+                        </Button>
+                        <Button variant="outline" onClick={exportValidationReport}>
+                          <Save className="w-4 h-4 mr-2" />
+                          Export Report
                         </Button>
                       </div>
                     )}
