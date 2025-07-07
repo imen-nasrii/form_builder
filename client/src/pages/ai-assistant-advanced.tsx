@@ -63,35 +63,35 @@ export default function AdvancedAIAssistant() {
   }, [messages]);
 
   useEffect(() => {
-    // Welcome message
+    // Message de bienvenue
     setMessages([{
       id: '1',
       type: 'assistant',
-      content: `🚀 **Welcome to the Advanced AI Assistant!**
+      content: `🚀 **Bienvenue dans l'Assistant IA Avancé !**
 
-I'm your intelligent programming companion powered by Claude 4.0 Sonnet. I can help you with:
+Je suis votre compagnon intelligent de programmation propulsé par Claude 4.0 Sonnet. Je peux vous aider avec :
 
-**🔧 Form Generation & Development:**
-• Convert DFM (Delphi) files to modern JSON configurations
-• Generate any program type (BUYTYP, ACCADJ, PRIMNT, SRCMNT, etc.)
-• Create sophisticated validation rules and business logic
+**🔧 Génération de Formulaires & Développement :**
+• Convertir les fichiers DFM (Delphi) en configurations JSON modernes
+• Générer tout type de programme (BUYTYP, ACCADJ, PRIMNT, SRCMNT, etc.)
+• Créer des règles de validation sophistiquées et de la logique métier
 
-**💻 Programming & Technical Support:**
-• Write, analyze, and debug code in any language
-• Provide architectural guidance and best practices
-• Solve complex technical problems step-by-step
+**💻 Support Programmation & Technique :**
+• Écrire, analyser et déboguer du code dans n'importe quel langage
+• Fournir des conseils architecturaux et de meilleures pratiques
+• Résoudre des problèmes techniques complexes étape par étape
 
-**📚 Learning & Explanation:**
-• Explain programming concepts at any level
-• Provide detailed tutorials and examples
-• Answer technical questions comprehensively
+**📚 Apprentissage & Explication :**
+• Expliquer les concepts de programmation à tout niveau
+• Fournir des tutoriels détaillés et des exemples
+• Répondre aux questions techniques de manière exhaustive
 
-**🔍 Analysis & Optimization:**
-• Review code quality and performance
-• Suggest improvements and optimizations
-• Identify security vulnerabilities
+**🔍 Analyse & Optimisation :**
+• Réviser la qualité et les performances du code
+• Suggérer des améliorations et optimisations
+• Identifier les vulnérabilités de sécurité
 
-Just ask me anything! I'm here to provide advanced, comprehensive assistance for all your development needs.`,
+Posez-moi n'importe quelle question ! Je suis là pour fournir une assistance avancée et complète pour tous vos besoins de développement.`,
       timestamp: new Date()
     }]);
   }, []);
@@ -290,21 +290,21 @@ Just ask me anything! I'm here to provide advanced, comprehensive assistance for
         setDfmContent(content);
         setCurrentTab('dfm-converter');
         toast({
-          title: "DFM File Loaded",
-          description: `Loaded ${file.name} successfully`
+          title: "Fichier DFM Chargé",
+          description: `${file.name} chargé avec succès`
         });
       } else if (file.name.toLowerCase().includes('info')) {
         setInfoContent(content);
         toast({
-          title: "Info File Loaded",
-          description: `Loaded ${file.name} successfully`
+          title: "Fichier Info Chargé",
+          description: `${file.name} chargé avec succès`
         });
       } else {
         setCodeToAnalyze(content);
         setCurrentTab('code-analyzer');
         toast({
-          title: "File Loaded",
-          description: `Loaded ${file.name} for analysis`
+          title: "Fichier Chargé",
+          description: `${file.name} chargé pour analyse`
         });
       }
     };
@@ -334,8 +334,8 @@ Just ask me anything! I'm here to provide advanced, comprehensive assistance for
     linkElement.click();
     
     toast({
-      title: "Chat Exported",
-      description: `Chat history saved: ${filename}`,
+      title: "Chat Exporté",
+      description: `Historique du chat sauvegardé : ${filename}`,
     });
   };
 
@@ -349,96 +349,105 @@ Just ask me anything! I'm here to provide advanced, comprehensive assistance for
   };
 
   return (
-    <div className="container mx-auto p-6 max-w-7xl">
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-3">
-          <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl text-white">
-            <Sparkles className="w-6 h-6" />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+      <div className="container mx-auto p-6 max-w-7xl">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur opacity-75"></div>
+              <div className="relative p-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl text-white shadow-lg">
+                <Sparkles className="w-8 h-8" />
+              </div>
+            </div>
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Assistant IA Avancé
+              </h1>
+              <p className="text-gray-600 text-lg">Propulsé par Claude 4.0 Sonnet - Votre compagnon intelligent de développement</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Advanced AI Assistant</h1>
-            <p className="text-gray-600">Powered by Claude 4.0 Sonnet - Your intelligent development companion</p>
+          <div className="flex gap-3">
+            <input
+              ref={fileInputRef}
+              type="file"
+              onChange={handleFileUpload}
+              accept=".dfm,.txt,.js,.ts,.json,.py,.java,.cpp,.c,.cs,.php,.rb,.go,.rs"
+              className="hidden"
+            />
+            <Button
+              variant="outline"
+              onClick={() => fileInputRef.current?.click()}
+              className="bg-white/80 backdrop-blur-sm border-blue-200 hover:bg-blue-50 shadow-lg"
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              Importer Fichier
+            </Button>
+            <Button
+              variant="outline"
+              onClick={exportChat}
+              disabled={messages.length <= 1}
+              className="bg-white/80 backdrop-blur-sm border-purple-200 hover:bg-purple-50 shadow-lg"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Exporter Chat
+            </Button>
           </div>
-        </div>
-        <div className="flex gap-2">
-          <input
-            ref={fileInputRef}
-            type="file"
-            onChange={handleFileUpload}
-            accept=".dfm,.txt,.js,.ts,.json,.py,.java,.cpp,.c,.cs,.php,.rb,.go,.rs"
-            className="hidden"
-          />
-          <Button
-            variant="outline"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <Upload className="w-4 h-4 mr-2" />
-            Upload File
-          </Button>
-          <Button
-            variant="outline"
-            onClick={exportChat}
-            disabled={messages.length <= 1}
-          >
-            <Download className="w-4 h-4 mr-2" />
-            Export Chat
-          </Button>
         </div>
       </div>
 
-      <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="chat" className="flex items-center gap-2">
-            <MessageCircle className="w-4 h-4" />
-            General Chat
-          </TabsTrigger>
-          <TabsTrigger value="dfm-converter" className="flex items-center gap-2">
-            <FileCode className="w-4 h-4" />
-            DFM Converter
-          </TabsTrigger>
-          <TabsTrigger value="code-analyzer" className="flex items-center gap-2">
-            <Code className="w-4 h-4" />
-            Code Analyzer
-          </TabsTrigger>
-          <TabsTrigger value="form-generator" className="flex items-center gap-2">
-            <Zap className="w-4 h-4" />
-            Form Generator
-          </TabsTrigger>
-          <TabsTrigger value="explainer" className="flex items-center gap-2">
-            <Lightbulb className="w-4 h-4" />
-            Concept Explainer
-          </TabsTrigger>
-          <TabsTrigger value="problem-solver" className="flex items-center gap-2">
-            <Cpu className="w-4 h-4" />
-            Problem Solver
-          </TabsTrigger>
-        </TabsList>
+        <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-6 bg-white/60 backdrop-blur-sm p-1 shadow-lg border-0">
+            <TabsTrigger value="chat" className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-500 data-[state=active]:text-white">
+              <MessageCircle className="w-4 h-4" />
+              Chat Général
+            </TabsTrigger>
+            <TabsTrigger value="dfm-converter" className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500 data-[state=active]:to-emerald-500 data-[state=active]:text-white">
+              <FileCode className="w-4 h-4" />
+              Convertisseur DFM
+            </TabsTrigger>
+            <TabsTrigger value="code-analyzer" className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-red-500 data-[state=active]:text-white">
+              <Code className="w-4 h-4" />
+              Analyseur Code
+            </TabsTrigger>
+            <TabsTrigger value="form-generator" className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-500 data-[state=active]:text-white">
+              <Zap className="w-4 h-4" />
+              Générateur Formulaires
+            </TabsTrigger>
+            <TabsTrigger value="explainer" className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-yellow-500 data-[state=active]:to-orange-500 data-[state=active]:text-white">
+              <Lightbulb className="w-4 h-4" />
+              Explicateur
+            </TabsTrigger>
+            <TabsTrigger value="problem-solver" className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-500 data-[state=active]:to-blue-500 data-[state=active]:text-white">
+              <Cpu className="w-4 h-4" />
+              Résolveur Problèmes
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Chat Interface */}
-        <TabsContent value="chat" className="space-y-4">
-          <Card className="h-[600px] flex flex-col">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2">
-                <Bot className="w-5 h-5" />
-                AI Chat Interface
-                <Badge variant="secondary">Claude 4.0 Sonnet</Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex-1 flex flex-col">
-              <ScrollArea className="flex-1 mb-4 border rounded-lg p-4">
-                <div className="space-y-4">
-                  {messages.map((message) => (
-                    <div
-                      key={message.id}
-                      className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
-                    >
+          {/* Chat Interface */}
+          <TabsContent value="chat" className="space-y-4">
+            <Card className="h-[600px] flex flex-col bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+              <CardHeader className="pb-3 bg-gradient-to-r from-blue-50 to-purple-50 border-b border-blue-100">
+                <CardTitle className="flex items-center gap-2">
+                  <Bot className="w-5 h-5 text-blue-600" />
+                  Interface Chat IA
+                  <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">Claude 4.0 Sonnet</Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex-1 flex flex-col">
+                <ScrollArea className="flex-1 mb-4 border-0 rounded-xl p-4 bg-gradient-to-b from-white/50 to-gray-50/50">
+                  <div className="space-y-4">
+                    {messages.map((message) => (
                       <div
-                        className={`max-w-[80%] p-3 rounded-lg ${
-                          message.type === 'user'
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-gray-100 text-gray-900'
-                        }`}
+                        key={message.id}
+                        className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
                       >
+                        <div
+                          className={`max-w-[80%] p-4 rounded-2xl shadow-lg ${
+                            message.type === 'user'
+                              ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white'
+                              : 'bg-white/90 backdrop-blur-sm text-gray-900 border border-gray-200'
+                          }`}
+                        >
                         <div 
                           className="whitespace-pre-wrap"
                           dangerouslySetInnerHTML={{ __html: formatMessage(message.content) }}
@@ -451,82 +460,91 @@ Just ask me anything! I'm here to provide advanced, comprehensive assistance for
                       </div>
                     </div>
                   ))}
-                  {isLoading && (
-                    <div className="flex justify-start">
-                      <div className="bg-gray-100 p-3 rounded-lg">
-                        <div className="flex items-center gap-2">
-                          <div className="animate-spin w-4 h-4 border-2 border-gray-300 border-t-blue-500 rounded-full"></div>
-                          <span>AI is thinking...</span>
+                    {isLoading && (
+                      <div className="flex justify-start">
+                        <div className="bg-white/90 backdrop-blur-sm p-4 rounded-2xl shadow-lg border border-gray-200">
+                          <div className="flex items-center gap-3">
+                            <div className="animate-spin w-5 h-5 border-2 border-gray-300 border-t-blue-500 rounded-full"></div>
+                            <span className="text-gray-700">L'IA réfléchit...</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
                   <div ref={messagesEndRef} />
                 </div>
               </ScrollArea>
-              
-              <div className="flex gap-2">
-                <Input
-                  value={inputMessage}
-                  onChange={(e) => setInputMessage(e.target.value)}
-                  placeholder="Ask me anything about programming, forms, or technical questions..."
-                  onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && sendChatMessage()}
-                />
-                <Button onClick={sendChatMessage} disabled={isLoading || !inputMessage.trim()}>
-                  <Send className="w-4 h-4" />
+                
+                <div className="flex gap-3 p-2 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl">
+                  <Input
+                    value={inputMessage}
+                    onChange={(e) => setInputMessage(e.target.value)}
+                    placeholder="Posez-moi des questions sur la programmation, les formulaires, ou tout autre sujet technique..."
+                    onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && sendChatMessage()}
+                    className="flex-1 border-0 bg-white/80 backdrop-blur-sm shadow-sm"
+                  />
+                  <Button 
+                    onClick={sendChatMessage} 
+                    disabled={isLoading || !inputMessage.trim()}
+                    className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-6 shadow-lg"
+                  >
+                    <Send className="w-4 h-4" />
+                  </Button>
+                </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+          {/* DFM Converter */}
+          <TabsContent value="dfm-converter" className="space-y-4">
+            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+              <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-100">
+                <CardTitle className="flex items-center gap-2">
+                  <FileCode className="w-5 h-5 text-green-600" />
+                  Convertisseur DFM vers JSON
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6 p-6">
+                <div className="space-y-2">
+                  <Label htmlFor="dfm-content" className="text-sm font-medium text-gray-700">Contenu DFM</Label>
+                  <Textarea
+                    id="dfm-content"
+                    value={dfmContent}
+                    onChange={(e) => setDfmContent(e.target.value)}
+                    placeholder="Collez votre contenu DFM (Delphi Form) ici..."
+                    className="min-h-[200px] font-mono bg-white/80 backdrop-blur-sm border-green-200 focus:border-green-400 shadow-sm"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="info-content" className="text-sm font-medium text-gray-700">Contenu Info (Optionnel)</Label>
+                  <Textarea
+                    id="info-content"
+                    value={infoContent}
+                    onChange={(e) => setInfoContent(e.target.value)}
+                    placeholder="Collez votre contenu de fichier Info ici pour des métadonnées supplémentaires..."
+                    className="min-h-[100px] font-mono bg-white/80 backdrop-blur-sm border-green-200 focus:border-green-400 shadow-sm"
+                  />
+                </div>
+                <Button 
+                  onClick={convertDFMToJSON} 
+                  disabled={isLoading || !dfmContent.trim()}
+                  className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-lg"
+                >
+                  <Zap className="w-4 h-4 mr-2" />
+                  Convertir en JSON
                 </Button>
-              </div>
-            </CardContent>
+              </CardContent>
           </Card>
         </TabsContent>
 
-        {/* DFM Converter */}
-        <TabsContent value="dfm-converter" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileCode className="w-5 h-5" />
-                DFM to JSON Converter
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="dfm-content">DFM Content</Label>
-                <Textarea
-                  id="dfm-content"
-                  value={dfmContent}
-                  onChange={(e) => setDfmContent(e.target.value)}
-                  placeholder="Paste your DFM (Delphi Form) content here..."
-                  className="min-h-[200px] font-mono"
-                />
-              </div>
-              <div>
-                <Label htmlFor="info-content">Info Content (Optional)</Label>
-                <Textarea
-                  id="info-content"
-                  value={infoContent}
-                  onChange={(e) => setInfoContent(e.target.value)}
-                  placeholder="Paste your Info file content here for additional metadata..."
-                  className="min-h-[100px] font-mono"
-                />
-              </div>
-              <Button onClick={convertDFMToJSON} disabled={isLoading || !dfmContent.trim()}>
-                <Zap className="w-4 h-4 mr-2" />
-                Convert to JSON
-              </Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Code Analyzer */}
-        <TabsContent value="code-analyzer" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Code className="w-5 h-5" />
-                Advanced Code Analyzer
-              </CardTitle>
-            </CardHeader>
+          {/* Code Analyzer */}
+          <TabsContent value="code-analyzer" className="space-y-4">
+            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+              <CardHeader className="bg-gradient-to-r from-orange-50 to-red-50 border-b border-orange-100">
+                <CardTitle className="flex items-center gap-2">
+                  <Code className="w-5 h-5 text-orange-600" />
+                  Analyseur de Code Avancé
+                </CardTitle>
+              </CardHeader>
             <CardContent className="space-y-4">
               <div>
                 <Label htmlFor="language-select">Programming Language</Label>
@@ -558,23 +576,27 @@ Just ask me anything! I'm here to provide advanced, comprehensive assistance for
                   className="min-h-[300px] font-mono"
                 />
               </div>
-              <Button onClick={analyzeCode} disabled={isLoading || !codeToAnalyze.trim()}>
-                <Brain className="w-4 h-4 mr-2" />
-                Analyze Code
-              </Button>
+                <Button 
+                  onClick={analyzeCode} 
+                  disabled={isLoading || !codeToAnalyze.trim()}
+                  className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg"
+                >
+                  <Brain className="w-4 h-4 mr-2" />
+                  Analyser le Code
+                </Button>
             </CardContent>
           </Card>
         </TabsContent>
 
-        {/* Form Generator */}
-        <TabsContent value="form-generator" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Zap className="w-5 h-5" />
-                Intelligent Form Generator
-              </CardTitle>
-            </CardHeader>
+          {/* Form Generator */}
+          <TabsContent value="form-generator" className="space-y-4">
+            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+              <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 border-b border-purple-100">
+                <CardTitle className="flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-purple-600" />
+                  Générateur de Formulaires Intelligent
+                </CardTitle>
+              </CardHeader>
             <CardContent className="space-y-4">
               <div>
                 <Label htmlFor="form-type">Form Type</Label>
@@ -595,91 +617,104 @@ Just ask me anything! I'm here to provide advanced, comprehensive assistance for
                   className="min-h-[150px]"
                 />
               </div>
-              <Button onClick={generateForm} disabled={isLoading || !formType.trim()}>
-                <Sparkles className="w-4 h-4 mr-2" />
-                Generate Form
-              </Button>
+                <Button 
+                  onClick={generateForm} 
+                  disabled={isLoading || !formType.trim()}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg"
+                >
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Générer le Formulaire
+                </Button>
             </CardContent>
           </Card>
         </TabsContent>
 
-        {/* Concept Explainer */}
-        <TabsContent value="explainer" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Lightbulb className="w-5 h-5" />
-                Concept Explainer
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="concept">Concept to Explain</Label>
-                <Input
-                  id="concept"
-                  value={conceptToExplain}
-                  onChange={(e) => setConceptToExplain(e.target.value)}
-                  placeholder="e.g., REST APIs, Database Normalization, React Hooks, Design Patterns..."
-                />
-              </div>
-              <div>
-                <Label htmlFor="level-select">Explanation Level</Label>
-                <Select value={explanationLevel} onValueChange={(value: any) => setExplanationLevel(value)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="beginner">Beginner - Basic concepts and terminology</SelectItem>
-                    <SelectItem value="intermediate">Intermediate - Practical examples and use cases</SelectItem>
-                    <SelectItem value="advanced">Advanced - Deep technical details and best practices</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <Button onClick={explainConcept} disabled={isLoading || !conceptToExplain.trim()}>
-                <HelpCircle className="w-4 h-4 mr-2" />
-                Explain Concept
-              </Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
+          {/* Concept Explainer */}
+          <TabsContent value="explainer" className="space-y-4">
+            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+              <CardHeader className="bg-gradient-to-r from-yellow-50 to-orange-50 border-b border-yellow-100">
+                <CardTitle className="flex items-center gap-2">
+                  <Lightbulb className="w-5 h-5 text-yellow-600" />
+                  Explicateur de Concepts
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6 p-6">
+                <div className="space-y-2">
+                  <Label htmlFor="concept" className="text-sm font-medium text-gray-700">Concept à Expliquer</Label>
+                  <Input
+                    id="concept"
+                    value={conceptToExplain}
+                    onChange={(e) => setConceptToExplain(e.target.value)}
+                    placeholder="ex: APIs REST, Normalisation BDD, React Hooks, Design Patterns..."
+                    className="bg-white/80 backdrop-blur-sm border-yellow-200 focus:border-yellow-400 shadow-sm"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="level-select" className="text-sm font-medium text-gray-700">Niveau d'Explication</Label>
+                  <Select value={explanationLevel} onValueChange={(value: any) => setExplanationLevel(value)}>
+                    <SelectTrigger className="bg-white/80 backdrop-blur-sm border-yellow-200 focus:border-yellow-400 shadow-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="beginner">Débutant - Concepts de base et terminologie</SelectItem>
+                      <SelectItem value="intermediate">Intermédiaire - Exemples pratiques et cas d'usage</SelectItem>
+                      <SelectItem value="advanced">Avancé - Détails techniques et meilleures pratiques</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button 
+                  onClick={explainConcept} 
+                  disabled={isLoading || !conceptToExplain.trim()}
+                  className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white shadow-lg"
+                >
+                  <HelpCircle className="w-4 h-4 mr-2" />
+                  Expliquer le Concept
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        {/* Problem Solver */}
-        <TabsContent value="problem-solver" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Cpu className="w-5 h-5" />
-                Advanced Problem Solver
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="problem">Problem Description</Label>
-                <Textarea
-                  id="problem"
-                  value={problemToSolve}
-                  onChange={(e) => setProblemToSolve(e.target.value)}
-                  placeholder="Describe the problem you need help solving..."
-                  className="min-h-[150px]"
-                />
-              </div>
-              <div>
-                <Label htmlFor="context">Additional Context (Optional)</Label>
-                <Textarea
-                  id="context"
-                  value={problemContext}
-                  onChange={(e) => setProblemContext(e.target.value)}
-                  placeholder="Provide any relevant context, constraints, or background information..."
-                  className="min-h-[100px]"
-                />
-              </div>
-              <Button onClick={solveProblem} disabled={isLoading || !problemToSolve.trim()}>
-                <Settings className="w-4 h-4 mr-2" />
-                Solve Problem
-              </Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
+          {/* Problem Solver */}
+          <TabsContent value="problem-solver" className="space-y-4">
+            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+              <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-indigo-100">
+                <CardTitle className="flex items-center gap-2">
+                  <Cpu className="w-5 h-5 text-indigo-600" />
+                  Résolveur de Problèmes Avancé
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6 p-6">
+                <div className="space-y-2">
+                  <Label htmlFor="problem" className="text-sm font-medium text-gray-700">Description du Problème</Label>
+                  <Textarea
+                    id="problem"
+                    value={problemToSolve}
+                    onChange={(e) => setProblemToSolve(e.target.value)}
+                    placeholder="Décrivez le problème que vous devez résoudre..."
+                    className="min-h-[150px] bg-white/80 backdrop-blur-sm border-indigo-200 focus:border-indigo-400 shadow-sm"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="context" className="text-sm font-medium text-gray-700">Contexte Additionnel (Optionnel)</Label>
+                  <Textarea
+                    id="context"
+                    value={problemContext}
+                    onChange={(e) => setProblemContext(e.target.value)}
+                    placeholder="Fournissez tout contexte pertinent, contraintes ou informations de fond..."
+                    className="min-h-[100px] bg-white/80 backdrop-blur-sm border-indigo-200 focus:border-indigo-400 shadow-sm"
+                  />
+                </div>
+                <Button 
+                  onClick={solveProblem} 
+                  disabled={isLoading || !problemToSolve.trim()}
+                  className="bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-600 hover:to-blue-600 text-white shadow-lg"
+                >
+                  <Settings className="w-4 h-4 mr-2" />
+                  Résoudre le Problème
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
       </Tabs>
     </div>
   );
