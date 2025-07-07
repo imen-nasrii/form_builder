@@ -62,7 +62,7 @@ export default function JSONValidator() {
   const handleInputChange = (value: string) => {
     setJsonInput(value);
     
-    if (realTimeValidation && value.trim()) {
+    if (realTimeValidation && value && value.trim()) {
       if (debounceTimeout.current) {
         clearTimeout(debounceTimeout.current);
       }
@@ -76,7 +76,7 @@ export default function JSONValidator() {
   const validateJSON = async (inputValue?: string) => {
     const valueToValidate = inputValue || jsonInput;
     
-    if (!valueToValidate.trim()) {
+    if (!valueToValidate || typeof valueToValidate !== 'string' || !valueToValidate.trim()) {
       toast({
         title: "No JSON Input",
         description: "Please enter JSON to validate",
@@ -844,7 +844,18 @@ export default function JSONValidator() {
   };
 
   const downloadValidatedJSON = () => {
-    const jsonToDownload = validationResult?.fixedJson || (jsonInput ? JSON.parse(jsonInput) : null);
+    let jsonToDownload = null;
+    
+    try {
+      jsonToDownload = validationResult?.fixedJson || (jsonInput ? JSON.parse(jsonInput) : null);
+    } catch (error) {
+      toast({
+        title: "Invalid JSON",
+        description: "Cannot download invalid JSON. Please validate first.",
+        variant: "destructive",
+      });
+      return;
+    }
     
     if (!jsonToDownload) {
       toast({
@@ -918,20 +929,7 @@ export default function JSONValidator() {
     });
   };
 
-  const oldDownloadValidatedJSON = () => {
-    const jsonToDownload = validationResult?.fixedJson || JSON.parse(jsonInput);
-    const blob = new Blob([JSON.stringify(jsonToDownload, null, 2)], {
-      type: 'application/json'
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `validated-form-${Date.now()}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
+
 
   const getScoreColor = (score: number) => {
     if (score >= 90) return 'text-green-600';
@@ -1005,8 +1003,8 @@ export default function JSONValidator() {
                 
                 <div className="mt-4 flex gap-3">
                   <Button 
-                    onClick={validateJSON} 
-                    disabled={isValidating || !jsonInput.trim()}
+                    onClick={() => validateJSON()} 
+                    disabled={isValidating || !jsonInput || !jsonInput.trim()}
                     className="flex-1"
                   >
                     {isValidating ? (
