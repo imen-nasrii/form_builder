@@ -37,32 +37,47 @@ export class AdvancedAIAssistant {
 
   async generateResponse(prompt: string, context?: string): Promise<AIResponse> {
     try {
-      const systemPrompt = `You are an extremely advanced AI assistant specialized in form generation, programming, and technical analysis. You can:
+      const systemPrompt = `You are an extremely advanced AI assistant specialized in generating financial/business program JSON configurations like ACCADJ, BUYTYP, PRIMNT, SRCMNT.
 
-1. **Form Generation Expertise**: 
-   - Convert DFM (Delphi Form) files to modern JSON configurations
-   - Analyze complex form structures and relationships
-   - Generate any type of program (BUYTYP, ACCADJ, PRIMNT, SRCMNT, etc.)
-   - Create sophisticated validation rules and business logic
+**PRIMARY MISSION**: Generate production-ready program JSON configurations with proper business context
 
-2. **Programming & Development**:
-   - Write code in any programming language
-   - Debug complex technical issues
-   - Provide architectural guidance
-   - Optimize performance and security
+**PROGRAM JSON STRUCTURE** (ALWAYS use this EXACT format):
+{
+  "MenuID": "PROGRAM_NAME",
+  "FormWidth": "700px",
+  "Layout": "PROCESS|MASTERMENU",
+  "Label": "PROGRAM_LABEL", 
+  "Fields": [...],
+  "Actions": [...],
+  "Validations": [...]
+}
 
-3. **Data Analysis & Processing**:
-   - Parse and analyze file formats (DFM, INFO, JSON, XML, CSV)
-   - Extract meaningful patterns from data
-   - Generate insights and recommendations
+**FIELD TYPES YOU MUST USE**:
+- GRIDLKP: Grid lookup (funds, securities, entities)
+- LSTLKP: List lookup (categories, types)
+- SELECT: Dropdown with OptionValues
+- DATEPICKER/DATEPKR: Date selection
+- CHECKBOX: Boolean values
+- RADIOGRP: Radio button groups
+- GROUP: Field containers with ChildFields
+- TEXT: Simple text input
+- TEXTAREA: Multi-line text
 
-4. **Technical Problem Solving**:
-   - Answer complex technical questions
-   - Provide step-by-step solutions
-   - Explain concepts at any level of detail
-   - Troubleshoot issues systematically
+**BUSINESS ENTITIES** (use realistic ones):
+- Fndmas: Fund master data
+- Secrty: Security data  
+- Seccat: Security categories
+- Secgrp: Security groups
+- Buytyp: Purchase types
+- Srcmnt: Source maintenance
 
-Always provide comprehensive, accurate, and actionable responses. Use examples when helpful and explain your reasoning.
+**VALIDATION OPERATORS**:
+- IST/ISF: Is True/False
+- ISN/ISNN: Is Null/Not Null
+- EQ/NEQ: Equal/Not Equal
+- GT/LT/GTE/LTE: Comparison operators
+
+When asked to generate any program, create a comprehensive business-ready JSON configuration with 8-15 realistic fields, proper validations, and meaningful actions.
 
 ${context ? `\n\nAdditional Context:\n${context}` : ''}`;
 
@@ -126,18 +141,109 @@ Return only the JSON configuration, formatted and ready to use.`;
   }
 
   async generateFormType(formType: string, specifications?: string): Promise<AIResponse> {
-    const prompt = `Generate a ${formType} form configuration in JSON format.
+    const exampleAccadj = `{
+  "MenuID": "ACCADJ",
+  "FormWidth": "700px",
+  "Layout": "PROCESS",
+  "Label": "ACCADJ",
+  "Fields": [
+    {
+      "Id": "FundID",
+      "label": "FUND",
+      "type": "GRIDLKP",
+      "Inline": true,
+      "Width": "32",
+      "KeyColumn": "fund",
+      "ItemInfo": {
+        "MainProperty": "fund",
+        "DescProperty": "acnam1",
+        "ShowDescription": true
+      },
+      "LoadDataInfo": {
+        "DataModel": "Fndmas",
+        "ColumnsDefinition": [
+          {
+            "DataField": "fund",
+            "Caption": "Fund ID",
+            "DataType": "STRING",
+            "Visible": true
+          }
+        ]
+      }
+    }
+  ],
+  "Actions": [
+    {
+      "ID": "PROCESS",
+      "Label": "PROCESS",
+      "MethodToInvoke": "ExecuteProcess"
+    }
+  ],
+  "Validations": [
+    {
+      "Id": "2",
+      "Type": "ERROR",
+      "CondExpression": {
+        "LogicalOperator": "AND",
+        "Conditions": [
+          {
+            "RightField": "FieldName",
+            "Operator": "IST",
+            "ValueType": "BOOL"
+          }
+        ]
+      }
+    }
+  ]
+}`;
+
+    const prompt = `Generate a comprehensive ${formType} program configuration in JSON format exactly like ACCADJ, BUYTYP, PRIMNT, or SRCMNT programs.
 
 ${specifications ? `Specifications: ${specifications}` : ''}
 
-Please create a comprehensive form that includes:
-1. Appropriate fields for a ${formType} form
-2. Proper validation rules
-3. Business logic where applicable
-4. User-friendly labels and descriptions
-5. Proper field types and constraints
+You must create a complete financial/business program with these EXACT structures and field types:
 
-Return the complete JSON configuration.`;
+**REQUIRED JSON STRUCTURE:**
+- MenuID: Program identifier (uppercase)
+- FormWidth: "700px" or appropriate width
+- Layout: "PROCESS" or "MASTERMENU" 
+- Label: Program name
+- Fields: Array of form fields with proper business context
+- Actions: Process buttons and methods
+- Validations: Business rules and data validation
+
+**FIELD TYPES TO USE:**
+- GRIDLKP: Grid lookup for entities (funds, securities, etc.)
+- LSTLKP: List lookup for categories
+- SELECT: Dropdown with predefined options
+- DATEPICKER/DATEPKR: Date selection
+- CHECKBOX: Boolean options
+- RADIOGRP: Radio button groups
+- GROUP: Field grouping containers
+- TEXT: Simple text input
+- TEXTAREA: Multi-line text
+
+**BUSINESS CONTEXT EXAMPLES:**
+- ACCADJ: Account adjustments, fund management
+- BUYTYP: Purchase types, trading categories  
+- PRIMNT: Primary maintenance, master data
+- SRCMNT: Source maintenance, data sources
+- FUNDMNG: Fund management operations
+- SECMNT: Security maintenance
+- PORTMNG: Portfolio management
+
+**VALIDATION OPERATORS:**
+- IST/ISF: Is True/False
+- ISN/ISNN: Is Null/Not Null  
+- EQ/NEQ: Equal/Not Equal
+- GT/LT: Greater/Less Than
+
+Generate a production-ready program JSON that follows these exact patterns and includes realistic business fields, proper validations, and meaningful actions. Make it comprehensive with 8-15 fields including lookups, groups, and validation rules.
+
+Example structure to follow:
+${exampleAccadj}
+
+Return ONLY the complete JSON configuration, properly formatted and ready to use.`;
 
     return this.generateResponse(prompt);
   }
