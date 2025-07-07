@@ -1300,7 +1300,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Advanced AI Assistant Routes
-  app.post("/api/ai/chat", requireAuthEnhanced, async (req, res) => {
+  app.post("/api/ai/chat", requireAuth, async (req, res) => {
     try {
       const { message, context } = req.body;
       
@@ -1316,7 +1316,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/ai/analyze-code", requireAuthEnhanced, async (req, res) => {
+  app.post("/api/ai/analyze-code", requireAuth, async (req, res) => {
     try {
       const { code, language } = req.body;
       
@@ -1332,7 +1332,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/ai/convert-dfm", requireAuthEnhanced, async (req, res) => {
+  app.post("/api/ai/convert-dfm", requireAuth, async (req, res) => {
     try {
       const { dfmContent, infoContent } = req.body;
       
@@ -1348,7 +1348,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/ai/generate-form", requireAuthEnhanced, async (req, res) => {
+  app.post("/api/ai/generate-form", requireAuth, async (req, res) => {
     try {
       const { formType, specifications } = req.body;
       
@@ -1364,7 +1364,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/ai/explain", requireAuthEnhanced, async (req, res) => {
+  app.post("/api/ai/explain", requireAuth, async (req, res) => {
     try {
       const { concept, level } = req.body;
       
@@ -1380,7 +1380,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/ai/solve-problem", requireAuthEnhanced, async (req, res) => {
+  app.post("/api/ai/solve-problem", requireAuth, async (req, res) => {
     try {
       const { problem, context } = req.body;
       
