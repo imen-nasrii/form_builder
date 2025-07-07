@@ -124,7 +124,7 @@ export default function AIChat() {
             </h1>
           </div>
           <p className="text-gray-600 dark:text-gray-300">
-            Votre assistant intelligent pour tous vos besoins de développement
+            Assistant spécialisé dans la génération de programmes JSON financiers (ACCADJ, BUYTYP, PRIMNT, SRCMNT)
           </p>
         </div>
 
@@ -139,32 +139,56 @@ export default function AIChat() {
                   Commencez une conversation
                 </h3>
                 <p className="text-gray-500 dark:text-gray-400 max-w-md">
-                  Posez-moi n'importe quelle question sur le développement, l'IA, ou demandez-moi de générer du code.
+                  Demandez-moi de générer n'importe quel programme JSON (ACCADJ, BUYTYP, PRIMNT, SRCMNT) avec tous les champs, validations et actions nécessaires.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-2 justify-center">
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setInputMessage("Comment créer un formulaire React ?")}
+                    onClick={() => setInputMessage("Génère un programme ACCADJ complet avec tous les champs et validations")}
                     className="text-sm"
                   >
-                    Créer un formulaire React
+                    Générer ACCADJ
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setInputMessage("Explique-moi les concepts de base de l'IA")}
+                    onClick={() => setInputMessage("Génère un programme BUYTYP pour la gestion des types d'achat")}
                     className="text-sm"
                   >
-                    Concepts de l'IA
+                    Générer BUYTYP
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setInputMessage("Génère un programme BUYTYP")}
+                    onClick={() => setInputMessage("Génère un programme PRIMNT pour la maintenance primaire")}
                     className="text-sm"
                   >
-                    Générer un programme
+                    Générer PRIMNT
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setInputMessage("Génère un programme SRCMNT pour la maintenance des sources")}
+                    className="text-sm"
+                  >
+                    Générer SRCMNT
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setInputMessage("Explique-moi la structure d'un programme JSON financier")}
+                    className="text-sm"
+                  >
+                    Structure JSON
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setInputMessage("Aide-moi à créer un nouveau type de programme personnalisé")}
+                    className="text-sm"
+                  >
+                    Programme personnalisé
                   </Button>
                 </div>
               </div>
