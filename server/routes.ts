@@ -7,6 +7,7 @@ import { insertFormSchema, insertTemplateSchema, insertNotificationSchema } from
 import { notificationService } from "./notification-service";
 import type { User } from "@shared/schema";
 import { apiService, type ApiDataSource } from "./services/apiService";
+import { aiAssistant } from "./anthropic";
 import { nanoid } from "nanoid";
 import crypto from "crypto";
 import fs from "fs";
@@ -1295,6 +1296,103 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error exporting templates:", error);
       res.status(500).json({ message: "Failed to export templates" });
+    }
+  });
+
+  // Advanced AI Assistant Routes
+  app.post("/api/ai/chat", requireAuthEnhanced, async (req, res) => {
+    try {
+      const { message, context } = req.body;
+      
+      if (!message) {
+        return res.status(400).json({ error: "Message is required" });
+      }
+
+      const response = await aiAssistant.generateResponse(message, context);
+      res.json(response);
+    } catch (error) {
+      console.error("AI chat error:", error);
+      res.status(500).json({ error: "Failed to generate AI response" });
+    }
+  });
+
+  app.post("/api/ai/analyze-code", requireAuthEnhanced, async (req, res) => {
+    try {
+      const { code, language } = req.body;
+      
+      if (!code) {
+        return res.status(400).json({ error: "Code is required" });
+      }
+
+      const response = await aiAssistant.analyzeCode(code, language);
+      res.json(response);
+    } catch (error) {
+      console.error("AI code analysis error:", error);
+      res.status(500).json({ error: "Failed to analyze code" });
+    }
+  });
+
+  app.post("/api/ai/convert-dfm", requireAuthEnhanced, async (req, res) => {
+    try {
+      const { dfmContent, infoContent } = req.body;
+      
+      if (!dfmContent) {
+        return res.status(400).json({ error: "DFM content is required" });
+      }
+
+      const response = await aiAssistant.convertDFMToJSON(dfmContent, infoContent);
+      res.json(response);
+    } catch (error) {
+      console.error("AI DFM conversion error:", error);
+      res.status(500).json({ error: "Failed to convert DFM to JSON" });
+    }
+  });
+
+  app.post("/api/ai/generate-form", requireAuthEnhanced, async (req, res) => {
+    try {
+      const { formType, specifications } = req.body;
+      
+      if (!formType) {
+        return res.status(400).json({ error: "Form type is required" });
+      }
+
+      const response = await aiAssistant.generateFormType(formType, specifications);
+      res.json(response);
+    } catch (error) {
+      console.error("AI form generation error:", error);
+      res.status(500).json({ error: "Failed to generate form" });
+    }
+  });
+
+  app.post("/api/ai/explain", requireAuthEnhanced, async (req, res) => {
+    try {
+      const { concept, level } = req.body;
+      
+      if (!concept) {
+        return res.status(400).json({ error: "Concept is required" });
+      }
+
+      const response = await aiAssistant.explainConcept(concept, level || 'intermediate');
+      res.json(response);
+    } catch (error) {
+      console.error("AI explanation error:", error);
+      res.status(500).json({ error: "Failed to explain concept" });
+    }
+  });
+
+  app.post("/api/ai/solve-problem", requireAuthEnhanced, async (req, res) => {
+    try {
+      const { problem, context } = req.body;
+      
+      if (!problem) {
+        return res.status(400).json({ error: "Problem is required" });
+      }
+
+      const response = await aiAssistant.solveProblem(problem, context);
+      res.json(response);
+    } catch (error) {
+      console.error("AI problem solving error:", error);
+      res.status(500).json({ error: "Failed to solve problem" });
     }
   });
 
