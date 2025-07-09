@@ -1348,6 +1348,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/ai/analyze-dfm", requireAuth, async (req, res) => {
+    try {
+      const { dfmContent } = req.body;
+      
+      if (!dfmContent) {
+        return res.status(400).json({ error: "DFM content is required" });
+      }
+
+      const response = await aiAssistant.analyzeDfmFile(dfmContent);
+      res.json(response);
+    } catch (error) {
+      console.error("AI DFM analysis error:", error);
+      res.status(500).json({ error: "Failed to analyze DFM file" });
+    }
+  });
+
   app.post("/api/ai/generate-form", requireAuth, async (req, res) => {
     try {
       const { formType, specifications } = req.body;

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Send, Bot, User, Copy, ThumbsUp, ThumbsDown, RotateCcw, Sparkles } from 'lucide-react';
+import { Send, Bot, User, Copy, ThumbsUp, ThumbsDown, RotateCcw, Sparkles, Upload, FileText } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { apiRequest } from '@/lib/queryClient';
 
@@ -26,9 +26,12 @@ export default function AIChat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showDfmUpload, setShowDfmUpload] = useState(false);
+  const [dfmContent, setDfmContent] = useState('');
   const { toast } = useToast();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -108,6 +111,86 @@ export default function AIChat() {
       title: "Conversation effacée",
       description: "La conversation a été remise à zéro.",
     });
+  };
+
+  const handleDfmUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const content = e.target?.result as string;
+      setDfmContent(content);
+      setShowDfmUpload(false);
+      
+      // Analyser automatiquement le fichier DFM
+      const analysisMessage: Message = {
+        id: Date.now().toString(),
+        type: 'user',
+        content: `Analyzing DFM file: ${file.name}`,
+        timestamp: new Date(),
+      };
+
+      const loadingMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        type: 'assistant',
+        content: '',
+        timestamp: new Date(),
+        isLoading: true,
+      };
+
+      setMessages(prev => [...prev, analysisMessage, loadingMessage]);
+      setIsLoading(true);
+
+      try {
+        const analysis = await apiRequest('/api/ai/analyze-dfm', {
+          method: 'POST',
+          body: JSON.stringify({ dfmContent: content }),
+        });
+
+        let analysisResponse = `**DFM File Analysis Results:**\n\n`;
+        
+        if (analysis.formType) {
+          analysisResponse += `**Suggested Program Type:** ${analysis.formType}\n\n`;
+        }
+        
+        if (analysis.fields?.length) {
+          analysisResponse += `**Identified Fields:** ${analysis.fields.join(', ')}\n\n`;
+        }
+        
+        if (analysis.components?.length) {
+          analysisResponse += `**Components:** ${analysis.components.join(', ')}\n\n`;
+        }
+        
+        if (analysis.businessLogic?.length) {
+          analysisResponse += `**Business Logic:** ${analysis.businessLogic.join(', ')}\n\n`;
+        }
+        
+        if (analysis.suggestedQuestions?.length) {
+          analysisResponse += `**Questions to help generate your program:**\n\n`;
+          analysis.suggestedQuestions.forEach((question: string, index: number) => {
+            analysisResponse += `${index + 1}. ${question}\n`;
+          });
+        }
+
+        setMessages(prev => prev.map(msg => 
+          msg.id === loadingMessage.id 
+            ? { ...msg, content: analysisResponse, isLoading: false }
+            : msg
+        ));
+      } catch (error) {
+        console.error('DFM analysis error:', error);
+        setMessages(prev => prev.filter(msg => msg.id !== loadingMessage.id));
+        toast({
+          title: "Error",
+          description: "Failed to analyze DFM file. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    reader.readAsText(file);
   };
 
   return (
@@ -297,6 +380,15 @@ export default function AIChat() {
                   <Send className="w-4 h-4" />
                 </Button>
               </div>
+              <Button
+                variant="outline"
+                onClick={() => fileInputRef.current?.click()}
+                className="flex-shrink-0 text-blue-600 dark:text-blue-400 border-blue-300 dark:border-blue-600"
+                disabled={isLoading}
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                Upload DFM
+              </Button>
               {messages.length > 0 && (
                 <Button
                   variant="outline"
@@ -307,6 +399,13 @@ export default function AIChat() {
                   Effacer
                 </Button>
               )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".dfm,.txt"
+                onChange={handleDfmUpload}
+                style={{ display: 'none' }}
+              />
             </div>
             <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 text-center">
               Appuyez sur Entrée pour envoyer, Shift+Entrée pour une nouvelle ligne

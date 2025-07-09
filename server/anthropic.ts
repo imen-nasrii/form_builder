@@ -35,6 +35,41 @@ export class AdvancedAIAssistant {
     this.model = model || DEFAULT_MODEL_STR;
   }
 
+  async analyzeDfmFile(dfmContent: string): Promise<any> {
+    try {
+      const message = await anthropic.messages.create({
+        max_tokens: 2000,
+        messages: [{ 
+          role: 'user', 
+          content: `Analyze this DFM file content and extract key information about form structure, fields, and business logic. Return a JSON object with extracted information:
+
+${dfmContent}
+
+Return JSON format:
+{
+  "formType": "suggested program type (ACCADJ, BUYTYP, PRIMNT, SRCMNT)",
+  "fields": ["list of identified fields"],
+  "components": ["list of component types"],
+  "businessLogic": ["identified business rules"],
+  "suggestedQuestions": ["specific questions to ask user"]
+}` 
+        }],
+        model: this.model,
+        system: "You are an expert DFM file analyzer for financial systems. Extract and analyze form structure to suggest appropriate program configurations."
+      });
+
+      const content = message.content[0].text;
+      try {
+        return JSON.parse(content);
+      } catch {
+        return { error: "Could not parse DFM analysis", rawContent: content };
+      }
+    } catch (error) {
+      console.error('Error analyzing DFM file:', error);
+      return { error: "Failed to analyze DFM file" };
+    }
+  }
+
   async generateResponse(prompt: string, context?: string): Promise<AIResponse> {
     try {
       // Détecter les demandes de génération spécifique
@@ -47,7 +82,46 @@ export class AdvancedAIAssistant {
 
       const systemPrompt = `You are an extremely advanced AI assistant specialized in generating financial/business program JSON configurations like ACCADJ, BUYTYP, PRIMNT, SRCMNT.
 
-**PRIMARY MISSION**: Generate production-ready program JSON configurations with proper business context
+**PRIMARY MISSION**: Generate production-ready program JSON configurations exactly like real production systems.
+
+**SPECIAL CAPABILITIES**:
+1. **DFM FILE ANALYSIS**: When user provides DFM file content, analyze it to understand:
+   - Form structure and components
+   - Field types and properties
+   - Validation rules
+   - Business logic
+
+2. **INTELLIGENT QUESTIONING**: Ask specific questions to gather missing information:
+   - What type of program is needed (ACCADJ, BUYTYP, PRIMNT, SRCMNT)?
+   - What entities should be used (Fndmas, Secrty, Seccat, etc.)?
+   - What validation rules are required?
+   - What business logic should be implemented?
+   - What actions are needed (PROCESS, ADD, EDIT, DELETE)?
+
+3. **CONTEXTUAL SUGGESTIONS**: Based on program type, suggest appropriate:
+   - Field configurations
+   - Entity relationships
+   - Validation patterns
+   - Business rules
+
+**CONVERSATION STYLE**:
+- Be friendly and helpful
+- Ask one focused question at a time
+- Provide context for why information is needed
+- Suggest options when appropriate
+- Build on previous answers to refine the program
+- When user greets you, respond warmly and offer to help generate any program type
+
+**GREETING RESPONSES**:
+- When user says hello/bonjour/hi: Respond warmly and offer to help generate programs
+- Explain that you can create any financial program (ACCADJ, BUYTYP, PRIMNT, SRCMNT)
+- Ask what type of program they need or if they have a DFM file to analyze
+
+**PROGRAM GENERATION**:
+- Always use the exact templates provided for each program type
+- Generate complete, production-ready JSON configurations
+- Include all necessary fields, validations, and business logic
+- Ask clarifying questions if needed to ensure accuracy
 
 **PROGRAM JSON STRUCTURE** (ALWAYS use this EXACT format):
 {
@@ -517,10 +591,10 @@ Return only the JSON configuration, formatted and ready to use.`;
   "Validations": []
 }`;
 
-    // Template ACCADJ réel du système
+    // Template ACCADJ réel du système de production
     const realAccadjTemplate = `{
   "MenuID": "ACCADJ",
-  "FormWidth": "700px", 
+  "FormWidth": "700px",
   "Layout": "PROCESS",
   "Label": "ACCADJ",
   "Fields": [
@@ -546,28 +620,30 @@ Return only the JSON configuration, formatted and ready to use.`;
     },
     {
       "Id": "Ticker",
-      "Label": "Ticker", 
+      "Label": "Ticker",
       "Type": "GRIDLKP",
       "Inline": true,
       "Width": "32",
       "KeyColumn": "tkr",
       "ItemInfo": {
         "MainProperty": "tkr",
-        "DescProperty": "tkr_DESC", 
+        "DescProperty": "tkr_DESC",
         "ShowDescription": true
       },
       "LoadDataInfo": {
         "DataModel": "Secrty",
         "ColumnsDefinition": [
           {"DataField": "tkr", "Caption": "Ticker", "DataType": "STRING", "Visible": true},
-          {"DataField": "tkr_DESC", "Caption": "Description", "DataType": "STRING", "Visible": true}
+          {"DataField": "tkr_DESC", "Caption": "Description", "DataType": "STRING", "Visible": true},
+          {"DataField": "desc2", "Caption": "Description - Second Line", "DataType": "STRING"},
+          {"DataField": "cusip", "Caption": "CUSIP", "DataType": "STRING"}
         ]
       }
     },
     {
       "Id": "SecCat",
       "label": "SECCAT",
-      "type": "LSTLKP", 
+      "type": "LSTLKP",
       "Inline": true,
       "Width": "32",
       "KeyColumn": "seccat",
@@ -585,17 +661,44 @@ Return only the JSON configuration, formatted and ready to use.`;
       }
     },
     {
+      "Id": "SecGrp",
+      "label": "SECGRP",
+      "type": "LSTLKP",
+      "Inline": true,
+      "Width": "32",
+      "LoadDataInfo": {
+        "DataModel": "Secgrp",
+        "ColumnsDefinition": [
+          {"DataField": "secgrp", "DataType": "STRING"},
+          {"DataField": "desc1", "DataType": "STRING"}
+        ]
+      },
+      "KeyColumn": "secgrp",
+      "ItemInfo": {
+        "MainProperty": "secgrp",
+        "DescProperty": "desc1",
+        "ShowDescription": true
+      }
+    },
+    {
       "Id": "MSBTypeInput",
       "label": "MBSTYPE",
       "type": "SELECT",
-      "Inline": true, 
+      "Inline": true,
       "Width": "32",
+      "required": false,
+      "Outlined": true,
+      "UserIntKey": true,
       "OptionValues": {
         "0": "",
         "1": "GNMA I",
-        "2": "GNMA II", 
+        "2": "GNMA II",
         "3": "FNMA",
-        "4": "FHLMC"
+        "4": "FHLMC",
+        "5": "CMO",
+        "6": "PO",
+        "7": "IO",
+        "8": "GPM"
       }
     },
     {
@@ -604,39 +707,162 @@ Return only the JSON configuration, formatted and ready to use.`;
       "type": "DATEPICKER",
       "Inline": true,
       "Width": "32",
-      "required": true
+      "Spacing": "30",
+      "required": true,
+      "Validations": [
+        {
+          "Id": "6",
+          "Type": "ERROR",
+          "ConditionExpression": {
+            "Conditions": [
+              {
+                "RightField": "AccrualDate",
+                "Operator": "ISN",
+                "ValueType": "DATE"
+              }
+            ]
+          }
+        }
+      ]
     },
     {
       "Id": "PROCAGAINST",
       "label": "PROCAGAINST",
       "type": "GROUP",
       "isGroup": true,
+      "Spacing": "0",
       "ChildFields": [
         {
           "Id": "Doasof",
           "type": "RADIOGRP",
           "value": "dfCurrent",
+          "Spacing": "0",
           "Width": "100",
           "OptionValues": {
             "dfCurrent": "DFCURRENT",
             "dfPosting": "DFPOST",
-            "dfReval": "DFVAL"
+            "dfReval": "DFVAL",
+            "dfTrade": "DFTRADE"
+          }
+        },
+        {
+          "Id": "ValDate",
+          "label": "VALDATE",
+          "type": "DATEPKR",
+          "Spacing": "0",
+          "Width": "25",
+          "EnabledWhen": {
+            "Conditions": [
+              {
+                "RightField": "Doasof",
+                "Operator": "NEQ",
+                "Value": "dfCurrent",
+                "ValueType": "STRING"
+              }
+            ]
+          },
+          "Validations": [
+            {
+              "Id": "3",
+              "Type": "ERROR",
+              "ConditionExpression": {
+                "LogicalOperator": "AND",
+                "Conditions": [
+                  {
+                    "RightField": "ValDate",
+                    "Operator": "ISN",
+                    "ValueType": "DATE"
+                  },
+                  {
+                    "RightField": "Doasof",
+                    "Operator": "NEQ",
+                    "Value": "dfCurrent",
+                    "ValueType": "STRING"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Id": "AccrueTypeGroup",
+      "label": "ACCTYPE",
+      "type": "GROUP",
+      "isGroup": true,
+      "Spacing": "0",
+      "ChildFields": [
+        {
+          "Id": "AccrueType",
+          "value": "atAll",
+          "label": "ACCTYPE",
+          "type": "RADIOGRP",
+          "Width": "600px",
+          "Spacing": "0",
+          "OptionValues": {
+            "atAll": "ATALL",
+            "atFixed": "ATFIXED",
+            "atVar": "ATVAR"
           }
         }
       ]
     },
     {
       "Id": "UpdateRates",
-      "label": "UPDATERATE", 
+      "label": "UPDATERATE",
       "type": "CHECKBOX",
+      "CheckboxValue": true,
+      "spacing": 0,
       "Value": false,
-      "Width": "600px"
+      "Width": "600px",
+      "EnabledWhen": {
+        "Conditions": [
+          {
+            "RightField": "ReportOnly",
+            "Operator": "ISF"
+          }
+        ]
+      }
+    },
+    {
+      "Id": "RPTOPTS",
+      "label": "RPTOPTS",
+      "type": "GROUP",
+      "required": false,
+      "Inline": true,
+      "isGroup": true,
+      "ChildFields": [
+        {
+          "Id": "Spool",
+          "label": "PRINTRPT",
+          "type": "CHECKBOX",
+          "Inline": true,
+          "Value": true,
+          "required": false
+        },
+        {
+          "Id": "ReportOnly",
+          "label": "RPTONLY",
+          "type": "CHECKBOX",
+          "Inline": true,
+          "Value": false,
+          "EnabledWhen": {
+            "Conditions": [
+              {
+                "RightField": "UpdateRates",
+                "Operator": "ISF"
+              }
+            ]
+          }
+        }
+      ]
     }
   ],
   "Actions": [
     {
       "ID": "PROCESS",
-      "Label": "PROCESS", 
+      "Label": "PROCESS",
       "MethodToInvoke": "ExecuteProcess"
     }
   ],
@@ -645,12 +871,46 @@ Return only the JSON configuration, formatted and ready to use.`;
       "Id": "2",
       "Type": "ERROR",
       "CondExpression": {
-        "LogicalOperator": "AND", 
+        "LogicalOperator": "AND",
         "Conditions": [
           {
-            "RightField": "AccrualDate",
-            "Operator": "ISN",
-            "ValueType": "DATE"
+            "RightField": "ReportOnly",
+            "Operator": "IST",
+            "ValueType": "BOOL"
+          },
+          {
+            "RightField": "UpdateRates",
+            "Operator": "IST",
+            "ValueType": "BOOL"
+          }
+        ]
+      }
+    },
+    {
+      "Id": "35",
+      "Type": "WARNING",
+      "CondExpression": {
+        "LogicalOperator": "OR",
+        "Conditions": [
+          {
+            "RightField": "Ticker",
+            "Operator": "ISNN",
+            "ValueType": "BOOL"
+          },
+          {
+            "RightField": "SecCat",
+            "Operator": "ISNN",
+            "ValueType": "BOOL"
+          },
+          {
+            "RightField": "SecGrp",
+            "Operator": "ISNN",
+            "ValueType": "BOOL"
+          },
+          {
+            "RightField": "MSBTypeInput",
+            "Operator": "ISNN",
+            "ValueType": "BOOL"
           }
         ]
       }
