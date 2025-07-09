@@ -37,6 +37,14 @@ export class AdvancedAIAssistant {
 
   async generateResponse(prompt: string, context?: string): Promise<AIResponse> {
     try {
+      // Détecter les demandes de génération spécifique
+      const programGenerationMatches = prompt.match(/génère(?:r)?\s+(ACCADJ|BUYTYP|PRIMNT|SRCMNT)/i);
+      if (programGenerationMatches) {
+        const programType = programGenerationMatches[1].toUpperCase();
+        console.log(`Detected specific program generation request: ${programType}`);
+        return this.generateFormType(programType, prompt);
+      }
+
       const systemPrompt = `You are an extremely advanced AI assistant specialized in generating financial/business program JSON configurations like ACCADJ, BUYTYP, PRIMNT, SRCMNT.
 
 **PRIMARY MISSION**: Generate production-ready program JSON configurations with proper business context
@@ -77,7 +85,16 @@ export class AdvancedAIAssistant {
 - EQ/NEQ: Equal/Not Equal
 - GT/LT/GTE/LTE: Comparison operators
 
-When asked to generate any program, create a comprehensive business-ready JSON configuration with 8-15 realistic fields, proper validations, and meaningful actions.
+**CRITICAL INSTRUCTIONS FOR PROGRAM GENERATION:**
+
+1. **When user asks "Génère ACCADJ"** → Generate the COMPLETE ACCADJ program with ALL fields from the real template
+2. **When user asks "Génère BUYTYP"** → Generate a complete BUYTYP program for purchase type management  
+3. **When user asks "Génère PRIMNT"** → Generate a complete PRIMNT program for primary maintenance
+4. **When user asks "Génère SRCMNT"** → Generate a complete SRCMNT program for source maintenance
+
+**ALWAYS RETURN PURE JSON - NO EXPLANATIONS, NO MARKDOWN BLOCKS, NO DESCRIPTIONS**
+
+Just the raw JSON that can be immediately used in the system.
 
 ${context ? `\n\nAdditional Context:\n${context}` : ''}`;
 
@@ -141,9 +158,369 @@ Return only the JSON configuration, formatted and ready to use.`;
   }
 
   async generateFormType(formType: string, specifications?: string): Promise<AIResponse> {
-    const exampleAccadj = `{
+    // Templates réels des programmes du système
+    const realBuytypTemplate = `{
+  "MenuID": "BUYTYP",
+  "Label": "BUYTYP", 
+  "FormWidth": "600px",
+  "Fields": [
+    {
+      "Id": "FundID",
+      "label": "FUND",
+      "type": "GRIDLKP",
+      "required": true,
+      "showAliasBox": true,
+      "EntitykeyField": "fund",
+      "Entity": "Fndmas",
+      "Required": true,
+      "EndpointOnchange": true,
+      "EndpointDepend": {
+        "Conditions": [{
+          "RightField": "Ticker",
+          "Operator": "ISNN"
+        }]
+      },
+      "RequestedFields": ["TradeDate"],
+      "ColumnDefinitions": [
+        {"DataField": "fund", "Caption": "Fund ID", "DataType": "STRING"},
+        {"DataField": "acnam1", "Caption": "Fund Name", "DataType": "STRING"},
+        {"DataField": "inactive", "ExcludeFromGrid": true, "DataType": "STRING"}
+      ],
+      "Validations": [
+        {
+          "Id": "24", "Type": "ERROR",
+          "CondExpression": {
+            "Conditions": [{"RightField": "FundID", "Operator": "ISN"}]
+          }
+        }
+      ]
+    },
+    {
+      "Id": "Ticker",
+      "label": "TKR",
+      "type": "GRIDLKP",
+      "required": true,
+      "filter": "1",
+      "EntitykeyField": "tkr",
+      "Entity": "Secrty",
+      "EndpointOnchange": true,
+      "EndpointDepend": {
+        "Conditions": [{"RightField": "FundID", "Operator": "ISNN"}]
+      },
+      "RequestedFields": ["TradeDate", "LastPriceLabel"],
+      "ColumnDefinitions": [
+        {"DataField": "tkr", "Caption": "Ticker", "DataType": "STRING"},
+        {"DataField": "tkr_DESC", "Caption": "Ticker Desc", "DataType": "STRING"}
+      ],
+      "Validations": [
+        {
+          "Id": "25", "Type": "ERROR",
+          "CondExpression": {
+            "Conditions": [{"RightField": "Ticker", "Operator": "ISN"}]
+          }
+        }
+      ]
+    },
+    {
+      "Id": "TradeDate",
+      "label": "TRADEDATE",
+      "type": "DATEPKR",
+      "required": true,
+      "EnabledWhen": {
+        "LogicalOperator": "AND",
+        "Conditions": [
+          {"RightField": "FundID", "Operator": "ISNN"},
+          {"RightField": "Ticker", "Operator": "ISNN"}
+        ]
+      },
+      "Validations": [
+        {
+          "Id": "26", "Type": "ERROR",
+          "CondExpression": {
+            "Conditions": [{"RightField": "TradeDate", "Operator": "ISN", "ValueType": "DATE"}]
+          }
+        }
+      ]
+    },
+    {
+      "Id": "Broker",
+      "label": "BROKER",
+      "type": "GRIDLKP",
+      "required": true,
+      "EntitykeyField": "broker",
+      "Entity": "Broker",
+      "endpoint": "AllBrokers",
+      "ColumnDefinitions": [
+        {"DataField": "name", "Caption": "Broker Name", "DataType": "STRING"},
+        {"DataField": "broker", "Caption": "Broker ID", "DataType": "STRING"},
+        {"DataField": "firm", "Caption": "Firm Name", "DataType": "STRING"}
+      ],
+      "EnabledWhen": {
+        "LogicalOperator": "AND",
+        "Conditions": [
+          {"RightField": "FundID", "Operator": "ISNN"},
+          {"RightField": "Ticker", "Operator": "ISNN"}
+        ]
+      }
+    },
+    {
+      "Id": "Quantity",
+      "label": "QUANTITY",
+      "type": "NUMERIC",
+      "required": true,
+      "EndpointOnchange": true,
+      "EndpointDepend": {
+        "Conditions": [{"RightField": "Price", "Operator": "ISNN"}]
+      },
+      "RequestedFields": ["GrossTrade", "NetCash", "BaseCash", "Local", "Base", "FxRate", "Commission"],
+      "EnabledWhen": {
+        "LogicalOperator": "AND",
+        "Conditions": [
+          {"RightField": "FundID", "Operator": "ISNN"},
+          {"RightField": "Ticker", "Operator": "ISNN"}
+        ]
+      }
+    },
+    {
+      "Id": "Price",
+      "label": "PRICE",
+      "type": "NUMERIC", 
+      "required": true,
+      "EndpointOnchange": true,
+      "EndpointDepend": {
+        "Conditions": [{"RightField": "Quantity", "Operator": "ISNN"}]
+      },
+      "RequestedFields": ["GrossTrade", "NetCash", "BaseCash", "Local", "Base", "FxRate", "Commission"],
+      "EnabledWhen": {
+        "LogicalOperator": "AND",
+        "Conditions": [
+          {"RightField": "FundID", "Operator": "ISNN"},
+          {"RightField": "Ticker", "Operator": "ISNN"}
+        ]
+      }
+    }
+  ],
+  "Actions": [
+    {"ID": "PROCESS", "Label": "PROCESS", "MethodToInvoke": "ExecuteProcess"}
+  ],
+  "Validations": []
+}`;
+
+    const realPrimntTemplate = `{
+  "MenuID": "PRIMNT",
+  "Label": "PRIMNT",
+  "Layout": "MASTERMENU",
+  "LoadDataDetails": {
+    "DataModel": "Prihst",
+    "ColumnsDefinition": [
+      {"DataField": "FUND", "Caption": "Fund ID", "DataType": "STRING", "Visible": true},
+      {"DataField": "TKR", "Caption": "Ticker", "DataType": "STRING", "Visible": true},
+      {"DataField": "PRCDATE", "Caption": "Price Date", "DataType": "DATE", "Visible": true},
+      {"DataField": "SOURCE", "Caption": "Source", "DataType": "STRING", "Visible": true},
+      {"DataField": "PRICE_TYPE", "Caption": "Price Type", "DataType": "STRING", "Visible": true},
+      {"DataField": "PRICE", "Caption": "Price", "DataType": "NUMERIC", "Visible": true},
+      {"DataField": "CUSIP", "Caption": "CUSIP", "DataType": "STRING", "Visible": true},
+      {"DataField": "TKR_TYPE", "Caption": "Security Type", "DataType": "STRING", "Visible": true},
+      {"DataField": "FACTOR", "Caption": "Factor", "DataType": "NUMERIC", "Visible": true},
+      {"DataField": "DATE_CHNG", "Caption": "Date Changed", "DataType": "DATE", "Visible": true},
+      {"DataField": "USER_ID", "Caption": "User ID", "DataType": "STRING", "Visible": true},
+      {"DataField": "PRCMEMO", "Caption": "Price Memo", "DataType": "STRING", "Visible": true},
+      {"DataField": "YIELD_CO", "Caption": "Yield", "DataType": "STRING", "Visible": true}
+    ]
+  },
+  "Fields": [
+    {
+      "id": "FundID",
+      "Label": "Fund",
+      "type": "GRIDLKP",
+      "DataField": "FUND",
+      "Inline": true,
+      "Width": "32",
+      "KeyColumn": "fund",
+      "LoadDataInfo": {
+        "DataModel": "Fndmas",
+        "ColumnsDefinition": [
+          {"DataField": "fund", "Caption": "Fund ID", "DataType": "STRING", "Visible": true},
+          {"DataField": "acnam1", "Caption": "Fund Name", "DataType": "STRING", "Visible": true}
+        ]
+      },
+      "Validations": []
+    },
+    {
+      "Id": "Ticker",
+      "Label": "Ticker",
+      "Type": "GRIDLKP",
+      "Inline": true,
+      "Width": "32",
+      "KeyColumn": "tkr",
+      "LoadDataInfo": {
+        "DataModel": "Secrty",
+        "ColumnsDefinition": [
+          {"DataField": "tkr", "Caption": "Ticker", "DataType": "STRING", "Visible": true},
+          {"DataField": "tkr_DESC", "Caption": "Description", "DataType": "STRING", "Visible": true},
+          {"DataField": "desc2", "Caption": "Description - Second Line", "DataType": "STRING"},
+          {"DataField": "cusip", "Caption": "CUSIP", "DataType": "STRING"}
+        ]
+      }
+    }
+  ],
+  "Actions": [
+    {"ID": "ADD", "Label": "ADD"}
+  ],
+  "Validations": []
+}`;
+
+    const realSrcmntTemplate = `{
+  "MenuID": "SRCMNT",
+  "Label": "SRCMNT",
+  "Fields": [
+    {
+      "Id": "SourceGrid",
+      "type": "GRID",
+      "RecordActions": [
+        {
+          "id": "Edit", "Label": "Edit",
+          "UpdateVarValues": [
+            {"Name": "ShowDialog", "Value": true},
+            {"Name": "RecordDetails", "linkTo": "SourceDetails", "linkToProperty": "Value", "linkFrom": "SourceGrid", "linkFromProperty": "SelectedRecord"},
+            {"Name": "Mode", "Value": "EDIT"}
+          ]
+        },
+        {
+          "id": "Copy", "Label": "Copy",
+          "UpdateVarValues": [
+            {"Name": "ShowDialog", "Value": true},
+            {"Name": "RecordDetails", "linkTo": "SourceDetails", "linkToProperty": "Value", "linkFrom": "SourceGrid", "linkFromProperty": "SelectedRecord"},
+            {"Name": "Mode", "Value": "COPY"}
+          ]
+        },
+        {
+          "id": "Delete", "Label": "Delete",
+          "UpdateVarValues": [
+            {"Name": "Mode", "Value": "DELETE"}
+          ]
+        }
+      ],
+      "ColumnDefinitions": [
+        {"DataField": "pSource", "Caption": "Source", "DataType": "STRING"},
+        {"DataField": "descr", "Caption": "Description", "DataType": "STRING"}
+      ],
+      "Endpoint": "AllSources",
+      "Entity": "Source",
+      "EntityKeyField": "pSource",
+      "Events": [
+        {
+          "id": "onClickRow",
+          "UpdateVarValues": [
+            {"Name": "ShowDialog", "Value": true},
+            {"Name": "RecordDetails", "linkTo": "SourceDetails", "linkToProperty": "Value", "linkFrom": "SourceGrid", "linkFromProperty": "SelectedRecord"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "SourceDetails",
+      "Label": "REC_DETAILS",
+      "Type": "DIALOG",
+      "isGroup": true,
+      "Entity": "Source",
+      "VisibleWhen": {
+        "Conditions": [
+          {"VariableId": "ShowDialog", "Operator": "IST", "ValueType": "BOOL"}
+        ]
+      },
+      "ChildFields": [
+        {
+          "id": "psource",
+          "Label": "SOURCE",
+          "type": "TEXT",
+          "DataField": "pSource",
+          "EnabledWhen": {
+            "LogicalOperator": "OR",
+            "Conditions": [
+              {"VariableId": "Mode", "Operator": "EQ", "ValueType": "STRING", "Value": "ADD"},
+              {"VariableId": "Mode", "Operator": "EQ", "ValueType": "STRING", "Value": "COPY"}
+            ]
+          },
+          "Validations": [
+            {
+              "Id": "4", "Type": "ERROR",
+              "CondExpression": {
+                "LogicalOperator": "AND",
+                "Conditions": [
+                  {"RightField": "psource", "Operator": "ISN", "ValueType": "BOOL"},
+                  {
+                    "NestedCondExp": {
+                      "LogicalOperator": "OR",
+                      "Conditions": [
+                        {"VariableId": "Mode", "Operator": "EQ", "ValueType": "STRING", "Value": "COPY"},
+                        {"VariableId": "Mode", "Operator": "EQ", "ValueType": "STRING", "Value": "ADD"}
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "descr",
+          "Label": "DESC",
+          "type": "TEXT",
+          "DataField": "descr",
+          "EnabledWhen": {
+            "LogicalOperator": "OR",
+            "Conditions": [
+              {"VariableId": "Mode", "Operator": "EQ", "ValueType": "STRING", "Value": "ADD"},
+              {"VariableId": "Mode", "Operator": "EQ", "ValueType": "STRING", "Value": "COPY"},
+              {"VariableId": "Mode", "Operator": "EQ", "ValueType": "STRING", "Value": "EDIT"}
+            ]
+          }
+        }
+      ],
+      "Events": [
+        {
+          "id": "onClose",
+          "UpdateVarValues": [
+            {"Name": "ShowDialog", "Value": false},
+            {"Name": "RecordDetails", "Value": null},
+            {"Name": "Mode", "Value": "VIEW"}
+          ]
+        },
+        {
+          "id": "onSubmit",
+          "MethodToInvoke": "Submit",
+          "UpdateVarValues": [
+            {"Name": "ShowDialog", "Value": false},
+            {"Name": "RecordDetails", "Value": null},
+            {"Name": "Mode", "Value": "VIEW"}
+          ]
+        }
+      ]
+    }
+  ],
+  "Variables": [
+    {"Name": "ShowDialog", "Value": false, "Type": "BOOL"},
+    {"Name": "RecordDetails", "Type": "NOTSET"},
+    {"Name": "Mode", "Value": "VIEW", "Type": "STRING"}
+  ],
+  "Actions": [
+    {
+      "id": "ADD", "Label": "Add",
+      "UpdateVarValues": [
+        {"Name": "ShowDialog", "Value": true},
+        {"Name": "RecordDetails", "linkTo": "SourceDetails", "linkToProperty": "Value", "Value": null},
+        {"Name": "Mode", "Value": "ADD"}
+      ]
+    }
+  ],
+  "Validations": []
+}`;
+
+    // Template ACCADJ réel du système
+    const realAccadjTemplate = `{
   "MenuID": "ACCADJ",
-  "FormWidth": "700px",
+  "FormWidth": "700px", 
   "Layout": "PROCESS",
   "Label": "ACCADJ",
   "Fields": [
@@ -162,20 +539,104 @@ Return only the JSON configuration, formatted and ready to use.`;
       "LoadDataInfo": {
         "DataModel": "Fndmas",
         "ColumnsDefinition": [
-          {
-            "DataField": "fund",
-            "Caption": "Fund ID",
-            "DataType": "STRING",
-            "Visible": true
-          }
+          {"DataField": "fund", "Caption": "Fund ID", "DataType": "STRING", "Visible": true},
+          {"DataField": "acnam1", "Caption": "Fund Name", "DataType": "STRING", "Visible": true}
         ]
       }
+    },
+    {
+      "Id": "Ticker",
+      "Label": "Ticker", 
+      "Type": "GRIDLKP",
+      "Inline": true,
+      "Width": "32",
+      "KeyColumn": "tkr",
+      "ItemInfo": {
+        "MainProperty": "tkr",
+        "DescProperty": "tkr_DESC", 
+        "ShowDescription": true
+      },
+      "LoadDataInfo": {
+        "DataModel": "Secrty",
+        "ColumnsDefinition": [
+          {"DataField": "tkr", "Caption": "Ticker", "DataType": "STRING", "Visible": true},
+          {"DataField": "tkr_DESC", "Caption": "Description", "DataType": "STRING", "Visible": true}
+        ]
+      }
+    },
+    {
+      "Id": "SecCat",
+      "label": "SECCAT",
+      "type": "LSTLKP", 
+      "Inline": true,
+      "Width": "32",
+      "KeyColumn": "seccat",
+      "LoadDataInfo": {
+        "DataModel": "Seccat",
+        "ColumnsDefinition": [
+          {"DataField": "seccat", "DataType": "STRING"},
+          {"DataField": "descr", "DataType": "STRING"}
+        ]
+      },
+      "ItemInfo": {
+        "MainProperty": "seccat",
+        "DescProperty": "descr",
+        "ShowDescription": true
+      }
+    },
+    {
+      "Id": "MSBTypeInput",
+      "label": "MBSTYPE",
+      "type": "SELECT",
+      "Inline": true, 
+      "Width": "32",
+      "OptionValues": {
+        "0": "",
+        "1": "GNMA I",
+        "2": "GNMA II", 
+        "3": "FNMA",
+        "4": "FHLMC"
+      }
+    },
+    {
+      "Id": "AccrualDate",
+      "label": "PROCDATE",
+      "type": "DATEPICKER",
+      "Inline": true,
+      "Width": "32",
+      "required": true
+    },
+    {
+      "Id": "PROCAGAINST",
+      "label": "PROCAGAINST",
+      "type": "GROUP",
+      "isGroup": true,
+      "ChildFields": [
+        {
+          "Id": "Doasof",
+          "type": "RADIOGRP",
+          "value": "dfCurrent",
+          "Width": "100",
+          "OptionValues": {
+            "dfCurrent": "DFCURRENT",
+            "dfPosting": "DFPOST",
+            "dfReval": "DFVAL"
+          }
+        }
+      ]
+    },
+    {
+      "Id": "UpdateRates",
+      "label": "UPDATERATE", 
+      "type": "CHECKBOX",
+      "Value": false,
+      "Width": "600px"
     }
   ],
   "Actions": [
     {
       "ID": "PROCESS",
-      "Label": "PROCESS",
+      "Label": "PROCESS", 
       "MethodToInvoke": "ExecuteProcess"
     }
   ],
@@ -184,12 +645,12 @@ Return only the JSON configuration, formatted and ready to use.`;
       "Id": "2",
       "Type": "ERROR",
       "CondExpression": {
-        "LogicalOperator": "AND",
+        "LogicalOperator": "AND", 
         "Conditions": [
           {
-            "RightField": "FieldName",
-            "Operator": "IST",
-            "ValueType": "BOOL"
+            "RightField": "AccrualDate",
+            "Operator": "ISN",
+            "ValueType": "DATE"
           }
         ]
       }
@@ -197,53 +658,59 @@ Return only the JSON configuration, formatted and ready to use.`;
   ]
 }`;
 
-    const prompt = `Generate a comprehensive ${formType} program configuration in JSON format exactly like ACCADJ, BUYTYP, PRIMNT, or SRCMNT programs.
+    const prompt = `Generate a complete ${formType} program in JSON format using the EXACT structure and patterns from real financial systems.
 
 ${specifications ? `Specifications: ${specifications}` : ''}
 
-You must create a complete financial/business program with these EXACT structures and field types:
+**CRITICAL: Generate PRODUCTION-READY JSON following these EXACT template structures:**
 
-**REQUIRED JSON STRUCTURE:**
-- MenuID: Program identifier (uppercase)
-- FormWidth: "700px" or appropriate width
-- Layout: "PROCESS" or "MASTERMENU" 
-- Label: Program name
-- Fields: Array of form fields with proper business context
-- Actions: Process buttons and methods
-- Validations: Business rules and data validation
+For ACCADJ: ${realAccadjTemplate}
 
-**FIELD TYPES TO USE:**
-- GRIDLKP: Grid lookup for entities (funds, securities, etc.)
-- LSTLKP: List lookup for categories
-- SELECT: Dropdown with predefined options
-- DATEPICKER/DATEPKR: Date selection
-- CHECKBOX: Boolean options
-- RADIOGRP: Radio button groups
-- GROUP: Field grouping containers
-- TEXT: Simple text input
-- TEXTAREA: Multi-line text
+For BUYTYP: ${realBuytypTemplate}
 
-**BUSINESS CONTEXT EXAMPLES:**
-- ACCADJ: Account adjustments, fund management
-- BUYTYP: Purchase types, trading categories  
-- PRIMNT: Primary maintenance, master data
-- SRCMNT: Source maintenance, data sources
-- FUNDMNG: Fund management operations
-- SECMNT: Security maintenance
-- PORTMNG: Portfolio management
+For PRIMNT: ${realPrimntTemplate}
 
-**VALIDATION OPERATORS:**
-- IST/ISF: Is True/False
-- ISN/ISNN: Is Null/Not Null  
-- EQ/NEQ: Equal/Not Equal
-- GT/LT: Greater/Less Than
+For SRCMNT: ${realSrcmntTemplate}
 
-Generate a production-ready program JSON that follows these exact patterns and includes realistic business fields, proper validations, and meaningful actions. Make it comprehensive with 8-15 fields including lookups, groups, and validation rules.
+**AUTOMATICALLY USE THE RIGHT TEMPLATE** based on the requested program type.
 
-Example structure to follow:
-${exampleAccadj}
+**PROGRAM SPECIFICATIONS BY TYPE:**
 
-Return ONLY the complete JSON configuration, properly formatted and ready to use.`;
+**ACCADJ** (Account Adjustments):
+- Use ACCADJ template above EXACTLY
+- Fields: Fund lookups, Security tickers, Categories, Process dates, Rate updates
+- Focus: Accrual processing, fund adjustments, security management
+
+**BUYTYP** (Buy Types):
+- MenuID: "BUYTYP", Label: "BUYTYP", FormWidth: "600px"
+- Complex trading form with Fund/Ticker lookups, dates, broker/exchange selections
+- Fields: FundID (GRIDLKP), Ticker (GRIDLKP), TradeDate (DATEPKR), Broker (GRIDLKP), Reason (LSTLKP), Exchange (LSTLKP), Quantity (NUMERIC), Price (NUMERIC)
+- Use real entities: Fndmas, Secrty, Broker, Reason, Exchang
+- Include comprehensive validations and EnabledWhen conditions
+
+**PRIMNT** (Primary Maintenance):
+- MenuID: "PRIMNT", Label: "PRIMNT", Layout: "MASTERMENU"
+- Price history maintenance with LoadDataDetails from Prihst entity
+- Fields: FundID (GRIDLKP), Ticker (GRIDLKP) with Fndmas/Secrty entities
+- Actions: ADD
+- ColumnsDefinition includes FUND, TKR, PRCDATE, SOURCE, PRICE_TYPE, PRICE, etc.
+
+**SRCMNT** (Source Maintenance):
+- MenuID: "SRCMNT", Label: "SRCMNT"
+- Complex grid-based maintenance with dialog forms
+- Fields: SourceGrid (GRID), SourceDetails (DIALOG) with child fields
+- RecordActions: Edit, Copy, Delete with UpdateVarValues
+- Variables: ShowDialog, RecordDetails, Mode for state management
+
+**MANDATORY STRUCTURE:**
+- ALWAYS include MenuID, FormWidth, Layout, Label, Fields, Actions, Validations
+- Use EXACT field properties: Id, label/Label, type/Type, Inline, Width
+- Include realistic LoadDataInfo with DataModel and ColumnsDefinition
+- Add proper ItemInfo with MainProperty, DescProperty, ShowDescription
+- Include EnabledWhen and Validations where appropriate
+- Use realistic DataModels: Fndmas, Secrty, Seccat, Secgrp, Buytyp, etc.
+
+Return ONLY the complete JSON - no explanations, no markdown, just pure JSON ready to use.`;
 
     return this.generateResponse(prompt);
   }
