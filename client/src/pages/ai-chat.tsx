@@ -81,8 +81,8 @@ export default function AIChat() {
       console.error('Error sending message:', error);
       setMessages(prev => prev.filter(msg => msg.id !== loadingMessage.id));
       toast({
-        title: "Erreur",
-        description: "Impossible d'envoyer le message. Veuillez réessayer.",
+        title: "Error",
+        description: "Failed to send message. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -100,16 +100,16 @@ export default function AIChat() {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     toast({
-      title: "Copié",
-      description: "Le texte a été copié dans le presse-papiers.",
+      title: "Copied",
+      description: "Text has been copied to clipboard.",
     });
   };
 
   const clearChat = () => {
     setMessages([]);
     toast({
-      title: "Conversation effacée",
-      description: "La conversation a été remise à zéro.",
+      title: "Conversation cleared",
+      description: "The conversation has been reset.",
     });
   };
 
@@ -203,11 +203,11 @@ export default function AIChat() {
               <Sparkles className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Assistant IA
+              AI Assistant
             </h1>
           </div>
           <p className="text-gray-600 dark:text-gray-300">
-            Assistant spécialisé dans la génération de programmes JSON financiers (ACCADJ, BUYTYP, PRIMNT, SRCMNT)
+            Specialized assistant for generating financial JSON programs (ACCADJ, BUYTYP, PRIMNT, SRCMNT)
           </p>
         </div>
 
@@ -219,59 +219,59 @@ export default function AIChat() {
               <div className="flex flex-col items-center justify-center h-full text-center py-12">
                 <Bot className="w-16 h-16 text-gray-400 mb-4" />
                 <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-300 mb-2">
-                  Commencez une conversation
+                  Start a conversation
                 </h3>
                 <p className="text-gray-500 dark:text-gray-400 max-w-md">
-                  Demandez-moi de générer n'importe quel programme JSON (ACCADJ, BUYTYP, PRIMNT, SRCMNT) avec tous les champs, validations et actions nécessaires.
+                  Ask me to generate any JSON program (ACCADJ, BUYTYP, PRIMNT, SRCMNT) with all necessary fields, validations and actions.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-2 justify-center">
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setInputMessage("Génère un programme ACCADJ complet avec tous les champs et validations")}
+                    onClick={() => setInputMessage("Generate a complete ACCADJ program with all fields and validations")}
                     className="text-sm"
                   >
-                    Générer ACCADJ
+                    Generate ACCADJ
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setInputMessage("Génère un programme BUYTYP pour la gestion des types d'achat")}
+                    onClick={() => setInputMessage("Generate a BUYTYP program for buy type management")}
                     className="text-sm"
                   >
-                    Générer BUYTYP
+                    Generate BUYTYP
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setInputMessage("Génère un programme PRIMNT pour la maintenance primaire")}
+                    onClick={() => setInputMessage("Generate a PRIMNT program for primary maintenance")}
                     className="text-sm"
                   >
-                    Générer PRIMNT
+                    Generate PRIMNT
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setInputMessage("Génère un programme SRCMNT pour la maintenance des sources")}
+                    onClick={() => setInputMessage("Generate a SRCMNT program for source maintenance")}
                     className="text-sm"
                   >
-                    Générer SRCMNT
+                    Generate SRCMNT
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setInputMessage("Explique-moi la structure d'un programme JSON financier")}
+                    onClick={() => setInputMessage("Explain the structure of a financial JSON program")}
                     className="text-sm"
                   >
-                    Structure JSON
+                    JSON Structure
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setInputMessage("Aide-moi à créer un nouveau type de programme personnalisé")}
+                    onClick={() => setInputMessage("Help me create a new custom program type")}
                     className="text-sm"
                   >
-                    Programme personnalisé
+                    Custom Program
                   </Button>
                 </div>
               </div>
@@ -315,7 +315,7 @@ export default function AIChat() {
                               <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
                               <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                             </div>
-                            <span className="text-sm text-gray-500">Assistant réfléchit...</span>
+                            <span className="text-sm text-gray-500">Assistant is thinking...</span>
                           </div>
                         ) : (
                           <div className="whitespace-pre-wrap break-words">
@@ -368,7 +368,7 @@ export default function AIChat() {
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Tapez votre message..."
+                  placeholder="Type your message..."
                   className="pr-12 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 rounded-xl"
                   disabled={isLoading}
                 />
@@ -396,7 +396,7 @@ export default function AIChat() {
                   className="flex-shrink-0"
                 >
                   <RotateCcw className="w-4 h-4 mr-2" />
-                  Effacer
+                  Clear
                 </Button>
               )}
               <input
@@ -408,7 +408,7 @@ export default function AIChat() {
               />
             </div>
             <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 text-center">
-              Appuyez sur Entrée pour envoyer, Shift+Entrée pour une nouvelle ligne
+              Press Enter to send, Shift+Enter for new line
             </div>
           </div>
         </div>
