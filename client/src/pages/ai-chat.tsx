@@ -148,29 +148,89 @@ export default function AIChat() {
           body: JSON.stringify({ dfmContent: content }),
         });
 
-        let analysisResponse = `**DFM File Analysis Results:**\n\n`;
+        let analysisResponse = `**🎯 Comprehensive DFM Analysis Results**\n\n`;
         
-        if (analysis.formType) {
-          analysisResponse += `**Suggested Program Type:** ${analysis.formType}\n\n`;
+        // Enhanced program type with confidence
+        if (analysis.programType) {
+          analysisResponse += `**📋 Program Type:** ${analysis.programType}\n`;
+          if (analysis.confidence) {
+            analysisResponse += `**🎯 Confidence:** ${analysis.confidence}\n\n`;
+          }
         }
         
-        if (analysis.fields?.length) {
-          analysisResponse += `**Identified Fields:** ${analysis.fields.join(', ')}\n\n`;
+        // Detailed field analysis
+        if (analysis.detectedFields?.length) {
+          analysisResponse += `**🔍 Detected Fields:**\n`;
+          analysis.detectedFields.forEach((field: any) => {
+            analysisResponse += `• **${field.name}** (${field.type}): ${field.purpose}${field.required ? ' *Required*' : ''}\n`;
+          });
+          analysisResponse += `\n`;
         }
         
-        if (analysis.components?.length) {
-          analysisResponse += `**Components:** ${analysis.components.join(', ')}\n\n`;
+        // Business context
+        if (analysis.businessContext) {
+          analysisResponse += `**💼 Business Context:**\n`;
+          if (analysis.businessContext.primaryEntity) {
+            analysisResponse += `• Primary Entity: ${analysis.businessContext.primaryEntity}\n`;
+          }
+          if (analysis.businessContext.relationships?.length) {
+            analysisResponse += `• Relationships: ${analysis.businessContext.relationships.join(', ')}\n`;
+          }
+          if (analysis.businessContext.workflows?.length) {
+            analysisResponse += `• Workflows: ${analysis.businessContext.workflows.join(', ')}\n`;
+          }
+          analysisResponse += `\n`;
         }
         
-        if (analysis.businessLogic?.length) {
-          analysisResponse += `**Business Logic:** ${analysis.businessLogic.join(', ')}\n\n`;
+        // Structural analysis
+        if (analysis.structuralAnalysis) {
+          analysisResponse += `**🏗️ Structure Analysis:**\n`;
+          const struct = analysis.structuralAnalysis;
+          if (struct.layoutType) analysisResponse += `• Layout: ${struct.layoutType}\n`;
+          if (struct.hasGrids !== undefined) analysisResponse += `• Has Grids: ${struct.hasGrids ? 'Yes' : 'No'}\n`;
+          if (struct.hasLookups !== undefined) analysisResponse += `• Has Lookups: ${struct.hasLookups ? 'Yes' : 'No'}\n`;
+          if (struct.hasValidations !== undefined) analysisResponse += `• Has Validations: ${struct.hasValidations ? 'Yes' : 'No'}\n`;
+          analysisResponse += `\n`;
         }
         
-        if (analysis.suggestedQuestions?.length) {
-          analysisResponse += `**Questions to help generate your program:**\n\n`;
-          analysis.suggestedQuestions.forEach((question: string, index: number) => {
+        // Intelligent questions
+        if (analysis.intelligentQuestions?.length) {
+          analysisResponse += `**❓ Key Questions to Refine Your Program:**\n\n`;
+          analysis.intelligentQuestions.forEach((question: string, index: number) => {
             analysisResponse += `${index + 1}. ${question}\n`;
           });
+          analysisResponse += `\n`;
+        }
+        
+        // Implementation guidance
+        if (analysis.recommendedTemplate) {
+          analysisResponse += `**📖 Recommended Template:** ${analysis.recommendedTemplate}\n\n`;
+        }
+        
+        if (analysis.implementationNotes) {
+          analysisResponse += `**💡 Implementation Notes:**\n${analysis.implementationNotes}\n\n`;
+        }
+        
+        // Fallback for old format or errors
+        if (!analysis.programType && analysis.formType) {
+          analysisResponse += `**Legacy Format - Suggested Program Type:** ${analysis.formType}\n\n`;
+        }
+        
+        if (!analysis.detectedFields && analysis.fields?.length) {
+          analysisResponse += `**Legacy Format - Identified Fields:** ${analysis.fields.join(', ')}\n\n`;
+        }
+        
+        // Handle parsing errors
+        if (analysis.error) {
+          analysisResponse += `**⚠️ Analysis Error:** ${analysis.error}\n\n`;
+          if (analysis.rawContent) {
+            analysisResponse += `**Raw Analysis:**\n${analysis.rawContent}\n`;
+          }
+        }
+        
+        // Ensure we have some content
+        if (analysisResponse === `**🎯 Comprehensive DFM Analysis Results**\n\n`) {
+          analysisResponse += `**Analysis completed successfully!** The DFM file has been processed. Please ask me specific questions about what program you'd like to generate based on this file.`;
         }
 
         setMessages(prev => prev.map(msg => 

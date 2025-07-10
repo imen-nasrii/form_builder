@@ -38,20 +38,81 @@ export class AdvancedAIAssistant {
   async analyzeDfmFile(dfmContent: string): Promise<any> {
     try {
       const message = await anthropic.messages.create({
-        max_tokens: 2000,
+        max_tokens: 4000,
         messages: [{ 
           role: 'user', 
-          content: `Analyze this DFM file content and extract key information about form structure, fields, and business logic. Return a JSON object with extracted information:
+          content: `You are an expert financial systems analyst specializing in converting Delphi DFM files to modern JSON program configurations. Perform a comprehensive, intelligent analysis of this DFM file.
 
+**DFM FILE CONTENT:**
 ${dfmContent}
 
-Return JSON format:
+**ANALYSIS REQUIREMENTS:**
+
+1. **PROGRAM TYPE IDENTIFICATION**: Based on the form name, fields, and structure, determine which financial program type this represents:
+   - ACCADJ: Account adjustment forms with fields like Fund, Ticker, Quantity, Price, adjustments
+   - BUYTYP: Buy type management with entity grids, source lookups, buy type definitions
+   - PRIMNT: Price maintenance with historical data, ticker lookups, price management
+   - SRCMNT: Source maintenance with source grids, record actions, entity management
+
+2. **DEEP FIELD ANALYSIS**: For each field/component found:
+   - Extract exact field names and their purposes
+   - Identify data types (TEXT, NUMERIC, DATE, GRIDLKP, LSTLKP, SELECT, etc.)
+   - Determine relationships between fields
+   - Identify lookup fields and their data sources
+   - Find validation rules and business constraints
+
+3. **BUSINESS LOGIC EXTRACTION**: Analyze for:
+   - Entity relationships and dependencies
+   - Validation patterns and rules
+   - Workflow processes and actions
+   - Data calculation requirements
+   - User interface behaviors
+
+4. **INTELLIGENT RECOMMENDATIONS**: Provide:
+   - 5-7 specific, targeted questions to gather missing details
+   - Suggested JSON structure based on our templates
+   - Required fields that might be missing
+   - Business rules that need clarification
+
+**REAL PROGRAM CONTEXT**: Use these production templates as reference:
+- ACCADJ: Account adjustments with Fund/Ticker lookups, Quantity/Price fields, process actions
+- BUYTYP: Entity management with grids, lookup tables, record operations
+- PRIMNT: Master menu layout with price history grids, ticker/fund lookups
+- SRCMNT: Source management with dialog forms, record actions, validation rules
+
+Return a comprehensive JSON analysis with intelligent insights:
+
 {
-  "formType": "suggested program type (ACCADJ, BUYTYP, PRIMNT, SRCMNT)",
-  "fields": ["list of identified fields"],
-  "components": ["list of component types"],
-  "businessLogic": ["identified business rules"],
-  "suggestedQuestions": ["specific questions to ask user"]
+  "programType": "Most likely program type with confidence reasoning",
+  "confidence": "High/Medium/Low with explanation",
+  "detectedFields": [
+    {
+      "name": "field name",
+      "type": "suggested JSON field type",
+      "purpose": "business purpose",
+      "required": true/false
+    }
+  ],
+  "businessContext": {
+    "primaryEntity": "main business entity",
+    "relationships": ["entity relationships"],
+    "workflows": ["identified business processes"]
+  },
+  "structuralAnalysis": {
+    "layoutType": "PROCESS/MASTERMENU/etc",
+    "hasGrids": true/false,
+    "hasLookups": true/false,
+    "hasValidations": true/false
+  },
+  "intelligentQuestions": [
+    "Specific question about business logic",
+    "Question about data relationships", 
+    "Question about validation requirements",
+    "Question about user workflow",
+    "Question about integration needs"
+  ],
+  "recommendedTemplate": "Which template section to use as base",
+  "implementationNotes": "Key considerations for JSON generation"
 }` 
         }],
         model: this.model,
