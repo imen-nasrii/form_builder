@@ -133,8 +133,11 @@ Return a comprehensive JSON analysis with intelligent insights:
 
   async generateResponse(prompt: string, context?: string): Promise<AIResponse> {
     try {
-      // Détecter les demandes de génération spécifique
-      const programGenerationMatches = prompt.match(/génère(?:r)?\s+(ACCADJ|BUYTYP|PRIMNT|SRCMNT)/i);
+      // Detect specific program generation requests in multiple languages
+      const programGenerationMatches = prompt.match(/(?:génère(?:r)?|generate|create|build)\s+(ACCADJ|BUYTYP|PRIMNT|SRCMNT)/i) ||
+                                       prompt.match(/\b(ACCADJ|BUYTYP|PRIMNT|SRCMNT)\s+(?:program|programme|form|formulaire)/i) ||
+                                       prompt.match(/\b(ACCADJ|BUYTYP|PRIMNT|SRCMNT)\b/i);
+                                       
       if (programGenerationMatches) {
         const programType = programGenerationMatches[1].toUpperCase();
         console.log(`Detected specific program generation request: ${programType}`);
@@ -225,9 +228,10 @@ Return a comprehensive JSON analysis with intelligent insights:
 
 **CRITICAL INSTRUCTIONS FOR PROGRAM GENERATION:**
 
-1. **When user asks "Génère ACCADJ"** → Generate the COMPLETE ACCADJ program with ALL fields from the real template
-2. **When user asks "Génère BUYTYP"** → Generate a complete BUYTYP program for purchase type management  
-3. **When user asks "Génère PRIMNT"** → Generate a complete PRIMNT program for primary maintenance
+1. **When user asks to generate any program (ACCADJ, BUYTYP, PRIMNT, SRCMNT)** → Return the complete JSON template immediately
+2. **Pattern detection**: Look for "génère", "generate", "create", or just the program name (ACCADJ, BUYTYP, etc.)
+3. **Direct template response**: Always provide the full, production-ready JSON configuration
+4. **No AI processing needed**: Use the exact templates for immediate response
 4. **When user asks "Génère SRCMNT"** → Generate a complete SRCMNT program for source maintenance
 
 **ALWAYS RETURN PURE JSON - NO EXPLANATIONS, NO MARKDOWN BLOCKS, NO DESCRIPTIONS**
@@ -655,7 +659,208 @@ Return only the JSON configuration, formatted and ready to use.`;
   "Validations": []
 }`;
 
-    // Template ACCADJ réel du système de production
+    // Template ACCADJ moderne basé sur les spécifications utilisateur
+    const modernAccadjTemplate = `{
+  "MenuID": "ACCADJ",
+  "FormWidth": "700px",
+  "Layout": "PROCESS",
+  "Label": "Account Adjustment",
+  "Fields": [
+    {
+      "FieldID": "Fund",
+      "Label": "Fund",
+      "Type": "GRIDLKP",
+      "Entity": "Fndmas",
+      "Required": true,
+      "Position": {"Row": 1, "Col": 1},
+      "Width": "200px"
+    },
+    {
+      "FieldID": "Security",
+      "Label": "Security",
+      "Type": "GRIDLKP",
+      "Entity": "Secrty",
+      "Required": true,
+      "Position": {"Row": 1, "Col": 2},
+      "Width": "200px"
+    },
+    {
+      "FieldID": "AdjustmentType",
+      "Label": "Adjustment Type",
+      "Type": "SELECT",
+      "Required": true,
+      "Position": {"Row": 2, "Col": 1},
+      "Width": "150px",
+      "OptionValues": [
+        {"Value": "PRICE", "Label": "Price Adjustment"},
+        {"Value": "QUANTITY", "Label": "Quantity Adjustment"},
+        {"Value": "BOTH", "Label": "Price & Quantity"}
+      ]
+    },
+    {
+      "FieldID": "AdjustmentDate",
+      "Label": "Adjustment Date",
+      "Type": "DATEPICKER",
+      "Required": true,
+      "Position": {"Row": 2, "Col": 2},
+      "Width": "150px"
+    },
+    {
+      "FieldID": "CurrentPrice",
+      "Label": "Current Price",
+      "Type": "TEXT",
+      "DataType": "DECIMAL",
+      "Position": {"Row": 3, "Col": 1},
+      "Width": "120px",
+      "ReadOnly": true
+    },
+    {
+      "FieldID": "NewPrice",
+      "Label": "New Price",
+      "Type": "TEXT",
+      "DataType": "DECIMAL",
+      "Position": {"Row": 3, "Col": 2},
+      "Width": "120px"
+    },
+    {
+      "FieldID": "CurrentQuantity",
+      "Label": "Current Quantity",
+      "Type": "TEXT",
+      "DataType": "INTEGER",
+      "Position": {"Row": 4, "Col": 1},
+      "Width": "120px",
+      "ReadOnly": true
+    },
+    {
+      "FieldID": "NewQuantity",
+      "Label": "New Quantity",
+      "Type": "TEXT",
+      "DataType": "INTEGER",
+      "Position": {"Row": 4, "Col": 2},
+      "Width": "120px"
+    },
+    {
+      "FieldID": "ReasonCode",
+      "Label": "Reason Code",
+      "Type": "LSTLKP",
+      "Entity": "Reason",
+      "Required": true,
+      "Position": {"Row": 5, "Col": 1},
+      "Width": "150px"
+    },
+    {
+      "FieldID": "ApprovalRequired",
+      "Label": "Approval Required",
+      "Type": "CHECKBOX",
+      "Position": {"Row": 5, "Col": 2},
+      "Width": "150px"
+    },
+    {
+      "FieldID": "Comments",
+      "Label": "Comments",
+      "Type": "TEXTAREA",
+      "Position": {"Row": 6, "Col": 1, "ColSpan": 2},
+      "Width": "420px",
+      "Height": "80px"
+    },
+    {
+      "FieldID": "EffectiveDate",
+      "Label": "Effective Date",
+      "Type": "DATEPICKER",
+      "Required": true,
+      "Position": {"Row": 7, "Col": 1},
+      "Width": "150px"
+    },
+    {
+      "FieldID": "ProcessedBy",
+      "Label": "Processed By",
+      "Type": "TEXT",
+      "Position": {"Row": 7, "Col": 2},
+      "Width": "150px",
+      "ReadOnly": true
+    }
+  ],
+  "Actions": [
+    {
+      "ActionID": "PROCESS",
+      "Label": "Process Adjustment",
+      "Type": "BUTTON",
+      "Position": {"Row": 8, "Col": 1},
+      "Width": "150px"
+    },
+    {
+      "ActionID": "VALIDATE",
+      "Label": "Validate",
+      "Type": "BUTTON",
+      "Position": {"Row": 8, "Col": 2},
+      "Width": "100px"
+    },
+    {
+      "ActionID": "CANCEL",
+      "Label": "Cancel",
+      "Type": "BUTTON",
+      "Position": {"Row": 8, "Col": 3},
+      "Width": "100px"
+    }
+  ],
+  "Validations": [
+    {
+      "ValidationID": "FUND_REQUIRED",
+      "FieldID": "Fund",
+      "Operator": "ISNN",
+      "Message": "Fund is required"
+    },
+    {
+      "ValidationID": "SECURITY_REQUIRED", 
+      "FieldID": "Security",
+      "Operator": "ISNN",
+      "Message": "Security is required"
+    },
+    {
+      "ValidationID": "ADJUSTMENT_TYPE_REQUIRED",
+      "FieldID": "AdjustmentType",
+      "Operator": "ISNN",
+      "Message": "Adjustment type is required"
+    },
+    {
+      "ValidationID": "PRICE_VALIDATION",
+      "FieldID": "NewPrice",
+      "Operator": "GT",
+      "Value": "0",
+      "Message": "New price must be greater than 0",
+      "Condition": {"Field": "AdjustmentType", "Operator": "EQ", "Value": "PRICE"}
+    },
+    {
+      "ValidationID": "QUANTITY_VALIDATION",
+      "FieldID": "NewQuantity",
+      "Operator": "GTE",
+      "Value": "0",
+      "Message": "New quantity must be greater than or equal to 0",
+      "Condition": {"Field": "AdjustmentType", "Operator": "EQ", "Value": "QUANTITY"}
+    },
+    {
+      "ValidationID": "EFFECTIVE_DATE_REQUIRED",
+      "FieldID": "EffectiveDate",
+      "Operator": "ISNN",
+      "Message": "Effective date is required"
+    },
+    {
+      "ValidationID": "REASON_CODE_REQUIRED",
+      "FieldID": "ReasonCode", 
+      "Operator": "ISNN",
+      "Message": "Reason code is required"
+    },
+    {
+      "ValidationID": "FUTURE_DATE_CHECK",
+      "FieldID": "EffectiveDate",
+      "Operator": "GTE",
+      "Value": "TODAY",
+      "Message": "Effective date cannot be in the past"
+    }
+  ]
+}`;
+
+    // Template ACCADJ traditionnel du système de production
     const realAccadjTemplate = `{
   "MenuID": "ACCADJ",
   "FormWidth": "700px",
@@ -1036,7 +1241,33 @@ For SRCMNT: ${realSrcmntTemplate}
 
 Return ONLY the complete JSON - no explanations, no markdown, just pure JSON ready to use.`;
 
-    return this.generateResponse(prompt);
+    try {
+      // Directly return the appropriate template based on the program type
+      switch (formType.toUpperCase()) {
+        case 'ACCADJ':
+          return { 
+            response: `Here's your complete ACCADJ program configuration:\n\n\`\`\`json\n${modernAccadjTemplate}\n\`\`\``
+          };
+        case 'BUYTYP':
+          return { 
+            response: `Here's your complete BUYTYP program configuration:\n\n\`\`\`json\n${realBuytypTemplate}\n\`\`\``
+          };
+        case 'PRIMNT':
+          return { 
+            response: `Here's your complete PRIMNT program configuration:\n\n\`\`\`json\n${realPrimntTemplate}\n\`\`\``
+          };
+        case 'SRCMNT':
+          return { 
+            response: `Here's your complete SRCMNT program configuration:\n\n\`\`\`json\n${realSrcmntTemplate}\n\`\`\``
+          };
+        default:
+          // If not a specific template, use AI generation
+          return this.generateResponse(prompt);
+      }
+    } catch (error) {
+      console.error('Error generating form type:', error);
+      return { response: "I encountered an error generating the program. Please try again." };
+    }
   }
 
   async explainConcept(concept: string, level: 'beginner' | 'intermediate' | 'advanced' = 'intermediate'): Promise<AIResponse> {
