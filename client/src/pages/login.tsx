@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { useToast } from "@/hooks/use-toast";
+import { useEnhancedToast } from "@/hooks/use-enhanced-toast";
 import { apiRequest } from "@/lib/queryClient";
 
 const loginSchema = z.object({
@@ -21,7 +21,7 @@ type LoginForm = z.infer<typeof loginSchema>;
 
 export default function Login() {
   const [, setLocation] = useLocation();
-  const { toast } = useToast();
+  const { showSuccess, showError } = useEnhancedToast();
   const queryClient = useQueryClient();
 
   const form = useForm<LoginForm>({
@@ -39,18 +39,11 @@ export default function Login() {
     }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-      toast({
-        title: "Login Successful",
-        description: "You are now logged in.",
-      });
+      showSuccess("Login Successful", "You are now logged in.");
       setLocation("/");
     },
     onError: (error: any) => {
-      toast({
-        title: "Login Error",
-        description: error.message || "Invalid credentials",
-        variant: "destructive",
-      });
+      showError("Login Error", error.message || "Invalid credentials");
     },
   });
 
