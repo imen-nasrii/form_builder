@@ -245,30 +245,56 @@ function ComponentPalette({ onTemplateSelect, expandedSections, onToggleSection 
     return acc;
   }, {} as Record<ComponentCategory, ComponentDefinition[]>);
 
-  // Force override to ensure Data Model component shows up
-  const dataDisplayComponents = componentsByCategory.DATA_DISPLAY || [];
+  // Debug and force Data Model component to appear
+  console.log('=== DEBUG COMPONENT REGISTRY ===');
+  console.log('Total components in registry:', COMPONENT_REGISTRY.length);
+  console.log('Last component in registry:', COMPONENT_REGISTRY[COMPONENT_REGISTRY.length - 1]);
   
-  // Ensure DATAMODEL component is explicitly added to DATA_DISPLAY
-  const dataModelExists = dataDisplayComponents.some(c => c.type === 'DATAMODEL');
+  // Check if DATAMODEL exists in registry
+  const dataModelInRegistry = COMPONENT_REGISTRY.find(c => c.type === 'DATAMODEL');
+  console.log('DATAMODEL component found in registry:', dataModelInRegistry);
   
-  if (!dataModelExists) {
-    console.log('DATAMODEL component missing from DATA_DISPLAY, adding it manually...');
-    // Find the DATAMODEL component in the registry
-    const dataModelComponent = COMPONENT_REGISTRY.find(c => c.type === 'DATAMODEL');
-    if (dataModelComponent) {
-      dataDisplayComponents.push(dataModelComponent);
-      console.log('Added DATAMODEL component to DATA_DISPLAY');
-    } else {
-      console.error('DATAMODEL component not found in registry!');
+  // Get DATA_DISPLAY components
+  let dataDisplayComponents = componentsByCategory.DATA_DISPLAY || [];
+  console.log('Original DATA_DISPLAY components:', dataDisplayComponents.map(c => `${c.type}:${c.label}`));
+  
+  // Force add the Data Model component manually
+  const dataModelComponent = {
+    type: 'DATAMODEL' as const,
+    label: 'Data Model',
+    icon: 'Database',
+    category: 'DATA_DISPLAY' as const,
+    color: 'text-indigo-700',
+    description: 'MFact business model selector and data structure viewer',
+    defaultProperties: {
+      Type: 'DATAMODEL' as const,
+      Label: 'Data Model',
+      DataField: 'data_model_field',
+      Width: '100%',
+      Required: false,
+      Properties: {
+        selectedModel: '',
+        selectedTable: '',
+        selectedField: '',
+        showTables: true,
+        showRelationships: true,
+        showValidations: true,
+        allowModelSelection: true
+      }
     }
+  };
+  
+  // Check if already exists and add if not
+  const existsAlready = dataDisplayComponents.some(c => c.type === 'DATAMODEL');
+  if (!existsAlready) {
+    dataDisplayComponents.push(dataModelComponent);
+    console.log('Force added DATAMODEL component');
   }
   
-  console.log('Final DATA_DISPLAY components:', dataDisplayComponents.map(c => c.label));
+  // Update the category mapping
+  componentsByCategory.DATA_DISPLAY = dataDisplayComponents;
   
-  // Update the category mapping to use the corrected DATA_DISPLAY components
-  if (dataDisplayComponents.length > 0) {
-    componentsByCategory.DATA_DISPLAY = dataDisplayComponents;
-  }
+  console.log('Final DATA_DISPLAY components:', dataDisplayComponents.map(c => `${c.type}:${c.label}`));
 
 
 
