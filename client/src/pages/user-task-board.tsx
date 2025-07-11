@@ -189,27 +189,47 @@ export default function UserTaskBoard() {
       priority?: string; 
       comment?: string 
     }) => {
+      console.log('Updating task with data:', { taskId, status, priority, comment });
       const response = await apiRequest(`/api/forms/${taskId}/status`, {
         method: 'PATCH',
         body: JSON.stringify({ status, priority, comment }),
       });
+      console.log('Update response:', response);
       return response;
+    },
+    onMutate: async ({ taskId, status }) => {
+      // Optimistic update
+      await queryClient.cancelQueries({ queryKey: ['/api/forms', 'assigned', user?.id] });
+      const previousTasks = queryClient.getQueryData(['/api/forms', 'assigned', user?.id]);
+      
+      queryClient.setQueryData(['/api/forms', 'assigned', user?.id], (old: any) => {
+        if (!old) return old;
+        return old.map((task: any) => 
+          task.id === taskId ? { ...task, status } : task
+        );
+      });
+
+      return { previousTasks };
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/forms'] });
       queryClient.invalidateQueries({ queryKey: ['/api/forms', 'assigned', user?.id] });
       toast({
-        title: "Task Updated",
-        description: "Task status has been updated successfully.",
+        title: "Task Moved",
+        description: `Task has been moved successfully.`,
       });
       setSelectedTask(null);
       setComment('');
     },
-    onError: (error: any) => {
+    onError: (error: any, variables, context) => {
+      // Rollback optimistic update
+      if (context?.previousTasks) {
+        queryClient.setQueryData(['/api/forms', 'assigned', user?.id], context.previousTasks);
+      }
       console.error('Task update error:', error);
       toast({
-        title: "Update Failed",
-        description: error?.message || "Failed to update task status.",
+        title: "Move Failed",
+        description: error?.message || "Failed to move task.",
         variant: "destructive",
       });
     },
@@ -274,6 +294,13 @@ export default function UserTaskBoard() {
     const taskId = Number(active.id);
     const dropZoneId = String(over.id);
 
+    // Find the current task to check if status actually changed
+    const currentTask = assignedPrograms.find(task => task.id === taskId);
+    if (!currentTask) {
+      console.log('Task not found:', taskId);
+      return;
+    }
+
     // Map droppable zone IDs to status values
     const statusMap: { [key: string]: string } = {
       'todo-zone': 'todo',
@@ -283,13 +310,18 @@ export default function UserTaskBoard() {
     };
 
     const newStatus = statusMap[dropZoneId];
+    const currentStatus = currentTask.status || 'todo';
 
-    if (newStatus) {
-      console.log('Updating task status:', { taskId, newStatus });
+    console.log('Status comparison:', { currentStatus, newStatus, dropZoneId });
+
+    if (newStatus && newStatus !== currentStatus) {
+      console.log('Updating task status:', { taskId, currentStatus, newStatus });
       updateTaskMutation.mutate({
         taskId,
         status: newStatus,
       });
+    } else if (newStatus === currentStatus) {
+      console.log('Task already in correct status, no update needed');
     } else {
       console.log('No valid status mapping found for:', dropZoneId);
     }
