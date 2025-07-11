@@ -56,7 +56,7 @@ export type ComponentType =
   // Lookup Components
   | 'GRIDLKP' | 'LSTLKP' | 'TREELKP' | 'TABLELKP'
   // Data Display
-  | 'LABEL' | 'DIVIDER' | 'SPACER' | 'IMAGE' | 'DATAMODEL'
+  | 'LABEL' | 'DIVIDER' | 'SPACER' | 'IMAGE' | 'DATAGRID' | 'DATAMODEL'
   // Container & Layout
   | 'GROUP' | 'PANEL' | 'TAB' | 'ACCORDION' | 'CARD' | 'DIALOG'
   // File & Upload
@@ -64,9 +64,7 @@ export type ComponentType =
   // Advanced Controls
   | 'SLIDER' | 'RATING' | 'COLOR' | 'RANGE'
   // Action Controls
-  | 'BUTTON' | 'SUBMIT' | 'RESET' | 'CANCEL' | 'ACTION'
-  // Data Model Components
-  | 'DATAMODEL';
+  | 'BUTTON' | 'SUBMIT' | 'RESET' | 'CANCEL' | 'ACTION';
 
 export type FormLayout = 'PROCESS' | 'MASTERMENU' | 'DIALOG' | 'POPUP' | 'FULLSCREEN' | 'WIZARD';
 
@@ -403,7 +401,45 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
     }
   },
 
-  // Data Model Components
+  // Data Display Components
+  {
+    type: 'LABEL',
+    label: 'Label',
+    icon: 'Type',
+    category: 'DATA_DISPLAY',
+    color: 'text-gray-600',
+    description: 'Text label for displaying information',
+    defaultProperties: {
+      Type: 'LABEL',
+      Label: 'Label Text',
+      DataField: '',
+      Width: 'auto',
+      Required: false
+    }
+  },
+  {
+    type: 'DATAGRID',
+    label: 'Data Grid',
+    icon: 'Grid',
+    category: 'DATA_DISPLAY',
+    color: 'text-emerald-600',
+    description: 'Data grid for displaying tabular information',
+    defaultProperties: {
+      Type: 'DATAGRID',
+      Label: 'Data Grid',
+      DataField: 'data_grid_field',
+      Width: '100%',
+      Required: false,
+      Properties: {
+        showHeader: true,
+        showFooter: false,
+        sortable: true,
+        filterable: true,
+        pagination: true,
+        rowsPerPage: 10
+      }
+    }
+  },
   {
     type: 'DATAMODEL',
     label: 'Data Model',
