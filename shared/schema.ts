@@ -56,6 +56,8 @@ export const forms = pgTable("forms", {
   formDefinition: text("form_definition"),
   createdBy: varchar("created_by").notNull().references(() => users.id),
   assignedTo: varchar("assigned_to").references(() => users.id),
+  status: varchar("status").notNull().default("todo"), // 'todo', 'in_progress', 'review', 'completed'
+  priority: varchar("priority").notNull().default("medium"), // 'low', 'medium', 'high'
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
