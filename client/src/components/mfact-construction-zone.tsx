@@ -70,21 +70,34 @@ interface DraggableComponentProps {
 function DraggableComponent({ component, isNew = false }: DraggableComponentProps) {
   const IconComponent = iconMap[component.icon as keyof typeof iconMap] || Type;
   
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({ id: `component-${component.type}` });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1
+  };
+  
   return (
     <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
       className={`
         relative w-full p-3 border border-dashed border-gray-300 rounded-lg cursor-move transition-all duration-200
         hover:shadow-md hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20
         flex items-center gap-3 text-sm
         ${isNew ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30' : 'bg-white dark:bg-gray-800'}
+        ${isDragging ? 'shadow-lg scale-105' : ''}
       `}
-      draggable
-      onDragStart={(e) => {
-        e.dataTransfer.setData('application/json', JSON.stringify({
-          type: 'component',
-          componentType: component.type
-        }));
-      }}
     >
       <div className={`p-2 rounded ${component.color} bg-opacity-10`}>
         <IconComponent className={`w-4 h-4 ${component.color}`} />
@@ -340,9 +353,11 @@ function ComponentPalette({ onTemplateSelect, expandedSections, onToggleSection 
             
             {expandedSections[category] && (
               <CardContent className="space-y-2">
-                {components.map((component) => (
-                  <DraggableComponent key={component.type} component={component} isNew />
-                ))}
+                <SortableContext items={components.map(c => `component-${c.type}`)} strategy={rectSortingStrategy}>
+                  {components.map((component) => (
+                    <DraggableComponent key={component.type} component={component} isNew />
+                  ))}
+                </SortableContext>
               </CardContent>
             )}
           </Card>
