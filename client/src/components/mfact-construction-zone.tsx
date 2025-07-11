@@ -243,9 +243,7 @@ function ComponentPalette({ onTemplateSelect, expandedSections, onToggleSection 
     return acc;
   }, {} as Record<ComponentCategory, ComponentDefinition[]>);
 
-  // Debug: Log the DATA_DISPLAY components
-  console.log('DATA_DISPLAY components:', componentsByCategory.DATA_DISPLAY);
-  console.log('All components:', COMPONENT_REGISTRY.map(c => c.type));
+
 
   const categoryLabels: Record<ComponentCategory, string> = {
     INPUT_CONTROLS: 'Input Fields',
