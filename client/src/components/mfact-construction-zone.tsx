@@ -258,38 +258,39 @@ function ComponentPalette({ onTemplateSelect, expandedSections, onToggleSection 
     return acc;
   }, {} as Record<ComponentCategory, ComponentDefinition[]>);
 
-  // Ensure Data Model component is always available
+  // Force add Data Model component to ensure it appears
   if (!componentsByCategory.DATA_DISPLAY) {
     componentsByCategory.DATA_DISPLAY = [];
   }
   
-  const hasDataModel = componentsByCategory.DATA_DISPLAY.some(c => c.type === 'DATAMODEL');
-  if (!hasDataModel) {
-    componentsByCategory.DATA_DISPLAY.push({
-      type: 'DATAMODEL' as const,
-      label: 'Data Model',
-      icon: 'Database',
-      category: 'DATA_DISPLAY' as const,
-      color: 'text-indigo-700',
-      description: 'MFact business model selector and data structure viewer',
-      defaultProperties: {
-        Type: 'DATAMODEL' as const,
-        Label: 'Data Model',
-        DataField: 'data_model_field',
-        Width: '100%',
-        Required: false,
-        Properties: {
-          selectedModel: '',
-          selectedTable: '',
-          selectedField: '',
-          showTables: true,
-          showRelationships: true,
-          showValidations: true,
-          allowModelSelection: true
-        }
+  // Remove any existing DATAMODEL to avoid duplicates
+  componentsByCategory.DATA_DISPLAY = componentsByCategory.DATA_DISPLAY.filter(c => c.type !== 'DATAMODEL');
+  
+  // Always add the Data Model component
+  componentsByCategory.DATA_DISPLAY.push({
+    type: 'DATAMODEL' as const,
+    label: 'Data Model',
+    icon: 'Database',
+    category: 'DATA_DISPLAY' as const,
+    color: 'text-indigo-700',
+    description: 'MFact business model selector and data structure viewer',
+    defaultProperties: {
+      Type: 'DATAMODEL' as const,
+      Label: 'Data Model',
+      DataField: 'data_model_field',
+      Width: '100%',
+      Required: false,
+      Properties: {
+        selectedModel: '',
+        selectedTable: '',
+        selectedField: '',
+        showTables: true,
+        showRelationships: true,
+        showValidations: true,
+        allowModelSelection: true
       }
-    });
-  }
+    }
+  });
 
 
 
