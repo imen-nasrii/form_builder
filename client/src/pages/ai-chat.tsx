@@ -44,7 +44,7 @@ export default function AIChat() {
       const welcomeMessage: Message = {
         id: 'welcome',
         type: 'assistant',
-        content: `Hello! I'm your AI Assistant specialized in creating financial program JSON configurations.
+        content: `Hello! I'm **Codex**, your magical AI assistant specialized in creating financial program JSON configurations.
 
 I can help you with:
 • ACCADJ - Account Adjustment Programs
@@ -243,18 +243,28 @@ You can also upload a DFM file for analysis.`,
 
   return (
     <div className="h-screen bg-white dark:bg-gray-900 flex flex-col">
-      {/* Simple Header */}
-      <div className="border-b border-gray-200 dark:border-gray-700 p-4">
+      {/* Enhanced Header */}
+      <div className="border-b border-gray-200 dark:border-gray-700 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-900">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-            AI Assistant
-          </h1>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
+              <Bot className="w-4 h-4 text-white" />
+            </div>
+            <div>
+              <h1 className="text-xl font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Codex
+              </h1>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Your Magical AI Assistant
+              </p>
+            </div>
+          </div>
           {messages.length > 0 && (
             <Button
               variant="outline"
               size="sm"
               onClick={clearChat}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 hover:bg-red-50 hover:border-red-200 hover:text-red-600"
             >
               <RotateCcw className="w-4 h-4" />
               Clear
@@ -270,11 +280,11 @@ You can also upload a DFM file for analysis.`,
             {messages.map((message) => (
               <div key={message.id} className="mb-6">
                 <div className="flex gap-4">
-                  {/* Avatar */}
-                  <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                  {/* Enhanced Avatar */}
+                  <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center shadow-md ${
                     message.type === 'user' 
-                      ? 'bg-blue-500' 
-                      : 'bg-green-500'
+                      ? 'bg-gradient-to-r from-blue-500 to-blue-600' 
+                      : 'bg-gradient-to-r from-purple-500 to-purple-600'
                   }`}>
                     {message.type === 'user' ? (
                       <User className="w-4 h-4 text-white" />
@@ -287,20 +297,25 @@ You can also upload a DFM file for analysis.`,
                   <div className="flex-1 min-w-0">
                     <div className="mb-1">
                       <span className="text-sm font-medium text-gray-900 dark:text-white">
-                        {message.type === 'user' ? 'You' : 'Assistant'}
+                        {message.type === 'user' ? 'You' : 'Codex'}
                       </span>
                     </div>
-                    <div className="text-gray-700 dark:text-gray-300">
+                    <div className={`text-gray-700 dark:text-gray-300 rounded-lg p-3 ${
+                      message.type === 'user' 
+                        ? 'bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500' 
+                        : 'bg-purple-50 dark:bg-purple-900/20 border-l-4 border-purple-500'
+                    }`}>
                       {message.isLoading ? (
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-3">
                           <div className="flex gap-1">
-                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                            <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"></div>
+                            <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                            <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                           </div>
+                          <span className="text-sm text-purple-600 dark:text-purple-400">Codex is thinking...</span>
                         </div>
                       ) : (
-                        <div className="whitespace-pre-wrap break-words">
+                        <div className="whitespace-pre-wrap break-words leading-relaxed">
                           {message.content}
                         </div>
                       )}
@@ -328,24 +343,24 @@ You can also upload a DFM file for analysis.`,
         </ScrollArea>
       </div>
 
-      {/* Input Area */}
-      <div className="border-t border-gray-200 dark:border-gray-700 p-4">
+      {/* Enhanced Input Area */}
+      <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-800 dark:to-gray-900">
         <div className="max-w-4xl mx-auto">
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <div className="flex-1 relative">
               <Input
                 ref={inputRef}
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Message AI Assistant..."
-                className="pr-12 border-gray-300 dark:border-gray-600 rounded-lg"
+                placeholder="Ask Codex anything about program generation..."
+                className="pr-12 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-800 shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                 disabled={isLoading}
               />
               <Button
                 onClick={handleSendMessage}
                 disabled={!inputMessage.trim() || isLoading}
-                className="absolute right-1 top-1 h-8 w-8 p-0"
+                className="absolute right-1 top-1 h-8 w-8 p-0 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 rounded-lg"
               >
                 <Send className="w-4 h-4" />
               </Button>
@@ -353,7 +368,7 @@ You can also upload a DFM file for analysis.`,
             <Button
               variant="outline"
               onClick={() => fileInputRef.current?.click()}
-              className="flex-shrink-0"
+              className="flex-shrink-0 border-blue-200 dark:border-blue-700 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20"
               disabled={isLoading}
             >
               <Upload className="w-4 h-4 mr-2" />
@@ -367,8 +382,8 @@ You can also upload a DFM file for analysis.`,
               style={{ display: 'none' }}
             />
           </div>
-          <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 text-center">
-            Press Enter to send, Shift+Enter for new line
+          <div className="mt-3 text-xs text-gray-500 dark:text-gray-400 text-center flex items-center justify-center gap-2">
+            <span>✨ Press Enter to send • Shift+Enter for new line • Let Codex work its magic!</span>
           </div>
         </div>
       </div>
