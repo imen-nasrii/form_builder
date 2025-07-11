@@ -13,6 +13,7 @@ import { Separator } from '@/components/ui/separator';
 import MFactDataModelViewer from './mfact-data-model-viewer';
 import { 
   Grid3X3, 
+  Grid,
   Settings, 
   Plus, 
   Trash2, 
@@ -52,6 +53,7 @@ const iconMap = {
   Circle,
   Calendar,
   Grid3X3,
+  Grid,
   List,
   Users,
   Upload,
