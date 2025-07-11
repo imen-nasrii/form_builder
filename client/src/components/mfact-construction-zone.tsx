@@ -245,6 +245,22 @@ function ComponentPalette({ onTemplateSelect, expandedSections, onToggleSection 
     return acc;
   }, {} as Record<ComponentCategory, ComponentDefinition[]>);
 
+  // Debug: Check DATA_DISPLAY components
+  const dataDisplayComponents = componentsByCategory.DATA_DISPLAY || [];
+  const dataModelComponents = COMPONENT_REGISTRY.filter(c => c.type === 'DATAMODEL');
+  
+  console.log('=== COMPONENT DEBUG ===');
+  console.log('DATA_DISPLAY components:', dataDisplayComponents);
+  console.log('DATA_DISPLAY component count:', dataDisplayComponents.length);
+  console.log('Total components in registry:', COMPONENT_REGISTRY.length);
+  console.log('DATAMODEL components found:', dataModelComponents);
+  console.log('All categories:', Object.keys(componentsByCategory));
+  
+  // Alert for immediate visibility
+  if (dataDisplayComponents.length === 0) {
+    console.error('NO DATA_DISPLAY COMPONENTS FOUND!');
+  }
+
 
 
   const categoryLabels: Record<ComponentCategory, string> = {
