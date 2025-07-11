@@ -58,7 +58,7 @@ export type ComponentType =
   // Data Display
   | 'LABEL' | 'DIVIDER' | 'SPACER' | 'IMAGE'
   // Container & Layout
-  | 'GROUP' | 'PANEL' | 'TAB' | 'ACCORDION' | 'CARD'
+  | 'GROUP' | 'PANEL' | 'TAB' | 'ACCORDION' | 'CARD' | 'DIALOG'
   // File & Upload
   | 'FILEUPLOAD' | 'IMAGEUPLOAD' | 'DROPZONE'
   // Advanced Controls
@@ -356,6 +356,20 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
     },
     isContainer: true,
     allowsChildren: true
+  },
+  {
+    type: 'DIALOG',
+    label: 'Dialog Container',
+    icon: 'MessageSquare',
+    category: 'CONTAINER_LAYOUT',
+    color: 'text-blue-600',
+    description: 'Modal dialog container',
+    defaultProperties: {
+      Type: 'DIALOG',
+      Label: 'Dialog Container',
+      Width: '500px',
+      Required: false
+    }
   },
   
   // File Upload
