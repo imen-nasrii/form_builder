@@ -44,7 +44,7 @@ export default function AIChat() {
       const welcomeMessage: Message = {
         id: 'welcome',
         type: 'assistant',
-        content: `Hello! I'm **Codex**, your magical AI assistant specialized in creating financial program JSON configurations.
+        content: `Hello! I'm **Alex**, your magical AI assistant specialized in creating financial program JSON configurations.
 
 I can help you with:
 • ACCADJ - Account Adjustment Programs
@@ -252,7 +252,7 @@ You can also upload a DFM file for analysis.`,
             </div>
             <div>
               <h1 className="text-xl font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Codex
+                Alex
               </h1>
               <p className="text-xs text-gray-500 dark:text-gray-400">
                 Your Magical AI Assistant
@@ -297,7 +297,7 @@ You can also upload a DFM file for analysis.`,
                   <div className="flex-1 min-w-0">
                     <div className="mb-1">
                       <span className="text-sm font-medium text-gray-900 dark:text-white">
-                        {message.type === 'user' ? 'You' : 'Codex'}
+                        {message.type === 'user' ? 'You' : 'Alex'}
                       </span>
                     </div>
                     <div className={`text-gray-700 dark:text-gray-300 rounded-lg p-3 ${
@@ -312,7 +312,7 @@ You can also upload a DFM file for analysis.`,
                             <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
                             <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                           </div>
-                          <span className="text-sm text-purple-600 dark:text-purple-400">Codex is thinking...</span>
+                          <span className="text-sm text-purple-600 dark:text-purple-400">Alex is thinking...</span>
                         </div>
                       ) : (
                         <div className="whitespace-pre-wrap break-words leading-relaxed">
@@ -353,7 +353,7 @@ You can also upload a DFM file for analysis.`,
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Ask Codex anything about program generation..."
+                placeholder="Ask Alex anything about program generation..."
                 className="pr-12 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-800 shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                 disabled={isLoading}
               />
@@ -383,7 +383,7 @@ You can also upload a DFM file for analysis.`,
             />
           </div>
           <div className="mt-3 text-xs text-gray-500 dark:text-gray-400 text-center flex items-center justify-center gap-2">
-            <span>✨ Press Enter to send • Shift+Enter for new line • Let Codex work its magic!</span>
+            <span>✨ Press Enter to send • Shift+Enter for new line • Let Alex work its magic!</span>
           </div>
         </div>
       </div>
