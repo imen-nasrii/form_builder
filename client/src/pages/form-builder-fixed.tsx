@@ -4287,9 +4287,6 @@ export default function FormBuilderFixed() {
                     <h3 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                       Construction Zone
                     </h3>
-                    <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-xs">
-                      Excel-like
-                    </Badge>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Badge variant="outline" className="text-xs">
