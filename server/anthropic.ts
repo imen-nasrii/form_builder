@@ -35,99 +35,156 @@ export class AdvancedAIAssistant {
     this.model = model || DEFAULT_MODEL_STR;
   }
 
+  async createInteractiveSession(message: string, context?: any): Promise<AIResponse> {
+    try {
+      const systemPrompt = `You are an advanced AI assistant specialized in creating financial program JSON configurations. Your role is to guide users through an intelligent questioning process to create accurate programs.
+
+**INTERACTION STYLE:**
+- Be conversational, friendly, and professional
+- Ask ONE clear question at a time
+- Provide context for why you're asking each question
+- Use the user's responses to build the perfect program
+- All communication must be in English
+
+**AVAILABLE PROGRAM TEMPLATES:**
+1. **ACCADJ** - Account Adjustment Programs
+   - Fields: FundID (GRIDLKP), Ticker (GRIDLKP), SecCat (LSTLKP), SecGrp (LSTLKP), MSBType (SELECT), AccrualDate (DATEPICKER), ProcessAgainst (GROUP with RADIOGRP), AccrueType (GROUP with RADIOGRP), UpdateRates (CHECKBOX), Report Options (GROUP)
+   - Purpose: Processing account adjustments and accruals with validation rules
+   - Key Validations: Date validation, conditional field enabling, report-only vs update validation
+   
+2. **BUYTYP** - Buy Type Management Programs  
+   - Fields: FundID (GRIDLKP), Ticker (GRIDLKP), TradeDate (DATEPICKER), Broker (GRIDLKP), Reason (LSTLKP), Exchange (LSTLKP), Subunit (LSTLKP), OrigFace (NUMERIC), Quantity (NUMERIC)
+   - Purpose: Managing buy type transactions and trade processing
+   - Key Features: Endpoint dependencies, conditional field enabling, complex validations, entity relationships
+   
+3. **PRIMNT** - Price Maintenance Programs
+   - Fields: Ticker lookup grids, price date fields, historical data management
+   - Purpose: Maintaining historical price data and market information
+   - Layout: MASTERMENU with data grids
+   
+4. **SRCMNT** - Source Maintenance Programs
+   - Fields: SourceGrid (GRID with record actions), dialog forms for editing
+   - Purpose: Managing data sources and entity configurations
+   - Features: Grid-based interface with Edit/Copy/Delete actions
+
+**INTERACTIVE QUESTIONING STRATEGY:**
+**INITIAL GREETING APPROACH:**
+When user greets you, start by asking: "Would you like to use one of our existing financial programs like ACCADJ, BUYTYP, PRIMNT, or SRCMNT? Or do you need to create a completely custom program?"
+
+**IF THEY CHOOSE EXISTING PROGRAMS:**
+- Ask which specific program they want (ACCADJ, BUYTYP, etc.)
+- Ask if they want the standard version or need modifications
+- Provide the complete JSON and ask for feedback
+
+**IF THEY WANT CUSTOM PROGRAMS:**
+Ask these questions ONE AT A TIME:
+1. "What should your program be called? (e.g., TRADMNT, PORTADJ, etc.)"
+2. "What business process should this program handle? (e.g., trade processing, portfolio adjustments, etc.)"
+3. "What are the main data fields you need? (e.g., Fund, Ticker, Amount, Date, etc.)"
+4. "For each field, should it be a dropdown list, searchable grid, text input, or date picker?"
+5. "What validation rules do you need? (e.g., required fields, date ranges, etc.)"
+6. "What actions should users be able to perform? (PROCESS, ADD, EDIT, DELETE, etc.)"
+
+**IF THEY UPLOAD DFM FILE:**
+- Analyze the DFM structure intelligently
+- Ask 3-5 specific questions about business logic
+- Generate the appropriate JSON program
+- Ask for confirmation and adjustments
+
+**FIELD TYPES AVAILABLE:**
+- GRIDLKP: Grid lookup with searchable data
+- LSTLKP: List lookup dropdown
+- SELECT: Fixed option dropdown
+- DATEPICKER: Date selection
+- NUMERIC: Number input
+- TEXT: Text input
+- CHECKBOX: Boolean checkbox
+- RADIOGRP: Radio button group
+- GROUP: Field grouping container
+
+Remember: Guide the conversation naturally, ask relevant questions, and build programs that match their exact needs.`;
+
+      // Build conversation context for better flow
+      const conversationMessages = [];
+      
+      // Add context from previous messages if available
+      if (context && Array.isArray(context) && context.length > 0) {
+        context.forEach((msg: any) => {
+          if (msg.type === 'user') {
+            conversationMessages.push({
+              role: 'user' as const,
+              content: msg.content,
+            });
+          } else if (msg.type === 'assistant') {
+            conversationMessages.push({
+              role: 'assistant' as const,
+              content: msg.content,
+            });
+          }
+        });
+      }
+
+      // Add the current message
+      conversationMessages.push({
+        role: 'user' as const,
+        content: message,
+      });
+
+      const response = await anthropic.messages.create({
+        max_tokens: 2048,
+        model: this.model,
+        system: systemPrompt,
+        messages: conversationMessages,
+      });
+
+      return {
+        response: response.content[0].type === 'text' ? response.content[0].text : 'Unable to process request',
+        usage: {
+          input_tokens: response.usage.input_tokens,
+          output_tokens: response.usage.output_tokens
+        }
+      };
+    } catch (error) {
+      console.error('Error in interactive session:', error);
+      throw new Error('Failed to create interactive session');
+    }
+  }
+
   async analyzeDfmFile(dfmContent: string): Promise<any> {
     try {
       const message = await anthropic.messages.create({
         max_tokens: 4000,
         messages: [{ 
           role: 'user', 
-          content: `You are an expert financial systems analyst specializing in converting Delphi DFM files to modern JSON program configurations. Perform a comprehensive, intelligent analysis of this DFM file.
+          content: `You are an expert financial systems analyst. Analyze this DFM file and ask intelligent questions to help create the perfect JSON program.
 
 **DFM FILE CONTENT:**
 ${dfmContent}
 
-**ANALYSIS REQUIREMENTS:**
+**YOUR TASK:**
+1. Identify the program type and purpose from the DFM structure
+2. Extract key fields, components, and their relationships  
+3. Ask 3-5 specific questions to clarify missing details
+4. Suggest what JSON program structure would work best
 
-1. **PROGRAM TYPE IDENTIFICATION**: Based on the form name, fields, and structure, determine which financial program type this represents:
-   - ACCADJ: Account adjustment forms with fields like Fund, Ticker, Quantity, Price, adjustments
-   - BUYTYP: Buy type management with entity grids, source lookups, buy type definitions
-   - PRIMNT: Price maintenance with historical data, ticker lookups, price management
-   - SRCMNT: Source maintenance with source grids, record actions, entity management
+**EXAMPLE QUESTIONS TO ASK:**
+- "I see this form has [specific fields]. What business process should this handle?"
+- "For the [field name] field, should this be a dropdown list or searchable grid?"
+- "What validation rules are needed for [specific field]?"
+- "Should this program have read-only reporting or allow data entry?"
 
-2. **DEEP FIELD ANALYSIS**: For each field/component found:
-   - Extract exact field names and their purposes
-   - Identify data types (TEXT, NUMERIC, DATE, GRIDLKP, LSTLKP, SELECT, etc.)
-   - Determine relationships between fields
-   - Identify lookup fields and their data sources
-   - Find validation rules and business constraints
-
-3. **BUSINESS LOGIC EXTRACTION**: Analyze for:
-   - Entity relationships and dependencies
-   - Validation patterns and rules
-   - Workflow processes and actions
-   - Data calculation requirements
-   - User interface behaviors
-
-4. **INTELLIGENT RECOMMENDATIONS**: Provide:
-   - 5-7 specific, targeted questions to gather missing details
-   - Suggested JSON structure based on our templates
-   - Required fields that might be missing
-   - Business rules that need clarification
-
-**REAL PROGRAM CONTEXT**: Use these production templates as reference:
-- ACCADJ: Account adjustments with Fund/Ticker lookups, Quantity/Price fields, process actions
-- BUYTYP: Entity management with grids, lookup tables, record operations
-- PRIMNT: Master menu layout with price history grids, ticker/fund lookups
-- SRCMNT: Source management with dialog forms, record actions, validation rules
-
-Return a comprehensive JSON analysis with intelligent insights:
-
-{
-  "programType": "Most likely program type with confidence reasoning",
-  "confidence": "High/Medium/Low with explanation",
-  "detectedFields": [
-    {
-      "name": "field name",
-      "type": "suggested JSON field type",
-      "purpose": "business purpose",
-      "required": true/false
-    }
-  ],
-  "businessContext": {
-    "primaryEntity": "main business entity",
-    "relationships": ["entity relationships"],
-    "workflows": ["identified business processes"]
-  },
-  "structuralAnalysis": {
-    "layoutType": "PROCESS/MASTERMENU/etc",
-    "hasGrids": true/false,
-    "hasLookups": true/false,
-    "hasValidations": true/false
-  },
-  "intelligentQuestions": [
-    "Specific question about business logic",
-    "Question about data relationships", 
-    "Question about validation requirements",
-    "Question about user workflow",
-    "Question about integration needs"
-  ],
-  "recommendedTemplate": "Which template section to use as base",
-  "implementationNotes": "Key considerations for JSON generation"
-}` 
+Provide your analysis and questions in a conversational, helpful tone. Focus on understanding the user's exact requirements.`
         }],
         model: this.model,
-        system: "You are an expert DFM file analyzer for financial systems. Extract and analyze form structure to suggest appropriate program configurations."
       });
 
-      const content = message.content[0].text;
-      try {
-        return JSON.parse(content);
-      } catch {
-        return { error: "Could not parse DFM analysis", rawContent: content };
-      }
+      return {
+        analysis: message.content[0].type === 'text' ? message.content[0].text : 'Unable to analyze file',
+        questions: [] // Will be extracted from the analysis text
+      };
     } catch (error) {
       console.error('Error analyzing DFM file:', error);
-      return { error: "Failed to analyze DFM file" };
+      throw new Error('Failed to analyze DFM file');
     }
   }
 

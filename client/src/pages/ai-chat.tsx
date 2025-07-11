@@ -28,10 +28,31 @@ export default function AIChat() {
   const [isLoading, setIsLoading] = useState(false);
   const [showDfmUpload, setShowDfmUpload] = useState(false);
   const [dfmContent, setDfmContent] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(true);
   const { toast } = useToast();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Intelligent suggestion buttons for quick interaction
+  const suggestions = [
+    { 
+      text: "Do you like ACCADJ program?", 
+      description: "Ask about existing Account Adjustment program" 
+    },
+    { 
+      text: "Do you like BUYTYP program?", 
+      description: "Ask about existing Buy Type Management program" 
+    },
+    { 
+      text: "I need a custom program", 
+      description: "Create a completely new program" 
+    },
+    { 
+      text: "Analyze my DFM file", 
+      description: "Upload and analyze Delphi DFM file" 
+    }
+  ];
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -41,13 +62,46 @@ export default function AIChat() {
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = async () => {
-    if (!inputMessage.trim() || isLoading) return;
+  useEffect(() => {
+    // Add initial welcome message when chat loads
+    if (messages.length === 0) {
+      const welcomeMessage: Message = {
+        id: 'welcome',
+        type: 'assistant',
+        content: `Hello! I'm your AI assistant specialized in creating financial program JSON configurations. 
+
+I can help you with:
+• **ACCADJ** - Account Adjustment Programs
+• **BUYTYP** - Buy Type Management Programs  
+• **PRIMNT** - Price Maintenance Programs
+• **SRCMNT** - Source Maintenance Programs
+
+Would you like to use one of our existing financial programs like ACCADJ, BUYTYP, PRIMNT, or SRCMNT? Or do you need to create a completely custom program?
+
+You can also upload a DFM file for analysis if you have one!`,
+        timestamp: new Date(),
+      };
+      setMessages([welcomeMessage]);
+    }
+  }, []);
+
+  const handleSuggestionClick = (suggestionText: string) => {
+    setInputMessage(suggestionText);
+    setShowSuggestions(false);
+    
+    // Automatically send the suggestion
+    setTimeout(() => {
+      sendMessage(suggestionText);
+    }, 100);
+  };
+
+  const sendMessage = async (messageText: string) => {
+    if (!messageText.trim() || isLoading) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
       type: 'user',
-      content: inputMessage,
+      content: messageText,
       timestamp: new Date(),
     };
 
@@ -60,15 +114,14 @@ export default function AIChat() {
     };
 
     setMessages(prev => [...prev, userMessage, loadingMessage]);
-    setInputMessage('');
     setIsLoading(true);
 
     try {
       const response = await apiRequest('/api/ai/chat', {
         method: 'POST',
         body: JSON.stringify({
-          message: inputMessage,
-          context: messages.slice(-10), // Inclure les 10 derniers messages pour le contexte
+          message: messageText,
+          context: messages.slice(-10),
         }),
       }) as AIResponse;
 
@@ -88,6 +141,11 @@ export default function AIChat() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSendMessage = () => {
+    sendMessage(inputMessage);
+    setInputMessage('');
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -467,6 +525,24 @@ export default function AIChat() {
                 style={{ display: 'none' }}
               />
             </div>
+            {/* Intelligent Suggestion Buttons */}
+            {showSuggestions && messages.length > 1 && (
+              <div className="mt-3 flex flex-wrap gap-2 justify-center">
+                {suggestions.map((suggestion, index) => (
+                  <Button
+                    key={index}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleSuggestionClick(suggestion.text)}
+                    className="text-xs px-3 py-1 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900 dark:to-purple-900 border-blue-200 dark:border-blue-700 hover:from-blue-100 hover:to-purple-100 dark:hover:from-blue-800 dark:hover:to-purple-800"
+                    title={suggestion.description}
+                  >
+                    {suggestion.text}
+                  </Button>
+                ))}
+              </div>
+            )}
+            
             <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 text-center">
               Press Enter to send, Shift+Enter for new line
             </div>
