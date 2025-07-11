@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import MFactDataModelViewer from './mfact-data-model-viewer';
 import { 
   Grid3X3, 
   Settings, 
@@ -103,6 +104,30 @@ interface SortableFieldProps {
 }
 
 function SortableField({ field, isSelected, onSelect, onRemove }: SortableFieldProps) {
+  // Special handling for DATAMODEL components
+  if (field.Type === 'DATAMODEL') {
+    return (
+      <div className="relative group">
+        <MFactDataModelViewer
+          field={field}
+          isSelected={isSelected}
+          onClick={onSelect}
+        />
+        <Button
+          variant="ghost"
+          size="sm"
+          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove();
+          }}
+        >
+          <Trash2 className="w-3 h-3" />
+        </Button>
+      </div>
+    );
+  }
+
   const {
     attributes,
     listeners,
