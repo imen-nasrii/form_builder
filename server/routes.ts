@@ -1308,7 +1308,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Message is required" });
       }
 
-      const response = await aiAssistant.generateResponse(message, context);
+      // Use interactive session for step-by-step questioning
+      const response = await aiAssistant.createInteractiveSession(message, context);
       res.json(response);
     } catch (error) {
       console.error("AI chat error:", error);
