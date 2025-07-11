@@ -172,7 +172,8 @@ export default function UserTaskBoard() {
       return allForms.filter((form: any) => form.assignedTo === user?.id);
     },
     enabled: !!user?.id,
-    refetchInterval: 5000 // Refresh every 5 seconds to keep data current
+    refetchInterval: false, // Disable auto-refresh to prevent overriding drag updates
+    staleTime: 30000 // Data considered fresh for 30 seconds
   });
 
   // Group tasks by status
@@ -198,15 +199,20 @@ export default function UserTaskBoard() {
       return response;
     },
     onMutate: async ({ taskId, status }) => {
-      // Optimistic update
+      // Cancel any outgoing refetches
       await queryClient.cancelQueries({ queryKey: ['/api/forms', 'assigned', user?.id] });
+      await queryClient.cancelQueries({ queryKey: ['/api/forms'] });
+      
       const previousTasks = queryClient.getQueryData(['/api/forms', 'assigned', user?.id]);
       
+      // Optimistically update the cache
       queryClient.setQueryData(['/api/forms', 'assigned', user?.id], (old: any) => {
         if (!old) return old;
-        return old.map((task: any) => 
+        const updated = old.map((task: any) => 
           task.id === taskId ? { ...task, status } : task
         );
+        console.log('Optimistic update applied:', { taskId, status, updated });
+        return updated;
       });
 
       return { previousTasks };
