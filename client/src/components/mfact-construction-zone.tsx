@@ -30,7 +30,8 @@ import {
   Upload,
   Zap,
   Copy,
-  Maximize2
+  Maximize2,
+  Database
 } from 'lucide-react';
 import type { MFactField, MFactForm, ComponentDefinition, ComponentCategory } from '@shared/mfact-models';
 import { COMPONENT_REGISTRY, MFACT_TEMPLATES } from '@shared/mfact-models';
@@ -55,7 +56,8 @@ const iconMap = {
   Users,
   Upload,
   Zap,
-  ChevronDown
+  ChevronDown,
+  Database
 };
 
 interface DraggableComponentProps {
@@ -240,6 +242,10 @@ function ComponentPalette({ onTemplateSelect, expandedSections, onToggleSection 
     acc[component.category].push(component);
     return acc;
   }, {} as Record<ComponentCategory, ComponentDefinition[]>);
+
+  // Debug: Log the DATA_DISPLAY components
+  console.log('DATA_DISPLAY components:', componentsByCategory.DATA_DISPLAY);
+  console.log('All components:', COMPONENT_REGISTRY.map(c => c.type));
 
   const categoryLabels: Record<ComponentCategory, string> = {
     INPUT_CONTROLS: 'Input Fields',
