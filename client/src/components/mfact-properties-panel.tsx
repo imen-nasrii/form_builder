@@ -24,6 +24,7 @@ import {
   Database,
   Code
 } from 'lucide-react';
+import { MFACT_BUSINESS_MODELS } from '@shared/mfact-business-models';
 import type { MFactField, SelectOption, ValidationRule } from '@shared/mfact-models';
 import { COMPONENT_REGISTRY } from '@shared/mfact-models';
 
@@ -369,6 +370,112 @@ export default function MFactPropertiesPanel({
                       options={selectedField.Options || []}
                       onChange={(options) => updateField({ Options: options })}
                     />
+                  </PropertySection>
+                )}
+
+                {selectedField.Type === 'DATAMODEL' && (
+                  <PropertySection 
+                    title="Data Model Configuration" 
+                    icon={<Database className="w-4 h-4" />}
+                  >
+                    <div className="space-y-3">
+                      <div>
+                        <Label className="text-sm font-medium">Selected Business Model</Label>
+                        <Select
+                          value={selectedField.Properties?.selectedModel || ''}
+                          onValueChange={(value) => updateField({ Properties: { 
+                            ...selectedField.Properties, 
+                            selectedModel: value,
+                            selectedTable: '',
+                            selectedField: ''
+                          }})}
+                        >
+                          <SelectTrigger className="h-8">
+                            <SelectValue placeholder="Choose a business model..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {MFACT_BUSINESS_MODELS.map((model) => (
+                              <SelectItem key={model.id} value={model.id}>
+                                <div className="flex items-center gap-2">
+                                  <Badge variant="outline" className="text-xs">{model.category}</Badge>
+                                  {model.name}
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {selectedField.Properties?.selectedModel && (
+                        <>
+                          <div>
+                            <Label className="text-sm font-medium">Display Options</Label>
+                            <div className="space-y-2 mt-2">
+                              <div className="flex items-center space-x-2">
+                                <Switch
+                                  checked={selectedField.Properties?.showTables ?? true}
+                                  onCheckedChange={(checked) => updateField({ Properties: { 
+                                    ...selectedField.Properties, 
+                                    showTables: checked 
+                                  }})}
+                                />
+                                <Label className="text-sm">Show Tables</Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <Switch
+                                  checked={selectedField.Properties?.showRelationships ?? true}
+                                  onCheckedChange={(checked) => updateField({ Properties: { 
+                                    ...selectedField.Properties, 
+                                    showRelationships: checked 
+                                  }})}
+                                />
+                                <Label className="text-sm">Show Relationships</Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <Switch
+                                  checked={selectedField.Properties?.showValidations ?? true}
+                                  onCheckedChange={(checked) => updateField({ Properties: { 
+                                    ...selectedField.Properties, 
+                                    showValidations: checked 
+                                  }})}
+                                />
+                                <Label className="text-sm">Show Validations</Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <Switch
+                                  checked={selectedField.Properties?.allowModelSelection ?? true}
+                                  onCheckedChange={(checked) => updateField({ Properties: { 
+                                    ...selectedField.Properties, 
+                                    allowModelSelection: checked 
+                                  }})}
+                                />
+                                <Label className="text-sm">Allow Model Selection</Label>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Info className="w-4 h-4 text-blue-600" />
+                              <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                                Model Information
+                              </span>
+                            </div>
+                            {(() => {
+                              const model = MFACT_BUSINESS_MODELS.find(m => m.id === selectedField.Properties?.selectedModel);
+                              return model ? (
+                                <div className="text-xs text-blue-800 dark:text-blue-200 space-y-1">
+                                  <p><strong>Name:</strong> {model.name}</p>
+                                  <p><strong>Category:</strong> {model.category}</p>
+                                  <p><strong>Tables:</strong> {model.tables.length}</p>
+                                  <p><strong>Description:</strong> {model.description}</p>
+                                </div>
+                              ) : null;
+                            })()}
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </PropertySection>
                 )}
               </TabsContent>

@@ -385,5 +385,31 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
       Label: 'Action',
       Width: '120px'
     }
+  },
+
+  // Data Model Components
+  {
+    type: 'DATAMODEL',
+    label: 'Data Model',
+    icon: 'Database',
+    category: 'DATA_DISPLAY',
+    color: 'text-indigo-700',
+    description: 'MFact business model selector and data structure viewer',
+    defaultProperties: {
+      Type: 'DATAMODEL',
+      Label: 'Data Model',
+      DataField: 'data_model_field',
+      Width: '100%',
+      Required: false,
+      Properties: {
+        selectedModel: '',
+        selectedTable: '',
+        selectedField: '',
+        showTables: true,
+        showRelationships: true,
+        showValidations: true,
+        allowModelSelection: true
+      }
+    }
   }
 ];
