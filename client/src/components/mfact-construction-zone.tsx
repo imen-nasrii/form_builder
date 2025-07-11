@@ -242,11 +242,11 @@ function ComponentPalette({ onTemplateSelect, expandedSections, onToggleSection 
   }, {} as Record<ComponentCategory, ComponentDefinition[]>);
 
   const categoryLabels: Record<ComponentCategory, string> = {
-    INPUT_CONTROLS: 'Input Controls',
+    INPUT_CONTROLS: 'Input Fields',
     SELECTION_CONTROLS: 'Selection Controls',
     LOOKUP_COMPONENTS: 'Lookup Components',
     CONTAINER_LAYOUT: 'Container & Layout',
-    DATA_DISPLAY: 'Data Display',
+    DATA_DISPLAY: 'Data & Display',
     FILE_UPLOAD: 'File & Upload',
     ACTION_VALIDATION: 'Action & Validation'
   };
@@ -325,7 +325,7 @@ export default function MFactConstructionZone({
     SELECTION_CONTROLS: false,
     LOOKUP_COMPONENTS: true,
     CONTAINER_LAYOUT: true,
-    DATA_DISPLAY: false,
+    DATA_DISPLAY: true,
     FILE_UPLOAD: false,
     ACTION_VALIDATION: true
   });
