@@ -249,25 +249,8 @@ interface ComponentPaletteProps {
 }
 
 function ComponentPalette({ onTemplateSelect, expandedSections, onToggleSection }: ComponentPaletteProps) {
-  // Group components by category
-  const componentsByCategory = COMPONENT_REGISTRY.reduce((acc, component) => {
-    if (!acc[component.category]) {
-      acc[component.category] = [];
-    }
-    acc[component.category].push(component);
-    return acc;
-  }, {} as Record<ComponentCategory, ComponentDefinition[]>);
-
-  // Force add Data Model component to ensure it appears
-  if (!componentsByCategory.DATA_DISPLAY) {
-    componentsByCategory.DATA_DISPLAY = [];
-  }
-  
-  // Remove any existing DATAMODEL to avoid duplicates
-  componentsByCategory.DATA_DISPLAY = componentsByCategory.DATA_DISPLAY.filter(c => c.type !== 'DATAMODEL');
-  
-  // Always add the Data Model component
-  componentsByCategory.DATA_DISPLAY.push({
+  // Create hardcoded component categories to ensure Data Model appears
+  const dataModelComponent = {
     type: 'DATAMODEL' as const,
     label: 'Data Model',
     icon: 'Database',
@@ -290,7 +273,24 @@ function ComponentPalette({ onTemplateSelect, expandedSections, onToggleSection 
         allowModelSelection: true
       }
     }
-  });
+  };
+
+  // Group components by category
+  const componentsByCategory = COMPONENT_REGISTRY.reduce((acc, component) => {
+    if (!acc[component.category]) {
+      acc[component.category] = [];
+    }
+    acc[component.category].push(component);
+    return acc;
+  }, {} as Record<ComponentCategory, ComponentDefinition[]>);
+
+  // Ensure DATA_DISPLAY exists and force add Data Model
+  if (!componentsByCategory.DATA_DISPLAY) {
+    componentsByCategory.DATA_DISPLAY = [];
+  }
+  
+  // Always add Data Model component at the end
+  componentsByCategory.DATA_DISPLAY.push(dataModelComponent);
 
 
 
