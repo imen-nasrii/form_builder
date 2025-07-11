@@ -227,10 +227,19 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
     defaultProperties: {
       Type: 'SELECT',
       Label: 'Select Option',
-      DataField: '',
-      Width: '200px',
+      DataField: 'select_field',
+      Width: '250px',
       Required: false,
-      Options: []
+      Options: [
+        { value: 'option1', label: 'Option 1' },
+        { value: 'option2', label: 'Option 2' },
+        { value: 'option3', label: 'Option 3' }
+      ],
+      Properties: {
+        placeholder: 'Choose an option...',
+        multiple: false,
+        searchable: false
+      }
     }
   },
   {
@@ -242,9 +251,16 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
     description: 'Boolean checkbox control',
     defaultProperties: {
       Type: 'CHECKBOX',
-      Label: 'Checkbox',
-      DataField: '',
-      Required: false
+      Label: 'Checkbox Option',
+      DataField: 'checkbox_field',
+      Width: 'auto',
+      Required: false,
+      Inline: true,
+      Properties: {
+        checkedValue: 'true',
+        uncheckedValue: 'false',
+        defaultChecked: false
+      }
     }
   },
   {
@@ -291,10 +307,18 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
     defaultProperties: {
       Type: 'GRIDLKP',
       Label: 'Grid Lookup',
-      DataField: '',
-      Entity: '',
-      Width: '400px',
-      Required: false
+      DataField: 'grid_lookup_field',
+      Entity: 'LookupTable',
+      Width: '500px',
+      Required: false,
+      Properties: {
+        displayColumns: ['id', 'name', 'description'],
+        valueColumn: 'id',
+        labelColumn: 'name',
+        searchable: true,
+        multiSelect: false,
+        pageSize: 10
+      }
     }
   },
   {
