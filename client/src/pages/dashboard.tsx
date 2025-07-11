@@ -7,11 +7,12 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import Navigation from "@/components/navigation";
 import JSONValidatorDialog from "@/components/form-builder/json-validator-dialog";
-import { Plus, Search, FileText, Calendar, User, FileCheck, Settings, Database, Menu, ArrowRightLeft, Upload, FileX, HelpCircle, Eye, Users, Edit3, Copy, Trash2, BarChart3, Clock } from "lucide-react";
+import { Plus, Search, FileText, Calendar, User, FileCheck, Settings, Database, Menu, ArrowRightLeft, Upload, FileX, HelpCircle, Eye, Users, Edit3, Copy, Trash2, BarChart3, Clock, ChevronDown, Wand2, Grid3X3 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import type { Form } from "@shared/schema";
 
@@ -499,12 +500,51 @@ export default function Dashboard() {
               }
             }}>
               {!isAdmin && (
-                <DialogTrigger asChild>
-                  <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Create Program
-                  </Button>
-                </DialogTrigger>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
+                      <Plus className="w-4 h-4 mr-2" />
+                      Create Program
+                      <ChevronDown className="w-4 h-4 ml-2" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuItem onClick={() => setShowNewFormDialog(true)}>
+                      <FileText className="w-4 h-4 mr-2" />
+                      <div>
+                        <div className="font-medium">Classic Form Builder</div>
+                        <div className="text-xs text-gray-500">Traditional drag-and-drop forms</div>
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem 
+                      onClick={() => {
+                        window.location.href = '/mfact-builder';
+                      }}
+                    >
+                      <Wand2 className="w-4 h-4 mr-2" />
+                      <div>
+                        <div className="font-medium">MFact Program Builder</div>
+                        <div className="text-xs text-gray-500">Advanced financial programs</div>
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onClick={() => {
+                        const fileInput = document.createElement('input');
+                        fileInput.type = 'file';
+                        fileInput.accept = '.json';
+                        fileInput.onchange = handleFileUpload;
+                        fileInput.click();
+                      }}
+                    >
+                      <Upload className="w-4 h-4 mr-2" />
+                      <div>
+                        <div className="font-medium">Import JSON</div>
+                        <div className="text-xs text-gray-500">Import existing form definition</div>
+                      </div>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               )}
               {isAdmin ? (
                 <div className="flex items-center space-x-2">
