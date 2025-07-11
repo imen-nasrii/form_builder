@@ -245,20 +245,29 @@ function ComponentPalette({ onTemplateSelect, expandedSections, onToggleSection 
     return acc;
   }, {} as Record<ComponentCategory, ComponentDefinition[]>);
 
-  // Debug: Check DATA_DISPLAY components
+  // Force override to ensure Data Model component shows up
   const dataDisplayComponents = componentsByCategory.DATA_DISPLAY || [];
-  const dataModelComponents = COMPONENT_REGISTRY.filter(c => c.type === 'DATAMODEL');
   
-  console.log('=== COMPONENT DEBUG ===');
-  console.log('DATA_DISPLAY components:', dataDisplayComponents);
-  console.log('DATA_DISPLAY component count:', dataDisplayComponents.length);
-  console.log('Total components in registry:', COMPONENT_REGISTRY.length);
-  console.log('DATAMODEL components found:', dataModelComponents);
-  console.log('All categories:', Object.keys(componentsByCategory));
+  // Ensure DATAMODEL component is explicitly added to DATA_DISPLAY
+  const dataModelExists = dataDisplayComponents.some(c => c.type === 'DATAMODEL');
   
-  // Alert for immediate visibility
-  if (dataDisplayComponents.length === 0) {
-    console.error('NO DATA_DISPLAY COMPONENTS FOUND!');
+  if (!dataModelExists) {
+    console.log('DATAMODEL component missing from DATA_DISPLAY, adding it manually...');
+    // Find the DATAMODEL component in the registry
+    const dataModelComponent = COMPONENT_REGISTRY.find(c => c.type === 'DATAMODEL');
+    if (dataModelComponent) {
+      dataDisplayComponents.push(dataModelComponent);
+      console.log('Added DATAMODEL component to DATA_DISPLAY');
+    } else {
+      console.error('DATAMODEL component not found in registry!');
+    }
+  }
+  
+  console.log('Final DATA_DISPLAY components:', dataDisplayComponents.map(c => c.label));
+  
+  // Update the category mapping to use the corrected DATA_DISPLAY components
+  if (dataDisplayComponents.length > 0) {
+    componentsByCategory.DATA_DISPLAY = dataDisplayComponents;
   }
 
 
