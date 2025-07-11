@@ -245,56 +245,38 @@ function ComponentPalette({ onTemplateSelect, expandedSections, onToggleSection 
     return acc;
   }, {} as Record<ComponentCategory, ComponentDefinition[]>);
 
-  // Debug and force Data Model component to appear
-  console.log('=== DEBUG COMPONENT REGISTRY ===');
-  console.log('Total components in registry:', COMPONENT_REGISTRY.length);
-  console.log('Last component in registry:', COMPONENT_REGISTRY[COMPONENT_REGISTRY.length - 1]);
-  
-  // Check if DATAMODEL exists in registry
-  const dataModelInRegistry = COMPONENT_REGISTRY.find(c => c.type === 'DATAMODEL');
-  console.log('DATAMODEL component found in registry:', dataModelInRegistry);
-  
-  // Get DATA_DISPLAY components
-  let dataDisplayComponents = componentsByCategory.DATA_DISPLAY || [];
-  console.log('Original DATA_DISPLAY components:', dataDisplayComponents.map(c => `${c.type}:${c.label}`));
-  
-  // Force add the Data Model component manually
-  const dataModelComponent = {
-    type: 'DATAMODEL' as const,
-    label: 'Data Model',
-    icon: 'Database',
-    category: 'DATA_DISPLAY' as const,
-    color: 'text-indigo-700',
-    description: 'MFact business model selector and data structure viewer',
-    defaultProperties: {
-      Type: 'DATAMODEL' as const,
-      Label: 'Data Model',
-      DataField: 'data_model_field',
-      Width: '100%',
-      Required: false,
-      Properties: {
-        selectedModel: '',
-        selectedTable: '',
-        selectedField: '',
-        showTables: true,
-        showRelationships: true,
-        showValidations: true,
-        allowModelSelection: true
-      }
-    }
-  };
-  
-  // Check if already exists and add if not
-  const existsAlready = dataDisplayComponents.some(c => c.type === 'DATAMODEL');
-  if (!existsAlready) {
-    dataDisplayComponents.push(dataModelComponent);
-    console.log('Force added DATAMODEL component');
+  // Ensure Data Model component is always available
+  if (!componentsByCategory.DATA_DISPLAY) {
+    componentsByCategory.DATA_DISPLAY = [];
   }
   
-  // Update the category mapping
-  componentsByCategory.DATA_DISPLAY = dataDisplayComponents;
-  
-  console.log('Final DATA_DISPLAY components:', dataDisplayComponents.map(c => `${c.type}:${c.label}`));
+  const hasDataModel = componentsByCategory.DATA_DISPLAY.some(c => c.type === 'DATAMODEL');
+  if (!hasDataModel) {
+    componentsByCategory.DATA_DISPLAY.push({
+      type: 'DATAMODEL' as const,
+      label: 'Data Model',
+      icon: 'Database',
+      category: 'DATA_DISPLAY' as const,
+      color: 'text-indigo-700',
+      description: 'MFact business model selector and data structure viewer',
+      defaultProperties: {
+        Type: 'DATAMODEL' as const,
+        Label: 'Data Model',
+        DataField: 'data_model_field',
+        Width: '100%',
+        Required: false,
+        Properties: {
+          selectedModel: '',
+          selectedTable: '',
+          selectedField: '',
+          showTables: true,
+          showRelationships: true,
+          showValidations: true,
+          allowModelSelection: true
+        }
+      }
+    });
+  }
 
 
 
