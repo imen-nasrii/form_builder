@@ -87,11 +87,17 @@ function SortableTaskCard({ task, onTaskClick }: { task: any; onTaskClick: (task
     <div
       ref={setNodeRef}
       style={style}
-      className="mb-3 cursor-grab active:cursor-grabbing"
+      className={`mb-3 transition-all duration-200 ${
+        isDragging 
+          ? 'cursor-grabbing scale-105 shadow-2xl z-50 rotate-3' 
+          : 'cursor-grab hover:shadow-lg'
+      }`}
       {...attributes}
       {...listeners}
     >
-      <Card className="hover:shadow-md transition-shadow border-l-4 border-l-blue-500">
+      <Card className={`transition-all duration-200 border-l-4 border-l-blue-500 ${
+        isDragging ? 'shadow-2xl border-blue-600' : 'hover:shadow-md'
+      }`}>
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -146,17 +152,14 @@ export default function UserTaskBoard() {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 3,
+        distance: 8,
       },
     }),
     useSensor(TouchSensor, {
       activationConstraint: {
-        delay: 250,
-        tolerance: 5,
+        delay: 300,
+        tolerance: 8,
       },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
     })
   );
 
