@@ -8,6 +8,7 @@ import { notificationService } from "./notification-service";
 import type { User } from "@shared/schema";
 import { apiService, type ApiDataSource } from "./services/apiService";
 import { aiAssistant } from "./anthropic";
+import { generateAIResponse, validateJSON } from "./ai-helpers";
 import { nanoid } from "nanoid";
 import crypto from "crypto";
 import fs from "fs";
@@ -1410,6 +1411,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("AI problem solving error:", error);
       res.status(500).json({ error: "Failed to solve problem" });
+    }
+  });
+
+  // AI Assistant routes for users
+  app.post('/api/ai/chat', requireAuth, async (req: any, res) => {
+    try {
+      const { message, userId } = req.body;
+      
+      if (!message || !userId) {
+        return res.status(400).json({ message: 'Message and userId are required' });
+      }
+      
+      console.log('AI Chat request:', { message, userId });
+      
+      // Enhanced AI response with context
+      const aiResponse = await generateAIResponse(message, userId);
+      
+      res.json({
+        message: aiResponse.message,
+        validationResult: aiResponse.validationResult,
+        generatedJSON: aiResponse.generatedJSON
+      });
+    } catch (error) {
+      console.error('AI Chat error:', error);
+      res.status(500).json({ message: 'Failed to process AI request' });
+    }
+  });
+
+  // JSON Validator route
+  app.post('/api/ai/validate', requireAuth, async (req: any, res) => {
+    try {
+      const { json, userId } = req.body;
+      
+      if (!json || !userId) {
+        return res.status(400).json({ message: 'JSON and userId are required' });
+      }
+      
+      console.log('JSON Validation request:', { userId });
+      
+      const validationResult = await validateJSON(json);
+      
+      res.json(validationResult);
+    } catch (error) {
+      console.error('JSON Validation error:', error);
+      res.status(500).json({ message: 'Failed to validate JSON' });
     }
   });
 

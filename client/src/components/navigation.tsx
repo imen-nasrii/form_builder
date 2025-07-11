@@ -81,15 +81,27 @@ export default function Navigation() {
               </button>
             </Link>
           ) : (
-            <Link href="/task-board">
-              <button className={`px-4 py-2 rounded-lg transition-all ${
-                isActive("/task-board") 
-                  ? "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 font-medium" 
-                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
-              }`}>
-                My Tasks
-              </button>
-            </Link>
+            <>
+              <Link href="/task-board">
+                <button className={`px-4 py-2 rounded-lg transition-all ${
+                  isActive("/task-board") 
+                    ? "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 font-medium" 
+                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+                }`}>
+                  My Tasks
+                </button>
+              </Link>
+              
+              <Link href="/user-ai">
+                <button className={`px-4 py-2 rounded-lg transition-all ${
+                  isActive("/user-ai") 
+                    ? "bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-700 dark:text-blue-300 font-medium" 
+                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+                }`}>
+                  🤖 AI Assistant
+                </button>
+              </Link>
+            </>
           )}
           
 
