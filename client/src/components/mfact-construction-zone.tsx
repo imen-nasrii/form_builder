@@ -424,7 +424,7 @@ export default function MFactConstructionZone({
               <ScrollArea className="h-[calc(100vh-200px)]">
                 {formData.fields.length === 0 ? (
                   <div 
-                    className="flex flex-col items-center justify-center h-96 text-center border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg"
+                    className="flex flex-col items-center justify-center h-96 text-center border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg relative"
                     onDragOver={(e) => {
                       e.preventDefault();
                       e.currentTarget.classList.add('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
@@ -467,27 +467,117 @@ export default function MFactConstructionZone({
                       Start Building Your MFact Program
                     </h3>
                     <p className="text-gray-500 dark:text-gray-400 max-w-md">
-                      Drag components from the palette or select a template to get started. 
+                      Drag components from the palette anywhere in this area to get started. 
                       Build professional financial programs with our comprehensive component library.
                     </p>
                   </div>
                 ) : (
-                  <SortableContext 
-                    items={formData.fields.map(field => field.Id)} 
-                    strategy={rectSortingStrategy}
+                  <div 
+                    className="relative min-h-96 w-full bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 rounded-lg p-4"
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      e.currentTarget.classList.add('bg-blue-50', 'dark:bg-blue-900/20');
+                    }}
+                    onDragLeave={(e) => {
+                      e.currentTarget.classList.remove('bg-blue-50', 'dark:bg-blue-900/20');
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      e.currentTarget.classList.remove('bg-blue-50', 'dark:bg-blue-900/20');
+                      
+                      try {
+                        const data = JSON.parse(e.dataTransfer.getData('application/json'));
+                        if (data.type === 'component') {
+                          const componentDef = COMPONENT_REGISTRY.find(c => c.type === data.componentType);
+                          if (componentDef) {
+                            // Calculate position based on drop location
+                            const rect = e.currentTarget.getBoundingClientRect();
+                            const x = e.clientX - rect.left;
+                            const y = e.clientY - rect.top;
+                            
+                            const newField: MFactField = {
+                              Id: `${componentDef.type}_${Date.now()}`,
+                              Type: componentDef.type,
+                              Label: componentDef.defaultProperties.Label || componentDef.label,
+                              DataField: componentDef.defaultProperties.DataField || `field_${Date.now()}`,
+                              ...componentDef.defaultProperties,
+                              Position: {
+                                x: Math.max(0, x - 100), // Offset for center positioning
+                                y: Math.max(0, y - 20)
+                              }
+                            };
+
+                            onFormUpdate({
+                              ...formData,
+                              fields: [...formData.fields, newField]
+                            });
+                          }
+                        }
+                      } catch (error) {
+                        console.error('Error handling drop:', error);
+                      }
+                    }}
                   >
-                    <div className="space-y-4">
-                      {formData.fields.map((field) => (
+                    {/* Grid overlay for visual guidance */}
+                    <div 
+                      className="absolute inset-0 opacity-10 pointer-events-none"
+                      style={{
+                        backgroundImage: `
+                          linear-gradient(to right, #9ca3af 1px, transparent 1px),
+                          linear-gradient(to bottom, #9ca3af 1px, transparent 1px)
+                        `,
+                        backgroundSize: '20px 20px'
+                      }}
+                    />
+
+                    {/* Render positioned components */}
+                    {formData.fields.map((field, index) => (
+                      <div
+                        key={field.Id}
+                        className="absolute cursor-move"
+                        style={{
+                          left: field.Position?.x || (index % 3) * 250 + 20,
+                          top: field.Position?.y || Math.floor(index / 3) * 100 + 20,
+                          zIndex: selectedField?.Id === field.Id ? 10 : 1
+                        }}
+                        onMouseDown={(e) => {
+                          const startX = e.clientX - (field.Position?.x || 0);
+                          const startY = e.clientY - (field.Position?.y || 0);
+                          
+                          const handleMouseMove = (e: MouseEvent) => {
+                            const newX = e.clientX - startX;
+                            const newY = e.clientY - startY;
+                            
+                            const updatedFields = formData.fields.map(f => 
+                              f.Id === field.Id 
+                                ? { ...f, Position: { x: Math.max(0, newX), y: Math.max(0, newY) } }
+                                : f
+                            );
+                            
+                            onFormUpdate({
+                              ...formData,
+                              fields: updatedFields
+                            });
+                          };
+
+                          const handleMouseUp = () => {
+                            document.removeEventListener('mousemove', handleMouseMove);
+                            document.removeEventListener('mouseup', handleMouseUp);
+                          };
+
+                          document.addEventListener('mousemove', handleMouseMove);
+                          document.addEventListener('mouseup', handleMouseUp);
+                        }}
+                      >
                         <SortableField
-                          key={field.Id}
                           field={field}
                           isSelected={selectedField?.Id === field.Id}
                           onSelect={() => onFieldSelect(field)}
                           onRemove={() => handleFieldRemove(field.Id)}
                         />
-                      ))}
-                    </div>
-                  </SortableContext>
+                      </div>
+                    ))}
+                  </div>
                 )}
               </ScrollArea>
             </CardContent>

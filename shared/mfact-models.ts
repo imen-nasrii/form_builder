@@ -15,10 +15,10 @@ export interface MFactField {
   Inline?: boolean;
   OutlinedStyle?: boolean;
   Position?: {
-    row: number;
-    col: number;
-    rowSpan?: number;
-    colSpan?: number;
+    x: number;
+    y: number;
+    width?: number;
+    height?: number;
   };
   Properties?: Record<string, any>;
   Validation?: ValidationRule[];
@@ -64,7 +64,9 @@ export type ComponentType =
   // Advanced Controls
   | 'SLIDER' | 'RATING' | 'COLOR' | 'RANGE'
   // Action Controls
-  | 'BUTTON' | 'SUBMIT' | 'RESET' | 'CANCEL' | 'ACTION';
+  | 'BUTTON' | 'SUBMIT' | 'RESET' | 'CANCEL' | 'ACTION'
+  // Data Model Components
+  | 'DATAMODEL';
 
 export type FormLayout = 'PROCESS' | 'MASTERMENU' | 'DIALOG' | 'POPUP' | 'FULLSCREEN' | 'WIZARD';
 
