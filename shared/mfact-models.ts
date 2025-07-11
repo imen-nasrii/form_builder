@@ -56,7 +56,7 @@ export type ComponentType =
   // Lookup Components
   | 'GRIDLKP' | 'LSTLKP' | 'TREELKP' | 'TABLELKP'
   // Data Display
-  | 'LABEL' | 'DIVIDER' | 'SPACER' | 'IMAGE'
+  | 'LABEL' | 'DIVIDER' | 'SPACER' | 'IMAGE' | 'DATAMODEL'
   // Container & Layout
   | 'GROUP' | 'PANEL' | 'TAB' | 'ACCORDION' | 'CARD' | 'DIALOG'
   // File & Upload
