@@ -74,6 +74,12 @@ function DraggableComponent({ component, isNew = false }: DraggableComponentProp
         ${isNew ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30' : 'bg-white dark:bg-gray-800'}
       `}
       draggable
+      onDragStart={(e) => {
+        e.dataTransfer.setData('application/json', JSON.stringify({
+          type: 'component',
+          componentType: component.type
+        }));
+      }}
     >
       <div className={`p-2 rounded ${component.color} bg-opacity-10`}>
         <IconComponent className={`w-4 h-4 ${component.color}`} />
@@ -316,9 +322,12 @@ export default function MFactConstructionZone({
       
       if (componentDef) {
         const newField: MFactField = {
-          Id: `field_${Date.now()}`,
+          Id: `${componentType}_${Date.now()}`,
+          Type: componentDef.type,
+          Label: componentDef.defaultProperties.Label || componentDef.label,
+          DataField: componentDef.defaultProperties.DataField || `field_${Date.now()}`,
           ...componentDef.defaultProperties
-        } as MFactField;
+        };
 
         onFormUpdate({
           ...formData,
@@ -414,7 +423,43 @@ export default function MFactConstructionZone({
             <CardContent>
               <ScrollArea className="h-[calc(100vh-200px)]">
                 {formData.fields.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-96 text-center">
+                  <div 
+                    className="flex flex-col items-center justify-center h-96 text-center border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg"
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      e.currentTarget.classList.add('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+                    }}
+                    onDragLeave={(e) => {
+                      e.currentTarget.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      e.currentTarget.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+                      
+                      try {
+                        const data = JSON.parse(e.dataTransfer.getData('application/json'));
+                        if (data.type === 'component') {
+                          const componentDef = COMPONENT_REGISTRY.find(c => c.type === data.componentType);
+                          if (componentDef) {
+                            const newField: MFactField = {
+                              Id: `${componentDef.type}_${Date.now()}`,
+                              Type: componentDef.type,
+                              Label: componentDef.defaultProperties.Label || componentDef.label,
+                              DataField: componentDef.defaultProperties.DataField || `field_${Date.now()}`,
+                              ...componentDef.defaultProperties
+                            };
+
+                            onFormUpdate({
+                              ...formData,
+                              fields: [...formData.fields, newField]
+                            });
+                          }
+                        }
+                      } catch (error) {
+                        console.error('Error handling drop:', error);
+                      }
+                    }}
+                  >
                     <div className="w-24 h-24 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-full flex items-center justify-center mb-4">
                       <Maximize2 className="w-8 h-8 text-blue-600" />
                     </div>

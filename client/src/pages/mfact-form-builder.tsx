@@ -100,12 +100,19 @@ export default function MFactFormBuilder() {
         label: formData.label,
         formWidth: formData.formWidth,
         layout: formData.layout,
-        definition: formData
+        formDefinition: JSON.stringify({
+          fields: formData.fields,
+          actions: formData.actions,
+          validations: formData.validations,
+          metadata: formData.metadata,
+          formWidth: formData.formWidth,
+          layout: formData.layout
+        })
       };
 
       if (formId) {
         return apiRequest(`/api/forms/${formId}`, {
-          method: 'PUT',
+          method: 'PATCH',
           body: payload
         });
       } else {
