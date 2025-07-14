@@ -12,7 +12,7 @@ import { Progress } from '@/components/ui/progress';
 import { Users, Settings, Bell, Eye, UserPlus, Trash2, CheckCircle2, AlertCircle, BarChart3, Edit } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
 import ProgramCompletionTracker from '@/components/program-completion-tracker';
-import RealTimeStats from '@/components/real-time-stats';
+
 import ActivityFeed from '@/components/activity-feed';
 
 interface User {
@@ -231,9 +231,7 @@ export default function AdminManagement() {
 
 
         {/* Dashboard Overview Cards */}
-        <div className="mb-8">
-          <RealTimeStats />
-        </div>
+
 
         <Tabs defaultValue="users" className="w-full">
           <TabsList className="grid w-full grid-cols-4">
