@@ -265,196 +265,124 @@ export default function MFactFormBuilder() {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-          {/* Tab Navigation */}
-          <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-6">
-            <TabsList className="grid w-full max-w-md grid-cols-3">
-              <TabsTrigger value="design" className="flex items-center gap-2">
-                <Settings className="w-4 h-4" />
-                Design
-              </TabsTrigger>
-              <TabsTrigger value="preview" className="flex items-center gap-2">
-                <Eye className="w-4 h-4" />
-                Preview
-              </TabsTrigger>
-              <TabsTrigger value="json" className="flex items-center gap-2">
-                <FileJson className="w-4 h-4" />
-                JSON
-              </TabsTrigger>
-            </TabsList>
+      {/* Main Content - Simplified Layout */}
+      <div className="flex-1 flex overflow-hidden bg-gray-50">
+        {/* Left Panel - Form Settings */}
+        <div className="w-72 bg-white border-r border-gray-200 overflow-y-auto">
+          <div className="p-4 border-b border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900">Form Settings</h3>
           </div>
+          <div className="p-4 space-y-4">
+            <div>
+              <Label htmlFor="menu-id">Menu ID</Label>
+              <Input
+                id="menu-id"
+                value={formData.menuId}
+                onChange={(e) => setFormData(prev => ({ ...prev, menuId: e.target.value }))}
+                placeholder="e.g., ACCADJ, BUYTYP"
+                className="font-mono"
+              />
+            </div>
 
-          {/* Tab Content */}
-          <div className="flex-1 overflow-hidden">
-            {/* Design Tab */}
-            <TabsContent value="design" className="h-full m-0">
-              <div className="h-full flex">
-                {/* Left Panel - Form Settings */}
-                <div className="w-80 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
-                  <Card>
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-lg font-semibold">Form Settings</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div>
-                        <Label htmlFor="menu-id">Menu ID</Label>
-                        <Input
-                          id="menu-id"
-                          value={formData.menuId}
-                          onChange={(e) => setFormData(prev => ({ ...prev, menuId: e.target.value }))}
-                          placeholder="e.g., ACCADJ, BUYTYP"
-                          className="font-mono"
-                        />
-                      </div>
+            <div>
+              <Label htmlFor="form-label">Program Label</Label>
+              <Input
+                id="form-label"
+                value={formData.label}
+                onChange={(e) => setFormData(prev => ({ ...prev, label: e.target.value }))}
+                placeholder="Enter program label"
+              />
+            </div>
 
-                      <div>
-                        <Label htmlFor="form-label">Program Label</Label>
-                        <Input
-                          id="form-label"
-                          value={formData.label}
-                          onChange={(e) => setFormData(prev => ({ ...prev, label: e.target.value }))}
-                          placeholder="Enter program label"
-                        />
-                      </div>
+            <div>
+              <Label htmlFor="form-width">Form Width</Label>
+              <Select
+                value={formData.formWidth}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, formWidth: value }))}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="600px">600px - Compact</SelectItem>
+                  <SelectItem value="700px">700px - Standard</SelectItem>
+                  <SelectItem value="800px">800px - Wide</SelectItem>
+                  <SelectItem value="1000px">1000px - Extra Wide</SelectItem>
+                  <SelectItem value="100%">100% - Full Width</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-                      <div>
-                        <Label htmlFor="form-width">Form Width</Label>
-                        <Select
-                          value={formData.formWidth}
-                          onValueChange={(value) => setFormData(prev => ({ ...prev, formWidth: value }))}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="600px">600px - Compact</SelectItem>
-                            <SelectItem value="700px">700px - Standard</SelectItem>
-                            <SelectItem value="800px">800px - Wide</SelectItem>
-                            <SelectItem value="1000px">1000px - Extra Wide</SelectItem>
-                            <SelectItem value="100%">100% - Full Width</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+            <div>
+              <Label htmlFor="form-layout">Layout Type</Label>
+              <Select
+                value={formData.layout}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, layout: value as FormLayout }))}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="PROCESS">Process Form</SelectItem>
+                  <SelectItem value="MASTERMENU">Master Menu</SelectItem>
+                  <SelectItem value="DIALOG">Dialog</SelectItem>
+                  <SelectItem value="POPUP">Popup</SelectItem>
+                  <SelectItem value="FULLSCREEN">Full Screen</SelectItem>
+                  <SelectItem value="WIZARD">Wizard</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-                      <div>
-                        <Label htmlFor="form-layout">Layout Type</Label>
-                        <Select
-                          value={formData.layout}
-                          onValueChange={(value) => setFormData(prev => ({ ...prev, layout: value as FormLayout }))}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="PROCESS">Process Form</SelectItem>
-                            <SelectItem value="MASTERMENU">Master Menu</SelectItem>
-                            <SelectItem value="DIALOG">Dialog</SelectItem>
-                            <SelectItem value="POPUP">Popup</SelectItem>
-                            <SelectItem value="FULLSCREEN">Full Screen</SelectItem>
-                            <SelectItem value="WIZARD">Wizard</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="program-category">Category</Label>
-                        <Select
-                          value={formData.metadata?.category}
-                          onValueChange={(value) => setFormData(prev => ({ 
-                            ...prev, 
-                            metadata: { ...prev.metadata!, category: value as ProgramCategory }
-                          }))}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="FINANCIAL">Financial</SelectItem>
-                            <SelectItem value="INVENTORY">Inventory</SelectItem>
-                            <SelectItem value="ACCOUNTING">Accounting</SelectItem>
-                            <SelectItem value="REPORTING">Reporting</SelectItem>
-                            <SelectItem value="ADMINISTRATION">Administration</SelectItem>
-                            <SelectItem value="CUSTOM">Custom</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="program-description">Description</Label>
-                        <Input
-                          id="program-description"
-                          value={formData.metadata?.description || ''}
-                          onChange={(e) => setFormData(prev => ({ 
-                            ...prev, 
-                            metadata: { ...prev.metadata!, description: e.target.value }
-                          }))}
-                          placeholder="Enter program description"
-                        />
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                {/* Center - Construction Zone */}
-                <div className="flex-1">
-                  <MFactConstructionZone
-                    formData={formData}
-                    selectedField={selectedField}
-                    onFormUpdate={handleFormUpdate}
-                    onFieldSelect={setSelectedField}
-                  />
-                </div>
-
-                {/* Right Panel - Properties */}
-                <div className="w-96 border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-                  <MFactPropertiesPanel
-                    selectedField={selectedField}
-                    onFieldUpdate={handleFieldUpdate}
-                    onFieldRemove={handleFieldRemove}
-                  />
-                </div>
-              </div>
-            </TabsContent>
-
-            {/* Preview Tab */}
-            <TabsContent value="preview" className="h-full m-0 p-6">
-              <Card className="h-full">
-                <CardHeader>
-                  <CardTitle>Form Preview</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-20 text-gray-500 dark:text-gray-400">
-                    <Play className="w-12 h-12 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium mb-2">Preview Coming Soon</h3>
-                    <p>Live form preview will be available in the next update.</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* JSON Tab */}
-            <TabsContent value="json" className="h-full m-0 p-6">
-              <Card className="h-full">
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span>JSON Configuration</span>
-                    <Button size="sm" variant="outline" onClick={exportJSON}>
-                      <Download className="w-4 h-4 mr-2" />
-                      Export
-                    </Button>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <pre className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg overflow-auto h-[600px] text-sm font-mono">
-                    {JSON.stringify(formData, null, 2)}
-                  </pre>
-                </CardContent>
-              </Card>
-            </TabsContent>
+            <div>
+              <Label htmlFor="program-category">Category</Label>
+              <Select
+                value={formData.metadata?.category}
+                onValueChange={(value) => setFormData(prev => ({ 
+                  ...prev, 
+                  metadata: { ...prev.metadata!, category: value as ProgramCategory }
+                }))}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="FINANCIAL">Financial</SelectItem>
+                  <SelectItem value="INVENTORY">Inventory</SelectItem>
+                  <SelectItem value="PURCHASING">Purchasing</SelectItem>
+                  <SelectItem value="REPORTING">Reporting</SelectItem>
+                  <SelectItem value="ADMINISTRATION">Administration</SelectItem>
+                  <SelectItem value="CUSTOM">Custom</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-        </Tabs>
+        </div>
+
+        {/* Center Panel - Construction Zone */}
+        <div className="flex-1 bg-white overflow-hidden">
+          <div className="h-full">
+            <MFactConstructionZone
+              form={formData}
+              onFormUpdate={handleFormUpdate}
+              selectedField={selectedField}
+              onFieldSelect={setSelectedField}
+            />
+          </div>
+        </div>
+
+        {/* Right Panel - Properties */}
+        <div className="w-80 bg-white border-l border-gray-200 overflow-y-auto">
+          <div className="p-4 border-b border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900">Properties Panel</h3>
+          </div>
+          <div className="p-4">
+            <MFactPropertiesPanel
+              selectedField={selectedField}
+              onFieldUpdate={handleFieldUpdate}
+              onFieldRemove={handleFieldRemove}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
