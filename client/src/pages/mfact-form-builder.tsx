@@ -362,7 +362,7 @@ export default function MFactFormBuilder() {
         <div className="flex-1 bg-white overflow-hidden">
           <div className="h-full">
             <MFactConstructionZone
-              form={formData}
+              formData={formData}
               onFormUpdate={handleFormUpdate}
               selectedField={selectedField}
               onFieldSelect={setSelectedField}
