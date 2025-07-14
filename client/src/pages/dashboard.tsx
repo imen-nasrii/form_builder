@@ -861,46 +861,6 @@ export default function Dashboard() {
           </DialogContent>
         </Dialog>
 
-      </div>
-
-      {/* Data Icons in top right */}
-      <div className="fixed top-20 right-6 z-40 flex flex-col gap-3">
-        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
-          <div className="flex items-center gap-2">
-            <FileText className="h-5 w-5 text-blue-600" />
-            <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Programs</p>
-              <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{forms.length}</p>
-            </div>
-          </div>
-        </div>
-        
-        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
-          <div className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-green-600" />
-            <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Users</p>
-              <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{Array.isArray(allUsers) ? allUsers.length : 0}</p>
-            </div>
-          </div>
-        </div>
-        
-        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
-          <div className="flex items-center gap-2">
-            <Clock className="h-5 w-5 text-orange-600" />
-            <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Recent</p>
-              <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                {forms.filter(form => {
-                  const updated = new Date(form.updatedAt || "");
-                  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-                  return updated > weekAgo;
-                }).length}
-              </p>
-            </div>
-          </div>
-        </div>
-
         {/* Assign Form Dialog */}
         <Dialog open={showAssignDialog} onOpenChange={setShowAssignDialog}>
           <DialogContent className="max-w-md">
