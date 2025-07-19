@@ -1,0 +1,56 @@
+Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+App.tsx:42 Auth state: {isAuthenticated: false, isLoading: true}
+queryClient.ts:67  GET https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/api/auth/user 401 (Unauthorized)
+(anonymous) @ queryClient.ts:67
+fetchFn @ @tanstack_react-query.js?v=15ba0b31:840
+run @ @tanstack_react-query.js?v=15ba0b31:494
+start @ @tanstack_react-query.js?v=15ba0b31:536
+fetch @ @tanstack_react-query.js?v=15ba0b31:926
+executeFetch_fn @ @tanstack_react-query.js?v=15ba0b31:2211
+onSubscribe @ @tanstack_react-query.js?v=15ba0b31:1898
+subscribe @ @tanstack_react-query.js?v=15ba0b31:24
+(anonymous) @ @tanstack_react-query.js?v=15ba0b31:3022
+subscribeToStore @ chunk-WERSD76P.js?v=15ba0b31:11984
+commitHookEffectListMount @ chunk-WERSD76P.js?v=15ba0b31:16915
+commitPassiveMountOnFiber @ chunk-WERSD76P.js?v=15ba0b31:18156
+commitPassiveMountEffects_complete @ chunk-WERSD76P.js?v=15ba0b31:18129
+commitPassiveMountEffects_begin @ chunk-WERSD76P.js?v=15ba0b31:18119
+commitPassiveMountEffects @ chunk-WERSD76P.js?v=15ba0b31:18109
+flushPassiveEffectsImpl @ chunk-WERSD76P.js?v=15ba0b31:19490
+flushPassiveEffects @ chunk-WERSD76P.js?v=15ba0b31:19447
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=15ba0b31:18868
+flushSyncCallbacks @ chunk-WERSD76P.js?v=15ba0b31:9119
+commitRootImpl @ chunk-WERSD76P.js?v=15ba0b31:19432
+commitRoot @ chunk-WERSD76P.js?v=15ba0b31:19277
+finishConcurrentRender @ chunk-WERSD76P.js?v=15ba0b31:18805
+performConcurrentWorkOnRoot @ chunk-WERSD76P.js?v=15ba0b31:18718
+workLoop @ chunk-WERSD76P.js?v=15ba0b31:197
+flushWork @ chunk-WERSD76P.js?v=15ba0b31:176
+performWorkUntilDeadline @ chunk-WERSD76P.js?v=15ba0b31:384Understand this error
+App.tsx:42 Auth state: {isAuthenticated: false, isLoading: false}
+queryClient.ts:46  POST https://351307f9-1d09-44f1-9ff5-69b55de4f7ee-00-2gbm9t4z23t54.janeway.replit.dev/api/login 400 (Bad Request)
+apiRequest @ queryClient.ts:46
+mutationFn @ modern-login.tsx:24
+fn @ @tanstack_react-query.js?v=15ba0b31:1189
+run @ @tanstack_react-query.js?v=15ba0b31:494
+start @ @tanstack_react-query.js?v=15ba0b31:536
+execute @ @tanstack_react-query.js?v=15ba0b31:1225
+await in execute
+mutate @ @tanstack_react-query.js?v=15ba0b31:2630
+(anonymous) @ @tanstack_react-query.js?v=15ba0b31:3295
+handleSubmit @ modern-login.tsx:56
+callCallback2 @ chunk-WERSD76P.js?v=15ba0b31:3674
+invokeGuardedCallbackDev @ chunk-WERSD76P.js?v=15ba0b31:3699
+invokeGuardedCallback @ chunk-WERSD76P.js?v=15ba0b31:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-WERSD76P.js?v=15ba0b31:3736
+executeDispatch @ chunk-WERSD76P.js?v=15ba0b31:7014
+processDispatchQueueItemsInOrder @ chunk-WERSD76P.js?v=15ba0b31:7034
+processDispatchQueue @ chunk-WERSD76P.js?v=15ba0b31:7043
+dispatchEventsForPlugins @ chunk-WERSD76P.js?v=15ba0b31:7051
+(anonymous) @ chunk-WERSD76P.js?v=15ba0b31:7174
+batchedUpdates$1 @ chunk-WERSD76P.js?v=15ba0b31:18913
+batchedUpdates @ chunk-WERSD76P.js?v=15ba0b31:3579
+dispatchEventForPluginEventSystem @ chunk-WERSD76P.js?v=15ba0b31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-WERSD76P.js?v=15ba0b31:5478
+dispatchEvent @ chunk-WERSD76P.js?v=15ba0b31:5472
+dispatchDiscreteEvent @ chunk-WERSD76P.js?v=15ba0b31:5449Understand this error
