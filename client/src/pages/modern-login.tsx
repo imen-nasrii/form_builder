@@ -88,54 +88,10 @@ export default function ModernLogin() {
 
       {/* Main Content Container */}
       <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
-        {/* Three-Element Layout */}
-        <div className="w-full max-w-7xl grid lg:grid-cols-3 gap-8 items-center">
-          
-          {/* Element 1: Brand/Logo Section */}
-          <div className="hidden lg:flex flex-col items-center text-center text-white">
-            <div className="mb-8">
-              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
-                <span className="text-3xl font-bold text-white">FB</span>
-              </div>
-              <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                FormBuilder
-              </h1>
-              <p className="text-xl text-blue-200 mb-8">Professional Form Creation Platform</p>
-            </div>
-            
-            {/* Features */}
-            <div className="space-y-4 w-full max-w-xs">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                <div className="w-8 h-8 mx-auto mb-2 rounded-full bg-blue-400 flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                  </svg>
-                </div>
-                <div className="text-sm text-gray-300">Lightning Fast</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                <div className="w-8 h-8 mx-auto mb-2 rounded-full bg-purple-400 flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                  </svg>
-                </div>
-                <div className="text-sm text-gray-300">Secure</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                <div className="w-8 h-8 mx-auto mb-2 rounded-full bg-green-400 flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2h4a1 1 0 110 2h-1v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6H3a1 1 0 110-2h4z"/>
-                  </svg>
-                </div>
-                <div className="text-sm text-gray-300">Professional</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Element 2: Login Form */}
-          <div className="flex justify-center">
-            <Card className="w-full max-w-md bg-white/90 backdrop-blur-lg border border-white/20 shadow-2xl rounded-2xl">
-              <CardContent className="p-8">
+        {/* Single Column Layout */}
+        <div className="w-full max-w-md">
+          <Card className="bg-white/90 backdrop-blur-lg border border-white/20 shadow-2xl rounded-2xl">
+            <CardContent className="p-8">
               <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">Login</h1>
               </div>
@@ -260,44 +216,6 @@ export default function ModernLogin() {
               </form>
             </CardContent>
           </Card>
-        </div>
-
-          {/* Element 3: Visual Elements */}
-          <div className="hidden lg:flex flex-col items-center text-center text-white">
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold mb-6 text-white">Modern Design</h2>
-            </div>
-            
-            {/* Design Cards */}
-            <div className="space-y-6 w-full max-w-xs">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20 hover:bg-white/20 transition-all">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                  </svg>
-                </div>
-                <h3 className="text-lg font-semibold text-white mb-2">Premium</h3>
-              </div>
-              
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20 hover:bg-white/20 transition-all">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-purple-400 to-pink-500 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M20.5 6c-2.61.7-5.67 1-8.5 1s-5.89-.3-8.5-1L3 8c0 9 5 11 9 11s9-2 9-11l-.5-2z"/>
-                  </svg>
-                </div>
-                <h3 className="text-lg font-semibold text-white mb-2">Reliable</h3>
-              </div>
-              
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20 hover:bg-white/20 transition-all">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-green-400 to-emerald-500 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                  </svg>
-                </div>
-                <h3 className="text-lg font-semibold text-white mb-2">Innovative</h3>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
