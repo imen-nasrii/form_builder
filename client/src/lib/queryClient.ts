@@ -26,34 +26,30 @@ async function throwIfResNotOk(res: Response) {
 
 export async function apiRequest(
   url: string,
-  options?: RequestInit & { body?: any },
+  options?: Omit<RequestInit, 'body'> & { body?: any },
 ): Promise<any> {
-  // Ensure proper serialization of the request body
-  let body: BodyInit | undefined = undefined;
-  
-  if (options?.body !== undefined) {
-    if (typeof options.body === 'string') {
-      body = options.body;
-    } else if (options.body instanceof FormData || options.body instanceof URLSearchParams) {
-      body = options.body;
-    } else if (typeof options.body === 'object') {
-      body = JSON.stringify(options.body);
-    } else {
-      body = String(options.body);
-    }
-  }
-
-  const res = await fetch(url, {
+  const requestOptions: RequestInit = {
     method: options?.method || 'GET',
     headers: {
       'Content-Type': 'application/json',
       ...options?.headers,
     },
-    body,
     credentials: "include",
-    ...options,
-  });
+  };
 
+  // Handle body serialization explicitly
+  if (options?.body !== undefined && options?.body !== null) {
+    if (typeof options.body === 'string') {
+      requestOptions.body = options.body;
+    } else if (options.body instanceof FormData || options.body instanceof URLSearchParams || options.body instanceof Blob) {
+      requestOptions.body = options.body;
+    } else {
+      // For objects, arrays, and other types, stringify to JSON
+      requestOptions.body = JSON.stringify(options.body);
+    }
+  }
+
+  const res = await fetch(url, requestOptions);
   await throwIfResNotOk(res);
   return await res.json();
 }
