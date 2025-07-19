@@ -172,47 +172,7 @@ export default function ModernLogin() {
                   </Link>
                 </div>
 
-                {/* Divider */}
-                <div className="relative my-6">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-200"></div>
-                  </div>
-                  <div className="relative flex justify-center text-sm">
-                    <span className="px-4 bg-white text-gray-500">Or Login With</span>
-                  </div>
-                </div>
 
-                {/* Social Login Buttons */}
-                <div className="grid grid-cols-4 gap-3">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="h-12 border-2 border-gray-200 rounded-xl hover:border-gray-300"
-                  >
-                    <Github className="w-5 h-5 text-gray-700" />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="h-12 border-2 border-gray-200 rounded-xl hover:border-gray-300"
-                  >
-                    <Twitter className="w-5 h-5 text-blue-400" />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="h-12 border-2 border-gray-200 rounded-xl hover:border-gray-300"
-                  >
-                    <Facebook className="w-5 h-5 text-blue-600" />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="h-12 border-2 border-gray-200 rounded-xl hover:border-gray-300"
-                  >
-                    <FcGoogle className="w-5 h-5" />
-                  </Button>
-                </div>
               </form>
             </CardContent>
           </Card>
