@@ -9,6 +9,8 @@ import Login from "@/pages/login";
 import Register from "@/pages/register";
 import SignUp from "@/pages/signup";
 import SignIn from "@/pages/signin";
+import ModernLogin from "@/pages/modern-login";
+import ModernSignup from "@/pages/modern-signup";
 import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import FormBuilderExact from "@/pages/form-builder-exact";
@@ -62,6 +64,8 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/signup" component={SignUp} />
       <Route path="/signin" component={SignIn} />
+      <Route path="/modern-login" component={ModernLogin} />
+      <Route path="/modern-signup" component={ModernSignup} />
       <Route path="/verify-email" component={VerifyEmail} />
       
       {/* Authenticated routes */}
