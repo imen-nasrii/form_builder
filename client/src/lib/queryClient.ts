@@ -30,8 +30,11 @@ export async function apiRequest(
 ): Promise<any> {
   // Properly serialize body if it's an object
   let body = options?.body;
+  console.log('Original body:', body, 'Type:', typeof body);
+  
   if (body && typeof body === 'object' && !(body instanceof FormData) && !(body instanceof URLSearchParams) && typeof body !== 'string') {
     body = JSON.stringify(body);
+    console.log('Serialized body:', body);
   }
 
   const res = await fetch(url, {
