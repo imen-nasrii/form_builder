@@ -95,68 +95,68 @@ export default function ModernSignup() {
           <Card className="bg-white border border-gray-200 shadow-lg rounded-2xl">
             <CardContent className="p-8">
               <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">Sign Up</h1>
-                <p className="text-gray-600">Create your account to get started</p>
+                <h1 className="text-2xl font-bold text-gray-900 mb-2">Sign Up</h1>
+                <p className="text-gray-600">Create your account</p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Name Fields */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="relative">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
                     <Input
                       type="text"
                       placeholder="First Name"
                       value={formData.firstName}
                       onChange={(e) => updateFormData('firstName', e.target.value)}
-                      className="h-12 pl-12 border-2 border-cyan-200 rounded-xl focus:border-cyan-400 focus:ring-0 bg-cyan-50/50"
+                      className="h-12 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-blue-50/30"
                     />
-                    <User className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-cyan-500" />
                   </div>
-                  <div className="relative">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
                     <Input
                       type="text"
                       placeholder="Last Name"
                       value={formData.lastName}
                       onChange={(e) => updateFormData('lastName', e.target.value)}
-                      className="h-12 pl-12 border-2 border-cyan-200 rounded-xl focus:border-cyan-400 focus:ring-0 bg-cyan-50/50"
+                      className="h-12 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-blue-50/30"
                     />
-                    <User className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-cyan-500" />
                   </div>
                 </div>
 
                 {/* Email Input */}
-                <div className="relative">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                   <Input
                     type="email"
-                    placeholder="your.email@gmail.com"
+                    placeholder="admin@formcraft.pro"
                     value={formData.email}
                     onChange={(e) => updateFormData('email', e.target.value)}
-                    className="h-12 pl-12 border-2 border-cyan-200 rounded-xl focus:border-cyan-400 focus:ring-0 bg-cyan-50/50"
+                    className="h-12 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-blue-50/30"
                   />
-                  <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-cyan-500" />
                 </div>
 
                 {/* Password Fields */}
                 <div className="space-y-4">
-                  <div className="relative">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
                     <Input
                       type="password"
-                      placeholder="Password"
+                      placeholder="........"
                       value={formData.password}
                       onChange={(e) => updateFormData('password', e.target.value)}
-                      className="h-12 pl-12 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-0 bg-gray-50"
+                      className="h-12 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-blue-50/30"
                     />
-                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
                   </div>
-                  <div className="relative">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
                     <Input
                       type="password"
                       placeholder="Confirm Password"
                       value={formData.confirmPassword}
                       onChange={(e) => updateFormData('confirmPassword', e.target.value)}
-                      className="h-12 pl-12 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-0 bg-gray-50"
+                      className="h-12 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-blue-50/30"
                     />
-                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
                   </div>
                 </div>
 
@@ -184,17 +184,17 @@ export default function ModernSignup() {
                 <Button
                   type="submit"
                   disabled={signupMutation.isPending}
-                  className="w-full h-12 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-medium text-base"
+                  className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-base"
                 >
-                  {signupMutation.isPending ? "Creating Account..." : "Create Account"}
+                  {signupMutation.isPending ? "Creating Account..." : "Sign Up"}
                 </Button>
 
                 {/* Login Link */}
                 <div className="text-center text-sm text-gray-600">
                   Already have an account?{" "}
                   <Link href="/modern-login">
-                    <button type="button" className="text-gray-900 font-medium hover:underline">
-                      Login
+                    <button type="button" className="text-blue-600 font-medium hover:underline">
+                      Sign in
                     </button>
                   </Link>
                 </div>
