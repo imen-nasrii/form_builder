@@ -26,7 +26,7 @@ export default function ModernSignup() {
 
   const signupMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      const result = await apiRequest("/api/auth/register", {
+      const result = await apiRequest("/api/register", {
         method: "POST",
         body: data,
       });
