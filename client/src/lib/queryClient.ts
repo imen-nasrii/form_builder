@@ -28,13 +28,19 @@ export async function apiRequest(
   url: string,
   options?: RequestInit & { body?: any },
 ): Promise<any> {
-  // Properly serialize body if it's an object
-  let body = options?.body;
-  console.log('Original body:', body, 'Type:', typeof body);
+  // Ensure proper serialization of the request body
+  let body: BodyInit | undefined = undefined;
   
-  if (body && typeof body === 'object' && !(body instanceof FormData) && !(body instanceof URLSearchParams) && typeof body !== 'string') {
-    body = JSON.stringify(body);
-    console.log('Serialized body:', body);
+  if (options?.body !== undefined) {
+    if (typeof options.body === 'string') {
+      body = options.body;
+    } else if (options.body instanceof FormData || options.body instanceof URLSearchParams) {
+      body = options.body;
+    } else if (typeof options.body === 'object') {
+      body = JSON.stringify(options.body);
+    } else {
+      body = String(options.body);
+    }
   }
 
   const res = await fetch(url, {
@@ -43,7 +49,7 @@ export async function apiRequest(
       'Content-Type': 'application/json',
       ...options?.headers,
     },
-    body: body as BodyInit,
+    body,
     credentials: "include",
     ...options,
   });

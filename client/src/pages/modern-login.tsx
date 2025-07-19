@@ -21,7 +21,7 @@ export default function ModernLogin() {
 
   const loginMutation = useMutation({
     mutationFn: async ({ email, password }: { email: string; password: string }) => {
-      const result = await apiRequest("/api/auth/login", {
+      const result = await apiRequest("/api/login", {
         method: "POST",
         body: { email, password },
       });
