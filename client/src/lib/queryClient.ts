@@ -28,13 +28,19 @@ export async function apiRequest(
   url: string,
   options?: RequestInit,
 ): Promise<any> {
+  // Properly serialize body if it's an object
+  let body = options?.body;
+  if (body && typeof body === 'object' && !(body instanceof FormData) && !(body instanceof URLSearchParams)) {
+    body = JSON.stringify(body);
+  }
+
   const res = await fetch(url, {
     method: options?.method || 'GET',
     headers: {
       'Content-Type': 'application/json',
       ...options?.headers,
     },
-    body: options?.body,
+    body,
     credentials: "include",
     ...options,
   });
