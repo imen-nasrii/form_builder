@@ -57,40 +57,13 @@ export default function ModernLogin() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Urban Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
-        {/* City Skyline SVG Background */}
-        <div className="absolute bottom-0 left-0 right-0 h-64 opacity-20">
-          <svg viewBox="0 0 1200 400" className="w-full h-full">
-            <polygon points="0,400 0,250 80,250 80,180 120,180 120,220 200,220 200,150 280,150 280,200 320,200 320,160 400,160 400,190 480,190 480,120 560,120 560,170 640,170 640,140 720,140 720,180 800,180 800,110 880,110 880,160 960,160 960,130 1040,130 1040,170 1120,170 1120,200 1200,200 1200,400" fill="currentColor"/>
-          </svg>
-        </div>
-        
-        {/* Animated City Lights */}
-        <div className="absolute inset-0">
-          <div className="absolute top-1/4 left-1/4 w-1 h-1 bg-yellow-400 rounded-full animate-pulse"></div>
-          <div className="absolute top-1/3 left-1/2 w-1 h-1 bg-blue-400 rounded-full animate-pulse delay-75"></div>
-          <div className="absolute top-1/2 left-1/3 w-1 h-1 bg-green-400 rounded-full animate-pulse delay-150"></div>
-          <div className="absolute top-2/3 left-2/3 w-1 h-1 bg-purple-400 rounded-full animate-pulse delay-300"></div>
-          <div className="absolute top-1/4 right-1/4 w-1 h-1 bg-red-400 rounded-full animate-pulse delay-500"></div>
-        </div>
-      </div>
-
-      {/* Grid Pattern Overlay */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="w-full h-full" style={{
-          backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-                           linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-          backgroundSize: '50px 50px'
-        }}></div>
-      </div>
+    <div className="min-h-screen bg-gray-50">
 
       {/* Main Content Container */}
-      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
+      <div className="min-h-screen flex items-center justify-center p-4">
         {/* Single Column Layout */}
         <div className="w-full max-w-md">
-          <Card className="bg-white/90 backdrop-blur-lg border border-white/20 shadow-2xl rounded-2xl">
+          <Card className="bg-white border border-gray-200 shadow-lg rounded-2xl">
             <CardContent className="p-8">
               <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">Login</h1>
