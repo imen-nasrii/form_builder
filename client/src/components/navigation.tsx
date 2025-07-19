@@ -42,7 +42,7 @@ export default function Navigation() {
             <img 
               src={formBuilderLogo}
               alt="FormBuilder Logo" 
-              className="h-12 w-auto transition-all duration-300 group-hover:scale-105"
+              className="h-16 w-auto transition-all duration-300 group-hover:scale-105"
             />
           </div>
         </Link>
