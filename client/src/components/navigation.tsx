@@ -16,7 +16,7 @@ import type { User } from "@shared/schema";
 import { Bell, ChevronDown } from "lucide-react";
 import LanguageToggle from "@/components/language-toggle";
 import NotificationBell from "@/components/notification-bell";
-import formBuilderLogo from "@/assets/formbuilder-logo.png";
+import formBuilderLogo from "@/assets/formbuilder-logo-3d.png";
 
 export default function Navigation() {
   const { user } = useAuth() as { user: User | null };
@@ -42,7 +42,7 @@ export default function Navigation() {
             <img 
               src={formBuilderLogo}
               alt="FormBuilder Logo" 
-              className="h-10 w-auto transition-all duration-300 group-hover:scale-105"
+              className="h-12 w-auto transition-all duration-300 group-hover:scale-105"
             />
           </div>
         </Link>
