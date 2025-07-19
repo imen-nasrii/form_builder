@@ -26,11 +26,11 @@ async function throwIfResNotOk(res: Response) {
 
 export async function apiRequest(
   url: string,
-  options?: RequestInit,
+  options?: RequestInit & { body?: any },
 ): Promise<any> {
   // Properly serialize body if it's an object
   let body = options?.body;
-  if (body && typeof body === 'object' && !(body instanceof FormData) && !(body instanceof URLSearchParams)) {
+  if (body && typeof body === 'object' && !(body instanceof FormData) && !(body instanceof URLSearchParams) && typeof body !== 'string') {
     body = JSON.stringify(body);
   }
 
@@ -40,7 +40,7 @@ export async function apiRequest(
       'Content-Type': 'application/json',
       ...options?.headers,
     },
-    body,
+    body: body as BodyInit,
     credentials: "include",
     ...options,
   });
