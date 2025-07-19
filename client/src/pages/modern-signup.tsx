@@ -86,13 +86,73 @@ export default function ModernSignup() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-8 items-center">
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Urban Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
+        {/* City Skyline SVG Background */}
+        <div className="absolute bottom-0 left-0 right-0 h-64 opacity-20">
+          <svg viewBox="0 0 1200 400" className="w-full h-full">
+            <polygon points="0,400 0,250 80,250 80,180 120,180 120,220 200,220 200,150 280,150 280,200 320,200 320,160 400,160 400,190 480,190 480,120 560,120 560,170 640,170 640,140 720,140 720,180 800,180 800,110 880,110 880,160 960,160 960,130 1040,130 1040,170 1120,170 1120,200 1200,200 1200,400" fill="currentColor"/>
+          </svg>
+        </div>
         
-        {/* Left Side - Signup Form */}
-        <div className="flex justify-center lg:justify-end">
-          <Card className="w-full max-w-md bg-white/80 backdrop-blur-sm border-0 shadow-2xl rounded-3xl">
-            <CardContent className="p-8">
+        {/* Animated City Lights */}
+        <div className="absolute inset-0">
+          <div className="absolute top-1/4 left-1/4 w-1 h-1 bg-yellow-400 rounded-full animate-pulse"></div>
+          <div className="absolute top-1/3 left-1/2 w-1 h-1 bg-blue-400 rounded-full animate-pulse delay-75"></div>
+          <div className="absolute top-1/2 left-1/3 w-1 h-1 bg-green-400 rounded-full animate-pulse delay-150"></div>
+          <div className="absolute top-2/3 left-2/3 w-1 h-1 bg-purple-400 rounded-full animate-pulse delay-300"></div>
+          <div className="absolute top-1/4 right-1/4 w-1 h-1 bg-red-400 rounded-full animate-pulse delay-500"></div>
+        </div>
+      </div>
+
+      {/* Grid Pattern Overlay */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="w-full h-full" style={{
+          backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+                           linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
+          backgroundSize: '50px 50px'
+        }}></div>
+      </div>
+
+      {/* Main Content Container */}
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
+        {/* Three-Element Layout */}
+        <div className="w-full max-w-7xl grid lg:grid-cols-3 gap-8 items-center">
+          
+          {/* Element 1: Brand/Logo Section */}
+          <div className="hidden lg:flex flex-col items-center text-center text-white">
+            <div className="mb-8">
+              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+                <span className="text-3xl font-bold text-white">FB</span>
+              </div>
+              <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                FormBuilder
+              </h1>
+              <p className="text-xl text-blue-200 mb-8">Join Our Professional Platform</p>
+            </div>
+            
+            {/* Registration Benefits */}
+            <div className="space-y-4 w-full max-w-xs">
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                <div className="text-2xl font-bold text-green-300">Free</div>
+                <div className="text-sm text-gray-300">Forever Plan</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                <div className="text-2xl font-bold text-blue-300">24/7</div>
+                <div className="text-sm text-gray-300">Support Available</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                <div className="text-2xl font-bold text-purple-300">Instant</div>
+                <div className="text-sm text-gray-300">Account Activation</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Element 2: Sign Up Form */}
+          <div className="flex justify-center">
+            <Card className="w-full max-w-md bg-white/90 backdrop-blur-lg border border-white/20 shadow-2xl rounded-2xl">
+              <CardContent className="p-8">
               <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">Sign Up</h1>
                 <p className="text-gray-600">Create your account to get started</p>
@@ -244,14 +304,38 @@ export default function ModernSignup() {
           </Card>
         </div>
 
-        {/* Right Side - Illustration */}
-        <div className="hidden lg:flex justify-center lg:justify-start">
-          <div className="relative">
-            <img
-              src={loginIllustration}
-              alt="Signup Illustration"
-              className="w-full max-w-lg h-auto"
-            />
+          {/* Element 3: Getting Started Guide */}
+          <div className="hidden lg:flex flex-col items-center text-center text-white">
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold mb-6 text-white">Getting Started</h2>
+            </div>
+            
+            {/* Step Cards */}
+            <div className="space-y-6 w-full max-w-xs">
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20 hover:bg-white/20 transition-all">
+                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-emerald-400 to-green-500 flex items-center justify-center">
+                  <span className="text-lg font-bold text-white">1</span>
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">Create Account</h3>
+                <p className="text-sm text-gray-300">Sign up with your email and basic information</p>
+              </div>
+              
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20 hover:bg-white/20 transition-all">
+                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-400 to-cyan-500 flex items-center justify-center">
+                  <span className="text-lg font-bold text-white">2</span>
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">Build Forms</h3>
+                <p className="text-sm text-gray-300">Use our drag-and-drop builder to create forms</p>
+              </div>
+              
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20 hover:bg-white/20 transition-all">
+                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-purple-400 to-pink-500 flex items-center justify-center">
+                  <span className="text-lg font-bold text-white">3</span>
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">Deploy & Share</h3>
+                <p className="text-sm text-gray-300">Publish your forms and start collecting data</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
