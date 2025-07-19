@@ -10,7 +10,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useMutation } from "@tanstack/react-query";
 import { Github, Twitter, Facebook, User, Mail, Lock } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
-import loginIllustration from "@/assets/login-illustration.png";
+import loginIllustration from "@/assets/login-illustration-new.png";
 
 export default function ModernSignup() {
   const [, setLocation] = useLocation();
