@@ -365,13 +365,6 @@ export default function Dashboard() {
                          form.menuId?.toLowerCase().includes(searchQuery.toLowerCase());
     
     const matchesFilter = filterType === "all" || 
-                         (filterType === "recent" && (() => {
-                           const updated = new Date(form.updatedAt || "");
-                           const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-                           return updated > weekAgo;
-                         })()) ||
-                         (filterType === "process" && form.layout === "PROCESS") ||
-                         (filterType === "form" && form.layout === "FORM") ||
                          (filterType === "assigned" && isAdmin && form.assignedTo) ||
                          (filterType === "not-assigned" && isAdmin && !form.assignedTo);
     
@@ -435,18 +428,12 @@ export default function Dashboard() {
                 {isAdmin ? (
                   <>
                     <option value="all">All Programs</option>
-                    <option value="recent">Recent (7 days)</option>
-                    <option value="process">Process Type</option>
-                    <option value="form">Form Type</option>
                     <option value="assigned">Assigned</option>
                     <option value="not-assigned">Not Assigned</option>
                   </>
                 ) : (
                   <>
                     <option value="all">My Assigned Tasks</option>
-                    <option value="recent">Recent (7 days)</option>
-                    <option value="process">Process Type</option>
-                    <option value="form">Form Type</option>
                   </>
                 )}
               </select>
