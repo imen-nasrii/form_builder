@@ -36,7 +36,7 @@ export default function Landing() {
           </div>
           
           <div className="flex justify-center">
-            <Link href="/modern-signup">
+            <Link href="/signup">
               <Button className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-4 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-200">
                 Start Building
                 <ArrowRight className="w-5 h-5 ml-2" />
