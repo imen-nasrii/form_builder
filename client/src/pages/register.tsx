@@ -71,131 +71,129 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
-          <Card className="bg-white border border-gray-200 shadow-lg rounded-2xl">
-            <CardContent className="p-8">
-              <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">Sign Up</h1>
-                <p className="text-gray-600">Create your account</p>
+    <div className="min-h-screen bg-white">
+      <div className="min-h-screen flex items-center justify-center px-6">
+        <div className="w-full max-w-sm">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-light text-gray-900 mb-3">Sign Up</h1>
+            <p className="text-gray-500 text-lg">Create your account</p>
+          </div>
+
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <div className="grid grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="firstName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-600 text-sm uppercase tracking-wide">First Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="First Name"
+                          className="h-14 border-0 border-b-2 border-gray-200 rounded-none focus:border-gray-900 focus:ring-0 bg-transparent px-0 text-lg"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="lastName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-600 text-sm uppercase tracking-wide">Last Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Last Name"
+                          className="h-14 border-0 border-b-2 border-gray-200 rounded-none focus:border-gray-900 focus:ring-0 bg-transparent px-0 text-lg"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
 
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="firstName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-gray-700 font-medium">First Name</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="First Name"
-                              className="h-12 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-0 bg-gray-50"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="lastName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-gray-700 font-medium">Last Name</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Last Name"
-                              className="h-12 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-0 bg-gray-50"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-600 text-sm uppercase tracking-wide">Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder="admin@formcraft.pro"
+                        className="h-14 border-0 border-b-2 border-gray-200 rounded-none focus:border-gray-900 focus:ring-0 bg-transparent px-0 text-lg"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-600 text-sm uppercase tracking-wide">Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="••••••••"
+                        className="h-14 border-0 border-b-2 border-gray-200 rounded-none focus:border-gray-900 focus:ring-0 bg-transparent px-0 text-lg"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-gray-700 font-medium">Email</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="email"
-                            placeholder="admin@formcraft.pro"
-                            className="h-12 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-0 bg-gray-50"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-gray-700 font-medium">Password</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="password"
-                            placeholder="••••••••"
-                            className="h-12 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-0 bg-gray-50"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-600 text-sm uppercase tracking-wide">Confirm Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="Confirm Password"
+                        className="h-14 border-0 border-b-2 border-gray-200 rounded-none focus:border-gray-900 focus:ring-0 bg-transparent px-0 text-lg"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                  <FormField
-                    control={form.control}
-                    name="confirmPassword"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-gray-700 font-medium">Confirm Password</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="password"
-                            placeholder="Confirm Password"
-                            className="h-12 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-0 bg-gray-50"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <Button
-                    type="submit"
-                    className="w-full h-12 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-medium text-base"
-                    disabled={registerMutation.isPending}
-                  >
-                    {registerMutation.isPending ? "Creating account..." : "Sign Up"}
-                  </Button>
-                </form>
-              </Form>
-
-              <div className="mt-6 text-center text-sm text-gray-600">
-                Already have an account?{" "}
-                <Link href="/login" className="text-gray-900 font-medium hover:underline">
-                  Sign in
-                </Link>
+              <div className="pt-6">
+                <Button
+                  type="submit"
+                  className="w-full h-14 bg-black hover:bg-gray-800 text-white rounded-none font-normal text-lg uppercase tracking-wide"
+                  disabled={registerMutation.isPending}
+                >
+                  {registerMutation.isPending ? "Creating account..." : "Sign Up"}
+                </Button>
               </div>
-            </CardContent>
-          </Card>
+            </form>
+          </Form>
+
+          <div className="mt-12 text-center">
+            <span className="text-gray-500">Already have an account? </span>
+            <Link href="/login" className="text-black font-medium hover:underline">
+              Sign in
+            </Link>
+          </div>
         </div>
       </div>
     </div>
