@@ -1,23 +1,14 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Navigation from "@/components/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { 
-  Users, 
   FileText, 
   TrendingUp, 
-  Activity, 
-  Calendar,
   Clock,
-  BarChart3,
   PieChart,
-  DollarSign,
-  Eye,
-  Edit,
   UserCheck
 } from "lucide-react";
 import {
@@ -37,46 +28,13 @@ import {
   Pie
 } from 'recharts';
 
-// Helper function to generate real growth data based on database creation dates
-const generateRealGrowthData = (users: any[], forms: any[]) => {
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-  const currentMonth = new Date().getMonth();
-  
-  return months.map((month, index) => {
-    // Calculate users created up to this month
-    const usersCount = users.filter(user => {
-      const createdMonth = new Date(user.createdAt || '').getMonth();
-      return createdMonth <= index;
-    }).length;
-    
-    // Calculate forms created up to this month
-    const formsCount = forms.filter(form => {
-      const createdMonth = new Date(form.createdAt || '').getMonth();
-      return createdMonth <= index;
-    }).length;
-    
-    return { month, users: usersCount, forms: formsCount };
-  });
-};
-
-// We don't track daily activity in the database yet, so we'll remove this chart
-
 export default function Analytics() {
   const { user, isAuthenticated } = useAuth();
   const [timeRange, setTimeRange] = useState("7d");
-  
-  // Type guard for user object
-  const typedUser = user as { role?: string } | null;
 
   // Fetch user-specific data
   const { data: forms = [] } = useQuery({
     queryKey: ["/api/forms"],
-    enabled: isAuthenticated,
-  });
-
-  // Get user's tasks/assignments from forms
-  const { data: userTasks = [] } = useQuery({
-    queryKey: ["/api/user/tasks"], 
     enabled: isAuthenticated,
   });
 
@@ -219,7 +177,7 @@ export default function Analytics() {
           <Card className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 border-orange-200 dark:border-orange-800">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-orange-700 dark:text-orange-300">Recent Activity</CardTitle>
-              <Activity className="h-4 w-4 text-orange-600" />
+              <TrendingUp className="h-4 w-4 text-orange-600" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-orange-900 dark:text-orange-100">{recentActivity}</div>
@@ -231,7 +189,7 @@ export default function Analytics() {
         </div>
 
         {/* Charts Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* User Activity Chart */}
           <Card>
             <CardHeader>
@@ -306,106 +264,6 @@ export default function Analytics() {
                     <span className="text-sm text-gray-600 dark:text-gray-400">{item.name} ({item.value})</span>
                   </div>
                 ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* My Activity Summary Chart */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5 text-purple-600" />
-              My Activity Overview
-            </CardTitle>
-            <CardDescription>Your personal statistics breakdown</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={[
-                { category: 'My Programs', count: totalMyForms },
-                { category: 'Created', count: myCreatedPrograms.length },
-                { category: 'Assigned Tasks', count: myAssignedTasks.length },
-                { category: 'Completed', count: completedTasks.length },
-                { category: 'In Progress', count: inProgressTasks.length }
-              ]}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="category" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="count" fill="#3B82F6" name="Count" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Real-time Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Eye className="h-5 w-5 text-blue-600" />
-                Recent Activity
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">My programs</span>
-                <Badge variant="secondary">{totalMyForms}</Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Recent updates</span>
-                <Badge variant="secondary">{recentActivity}</Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Completed tasks</span>
-                <Badge variant="secondary">{completedTasks.length}</Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Clock className="h-5 w-5 text-green-600" />
-                System Health
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Database Status</span>
-                <Badge className="bg-green-100 text-green-800">Healthy</Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">API Response Time</span>
-                <Badge variant="secondary">~120ms</Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Uptime</span>
-                <Badge className="bg-green-100 text-green-800">99.9%</Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-orange-600" />
-                Quick Stats
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">My forms</span>
-                <Badge variant="secondary">{totalMyForms}</Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">In progress</span>
-                <Badge variant="secondary">{inProgressTasks.length}</Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Completion rate</span>
-                <Badge variant="secondary">{myAssignedTasks.length > 0 ? Math.round((completedTasks.length / myAssignedTasks.length) * 100) : 0}%</Badge>
               </div>
             </CardContent>
           </Card>
