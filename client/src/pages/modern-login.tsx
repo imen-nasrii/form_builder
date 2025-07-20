@@ -12,6 +12,7 @@ import { Github, Twitter, Facebook, Layers } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import loginIllustration from "@/assets/login-illustration-new.png";
 import formBuilderLogo from "@/assets/formbuilder-logo-3d.png";
+import magicCityBg from "@/assets/magic-city-bg.svg";
 
 export default function ModernLogin() {
   const [, setLocation] = useLocation();
@@ -58,12 +59,23 @@ export default function ModernLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div 
+      className="min-h-screen relative"
+      style={{
+        backgroundImage: `url(${magicCityBg})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
+      {/* Overlay for better readability */}
+      <div className="absolute inset-0 bg-black/20"></div>
+      
       {/* Main Content Container */}
-      <div className="min-h-screen flex items-center justify-center p-4 pt-20">
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-4 pt-20">
         {/* Single Column Layout */}
         <div className="w-full max-w-md">
-          <Card className="bg-white border border-gray-200 shadow-lg rounded-2xl">
+          <Card className="bg-white/95 backdrop-blur-sm border border-white/30 shadow-2xl rounded-2xl">
             <CardContent className="p-8">
               <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">Login</h1>
