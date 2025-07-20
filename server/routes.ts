@@ -1215,8 +1215,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "No valid fields to update" });
       }
 
-      await storage.updateUserProfile(userId, updateData);
-      res.json({ message: "Profile updated successfully" });
+      const updatedUser = await storage.updateUserProfile(userId, updateData);
+      // Remove password from response
+      const { password: _, ...userResponse } = updatedUser;
+      res.json({ message: "Profile updated successfully", user: userResponse });
     } catch (error) {
       console.error("Error updating profile:", error);
       res.status(500).json({ message: "Failed to update profile" });

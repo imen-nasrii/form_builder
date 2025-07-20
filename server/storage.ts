@@ -120,14 +120,17 @@ export class DatabaseStorage implements IStorage {
       .where(eq(users.id, userId));
   }
 
-  async updateUserProfile(userId: string, profileData: { firstName?: string; lastName?: string; profileImageUrl?: string; }): Promise<void> {
-    await db
+  async updateUserProfile(userId: string, profileData: { firstName?: string; lastName?: string; profileImageUrl?: string; }): Promise<User> {
+    const [updatedUser] = await db
       .update(users)
       .set({ 
         ...profileData,
         updatedAt: new Date()
       })
-      .where(eq(users.id, userId));
+      .where(eq(users.id, userId))
+      .returning();
+    
+    return updatedUser;
   }
 
   async enableTwoFactor(userId: string, secret: string): Promise<void> {
