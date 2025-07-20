@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -19,6 +19,15 @@ export default function Profile() {
   const [profileImage, setProfileImage] = useState(user?.profileImageUrl || "");
   const [firstName, setFirstName] = useState(user?.firstName || "");
   const [lastName, setLastName] = useState(user?.lastName || "");
+
+  // Update form state when user data changes
+  useEffect(() => {
+    if (user) {
+      setProfileImage(user.profileImageUrl || "");
+      setFirstName(user.firstName || "");
+      setLastName(user.lastName || "");
+    }
+  }, [user]);
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: { 
