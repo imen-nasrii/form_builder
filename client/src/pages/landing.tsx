@@ -60,35 +60,6 @@ export default function Landing() {
           </div>
         </div>
       </div>
-
-      {/* Features Grid */}
-      <div className="max-w-4xl mx-auto px-6 py-16 bg-white">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="p-8 bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
-            <div className="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mb-4">
-              <Layers className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Drag & Drop</h3>
-            <p className="text-gray-600">Intuitive visual interface for rapid form creation</p>
-          </div>
-          
-          <div className="p-8 bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
-            <div className="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center mb-4">
-              <Zap className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Smart Logic</h3>
-            <p className="text-gray-600">Advanced validation and conditional workflows</p>
-          </div>
-          
-          <div className="p-8 bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
-            <div className="w-12 h-12 bg-gray-700 rounded-xl flex items-center justify-center mb-4">
-              <Code className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Export Ready</h3>
-            <p className="text-gray-600">Clean JSON schemas for seamless integration</p>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
