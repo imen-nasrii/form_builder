@@ -32,6 +32,7 @@ import AIAssistant from "@/pages/ai-assistant-simple";
 import AdvancedAIAssistant from "@/pages/ai-assistant-advanced";
 import AIChat from "@/pages/ai-chat";
 import UserAIAssistant from "@/pages/user-ai-assistant";
+import Profile from "@/pages/profile";
 
 import JSONValidator from "@/pages/json-validator";
 import Navigation from "@/components/navigation";
@@ -87,6 +88,7 @@ function Router() {
 
       <Route path="/json-validator" component={JSONValidator} />
       <Route path="/analytics" component={Analytics} />
+      <Route path="/profile" component={Profile} />
       <Route path="/api-integration" component={ApiIntegration} />
       <Route path="/setup-2fa" component={Setup2FA} />
       
