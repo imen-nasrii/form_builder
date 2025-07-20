@@ -87,7 +87,7 @@ export default function SignIn() {
 
             <Button
               type="submit"
-              className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors"
+              className="w-full h-12 bg-red-600 hover:bg-red-700 text-white font-medium rounded-md transition-colors"
               disabled={isLoading}
             >
               {isLoading ? 'Signing In...' : 'Sign In'}
