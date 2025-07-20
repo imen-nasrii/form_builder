@@ -1205,6 +1205,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.id;
       const { firstName, lastName, profileImageUrl } = req.body;
       
+      console.log('Profile update request:', { 
+        firstName, 
+        lastName, 
+        profileImageUrlLength: profileImageUrl ? profileImageUrl.length : 0 
+      });
+      
       // Validate input
       const updateData: any = {};
       if (firstName !== undefined) updateData.firstName = firstName.trim();

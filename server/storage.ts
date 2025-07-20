@@ -34,7 +34,7 @@ export interface IStorage {
   upsertUser(user: UpsertUser): Promise<User>;
   getAllUsers(): Promise<User[]>;
   updateUserRole(userId: string, role: string): Promise<void>;
-  updateUserProfile(userId: string, profileData: { firstName?: string; lastName?: string; profileImageUrl?: string; }): Promise<void>;
+  updateUserProfile(userId: string, profileData: { firstName?: string; lastName?: string; profileImageUrl?: string; }): Promise<User>;
   enableTwoFactor(userId: string, secret: string): Promise<void>;
   disableTwoFactor(userId: string): Promise<void>;
   verifyUserEmail(userId: string): Promise<void>;

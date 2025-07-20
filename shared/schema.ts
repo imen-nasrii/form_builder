@@ -32,7 +32,7 @@ export const users = pgTable("users", {
   password: varchar("password").notNull(),
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
-  profileImageUrl: varchar("profile_image_url"),
+  profileImageUrl: text("profile_image_url"),
   role: varchar("role").notNull().default("user"), // "user" or "admin"
   twoFactorEnabled: boolean("two_factor_enabled").notNull().default(false),
   twoFactorSecret: varchar("two_factor_secret"),
