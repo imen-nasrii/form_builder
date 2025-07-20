@@ -13,7 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import type { User } from "@shared/schema";
-import { Bell, ChevronDown } from "lucide-react";
+import { Bell, ChevronDown, User as UserIcon, LogOut } from "lucide-react";
 import LanguageToggle from "@/components/language-toggle";
 import NotificationBell from "@/components/notification-bell";
 import formBuilderLogo from "@/assets/formbuilder-logo-3d.png";
@@ -133,57 +133,74 @@ export default function Navigation() {
 
 
           
-          {/* User Info */}
-          <div className="flex items-center gap-3">
-            <div className="text-right">
-              <div className="text-sm font-medium text-black dark:text-white">
-                {user?.firstName || user?.email?.split('@')[0] || 'User'}
-              </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400">
-                {user?.role === 'admin' ? 'Admin' : 'Creator'}
-              </div>
-            </div>
-            
-            <div className="relative">
-              {user?.profileImageUrl ? (
-                <img 
-                  src={user.profileImageUrl} 
-                  alt="Profile" 
-                  className="w-8 h-8 rounded-full object-cover ring-2 ring-purple-200 dark:ring-purple-800"
-                />
-              ) : (
-                <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                  {(user?.firstName?.[0] || user?.email?.[0] || 'U').toUpperCase()}
+          {/* User Profile Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg px-3 py-2 transition-colors">
+                <div className="text-right">
+                  <div className="text-sm font-medium text-black dark:text-white">
+                    {user?.firstName || user?.email?.split('@')[0] || 'User'}
+                  </div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                    {user?.role === 'admin' ? 'Admin' : 'Creator'}
+                  </div>
                 </div>
-              )}
-              <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-black"></div>
-            </div>
-            
-            <button
-              onClick={() => {
-                fetch('/api/logout', { 
-                  method: 'POST',
-                  credentials: 'include',
-                  headers: {
-                    'Content-Type': 'application/json'
-                  }
-                })
-                .then(response => {
-                  if (response.ok) {
-                    window.location.href = '/';
-                  } else {
+                
+                <div className="relative">
+                  {user?.profileImageUrl ? (
+                    <img 
+                      src={user.profileImageUrl} 
+                      alt="Profile" 
+                      className="w-8 h-8 rounded-full object-cover ring-2 ring-purple-200 dark:ring-purple-800"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                      {(user?.firstName?.[0] || user?.email?.[0] || 'U').toUpperCase()}
+                    </div>
+                  )}
+                  <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-black"></div>
+                </div>
+                
+                <ChevronDown className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/profile" className="flex items-center gap-2 w-full">
+                  <UserIcon className="w-4 h-4" />
+                  Profile Settings
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                onClick={() => {
+                  fetch('/api/logout', { 
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    }
+                  })
+                  .then(response => {
+                    if (response.ok) {
+                      window.location.href = '/';
+                    } else {
+                      window.location.href = '/api/logout';
+                    }
+                  })
+                  .catch(() => {
                     window.location.href = '/api/logout';
-                  }
-                })
-                .catch(() => {
-                  window.location.href = '/api/logout';
-                });
-              }}
-              className="text-sm text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors px-3 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
-            >
-              Logout
-            </button>
-          </div>
+                  });
+                }}
+                className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400"
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                Logout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </nav>

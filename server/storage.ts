@@ -34,6 +34,7 @@ export interface IStorage {
   upsertUser(user: UpsertUser): Promise<User>;
   getAllUsers(): Promise<User[]>;
   updateUserRole(userId: string, role: string): Promise<void>;
+  updateUserProfile(userId: string, profileData: { firstName?: string; lastName?: string; profileImageUrl?: string; }): Promise<void>;
   enableTwoFactor(userId: string, secret: string): Promise<void>;
   disableTwoFactor(userId: string): Promise<void>;
   verifyUserEmail(userId: string): Promise<void>;
@@ -116,6 +117,16 @@ export class DatabaseStorage implements IStorage {
     await db
       .update(users)
       .set({ role, updatedAt: new Date() })
+      .where(eq(users.id, userId));
+  }
+
+  async updateUserProfile(userId: string, profileData: { firstName?: string; lastName?: string; profileImageUrl?: string; }): Promise<void> {
+    await db
+      .update(users)
+      .set({ 
+        ...profileData,
+        updatedAt: new Date()
+      })
       .where(eq(users.id, userId));
   }
 

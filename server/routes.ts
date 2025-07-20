@@ -1199,6 +1199,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update user profile
+  app.patch('/api/user/profile', requireAuth, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const { firstName, lastName, profileImageUrl } = req.body;
+      
+      // Validate input
+      const updateData: any = {};
+      if (firstName !== undefined) updateData.firstName = firstName.trim();
+      if (lastName !== undefined) updateData.lastName = lastName.trim();
+      if (profileImageUrl !== undefined) updateData.profileImageUrl = profileImageUrl.trim();
+      
+      if (Object.keys(updateData).length === 0) {
+        return res.status(400).json({ message: "No valid fields to update" });
+      }
+
+      await storage.updateUserProfile(userId, updateData);
+      res.json({ message: "Profile updated successfully" });
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      res.status(500).json({ message: "Failed to update profile" });
+    }
+  });
+
   // External Components routes
   app.get('/api/external-components', requireAuth, async (req, res) => {
     try {
