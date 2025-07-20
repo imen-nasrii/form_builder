@@ -201,15 +201,7 @@ export default function ModernSignup() {
                   {signupMutation.isPending ? "Creating Account..." : "Sign Up"}
                 </Button>
 
-                {/* Login Link */}
-                <div className="text-center text-sm text-gray-600">
-                  Already have an account?{" "}
-                  <Link href="/modern-login">
-                    <button type="button" className="text-blue-600 font-medium hover:underline">
-                      Sign in
-                    </button>
-                  </Link>
-                </div>
+
 
 
               </form>
