@@ -66,44 +66,35 @@ export default function ModernLogin() {
           <Card className="bg-white border border-gray-200 shadow-lg rounded-2xl">
             <CardContent className="p-8">
               <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">Login</h1>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">Sign In</h1>
+                <p className="text-gray-600">Welcome back</p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Email Input */}
                 <div className="space-y-2">
-                  <div className="relative">
-                    <Input
-                      type="email"
-                      placeholder="Potter@gmail.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="h-12 pl-12 border-2 border-cyan-200 rounded-xl focus:border-cyan-400 focus:ring-0 bg-cyan-50/50"
-                    />
-                    <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-                      <div className="w-5 h-5 bg-cyan-400 rounded-full flex items-center justify-center">
-                        <div className="w-2 h-2 bg-white rounded-full"></div>
-                      </div>
-                    </div>
-                  </div>
+                  <Label htmlFor="email" className="text-gray-700 font-medium">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="admin@formcraft.pro"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="h-12 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-0 bg-gray-50"
+                  />
                 </div>
 
                 {/* Password Input */}
                 <div className="space-y-2">
-                  <div className="relative">
-                    <Input
-                      type="password"
-                      placeholder="Password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="h-12 pl-12 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-0 bg-gray-50"
-                    />
-                    <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-                      <div className="w-5 h-5 bg-gray-400 rounded flex items-center justify-center">
-                        <div className="w-2 h-2 bg-white rounded"></div>
-                      </div>
-                    </div>
-                  </div>
+                  <Label htmlFor="password" className="text-gray-700 font-medium">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="h-12 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-0 bg-gray-50"
+                  />
                 </div>
 
                 {/* Remember Me & Forgot Password */}
@@ -113,15 +104,15 @@ export default function ModernLogin() {
                       id="remember"
                       checked={rememberMe}
                       onCheckedChange={(checked) => setRememberMe(checked as boolean)}
-                      className="border-cyan-300"
+                      className="border-gray-300"
                     />
                     <Label htmlFor="remember" className="text-gray-600">
-                      Remember Password
+                      Remember me
                     </Label>
                   </div>
                   <Link href="/forgot-password">
                     <button type="button" className="text-gray-600 hover:text-gray-900 underline">
-                      Forget Password?
+                      Forgot your password?
                     </button>
                   </Link>
                 </div>
@@ -132,15 +123,15 @@ export default function ModernLogin() {
                   disabled={loginMutation.isPending}
                   className="w-full h-12 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-medium text-base"
                 >
-                  {loginMutation.isPending ? "Logging in..." : "Login"}
+                  {loginMutation.isPending ? "Signing in..." : "Sign In"}
                 </Button>
 
                 {/* Sign Up Link */}
                 <div className="text-center text-sm text-gray-600">
-                  No account yet?{" "}
+                  Don't have an account?{" "}
                   <Link href="/modern-signup">
                     <button type="button" className="text-gray-900 font-medium hover:underline">
-                      Register
+                      Sign up
                     </button>
                   </Link>
                 </div>
