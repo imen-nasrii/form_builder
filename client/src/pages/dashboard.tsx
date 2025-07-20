@@ -372,7 +372,8 @@ export default function Dashboard() {
                          })()) ||
                          (filterType === "process" && form.layout === "PROCESS") ||
                          (filterType === "form" && form.layout === "FORM") ||
-                         (filterType === "assigned" && isAdmin && form.assignedTo);
+                         (filterType === "assigned" && isAdmin && form.assignedTo) ||
+                         (filterType === "not-assigned" && isAdmin && !form.assignedTo);
     
     return matchesSearch && matchesFilter;
   });
@@ -438,6 +439,7 @@ export default function Dashboard() {
                     <option value="process">Process Type</option>
                     <option value="form">Form Type</option>
                     <option value="assigned">Assigned</option>
+                    <option value="not-assigned">Not Assigned</option>
                   </>
                 ) : (
                   <>
