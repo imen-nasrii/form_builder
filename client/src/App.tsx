@@ -10,7 +10,7 @@ import Register from "@/pages/register";
 import SignUp from "@/pages/signup";
 import SignIn from "@/pages/signin";
 import ModernLogin from "@/pages/modern-login";
-
+import ModernSignup from "@/pages/modern-signup";
 import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import FormBuilderExact from "@/pages/form-builder-exact";
@@ -59,48 +59,42 @@ function Router() {
       {isAuthenticated && <Navigation />}
       <div className={isAuthenticated ? "pt-16" : ""}>
         <Switch>
-          {!isAuthenticated ? (
-            // Public routes for non-authenticated users
-            <>
-              <Route path="/register" component={Register} />
-              <Route path="/login" component={Login} />
-              <Route path="/signup" component={SignUp} />
-              <Route path="/signin" component={SignIn} />
-              <Route path="/modern-login" component={ModernLogin} />
-              <Route path="/verify-email" component={VerifyEmail} />
-              {/* Root route for non-authenticated users */}
-              <Route path="/" component={Landing} />
-              {/* Fallback */}
-              <Route component={Landing} />
-            </>
-          ) : (
-            // Authenticated routes
-            <>
-              <Route path="/form-builder" component={FormBuilderFixed} />
-              <Route path="/form-builder/:formId" component={FormBuilderFixed} />
-              <Route path="/mfact-builder" component={MFactFormBuilder} />
-              <Route path="/mfact-builder/:formId" component={MFactFormBuilder} />
-              <Route path="/advanced-grid" component={AdvancedGridPage} />
-              <Route path="/ultra-grid" component={UltraGridPage} />
-              <Route path="/dashboard" component={Dashboard} />
-              <Route path="/components" component={ComponentsOverview} />
-              <Route path="/ai-bot" component={DFMToJSONBotStable} />
-              <Route path="/admin" component={AdminPage} />
-              <Route path="/admin-panel" component={AdminPanel} />
-              <Route path="/admin-management" component={AdminManagement} />
-              <Route path="/task-board" component={UserTaskBoard} />
-              <Route path="/ai-assistant" component={AIChat} />
-              <Route path="/user-ai" component={UserAIAssistant} />
-              <Route path="/json-validator" component={JSONValidator} />
-              <Route path="/analytics" component={Analytics} />
-              <Route path="/api-integration" component={ApiIntegration} />
-              <Route path="/setup-2fa" component={Setup2FA} />
-              {/* Root route for authenticated users */}
-              <Route path="/" component={Dashboard} />
-              {/* Fallback */}
-              <Route component={NotFound} />
-            </>
-          )}
+          {/* Public routes */}
+          <Route path="/register" component={Register} />
+      <Route path="/login" component={Login} />
+      <Route path="/signup" component={SignUp} />
+      <Route path="/signin" component={SignIn} />
+      <Route path="/modern-login" component={ModernLogin} />
+      <Route path="/modern-signup" component={ModernSignup} />
+      <Route path="/verify-email" component={VerifyEmail} />
+      
+      {/* Authenticated routes */}
+      <Route path="/form-builder" component={FormBuilderFixed} />
+      <Route path="/form-builder/:formId" component={FormBuilderFixed} />
+      <Route path="/mfact-builder" component={MFactFormBuilder} />
+      <Route path="/mfact-builder/:formId" component={MFactFormBuilder} />
+      <Route path="/advanced-grid" component={AdvancedGridPage} />
+      <Route path="/ultra-grid" component={UltraGridPage} />
+      <Route path="/dashboard" component={Dashboard} />
+      <Route path="/components" component={ComponentsOverview} />
+      <Route path="/ai-bot" component={DFMToJSONBotStable} />
+      <Route path="/admin" component={AdminPage} />
+      <Route path="/admin-panel" component={AdminPanel} />
+      <Route path="/admin-management" component={AdminManagement} />
+      <Route path="/task-board" component={UserTaskBoard} />
+      <Route path="/ai-assistant" component={AIChat} />
+      <Route path="/user-ai" component={UserAIAssistant} />
+
+      <Route path="/json-validator" component={JSONValidator} />
+      <Route path="/analytics" component={Analytics} />
+      <Route path="/api-integration" component={ApiIntegration} />
+      <Route path="/setup-2fa" component={Setup2FA} />
+      
+      {/* Root route */}
+      <Route path="/" component={isAuthenticated ? Dashboard : SignUp} />
+      
+      {/* 404 fallback */}
+          <Route component={NotFound} />
         </Switch>
       </div>
     </div>
