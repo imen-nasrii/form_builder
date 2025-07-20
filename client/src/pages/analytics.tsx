@@ -311,23 +311,23 @@ export default function Analytics() {
           </Card>
         </div>
 
-        {/* Database Summary Chart */}
+        {/* My Activity Summary Chart */}
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BarChart3 className="h-5 w-5 text-purple-600" />
-              Database Overview
+              My Activity Overview
             </CardTitle>
-            <CardDescription>Actual data from your system database</CardDescription>
+            <CardDescription>Your personal statistics breakdown</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={[
-                { category: 'Total Users', count: totalUsers },
-                { category: 'Admin Users', count: adminUsers },
-                { category: 'Regular Users', count: regularUsers },
-                { category: 'Total Programs', count: totalForms },
-                { category: 'Recent Programs', count: recentForms }
+                { category: 'My Programs', count: totalMyForms },
+                { category: 'Created', count: myCreatedPrograms.length },
+                { category: 'Assigned Tasks', count: myAssignedTasks.length },
+                { category: 'Completed', count: completedTasks.length },
+                { category: 'In Progress', count: inProgressTasks.length }
               ]}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="category" />
@@ -350,16 +350,16 @@ export default function Analytics() {
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Total programs</span>
-                <Badge variant="secondary">{totalForms}</Badge>
+                <span className="text-sm text-gray-600 dark:text-gray-400">My programs</span>
+                <Badge variant="secondary">{totalMyForms}</Badge>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600 dark:text-gray-400">Recent updates</span>
-                <Badge variant="secondary">{recentForms}</Badge>
+                <Badge variant="secondary">{recentActivity}</Badge>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Active users</span>
-                <Badge variant="secondary">{totalUsers}</Badge>
+                <span className="text-sm text-gray-600 dark:text-gray-400">Completed tasks</span>
+                <Badge variant="secondary">{completedTasks.length}</Badge>
               </div>
             </CardContent>
           </Card>
@@ -396,16 +396,16 @@ export default function Analytics() {
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Total forms</span>
-                <Badge variant="secondary">{totalForms}</Badge>
+                <span className="text-sm text-gray-600 dark:text-gray-400">My forms</span>
+                <Badge variant="secondary">{totalMyForms}</Badge>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Regular users</span>
-                <Badge variant="secondary">{regularUsers}</Badge>
+                <span className="text-sm text-gray-600 dark:text-gray-400">In progress</span>
+                <Badge variant="secondary">{inProgressTasks.length}</Badge>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Avg. programs per user</span>
-                <Badge variant="secondary">{totalUsers > 0 ? Math.round(totalForms / totalUsers) : 0}</Badge>
+                <span className="text-sm text-gray-600 dark:text-gray-400">Completion rate</span>
+                <Badge variant="secondary">{myAssignedTasks.length > 0 ? Math.round((completedTasks.length / myAssignedTasks.length) * 100) : 0}%</Badge>
               </div>
             </CardContent>
           </Card>
