@@ -8,9 +8,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useMutation } from "@tanstack/react-query";
-import { Github, Twitter, Facebook, User, Mail, Lock } from "lucide-react";
+import { Github, Twitter, Facebook, User, Mail, Lock, Layers } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import loginIllustration from "@/assets/login-illustration-new.png";
+import formBuilderLogo from "@/assets/formbuilder-logo-3d.png";
 
 export default function ModernSignup() {
   const [, setLocation] = useLocation();
@@ -87,9 +88,33 @@ export default function ModernSignup() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Navigation */}
+      <nav className="bg-white border-b border-gray-200 px-6 py-3">
+        <div className="flex items-center justify-between max-w-7xl mx-auto">
+          {/* FormBuilder Logo */}
+          <Link href="/">
+            <div className="flex items-center gap-3 cursor-pointer group">
+              <img 
+                src={formBuilderLogo}
+                alt="FormBuilder Logo" 
+                className="h-16 w-auto transition-all duration-300 group-hover:scale-105"
+              />
+            </div>
+          </Link>
+          
+          {/* Navigation Links */}
+          <div className="flex items-center gap-4">
+            <Link href="/modern-login">
+              <Button variant="outline" className="border border-gray-300 text-gray-700 hover:bg-gray-50">
+                Sign In
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </nav>
 
       {/* Main Content Container */}
-      <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="min-h-[calc(100vh-80px)] flex items-center justify-center p-4 pt-8">
         {/* Single Column Layout */}
         <div className="w-full max-w-md">
           <Card className="bg-white border border-gray-200 shadow-lg rounded-2xl">
