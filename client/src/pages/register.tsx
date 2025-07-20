@@ -179,7 +179,7 @@ export default function Register() {
               <div className="pt-6">
                 <Button
                   type="submit"
-                  className="w-full h-14 bg-black hover:bg-gray-800 text-white rounded-none font-normal text-lg uppercase tracking-wide"
+                  className="w-full h-14 bg-red-600 hover:bg-red-700 text-white rounded-none font-normal text-lg uppercase tracking-wide"
                   disabled={registerMutation.isPending}
                 >
                   {registerMutation.isPending ? "Creating account..." : "Sign Up"}
