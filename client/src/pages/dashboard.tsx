@@ -389,58 +389,60 @@ export default function Dashboard() {
               id="file-upload"
             />
             
-            {/* Create Program Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Program
-                  <ChevronDown className="w-4 h-4 ml-2" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-64" align="end">
-                <DropdownMenuItem 
-                  onClick={() => setShowNewFormDialog(true)}
-                  className="p-3 cursor-pointer"
-                >
-                  <div className="flex items-start gap-3">
-                    <FileText className="w-5 h-5 mt-0.5 text-blue-600" />
-                    <div>
-                      <div className="font-medium">Classic Form Builder</div>
-                      <div className="text-xs text-gray-500">Traditional drag-and-drop forms</div>
+            {/* Create Program Dropdown - Available for non-admin users */}
+            {!isAdmin && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create Program
+                    <ChevronDown className="w-4 h-4 ml-2" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-64" align="end">
+                  <DropdownMenuItem 
+                    onClick={() => setShowNewFormDialog(true)}
+                    className="p-3 cursor-pointer"
+                  >
+                    <div className="flex items-start gap-3">
+                      <FileText className="w-5 h-5 mt-0.5 text-blue-600" />
+                      <div>
+                        <div className="font-medium">Classic Form Builder</div>
+                        <div className="text-xs text-gray-500">Traditional drag-and-drop forms</div>
+                      </div>
                     </div>
-                  </div>
-                </DropdownMenuItem>
-                
-                <DropdownMenuItem 
-                  onClick={() => window.location.href = '/mfact-form-builder'}
-                  className="p-3 cursor-pointer"
-                >
-                  <div className="flex items-start gap-3">
-                    <Wand2 className="w-5 h-5 mt-0.5 text-purple-600" />
-                    <div>
-                      <div className="font-medium">MFact Program Builder</div>
-                      <div className="text-xs text-gray-500">Advanced financial programs</div>
+                  </DropdownMenuItem>
+                  
+                  <DropdownMenuItem 
+                    onClick={() => window.location.href = '/mfact-form-builder'}
+                    className="p-3 cursor-pointer"
+                  >
+                    <div className="flex items-start gap-3">
+                      <Wand2 className="w-5 h-5 mt-0.5 text-purple-600" />
+                      <div>
+                        <div className="font-medium">MFact Program Builder</div>
+                        <div className="text-xs text-gray-500">Advanced financial programs</div>
+                      </div>
                     </div>
-                  </div>
-                </DropdownMenuItem>
-                
-                <DropdownMenuSeparator />
-                
-                <DropdownMenuItem 
-                  onClick={() => document.getElementById('file-upload')?.click()}
-                  className="p-3 cursor-pointer"
-                >
-                  <div className="flex items-start gap-3">
-                    <Upload className="w-5 h-5 mt-0.5 text-green-600" />
-                    <div>
-                      <div className="font-medium">Import JSON</div>
-                      <div className="text-xs text-gray-500">Import existing form definition</div>
+                  </DropdownMenuItem>
+                  
+                  <DropdownMenuSeparator />
+                  
+                  <DropdownMenuItem 
+                    onClick={() => document.getElementById('file-upload')?.click()}
+                    className="p-3 cursor-pointer"
+                  >
+                    <div className="flex items-start gap-3">
+                      <Upload className="w-5 h-5 mt-0.5 text-green-600" />
+                      <div>
+                        <div className="font-medium">Import JSON</div>
+                        <div className="text-xs text-gray-500">Import existing form definition</div>
+                      </div>
                     </div>
-                  </div>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
             
             {!isAdmin && <JSONValidatorDialog />}
           </div>
@@ -532,53 +534,7 @@ export default function Dashboard() {
                 });
               }
             }}>
-              {!isAdmin && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
-                      <Plus className="w-4 h-4 mr-2" />
-                      Create Program
-                      <ChevronDown className="w-4 h-4 ml-2" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56">
-                    <DropdownMenuItem onClick={() => setShowNewFormDialog(true)}>
-                      <FileText className="w-4 h-4 mr-2" />
-                      <div>
-                        <div className="font-medium">Classic Form Builder</div>
-                        <div className="text-xs text-gray-500">Traditional drag-and-drop forms</div>
-                      </div>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem 
-                      onClick={() => {
-                        window.location.href = '/mfact-builder';
-                      }}
-                    >
-                      <Wand2 className="w-4 h-4 mr-2" />
-                      <div>
-                        <div className="font-medium">MFact Program Builder</div>
-                        <div className="text-xs text-gray-500">Advanced financial programs</div>
-                      </div>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      onClick={() => {
-                        const fileInput = document.createElement('input');
-                        fileInput.type = 'file';
-                        fileInput.accept = '.json';
-                        fileInput.onchange = handleFileUpload;
-                        fileInput.click();
-                      }}
-                    >
-                      <Upload className="w-4 h-4 mr-2" />
-                      <div>
-                        <div className="font-medium">Import JSON</div>
-                        <div className="text-xs text-gray-500">Import existing form definition</div>
-                      </div>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
+
               {isAdmin ? (
                 <div className="flex items-center space-x-2">
                   <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
