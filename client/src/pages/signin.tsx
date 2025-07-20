@@ -90,54 +90,36 @@ export default function SignIn() {
            backgroundRepeat: 'no-repeat'
          }}>
       
-      {/* 3D Error Mascot */}
-      {showMascot && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
-          <div className="relative animate-bounce">
-            {/* 3D Mascot Character */}
-            <div className="w-32 h-32 relative">
-              {/* Main body */}
-              <div className="absolute inset-0 bg-gradient-to-b from-red-400 to-red-600 rounded-full shadow-2xl transform rotate-3 animate-pulse"
-                   style={{
-                     boxShadow: '0 20px 40px rgba(220, 38, 38, 0.4), inset 0 -10px 20px rgba(0,0,0,0.2)'
-                   }}>
-              </div>
-              
-              {/* Eyes */}
-              <div className="absolute top-6 left-6 w-6 h-6 bg-white rounded-full shadow-inner">
-                <div className="w-4 h-4 bg-black rounded-full mt-1 ml-1 animate-ping"></div>
-              </div>
-              <div className="absolute top-6 right-6 w-6 h-6 bg-white rounded-full shadow-inner">
-                <div className="w-4 h-4 bg-black rounded-full mt-1 ml-1 animate-ping"></div>
-              </div>
-              
-              {/* Sad mouth */}
-              <div className="absolute top-16 left-1/2 transform -translate-x-1/2 w-8 h-4 border-4 border-white border-t-0 rounded-b-full"></div>
-              
-              {/* Arms waving */}
-              <div className="absolute top-12 -left-4 w-6 h-6 bg-red-500 rounded-full animate-ping" style={{animationDelay: '0.2s'}}></div>
-              <div className="absolute top-12 -right-4 w-6 h-6 bg-red-500 rounded-full animate-ping" style={{animationDelay: '0.4s'}}></div>
-            </div>
-            
-            {/* Speech bubble */}
-            <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-white rounded-lg px-4 py-2 shadow-xl animate-fade-in border-4 border-red-200">
-              <div className="text-red-600 font-bold text-sm text-center whitespace-nowrap">
-                Oops! C'est faux! 😔
-              </div>
-              {Object.values(errors)[0] && (
-                <div className="text-red-500 text-xs text-center mt-1">
-                  {Object.values(errors)[0]}
+      {/* Error Notification */}
+      {showMascot && Object.values(errors).some(error => error) && (
+        <div className="fixed top-4 right-4 z-50 animate-slide-in-right">
+          <div className="bg-white border-l-4 border-orange-500 rounded-lg shadow-xl p-4 min-w-[300px] max-w-[400px]">
+            <div className="flex items-start">
+              <div className="flex-shrink-0">
+                <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
+                  <span className="text-white text-sm font-bold">!</span>
                 </div>
-              )}
-              {/* Speech bubble arrow */}
-              <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-white"></div>
+              </div>
+              <div className="ml-3 flex-1">
+                <p className="text-sm font-medium text-gray-900">
+                  Veuillez renseigner ce champ.
+                </p>
+                {Object.values(errors)[0] && (
+                  <p className="text-xs text-gray-600 mt-1">
+                    {Object.values(errors)[0]}
+                  </p>
+                )}
+              </div>
+              <button 
+                onClick={() => setShowMascot(false)}
+                className="ml-4 inline-flex text-gray-400 hover:text-gray-600 focus:outline-none"
+              >
+                <span className="sr-only">Fermer</span>
+                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </button>
             </div>
-            
-            {/* Sparkles around mascot */}
-            <div className="absolute -top-8 -left-8 animate-ping text-2xl">❌</div>
-            <div className="absolute -top-4 -right-8 animate-pulse text-xl">💢</div>
-            <div className="absolute -bottom-4 -left-6 animate-bounce text-lg" style={{ animationDelay: '0.5s' }}>⚠️</div>
-            <div className="absolute -bottom-6 -right-4 animate-ping text-lg" style={{ animationDelay: '1s' }}>🚫</div>
           </div>
         </div>
       )}
