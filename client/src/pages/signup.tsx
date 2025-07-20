@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
+import { Mail, Lock, User } from 'lucide-react';
 
 export default function SignUp() {
   const [, setLocation] = useLocation();
@@ -98,29 +99,35 @@ export default function SignUp() {
                 <Label htmlFor="firstName" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   First Name
                 </Label>
-                <Input
-                  id="firstName"
-                  type="text"
-                  placeholder="First Name"
-                  value={formData.firstName}
-                  onChange={(e) => handleInputChange('firstName', e.target.value)}
-                  className="h-12 bg-blue-50 dark:bg-gray-700 border-blue-200 dark:border-gray-600"
-                  required
-                />
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Input
+                    id="firstName"
+                    type="text"
+                    placeholder="First Name"
+                    value={formData.firstName}
+                    onChange={(e) => handleInputChange('firstName', e.target.value)}
+                    className="h-12 pl-12 bg-blue-50 dark:bg-gray-700 border-blue-200 dark:border-gray-600"
+                    required
+                  />
+                </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="lastName" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Last Name
                 </Label>
-                <Input
-                  id="lastName"
-                  type="text"
-                  placeholder="Last Name"
-                  value={formData.lastName}
-                  onChange={(e) => handleInputChange('lastName', e.target.value)}
-                  className="h-12 bg-blue-50 dark:bg-gray-700 border-blue-200 dark:border-gray-600"
-                  required
-                />
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Input
+                    id="lastName"
+                    type="text"
+                    placeholder="Last Name"
+                    value={formData.lastName}
+                    onChange={(e) => handleInputChange('lastName', e.target.value)}
+                    className="h-12 pl-12 bg-blue-50 dark:bg-gray-700 border-blue-200 dark:border-gray-600"
+                    required
+                  />
+                </div>
               </div>
             </div>
 
@@ -128,45 +135,54 @@ export default function SignUp() {
               <Label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 Email
               </Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="contact.nasrimemr@gmail.com"
-                value={formData.email}
-                onChange={(e) => handleInputChange('email', e.target.value)}
-                className="h-12 bg-blue-50 dark:bg-gray-700 border-blue-200 dark:border-gray-600"
-                required
-              />
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="your@email.com"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  className="h-12 pl-12 bg-blue-50 dark:bg-gray-700 border-blue-200 dark:border-gray-600"
+                  required
+                />
+              </div>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 Password
               </Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••"
-                value={formData.password}
-                onChange={(e) => handleInputChange('password', e.target.value)}
-                className="h-12 bg-blue-50 dark:bg-gray-700 border-blue-200 dark:border-gray-600"
-                required
-              />
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={(e) => handleInputChange('password', e.target.value)}
+                  className="h-12 pl-12 bg-blue-50 dark:bg-gray-700 border-blue-200 dark:border-gray-600"
+                  required
+                />
+              </div>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 Confirm Password
               </Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                placeholder="Confirm Password"
-                value={formData.confirmPassword}
-                onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                className="h-12 bg-blue-50 dark:bg-gray-700 border-blue-200 dark:border-gray-600"
-                required
-              />
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="••••••••"
+                  value={formData.confirmPassword}
+                  onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                  className="h-12 pl-12 bg-blue-50 dark:bg-gray-700 border-blue-200 dark:border-gray-600"
+                  required
+                />
+              </div>
             </div>
 
             <Button

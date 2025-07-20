@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useEnhancedToast } from '@/hooks/use-enhanced-toast';
 import { apiRequest } from '@/lib/queryClient';
+import { Mail, Lock } from 'lucide-react';
 
 export default function SignIn() {
   const [, setLocation] = useLocation();
@@ -65,30 +66,36 @@ export default function SignIn() {
               <Label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 Email
               </Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="contact.nasrimemr@gmail.com"
-                value={formData.email}
-                onChange={(e) => handleInputChange('email', e.target.value)}
-                className="h-12 bg-blue-50 dark:bg-gray-700 border-blue-200 dark:border-gray-600"
-                required
-              />
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="admin@formcraft.pro"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  className="h-12 pl-12 bg-blue-50 dark:bg-gray-700 border-blue-200 dark:border-gray-600"
+                  required
+                />
+              </div>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 Password
               </Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••"
-                value={formData.password}
-                onChange={(e) => handleInputChange('password', e.target.value)}
-                className="h-12 bg-blue-50 dark:bg-gray-700 border-blue-200 dark:border-gray-600"
-                required
-              />
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={(e) => handleInputChange('password', e.target.value)}
+                  className="h-12 pl-12 bg-blue-50 dark:bg-gray-700 border-blue-200 dark:border-gray-600"
+                  required
+                />
+              </div>
             </div>
 
             <Button
