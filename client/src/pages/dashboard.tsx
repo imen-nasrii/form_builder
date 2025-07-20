@@ -407,7 +407,7 @@ export default function Dashboard() {
                     <div className="flex items-start gap-3">
                       <FileText className="w-5 h-5 mt-0.5 text-blue-600" />
                       <div>
-                        <div className="font-medium">Create Program</div>
+                        <div className="font-medium">New Program</div>
                         <div className="text-xs text-gray-500">Build new forms and programs</div>
                       </div>
                     </div>
