@@ -96,67 +96,72 @@ export default function ModernSignup() {
             <CardContent className="p-8">
               <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">Sign Up</h1>
-                <p className="text-gray-600">Create your account to get started</p>
+                <p className="text-gray-600">Create your account</p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Name Fields */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="relative">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName" className="text-gray-700 font-medium">First Name</Label>
                     <Input
+                      id="firstName"
                       type="text"
                       placeholder="First Name"
                       value={formData.firstName}
                       onChange={(e) => updateFormData('firstName', e.target.value)}
-                      className="h-12 pl-12 border-2 border-cyan-200 rounded-xl focus:border-cyan-400 focus:ring-0 bg-cyan-50/50"
+                      className="h-12 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-0 bg-gray-50"
                     />
-                    <User className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-cyan-500" />
                   </div>
-                  <div className="relative">
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName" className="text-gray-700 font-medium">Last Name</Label>
                     <Input
+                      id="lastName"
                       type="text"
                       placeholder="Last Name"
                       value={formData.lastName}
                       onChange={(e) => updateFormData('lastName', e.target.value)}
-                      className="h-12 pl-12 border-2 border-cyan-200 rounded-xl focus:border-cyan-400 focus:ring-0 bg-cyan-50/50"
+                      className="h-12 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-0 bg-gray-50"
                     />
-                    <User className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-cyan-500" />
                   </div>
                 </div>
 
                 {/* Email Input */}
-                <div className="relative">
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-gray-700 font-medium">Email</Label>
                   <Input
+                    id="email"
                     type="email"
-                    placeholder="your.email@gmail.com"
+                    placeholder="admin@formcraft.pro"
                     value={formData.email}
                     onChange={(e) => updateFormData('email', e.target.value)}
-                    className="h-12 pl-12 border-2 border-cyan-200 rounded-xl focus:border-cyan-400 focus:ring-0 bg-cyan-50/50"
+                    className="h-12 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-0 bg-gray-50"
                   />
-                  <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-cyan-500" />
                 </div>
 
                 {/* Password Fields */}
                 <div className="space-y-4">
-                  <div className="relative">
+                  <div className="space-y-2">
+                    <Label htmlFor="password" className="text-gray-700 font-medium">Password</Label>
                     <Input
+                      id="password"
                       type="password"
-                      placeholder="Password"
+                      placeholder="••••••••"
                       value={formData.password}
                       onChange={(e) => updateFormData('password', e.target.value)}
-                      className="h-12 pl-12 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-0 bg-gray-50"
+                      className="h-12 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-0 bg-gray-50"
                     />
-                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
                   </div>
-                  <div className="relative">
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmPassword" className="text-gray-700 font-medium">Confirm Password</Label>
                     <Input
+                      id="confirmPassword"
                       type="password"
                       placeholder="Confirm Password"
                       value={formData.confirmPassword}
                       onChange={(e) => updateFormData('confirmPassword', e.target.value)}
-                      className="h-12 pl-12 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-0 bg-gray-50"
+                      className="h-12 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-0 bg-gray-50"
                     />
-                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
                   </div>
                 </div>
 
@@ -166,7 +171,7 @@ export default function ModernSignup() {
                     id="terms"
                     checked={agreeToTerms}
                     onCheckedChange={(checked) => setAgreeToTerms(checked as boolean)}
-                    className="border-cyan-300 mt-1"
+                    className="border-gray-300 mt-1"
                   />
                   <Label htmlFor="terms" className="text-sm text-gray-600 leading-relaxed">
                     I agree to the{" "}
@@ -186,7 +191,7 @@ export default function ModernSignup() {
                   disabled={signupMutation.isPending}
                   className="w-full h-12 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-medium text-base"
                 >
-                  {signupMutation.isPending ? "Creating Account..." : "Create Account"}
+                  {signupMutation.isPending ? "Creating Account..." : "Sign Up"}
                 </Button>
 
                 {/* Login Link */}
@@ -194,7 +199,7 @@ export default function ModernSignup() {
                   Already have an account?{" "}
                   <Link href="/modern-login">
                     <button type="button" className="text-gray-900 font-medium hover:underline">
-                      Login
+                      Sign in
                     </button>
                   </Link>
                 </div>
