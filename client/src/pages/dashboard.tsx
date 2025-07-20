@@ -407,26 +407,11 @@ export default function Dashboard() {
                     <div className="flex items-start gap-3">
                       <FileText className="w-5 h-5 mt-0.5 text-blue-600" />
                       <div>
-                        <div className="font-medium">Classic Form Builder</div>
-                        <div className="text-xs text-gray-500">Traditional drag-and-drop forms</div>
+                        <div className="font-medium">Create Program</div>
+                        <div className="text-xs text-gray-500">Build new forms and programs</div>
                       </div>
                     </div>
                   </DropdownMenuItem>
-                  
-                  <DropdownMenuItem 
-                    onClick={() => window.location.href = '/mfact-form-builder'}
-                    className="p-3 cursor-pointer"
-                  >
-                    <div className="flex items-start gap-3">
-                      <Wand2 className="w-5 h-5 mt-0.5 text-purple-600" />
-                      <div>
-                        <div className="font-medium">MFact Program Builder</div>
-                        <div className="text-xs text-gray-500">Advanced financial programs</div>
-                      </div>
-                    </div>
-                  </DropdownMenuItem>
-                  
-                  <DropdownMenuSeparator />
                   
                   <DropdownMenuItem 
                     onClick={() => document.getElementById('file-upload')?.click()}
@@ -435,7 +420,7 @@ export default function Dashboard() {
                     <div className="flex items-start gap-3">
                       <Upload className="w-5 h-5 mt-0.5 text-green-600" />
                       <div>
-                        <div className="font-medium">Import JSON</div>
+                        <div className="font-medium">Import Program</div>
                         <div className="text-xs text-gray-500">Import existing form definition</div>
                       </div>
                     </div>
