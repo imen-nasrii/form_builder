@@ -137,6 +137,22 @@
   border: 1px solid rgba(255, 255, 255, 0.125);
 }
 
+/* Hello Animation */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 /* Force component icon colors to be included in build */
 .bg-blue-600, .bg-green-600, .bg-orange-600, .bg-cyan-600, 
 .bg-purple-600, .bg-pink-600, .bg-indigo-600, .bg-teal-600, 

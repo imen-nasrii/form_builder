@@ -52,12 +52,22 @@ export default function MFactFormBuilder() {
   
   const [selectedField, setSelectedField] = useState<MFactField | null>(null);
   const [activeTab, setActiveTab] = useState("design");
+  const [showHelloAnimation, setShowHelloAnimation] = useState(true);
 
   // Load form data
   const { data: form, isLoading: formLoading } = useQuery({
     queryKey: ['/api/forms', formId],
     enabled: !!formId,
   });
+
+  // Hello animation timer
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowHelloAnimation(false);
+    }, 3000); // Show for 3 seconds
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   // Load form data into state
   useEffect(() => {
@@ -205,7 +215,42 @@ export default function MFactFormBuilder() {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+    <div className="h-screen flex flex-col bg-gray-50 dark:bg-gray-900 relative">
+      {/* Cute Hello Animation */}
+      {showHelloAnimation && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-20 pointer-events-none">
+          <div className="relative">
+            {/* Cute character */}
+            <div className="animate-bounce">
+              <div className="w-24 h-24 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
+                <div className="text-4xl animate-pulse">👋</div>
+              </div>
+            </div>
+            
+            {/* Speech bubble */}
+            <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-white rounded-lg px-4 py-2 shadow-lg animate-fade-in">
+              <div className="text-lg font-bold text-gray-800 animate-pulse">Hello!</div>
+              <div className="text-sm text-gray-600">Welcome to MFact Builder ✨</div>
+              {/* Speech bubble arrow */}
+              <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-white"></div>
+            </div>
+            
+            {/* Sparkles animation */}
+            <div className="absolute -top-8 -left-8 animate-ping">
+              <div className="text-2xl">✨</div>
+            </div>
+            <div className="absolute -top-4 -right-8 animate-pulse">
+              <div className="text-xl">⭐</div>
+            </div>
+            <div className="absolute -bottom-4 -left-6 animate-bounce" style={{ animationDelay: '0.5s' }}>
+              <div className="text-lg">💫</div>
+            </div>
+            <div className="absolute -bottom-6 -right-4 animate-ping" style={{ animationDelay: '1s' }}>
+              <div className="text-lg">🌟</div>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Header */}
       <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-6 py-4">
         <div className="flex items-center justify-between">
