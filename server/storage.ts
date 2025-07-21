@@ -121,6 +121,14 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateUserProfile(userId: string, profileData: { firstName?: string; lastName?: string; profileImageUrl?: string; }): Promise<User> {
+    console.log('updateUserProfile called with:', { 
+      userId, 
+      profileData: { 
+        ...profileData, 
+        profileImageUrl: profileData.profileImageUrl ? `${profileData.profileImageUrl.length} chars` : 'null' 
+      } 
+    });
+    
     const [updatedUser] = await db
       .update(users)
       .set({ 
@@ -129,6 +137,13 @@ export class DatabaseStorage implements IStorage {
       })
       .where(eq(users.id, userId))
       .returning();
+    
+    console.log('updateUserProfile result:', { 
+      id: updatedUser.id, 
+      firstName: updatedUser.firstName, 
+      lastName: updatedUser.lastName,
+      profileImageUrl: updatedUser.profileImageUrl ? `${updatedUser.profileImageUrl.length} chars` : 'null'
+    });
     
     return updatedUser;
   }

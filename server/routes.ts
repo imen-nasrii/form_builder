@@ -1206,9 +1206,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { firstName, lastName, profileImageUrl } = req.body;
       
       console.log('Profile update request:', { 
+        userId,
         firstName, 
         lastName, 
-        profileImageUrlLength: profileImageUrl ? profileImageUrl.length : 0 
+        profileImageUrlLength: profileImageUrl ? profileImageUrl.length : 0,
+        profileImageUrlPreview: profileImageUrl ? profileImageUrl.substring(0, 50) + '...' : null
       });
       
       // Validate input
@@ -1217,11 +1219,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (lastName !== undefined) updateData.lastName = lastName.trim();
       if (profileImageUrl !== undefined) updateData.profileImageUrl = profileImageUrl.trim();
       
+      console.log('Update data to save:', { 
+        ...updateData, 
+        profileImageUrl: updateData.profileImageUrl ? 'DATA PRESENT' : 'NO DATA'
+      });
+      
       if (Object.keys(updateData).length === 0) {
         return res.status(400).json({ message: "No valid fields to update" });
       }
 
+      console.log('Calling storage.updateUserProfile...');
       const updatedUser = await storage.updateUserProfile(userId, updateData);
+      console.log('Updated user result:', { 
+        id: updatedUser.id, 
+        firstName: updatedUser.firstName, 
+        lastName: updatedUser.lastName,
+        hasProfileImage: !!updatedUser.profileImageUrl 
+      });
       // Remove password from response
       const { password: _, ...userResponse } = updatedUser;
       res.json({ message: "Profile updated successfully", user: userResponse });
