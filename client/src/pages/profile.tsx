@@ -40,11 +40,13 @@ export default function Profile() {
         body: data,
       });
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
+      // Immediately update the cached user data
+      queryClient.setQueryData(["/api/auth/user"], response.user);
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       toast({
         title: "Profile Updated",
-        description: "Your profile has been successfully updated!",
+        description: "Your profile has been successfully saved!",
         variant: "default",
       });
     },
