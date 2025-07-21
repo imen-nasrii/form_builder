@@ -72,7 +72,7 @@ export default function MFactFormBuilder() {
 
   // Load form data into state
   useEffect(() => {
-    if (form && 'definition' in form && form.definition) {
+    if (form && typeof form === 'object' && 'definition' in form && form.definition) {
       try {
         const parsed = typeof form.definition === 'string' 
           ? JSON.parse(form.definition) 
