@@ -3860,6 +3860,7 @@ export default function FormBuilderFixed() {
               {saveFormMutation.isPending ? 'Saving...' : 'Save'}
             </Button>
           </div>
+        </div>
 
         {/* Hidden file input for import */}
         <input
