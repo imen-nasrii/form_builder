@@ -305,13 +305,13 @@ export default function MFactFormBuilder() {
         </div>
 
         {/* Secondary Navigation Toolbar */}
-        <div className="px-6 py-2 bg-gray-50 dark:bg-gray-900/50">
+        <div className="px-6 py-3 bg-gray-50 dark:bg-gray-900/50">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 text-xs text-gray-600 hover:text-gray-900 hover:bg-white hover:shadow-sm"
+                className="h-8 text-xs text-gray-600 hover:text-gray-900 hover:bg-white hover:shadow-sm transition-all duration-200"
                 onClick={() => setLocation('/')}
               >
                 🏠 Home
@@ -320,7 +320,7 @@ export default function MFactFormBuilder() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 text-xs text-gray-600 hover:text-gray-900 hover:bg-white hover:shadow-sm"
+                className="h-8 text-xs text-gray-600 hover:text-gray-900 hover:bg-white hover:shadow-sm transition-all duration-200"
                 onClick={() => window.open('/guide', '_blank')}
               >
                 📖 Guide
@@ -329,7 +329,7 @@ export default function MFactFormBuilder() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 hover:shadow-sm"
+                className="h-8 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 hover:shadow-sm transition-all duration-200"
                 onClick={exportJSON}
               >
                 📤 Export
@@ -338,7 +338,7 @@ export default function MFactFormBuilder() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 text-xs text-purple-600 hover:text-purple-700 hover:bg-purple-50 hover:shadow-sm"
+                className="h-8 text-xs text-purple-600 hover:text-purple-700 hover:bg-purple-50 hover:shadow-sm transition-all duration-200"
                 onClick={generateCode}
               >
                 💻 Generate Code
@@ -347,7 +347,7 @@ export default function MFactFormBuilder() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 text-xs text-gray-600 hover:text-gray-900 hover:bg-white hover:shadow-sm"
+                className="h-8 text-xs text-gray-600 hover:text-gray-900 hover:bg-white hover:shadow-sm transition-all duration-200"
                 onClick={() => console.log('External Components')}
               >
                 🔗 External Components
@@ -356,17 +356,17 @@ export default function MFactFormBuilder() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 text-xs text-gray-600 hover:text-gray-900 hover:bg-white hover:shadow-sm"
+                className="h-8 text-xs text-gray-600 hover:text-gray-900 hover:bg-white hover:shadow-sm transition-all duration-200"
               >
                 👥 Collaborate (0)
               </Button>
             </div>
             
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
+                className="h-8 text-xs text-red-600 hover:text-red-700 hover:bg-red-50 transition-all duration-200"
                 onClick={() => {
                   if (confirm('Clear all components?')) {
                     setFormData(prev => ({ ...prev, fields: [] }));
