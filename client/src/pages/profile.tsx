@@ -57,7 +57,44 @@ export default function Profile() {
     },
   });
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const resizeAndCompressImage = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      
+      img.onload = () => {
+        // Resize to max 300x300 for profile photos
+        const maxSize = 300;
+        let { width, height } = img;
+        
+        if (width > height) {
+          if (width > maxSize) {
+            height = (height * maxSize) / width;
+            width = maxSize;
+          }
+        } else {
+          if (height > maxSize) {
+            width = (width * maxSize) / height;
+            height = maxSize;
+          }
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        // Draw and compress
+        ctx?.drawImage(img, 0, 0, width, height);
+        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7); // 70% quality
+        resolve(compressedBase64);
+      };
+      
+      img.onerror = () => reject(new Error('Failed to load image'));
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) { // 5MB limit
@@ -69,12 +106,22 @@ export default function Profile() {
         return;
       }
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const base64 = e.target?.result as string;
-        setProfileImage(base64);
-      };
-      reader.readAsDataURL(file);
+      try {
+        const compressedBase64 = await resizeAndCompressImage(file);
+        setProfileImage(compressedBase64);
+        
+        toast({
+          title: "Image Loaded",
+          description: "Image has been optimized and is ready to save.",
+          variant: "default",
+        });
+      } catch (error) {
+        toast({
+          title: "Upload Failed",
+          description: "Failed to process the image. Please try another file.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
