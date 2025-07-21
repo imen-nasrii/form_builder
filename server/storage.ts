@@ -121,20 +121,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateUserProfile(userId: string, profileData: { firstName?: string; lastName?: string; profileImageUrl?: string; }): Promise<User> {
-    console.log('updateUserProfile called with:', { 
-      userId, 
-      profileData: { 
-        ...profileData, 
-        profileImageUrl: profileData.profileImageUrl ? `${profileData.profileImageUrl.length} chars` : 'null' 
-      } 
-    });
-    
     try {
-      // Test if image data is too large before updating
-      if (profileData.profileImageUrl && profileData.profileImageUrl.length > 1000000) {
-        console.warn('Image data is very large:', profileData.profileImageUrl.length, 'characters');
-      }
-      
       const [updatedUser] = await db
         .update(users)
         .set({ 
@@ -143,20 +130,6 @@ export class DatabaseStorage implements IStorage {
         })
         .where(eq(users.id, userId))
         .returning();
-      
-      console.log('updateUserProfile result:', { 
-        id: updatedUser.id, 
-        firstName: updatedUser.firstName, 
-        lastName: updatedUser.lastName,
-        profileImageUrl: updatedUser.profileImageUrl ? `${updatedUser.profileImageUrl.length} chars` : 'null'
-      });
-      
-      // Verify the save was successful by checking the actual database
-      const verificationUser = await this.getUser(userId);
-      console.log('Verification check:', {
-        userExists: !!verificationUser,
-        imageActuallyStored: verificationUser?.profileImageUrl ? `${verificationUser.profileImageUrl.length} chars` : 'null'
-      });
       
       return updatedUser;
     } catch (error) {
