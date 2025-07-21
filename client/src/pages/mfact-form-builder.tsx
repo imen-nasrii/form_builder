@@ -71,15 +71,15 @@ export default function MFactFormBuilder() {
 
   // Load form data into state
   useEffect(() => {
-    if (form?.definition) {
+    if (form && 'definition' in form && form.definition) {
       try {
         const parsed = typeof form.definition === 'string' 
           ? JSON.parse(form.definition) 
           : form.definition;
         
         setFormData({
-          menuId: form.menuId || "",
-          label: form.label || "",
+          menuId: (form as any).menuId || "",
+          label: (form as any).label || "",
           formWidth: parsed.formWidth || "700px",
           layout: parsed.layout || "PROCESS",
           fields: parsed.fields || [],
