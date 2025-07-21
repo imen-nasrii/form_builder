@@ -469,7 +469,7 @@ export default function MFactConstructionZone({
   const toggleSection = useCallback((section: string) => {
     setExpandedSections(prev => ({
       ...prev,
-      [section]: !prev[section]
+      [section]: !prev[section as keyof typeof prev]
     }));
   }, []);
 
@@ -480,17 +480,20 @@ export default function MFactConstructionZone({
       onDragEnd={handleDragEnd}
     >
       <div className="grid grid-cols-12 gap-6 h-full">
-        {/* Enhanced Component Palette */}
+        {/* Modern Component Palette */}
         <div className="col-span-3">
-          <Card className="h-full shadow-lg border-0 bg-gradient-to-b from-white to-gray-50">
-            <CardHeader className="pb-3 bg-gradient-to-r from-indigo-50 to-purple-50 border-b">
-              <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                <div className="p-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg">
-                  <Plus className="w-4 h-4 text-white" />
+          <Card className="h-full shadow-xl border-0 bg-white/95 backdrop-blur-sm">
+            <CardHeader className="pb-4 bg-gradient-to-r from-indigo-50/80 to-purple-50/60 border-b border-slate-200/50">
+              <CardTitle className="text-lg font-bold flex items-center gap-3">
+                <div className="p-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl shadow-lg">
+                  <Plus className="w-5 h-5 text-white" />
                 </div>
-                Component Palette
-                <Badge variant="secondary" className="ml-auto text-xs">
-                  25+ Components
+                <div>
+                  <div className="text-slate-900">Components</div>
+                  <div className="text-xs text-slate-600 font-normal mt-0.5">Drag to add</div>
+                </div>
+                <Badge variant="secondary" className="ml-auto bg-white/80 border-slate-200">
+                  25+
                 </Badge>
               </CardTitle>
             </CardHeader>
