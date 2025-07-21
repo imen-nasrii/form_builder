@@ -54,7 +54,8 @@ import {
   Minimize2,
   Hash,
   Bell,
-  ArrowLeft
+  ArrowLeft,
+  BookOpen
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { ComponentCategories as EnterpriseComponentCategories, ComponentSpecificProperties, CommonProperties, renderFormComponent } from '@/components/enterprise-form-components';
@@ -3713,8 +3714,34 @@ export default function FormBuilderFixed() {
       {/* Navbar unifiée moderne */}
       <div className={`border-b sticky top-0 z-50 backdrop-blur-md ${isDarkMode ? 'bg-gray-800/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}>
         <div className="flex items-center justify-between h-16 px-6">
-          {/* Left side: Empty for clean design */}
-          <div></div>
+          {/* Left side: Quick access buttons */}
+          <div className="flex items-center space-x-3">
+            <Button
+              variant="outline"
+              size="sm"
+              className={`text-xs ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
+              onClick={() => {
+                // TODO: Implement External Components functionality
+                alert("External Components - Functionality to be implemented");
+              }}
+            >
+              <Package className="w-3 h-3 mr-1" />
+              External Components
+            </Button>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              className={`text-xs ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
+              onClick={() => {
+                // TODO: Implement Guide functionality
+                alert("Guide - Functionality to be implemented");
+              }}
+            >
+              <BookOpen className="w-3 h-3 mr-1" />
+              Guide
+            </Button>
+          </div>
 
           {/* Right side: Actions et profil */}
           <div className="flex items-center space-x-3">
