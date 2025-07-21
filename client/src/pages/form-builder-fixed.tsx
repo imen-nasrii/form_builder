@@ -59,6 +59,55 @@ import {
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { ComponentCategories as EnterpriseComponentCategories, ComponentSpecificProperties, CommonProperties, renderFormComponent } from '@/components/enterprise-form-components';
+
+// Icon mapping for custom components
+const iconMap: Record<string, any> = {
+  'Type': Type,
+  'AlignLeft': AlignLeft,
+  'CheckSquare': CheckSquare,
+  'List': List,
+  'Calendar': Calendar,
+  'Upload': Upload,
+  'Table': Table,
+  'Square': Square,
+  'Search': Search,
+  'Play': Play,
+  'RotateCcw': RotateCcw,
+  'X': X,
+  'AlertTriangle': AlertTriangle,
+  'Trash2': Trash2,
+  'Settings': Settings,
+  'ChevronRight': ChevronRight,
+  'Moon': Moon,
+  'Sun': Sun,
+  'Users': Users,
+  'Maximize': Maximize,
+  'Minimize': Minimize,
+  'HelpCircle': HelpCircle,
+  'ArrowRight': ArrowRight,
+  'ArrowDown': ArrowDown,
+  'Mail': Mail,
+  'Share': Share,
+  'Plus': Plus,
+  'Code': Code,
+  'Package': Package,
+  'Save': Save,
+  'FileUp': FileUp,
+  'Download': Download,
+  'Database': Database,
+  'Eye': Eye,
+  'ChevronDown': ChevronDown,
+  'ChevronUp': ChevronUp,
+  'Home': Home,
+  'Grid3X3': Grid3X3,
+  'Minus': Minus,
+  'Maximize2': Maximize2,
+  'Minimize2': Minimize2,
+  'Hash': Hash,
+  'Bell': Bell,
+  'ArrowLeft': ArrowLeft,
+  'BookOpen': BookOpen
+};
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { FormFieldProperties } from '@/components/form-field-properties';
 import ComponentConfigManager from '@/components/form-builder/component-config-manager';
@@ -4365,17 +4414,24 @@ export default function FormBuilderFixed() {
                       <span>Custom Components</span>
                     </div>
                     <div className="grid grid-cols-3 gap-2 pl-2">
-                      {customComponents.map((component) => (
-                        <DraggableComponent
-                          key={component.id}
-                          componentType={component.id}
-                          label={component.label}
-                          icon={component.icon}
-                          color={component.color}
-                          isDarkMode={isDarkMode}
-                          isCustom={true}
-                        />
-                      ))}
+                      {customComponents.map((component) => {
+                        // Extract color name from Tailwind class (e.g., "text-yellow-500" -> "yellow")
+                        const colorName = component.color?.includes('-') 
+                          ? component.color.split('-')[1] 
+                          : component.color || 'blue';
+                        
+                        return (
+                          <DraggableComponent
+                            key={component.id}
+                            componentType={component.id}
+                            label={component.label}
+                            icon={iconMap[component.icon] || Type}
+                            color={colorName}
+                            isDarkMode={isDarkMode}
+                            isCustom={true}
+                          />
+                        );
+                      })}
                     </div>
                   </div>
                 )}
