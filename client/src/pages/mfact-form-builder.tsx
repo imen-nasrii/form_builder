@@ -305,102 +305,157 @@ export default function MFactFormBuilder() {
           </div>
         </div>
 
-        {/* Simple Dropdown Navigation */}
-        <div className="px-6 py-3 bg-white border-b border-gray-200">
+        {/* Modern Dropdown Toolbar */}
+        <div className="px-6 py-4 bg-gradient-to-r from-slate-50 to-indigo-50/30 border-b border-slate-200/60 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="relative">
-              {/* Menu Button */}
+              {/* Modern Menu Button */}
               <Button
                 variant="outline"
                 size="sm"
-                className="h-9 px-3 text-sm"
+                className="h-10 px-6 bg-white/80 border-slate-300 hover:bg-white hover:border-indigo-400 transition-all duration-200 flex items-center gap-2 shadow-sm"
                 onClick={() => setShowMenuDropdown(!showMenuDropdown)}
               >
-                Menu ▼
+                <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
+                Actions
+                <div className={`transition-transform duration-200 ${showMenuDropdown ? 'rotate-180' : ''}`}>
+                  ▼
+                </div>
               </Button>
 
-              {/* Dropdown */}
+              {/* Enhanced Dropdown */}
               {showMenuDropdown && (
-                <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50 py-1">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start px-3 py-2 text-sm hover:bg-gray-50"
-                    onClick={() => {
-                      setLocation('/');
-                      setShowMenuDropdown(false);
-                    }}
-                  >
-                    Home
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start px-3 py-2 text-sm hover:bg-gray-50"
-                    onClick={() => {
-                      window.open('/guide', '_blank');
-                      setShowMenuDropdown(false);
-                    }}
-                  >
-                    Guide
-                  </Button>
-                  <hr className="my-1" />
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start px-3 py-2 text-sm hover:bg-gray-50"
-                    onClick={() => {
-                      console.log('Import functionality');
-                      setShowMenuDropdown(false);
-                    }}
-                  >
-                    Import
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start px-3 py-2 text-sm hover:bg-gray-50"
-                    onClick={() => {
-                      exportJSON();
-                      setShowMenuDropdown(false);
-                    }}
-                  >
-                    Export
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start px-3 py-2 text-sm hover:bg-gray-50"
-                    onClick={() => {
-                      console.log('External Components');
-                      setShowMenuDropdown(false);
-                    }}
-                  >
-                    External Components
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start px-3 py-2 text-sm hover:bg-gray-50"
-                    onClick={() => setShowMenuDropdown(false)}
-                  >
-                    Collaborate (0)
-                  </Button>
-                  <hr className="my-1" />
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start px-3 py-2 text-sm text-red-600 hover:bg-red-50"
-                    onClick={() => {
-                      if (confirm('Clear all components?')) {
-                        setFormData(prev => ({ ...prev, fields: [] }));
-                        setSelectedField(null);
-                      }
-                      setShowMenuDropdown(false);
-                    }}
-                  >
-                    Clear
-                  </Button>
+                <div className="absolute top-full left-0 mt-2 w-64 bg-white/95 backdrop-blur-md border border-slate-200/60 rounded-xl shadow-2xl z-50 overflow-hidden">
+                  <div className="p-2 space-y-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start h-11 px-4 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-200 rounded-lg"
+                      onClick={() => {
+                        setLocation('/');
+                        setShowMenuDropdown(false);
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                          🏠
+                        </div>
+                        <span className="font-medium">Home</span>
+                      </div>
+                    </Button>
+                    
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start h-11 px-4 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-200 rounded-lg"
+                      onClick={() => {
+                        alert('Guide feature coming soon!');
+                        setShowMenuDropdown(false);
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
+                          📖
+                        </div>
+                        <span className="font-medium">Guide</span>
+                      </div>
+                    </Button>
+                    
+                    <div className="h-px bg-slate-200 my-2"></div>
+                    
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start h-11 px-4 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-200 rounded-lg"
+                      onClick={() => {
+                        alert('Import feature coming soon!');
+                        setShowMenuDropdown(false);
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                          📥
+                        </div>
+                        <span className="font-medium">Import</span>
+                      </div>
+                    </Button>
+                    
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start h-11 px-4 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-200 rounded-lg"
+                      onClick={() => {
+                        exportJSON();
+                        setShowMenuDropdown(false);
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                          📤
+                        </div>
+                        <span className="font-medium">Export</span>
+                      </div>
+                    </Button>
+                    
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start h-11 px-4 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-200 rounded-lg"
+                      onClick={() => {
+                        alert('External Components feature coming soon!');
+                        setShowMenuDropdown(false);
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-teal-100 rounded-lg flex items-center justify-center">
+                          🧩
+                        </div>
+                        <span className="font-medium">External Components</span>
+                      </div>
+                    </Button>
+                    
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start h-11 px-4 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-200 rounded-lg"
+                      onClick={() => {
+                        alert('Collaborate feature coming soon!');
+                        setShowMenuDropdown(false);
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-pink-100 rounded-lg flex items-center justify-center">
+                          👥
+                        </div>
+                        <div className="flex flex-col items-start">
+                          <span className="font-medium">Collaborate</span>
+                          <span className="text-xs text-slate-500">0 active</span>
+                        </div>
+                      </div>
+                    </Button>
+                    
+                    <div className="h-px bg-slate-200 my-2"></div>
+                    
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start h-11 px-4 text-red-600 hover:bg-red-50 hover:text-red-700 transition-all duration-200 rounded-lg"
+                      onClick={() => {
+                        if (confirm('Clear all components?')) {
+                          setFormData(prev => ({ ...prev, fields: [] }));
+                          setSelectedField(null);
+                        }
+                        setShowMenuDropdown(false);
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
+                          🗑️
+                        </div>
+                        <span className="font-medium">Clear All</span>
+                      </div>
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
@@ -409,12 +464,13 @@ export default function MFactFormBuilder() {
               <Button
                 variant="default"
                 size="sm"
-                className="h-9 px-4"
+                className="h-10 px-6 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
                 onClick={() => {
-                  console.log('Saving form...', formData);
+                  saveForm.mutate();
                 }}
+                disabled={saveForm.isPending}
               >
-                Save
+                💾 {saveForm.isPending ? 'Saving...' : 'Save'}
               </Button>
             </div>
           </div>
