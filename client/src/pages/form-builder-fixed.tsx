@@ -263,12 +263,13 @@ const ComponentTypes = Object.values(ComponentCategories).reduce((acc, category)
   return { ...acc, ...category.components };
 }, {} as Record<string, { icon: any; label: string; color: string }>);
 
-function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMode = false }: {
+function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMode = false, isCustom = false }: {
   componentType: string;
   label: string;
   icon: any;
   color: string;
   isDarkMode?: boolean;
+  isCustom?: boolean;
 }) {
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -369,6 +370,15 @@ function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMod
       <span className={`text-xs font-medium text-center leading-tight ${classes.text}`} style={{ fontSize: '10px' }}>
         {label}
       </span>
+      
+      {/* Custom component indicator */}
+      {isCustom && (
+        <div className="absolute -top-1 -right-1">
+          <div className="w-3 h-3 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
+            <div className="w-1 h-1 bg-white rounded-full" />
+          </div>
+        </div>
+      )}
       
       {/* Hover overlay with grab cursor indicator */}
       <div className={`
@@ -4346,47 +4356,33 @@ export default function FormBuilderFixed() {
                     </div>
                   </div>
                 ))}
+
+                {/* Custom Components integrated into the layout */}
+                {customComponents.length > 0 && (
+                  <div className="space-y-1">
+                    <div className={`flex items-center space-x-2 text-xs font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                      <Package className="w-3 h-3" />
+                      <span>Custom Components</span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 pl-2">
+                      {customComponents.map((component) => (
+                        <DraggableComponent
+                          key={component.id}
+                          componentType={component.id}
+                          label={component.label}
+                          icon={component.icon}
+                          color={component.color}
+                          isDarkMode={isDarkMode}
+                          isCustom={true}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
             
-            {customComponents.length > 0 && (
-              <>
-                <Separator className="my-4" />
-                <h3 className={`font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Custom Components</h3>
-                <div className="grid grid-cols-1 gap-2">
-                  {customComponents.map((component) => (
-                    <div
-                      key={component.id}
-                      draggable
-                      onDragStart={(e) => {
-                        e.dataTransfer.setData('componentType', component.id);
-                      }}
-                      className={`p-3 border-2 border-dashed rounded-lg cursor-move transition-all hover:shadow-md ${
-                        isDarkMode 
-                          ? `bg-${component.color}-900/20 border-${component.color}-600 hover:border-${component.color}-500`
-                          : `bg-${component.color}-50 border-${component.color}-200 hover:border-${component.color}-400`
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <div className={`w-4 h-4 rounded bg-${component.color}-600 flex items-center justify-center`}>
-                            <Package className="w-3 h-3 text-white" />
-                          </div>
-                          <span className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                            {component.label}
-                          </span>
-                        </div>
-                        <span className={`text-xs px-2 py-1 rounded ${
-                          isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-600'
-                        }`}>
-                          CUSTOM
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
+
           </div>
         </div>
 
