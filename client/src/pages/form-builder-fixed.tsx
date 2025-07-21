@@ -4680,8 +4680,8 @@ export default function FormBuilderFixed() {
                 // Panneau propriétés normal pour les utilisateurs
                 selectedField ? (
                   <FormFieldProperties 
-                    field={selectedField}
-                    updateField={updateFieldInFormData}
+                    field={selectedField as any}
+                    updateField={updateFieldInFormData as any}
                     isDarkMode={isDarkMode}
                   />
                 ) : (
