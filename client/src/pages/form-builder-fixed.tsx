@@ -2836,6 +2836,7 @@ export default function FormBuilderFixed() {
   const [importedData, setImportedData] = useState<any>(null);
   const [isPaletteCollapsed, setIsPaletteCollapsed] = useState(false);
   const [isDragZoneCollapsed, setIsDragZoneCollapsed] = useState(false);
+  const [showMenuDropdown, setShowMenuDropdown] = useState(false);
   const formBuilderRef = useRef<HTMLDivElement>(null);
 
   // Grid configuration state for ultra-advanced grid system
@@ -3703,18 +3704,127 @@ export default function FormBuilderFixed() {
   return (
     <div className={`min-h-screen transition-colors ${isDarkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
       <div className={`border-b px-6 py-4 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
-        <div className="flex items-center justify-center">
-          <div className="flex items-center space-x-3">
-            {/* Home Button */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => window.location.href = '/'}
-              className={`flex items-center space-x-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
-            >
-              <Home className="w-4 h-4" />
-              <span>Home</span>
-            </Button>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            {/* Modern Dropdown Actions Menu */}
+            <div className="relative">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowMenuDropdown(!showMenuDropdown)}
+                className={`h-10 px-6 ${isDarkMode ? 'bg-gray-800/80 border-gray-600 hover:bg-gray-700 hover:border-indigo-400' : 'bg-white/80 border-slate-300 hover:bg-white hover:border-indigo-400'} transition-all duration-200 flex items-center gap-2 shadow-sm`}
+              >
+                <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
+                Actions
+                <div className={`transition-transform duration-200 ${showMenuDropdown ? 'rotate-180' : ''}`}>
+                  <ChevronDown className="w-4 h-4" />
+                </div>
+              </Button>
+
+              {/* Enhanced Dropdown */}
+              {showMenuDropdown && (
+                <div className={`absolute top-full left-0 mt-2 w-64 ${isDarkMode ? 'bg-gray-800/95' : 'bg-white/95'} backdrop-blur-md border ${isDarkMode ? 'border-gray-600/60' : 'border-slate-200/60'} rounded-xl shadow-2xl z-50 overflow-hidden`}>
+                  <div className="p-2 space-y-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={`w-full justify-start h-11 px-4 ${isDarkMode ? 'text-gray-300 hover:bg-gray-700 hover:text-white' : 'text-slate-700 hover:bg-indigo-50 hover:text-indigo-700'} transition-all duration-200 rounded-lg`}
+                      onClick={() => {
+                        window.location.href = '/';
+                        setShowMenuDropdown(false);
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-8 h-8 ${isDarkMode ? 'bg-blue-800' : 'bg-blue-100'} rounded-lg flex items-center justify-center`}>
+                          <Home className="w-4 h-4" />
+                        </div>
+                        <span className="font-medium">Home</span>
+                      </div>
+                    </Button>
+                    
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={`w-full justify-start h-11 px-4 ${isDarkMode ? 'text-gray-300 hover:bg-gray-700 hover:text-white' : 'text-slate-700 hover:bg-indigo-50 hover:text-indigo-700'} transition-all duration-200 rounded-lg`}
+                      onClick={() => {
+                        // Open guide modal or navigate to guide
+                        setShowMenuDropdown(false);
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-8 h-8 ${isDarkMode ? 'bg-emerald-800' : 'bg-emerald-100'} rounded-lg flex items-center justify-center`}>
+                          <HelpCircle className="w-4 h-4" />
+                        </div>
+                        <span className="font-medium">Guide</span>
+                      </div>
+                    </Button>
+                    
+                    <div className={`h-px ${isDarkMode ? 'bg-gray-600' : 'bg-slate-200'} my-2`}></div>
+                    
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={`w-full justify-start h-11 px-4 ${isDarkMode ? 'text-gray-300 hover:bg-gray-700 hover:text-white' : 'text-slate-700 hover:bg-indigo-50 hover:text-indigo-700'} transition-all duration-200 rounded-lg`}
+                      onClick={() => {
+                        document.getElementById('json-file-input')?.click();
+                        setShowMenuDropdown(false);
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-8 h-8 ${isDarkMode ? 'bg-purple-800' : 'bg-purple-100'} rounded-lg flex items-center justify-center`}>
+                          <Upload className="w-4 h-4" />
+                        </div>
+                        <span className="font-medium">Import</span>
+                      </div>
+                    </Button>
+                    
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={`w-full justify-start h-11 px-4 ${isDarkMode ? 'text-gray-300 hover:bg-gray-700 hover:text-white' : 'text-slate-700 hover:bg-indigo-50 hover:text-indigo-700'} transition-all duration-200 rounded-lg`}
+                      onClick={() => {
+                        handleExportJSON();
+                        setShowMenuDropdown(false);
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-8 h-8 ${isDarkMode ? 'bg-orange-800' : 'bg-orange-100'} rounded-lg flex items-center justify-center`}>
+                          <Download className="w-4 h-4" />
+                        </div>
+                        <span className="font-medium">Export</span>
+                      </div>
+                    </Button>
+                    
+                    <div className={`h-px ${isDarkMode ? 'bg-gray-600' : 'bg-slate-200'} my-2`}></div>
+                    
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={`w-full justify-start h-11 px-4 ${isDarkMode ? 'text-red-400 hover:bg-red-900/50 hover:text-red-300' : 'text-red-600 hover:bg-red-50 hover:text-red-700'} transition-all duration-200 rounded-lg`}
+                      onClick={() => {
+                        resetForm();
+                        setShowMenuDropdown(false);
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-8 h-8 ${isDarkMode ? 'bg-red-900/50' : 'bg-red-100'} rounded-lg flex items-center justify-center`}>
+                          <Trash2 className="w-4 h-4" />
+                        </div>
+                        <span className="font-medium">Clear All</span>
+                      </div>
+                    </Button>
+                  </div>
+                </div>
+              )}
+              
+              {/* Click outside to close */}
+              {showMenuDropdown && (
+                <div 
+                  className="fixed inset-0 z-40" 
+                  onClick={() => setShowMenuDropdown(false)}
+                />
+              )}
+            </div>
             
             {/* Theme Toggle */}
             <Button
@@ -3735,72 +3845,61 @@ export default function FormBuilderFixed() {
             >
               {isFullScreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
             </Button>
+          </div>
+          
+          <div className="flex items-center space-x-3">
+            {/* Save Button */}
+            <Button
+              variant="default"
+              size="sm"
+              onClick={saveFormManually}
+              disabled={saveFormMutation.isPending}
+              className={`h-10 px-6 ${isDarkMode ? 'bg-gradient-to-r from-indigo-600 to-purple-700 hover:from-indigo-700 hover:to-purple-800' : 'bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700'} text-white shadow-lg hover:shadow-xl transition-all duration-200`}
+            >
+              <Save className="w-4 h-4 mr-2" />
+              {saveFormMutation.isPending ? 'Saving...' : 'Save'}
+            </Button>
+          </div>
 
-            <StepByStepGuide isDarkMode={isDarkMode} />
+        {/* Hidden file input for import */}
+        <input
+          type="file"
+          accept=".json"
+          onChange={handleFileUpload}
+          style={{ display: 'none' }}
+          id="json-file-input"
+        />
+      </div>
 
-            {/* Import/Export JSON */}
-            <div className="flex space-x-2">
-              <input
-                type="file"
-                accept=".json"
-                onChange={handleFileUpload}
-                style={{ display: 'none' }}
-                id="json-file-input"
-              />
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => document.getElementById('json-file-input')?.click()}
-                className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
-              >
-                <Upload className="w-4 h-4 mr-2" />
-                Import
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleExportJSON}
-                className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Export
-              </Button>
-            </div>
-
-            {/* Add External Components */}
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  External Components
-                </Button>
-              </DialogTrigger>
-              <DialogContent className={`max-w-3xl ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
-                <DialogHeader>
-                  <DialogTitle className={isDarkMode ? 'text-white' : ''}>Component Creation Assistant</DialogTitle>
-                </DialogHeader>
-                <Tabs defaultValue="json" className="w-full">
-                  <TabsList className={`grid w-full grid-cols-2 ${isDarkMode ? 'bg-gray-700' : ''}`}>
-                    <TabsTrigger value="json" className={isDarkMode ? 'data-[state=active]:bg-gray-600 text-gray-300' : ''}>
-                      <Code className="w-4 h-4 mr-2" />
-                      JSON Configuration
-                    </TabsTrigger>
-                    <TabsTrigger value="form" className={isDarkMode ? 'data-[state=active]:bg-gray-600 text-gray-300' : ''}>
-                      <Package className="w-4 h-4 mr-2" />
-                      Visual Creator
-                    </TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="json" className="space-y-4">
-                    <div>
-                      <Label className={isDarkMode ? 'text-gray-300' : ''}>Component JSON Configuration:</Label>
-                      <Textarea
-                        data-json-input
-                        placeholder={`{
+      {/* External Components Dialog */}
+      <Dialog>
+        <DialogTrigger asChild>
+          <div style={{ display: 'none' }}>
+            <Button>Hidden Trigger</Button>
+          </div>
+        </DialogTrigger>
+        <DialogContent className={`max-w-3xl ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
+          <DialogHeader>
+            <DialogTitle className={isDarkMode ? 'text-white' : ''}>Component Creation Assistant</DialogTitle>
+          </DialogHeader>
+          <Tabs defaultValue="json" className="w-full">
+            <TabsList className={`grid w-full grid-cols-2 ${isDarkMode ? 'bg-gray-700' : ''}`}>
+              <TabsTrigger value="json" className={isDarkMode ? 'data-[state=active]:bg-gray-600 text-gray-300' : ''}>
+                <Code className="w-4 h-4 mr-2" />
+                JSON Configuration
+              </TabsTrigger>
+              <TabsTrigger value="form" className={isDarkMode ? 'data-[state=active]:bg-gray-600 text-gray-300' : ''}>
+                <Package className="w-4 h-4 mr-2" />
+                Visual Creator
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="json" className="space-y-4">
+              <div>
+                <Label className={isDarkMode ? 'text-gray-300' : ''}>Component JSON Configuration:</Label>
+                <Textarea
+                  data-json-input
+                  placeholder={`{
   "name": "customInput",
   "label": "Input Personnalisé",
   "icon": "Type",
@@ -3811,20 +3910,20 @@ export default function FormBuilderFixed() {
     "maxLength": 255
   }
 }`}
-                        className={`h-48 text-xs font-mono ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
-                      />
-                    </div>
-                    <Button onClick={() => {
-                      const textarea = document.querySelector('[data-json-input]') as HTMLTextAreaElement;
-                      if (textarea?.value) {
-                        addComponentFromJSON(textarea.value);
-                        textarea.value = '';
-                      }
-                    }}>
-                      <Code className="w-4 h-4 mr-2" />
-                      Add from JSON
-                    </Button>
-                  </TabsContent>
+                  className={`h-48 text-xs font-mono ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
+                />
+              </div>
+              <Button onClick={() => {
+                const textarea = document.querySelector('[data-json-input]') as HTMLTextAreaElement;
+                if (textarea?.value) {
+                  addComponentFromJSON(textarea.value);
+                  textarea.value = '';
+                }
+              }}>
+                <Code className="w-4 h-4 mr-2" />
+                Add from JSON
+              </Button>
+            </TabsContent>
                   
                   <TabsContent value="form" className="space-y-4">
                     <div className="space-y-6">
@@ -4118,82 +4217,6 @@ export default function FormBuilderFixed() {
                 )}
               </DialogContent>
             </Dialog>
-
-            {/* Collaboration */}
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
-                >
-                  <Users className="w-4 h-4 mr-2" />
-                  Collaborate ({collaborators.length})
-                </Button>
-              </DialogTrigger>
-              <DialogContent className={isDarkMode ? 'bg-gray-800 border-gray-700' : ''}>
-                <DialogHeader>
-                  <DialogTitle className={isDarkMode ? 'text-white' : ''}>Manage Collaborators</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div className="flex space-x-2">
-                    <Input
-                      placeholder="Collaborator email"
-                      value={collaboratorEmail}
-                      onChange={(e) => setCollaboratorEmail(e.target.value)}
-                      className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-                    />
-                    <Button onClick={addCollaborator} size="sm">
-                      <Mail className="w-4 h-4 mr-2" />
-                      Invite
-                    </Button>
-                  </div>
-                  
-                  {collaborators.length > 0 && (
-                    <div className="space-y-2">
-                      <h4 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Active Collaborators:</h4>
-                      {collaborators.map((email, index) => (
-                        <div key={index} className={`flex items-center justify-between p-2 rounded border ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50'}`}>
-                          <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{email}</span>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeCollaborator(email)}
-                            className={`p-1 h-6 w-6 ${isDarkMode ? 'text-gray-400 hover:text-red-400' : 'text-gray-400 hover:text-red-500'}`}
-                          >
-                            <X className="w-3 h-3" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </DialogContent>
-            </Dialog>
-
-
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={resetForm}
-              className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
-            >
-              <RotateCcw className="w-4 h-4 mr-2" />
-              Clear
-            </Button>
-            <Button 
-              size="sm" 
-              onClick={saveFormManually}
-              disabled={saveFormMutation.isPending}
-            >
-              <Save className="w-4 h-4 mr-2" />
-              {saveFormMutation.isPending ? 'Saving...' : 'Save'}
-            </Button>
-          </div>
-        </div>
-
-
-      </div>
 
       <div className="flex h-[calc(100vh-80px)]">
         <div className={`${isPaletteCollapsed ? 'w-12' : 'w-72'} border-r overflow-y-auto transition-all duration-300 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
