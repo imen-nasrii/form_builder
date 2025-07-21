@@ -62,6 +62,7 @@ import { ComponentCategories as EnterpriseComponentCategories, ComponentSpecific
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { FormFieldProperties } from '@/components/form-field-properties';
 import ComponentConfigManager from '@/components/form-builder/component-config-manager';
+import AdvancedComponentCreator from '@/components/form-builder/advanced-component-creator';
 
 // Model Dropdown Selector Component
 function ModelDropdownSelector({ 
@@ -2840,6 +2841,7 @@ export default function FormBuilderFixed() {
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [importedData, setImportedData] = useState<any>(null);
   const [showGuide, setShowGuide] = useState(false);
+  const [showComponentCreator, setShowComponentCreator] = useState(false);
   const [isPaletteCollapsed, setIsPaletteCollapsed] = useState(false);
   const [isDragZoneCollapsed, setIsDragZoneCollapsed] = useState(false);
   const [showMenuDropdown, setShowMenuDropdown] = useState(false);
@@ -3718,11 +3720,47 @@ export default function FormBuilderFixed() {
         <div className="flex items-center justify-between h-16 px-6">
           {/* Left side: Quick access buttons */}
           <div className="flex items-center space-x-3">
-            {/* External Components avec ComponentConfigManager */}
-            <ComponentConfigManager
-              customComponents={customComponents}
-              onLoadComponents={(components) => setCustomComponents(components)}
-            />
+            {/* External Components Menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={`text-xs ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
+                >
+                  <Package className="w-3 h-3 mr-1" />
+                  External Components
+                  <ChevronDown className="w-3 h-3 ml-1" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                <DropdownMenuItem onClick={() => setShowComponentCreator(true)}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create New Component
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                  onClick={() => {
+                    // Trigger the hidden ComponentConfigManager by clicking its button
+                    const hiddenButton = document.querySelector('#hidden-component-manager button');
+                    if (hiddenButton) {
+                      (hiddenButton as HTMLButtonElement).click();
+                    }
+                  }}
+                >
+                  <Settings className="w-4 h-4 mr-2" />
+                  Manage Components (JSON)
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
+            {/* Hidden ComponentConfigManager - will be triggered programmatically */}
+            <div id="hidden-component-manager" style={{ display: 'none' }}>
+              <ComponentConfigManager
+                customComponents={customComponents}
+                onLoadComponents={(components) => setCustomComponents(components)}
+              />
+            </div>
             
             <Button
               variant="outline"
@@ -4705,6 +4743,16 @@ export default function FormBuilderFixed() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Advanced Component Creator Modal */}
+      <AdvancedComponentCreator
+        isOpen={showComponentCreator}
+        onClose={() => setShowComponentCreator(false)}
+        onCreateComponent={(component) => {
+          setCustomComponents(prev => [...prev, component]);
+        }}
+        isDarkMode={isDarkMode}
+      />
     </div>
   );
 }
