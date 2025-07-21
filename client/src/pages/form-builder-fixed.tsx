@@ -3703,22 +3703,20 @@ export default function FormBuilderFixed() {
 
   return (
     <div className={`min-h-screen transition-colors ${isDarkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
-      <div className={`border-b px-8 py-6 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
+      <div className={`border-b px-8 py-3 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            {/* Modern Dropdown Actions Menu */}
+          <div className="flex items-center space-x-3">
+            {/* Compact Actions Dropdown */}
             <div className="relative">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setShowMenuDropdown(!showMenuDropdown)}
-                className={`h-10 px-6 ${isDarkMode ? 'bg-gray-800/80 border-gray-600 hover:bg-gray-700 hover:border-indigo-400' : 'bg-white/80 border-slate-300 hover:bg-white hover:border-indigo-400'} transition-all duration-200 flex items-center gap-2 shadow-sm`}
+                className={`h-8 px-4 ${isDarkMode ? 'bg-gray-800/80 border-gray-600 hover:bg-gray-700 hover:border-indigo-400' : 'bg-white/80 border-slate-300 hover:bg-white hover:border-indigo-400'} transition-all duration-200 flex items-center gap-2 shadow-sm text-xs`}
               >
-                <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
+                <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full"></div>
                 Actions
-                <div className={`transition-transform duration-200 ${showMenuDropdown ? 'rotate-180' : ''}`}>
-                  <ChevronDown className="w-4 h-4" />
-                </div>
+                <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${showMenuDropdown ? 'rotate-180' : ''}`} />
               </Button>
 
               {/* Enhanced Dropdown */}
@@ -3826,37 +3824,58 @@ export default function FormBuilderFixed() {
               )}
             </div>
             
-            {/* Theme Toggle */}
+            {/* Inline Quick Actions */}
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
               onClick={() => setIsDarkMode(!isDarkMode)}
-              className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
+              className={`h-8 px-3 ${isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+              title="Toggle Theme"
             >
-              {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              {isDarkMode ? <Sun className="w-3 h-3" /> : <Moon className="w-3 h-3" />}
             </Button>
 
-            {/* Fullscreen Toggle */}
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
               onClick={toggleFullScreen}
-              className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
+              className={`h-8 px-3 ${isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+              title="Toggle Fullscreen"
             >
-              {isFullScreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
+              {isFullScreen ? <Minimize className="w-3 h-3" /> : <Maximize className="w-3 h-3" />}
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => document.getElementById('json-file-input')?.click()}
+              className={`h-8 px-3 ${isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+              title="Import JSON"
+            >
+              <Upload className="w-3 h-3" />
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleExportJSON}
+              className={`h-8 px-3 ${isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+              title="Export JSON"
+            >
+              <Download className="w-3 h-3" />
             </Button>
           </div>
           
-          <div className="flex items-center space-x-3">
-            {/* Save Button */}
+          <div className="flex items-center space-x-2">
+            {/* Compact Save Button */}
             <Button
               variant="default"
               size="sm"
               onClick={saveFormManually}
               disabled={saveFormMutation.isPending}
-              className={`h-10 px-6 ${isDarkMode ? 'bg-gradient-to-r from-indigo-600 to-purple-700 hover:from-indigo-700 hover:to-purple-800' : 'bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700'} text-white shadow-lg hover:shadow-xl transition-all duration-200`}
+              className={`h-8 px-4 text-xs ${isDarkMode ? 'bg-gradient-to-r from-indigo-600 to-purple-700 hover:from-indigo-700 hover:to-purple-800' : 'bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700'} text-white shadow-md transition-all duration-200`}
             >
-              <Save className="w-4 h-4 mr-2" />
+              <Save className="w-3 h-3 mr-1" />
               {saveFormMutation.isPending ? 'Saving...' : 'Save'}
             </Button>
           </div>
@@ -4219,7 +4238,7 @@ export default function FormBuilderFixed() {
               </DialogContent>
             </Dialog>
 
-      <div className="flex h-[calc(100vh-80px)] mx-4 mt-4 rounded-lg overflow-hidden shadow-lg">
+      <div className="flex h-[calc(100vh-60px)] mx-4 mt-4 rounded-lg overflow-hidden shadow-lg">
         <div className={`${isPaletteCollapsed ? 'w-12' : 'w-72'} border-r overflow-y-auto transition-all duration-300 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
           <div className="p-4">
             <div className="flex items-center justify-between mb-3">
