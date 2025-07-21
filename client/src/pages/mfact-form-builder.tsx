@@ -304,78 +304,96 @@ export default function MFactFormBuilder() {
           </div>
         </div>
 
-        {/* Secondary Navigation Toolbar */}
-        <div className="px-6 py-3 bg-gray-50 dark:bg-gray-900/50">
+        {/* Enhanced Secondary Navigation Toolbar */}
+        <div className="px-6 py-4 bg-gradient-to-r from-gray-50 via-white to-gray-50 dark:from-gray-900/50 dark:to-gray-800/50 border-b border-gray-100 shadow-sm backdrop-blur-sm">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 text-xs text-gray-600 hover:text-gray-900 hover:bg-white hover:shadow-sm transition-all duration-200"
-                onClick={() => setLocation('/')}
-              >
-                🏠 Home
-              </Button>
-              
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 text-xs text-gray-600 hover:text-gray-900 hover:bg-white hover:shadow-sm transition-all duration-200"
-                onClick={() => window.open('/guide', '_blank')}
-              >
-                📖 Guide
-              </Button>
-              
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 hover:shadow-sm transition-all duration-200"
-                onClick={exportJSON}
-              >
-                📤 Export
-              </Button>
-              
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 text-xs text-purple-600 hover:text-purple-700 hover:bg-purple-50 hover:shadow-sm transition-all duration-200"
-                onClick={generateCode}
-              >
-                💻 Generate Code
-              </Button>
-              
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 text-xs text-gray-600 hover:text-gray-900 hover:bg-white hover:shadow-sm transition-all duration-200"
-                onClick={() => console.log('External Components')}
-              >
-                🔗 External Components
-              </Button>
-              
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 text-xs text-gray-600 hover:text-gray-900 hover:bg-white hover:shadow-sm transition-all duration-200"
-              >
-                👥 Collaborate (0)
-              </Button>
+            <div className="flex items-center gap-4">
+              {/* Navigation Group */}
+              <div className="flex items-center gap-1 px-3 py-1 bg-white/80 rounded-lg border border-gray-200/60 shadow-md hover:shadow-lg hover:bg-white/90 transition-all duration-300 backdrop-blur-sm">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-3 text-xs text-gray-600 hover:text-gray-900 hover:bg-blue-50 hover:text-blue-700 rounded-md transition-all duration-200"
+                  onClick={() => setLocation('/')}
+                >
+                  🏠 Home
+                </Button>
+                
+                <div className="w-px h-4 bg-gray-300"></div>
+                
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-3 text-xs text-gray-600 hover:text-gray-900 hover:bg-blue-50 hover:text-blue-700 rounded-md transition-all duration-200"
+                  onClick={() => window.open('/guide', '_blank')}
+                >
+                  📖 Guide
+                </Button>
+              </div>
+
+              {/* Actions Group */}
+              <div className="flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-blue-50/80 to-purple-50/80 rounded-lg border border-blue-200/60 shadow-md hover:shadow-lg hover:from-blue-50/90 hover:to-purple-50/90 transition-all duration-300 backdrop-blur-sm">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-3 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-md transition-all duration-200"
+                  onClick={exportJSON}
+                >
+                  📤 Export
+                </Button>
+                
+                <div className="w-px h-4 bg-gray-300"></div>
+                
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-3 text-xs text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-md transition-all duration-200"
+                  onClick={generateCode}
+                >
+                  💻 Generate
+                </Button>
+              </div>
+
+              {/* Tools Group */}
+              <div className="flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-emerald-50/80 to-teal-50/80 rounded-lg border border-emerald-200/60 shadow-md hover:shadow-lg hover:from-emerald-50/90 hover:to-teal-50/90 transition-all duration-300 backdrop-blur-sm">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-3 text-xs text-gray-600 hover:text-gray-900 hover:bg-emerald-50 hover:text-emerald-700 rounded-md transition-all duration-200"
+                  onClick={() => console.log('External Components')}
+                >
+                  🔗 Components
+                </Button>
+                
+                <div className="w-px h-4 bg-gray-300"></div>
+                
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-3 text-xs text-gray-600 hover:text-gray-900 hover:bg-orange-50 hover:text-orange-700 rounded-md transition-all duration-200"
+                >
+                  👥 Collaborate (0)
+                </Button>
+              </div>
             </div>
             
             <div className="flex items-center gap-3">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 text-xs text-red-600 hover:text-red-700 hover:bg-red-50 transition-all duration-200"
-                onClick={() => {
-                  if (confirm('Clear all components?')) {
-                    setFormData(prev => ({ ...prev, fields: [] }));
-                    setSelectedField(null);
-                  }
-                }}
-              >
-                🗑️ Clear
-              </Button>
+              {/* Actions Group */}
+              <div className="flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-red-50/80 to-pink-50/80 rounded-lg border border-red-200/60 shadow-md hover:shadow-lg hover:from-red-50/90 hover:to-pink-50/90 transition-all duration-300 backdrop-blur-sm">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-3 text-xs text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md transition-all duration-200"
+                  onClick={() => {
+                    if (confirm('Clear all components?')) {
+                      setFormData(prev => ({ ...prev, fields: [] }));
+                      setSelectedField(null);
+                    }
+                  }}
+                >
+                  🗑️ Clear
+                </Button>
+              </div>
             </div>
           </div>
         </div>
