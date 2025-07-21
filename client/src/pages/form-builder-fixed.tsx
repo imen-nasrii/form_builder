@@ -53,7 +53,8 @@ import {
   Maximize2,
   Minimize2,
   Hash,
-  Bell
+  Bell,
+  ArrowLeft
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { ComponentCategories as EnterpriseComponentCategories, ComponentSpecificProperties, CommonProperties, renderFormComponent } from '@/components/enterprise-form-components';
@@ -3709,221 +3710,16 @@ export default function FormBuilderFixed() {
 
   return (
     <div className={`min-h-screen transition-colors ${isDarkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
-      {/* Navbar unifiée moderne */}
-      <div className={`border-b sticky top-0 z-50 backdrop-blur-md ${isDarkMode ? 'bg-gray-800/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}>
-        <div className="flex items-center justify-between h-16 px-6">
-          {/* Left side: Logo et navigation principale */}
-          <div className="flex items-center space-x-8">
-            {/* Logo FormBuilder */}
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-sm">
-                <span className="text-white text-sm font-bold">F</span>
-              </div>
-              <span className={`font-semibold text-lg ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                FormBuilder
-              </span>
-            </div>
-            
-            {/* Navigation Links - masquée sur mobile */}
-            <nav className="hidden lg:flex items-center space-x-6">
-              <a href="/" className={`text-sm font-medium hover:text-blue-600 transition-colors ${
-                isDarkMode ? 'text-gray-300 hover:text-blue-400' : 'text-gray-700'
-              }`}>
-                Dashboard
-              </a>
-              <a href="/tasks" className={`text-sm font-medium hover:text-blue-600 transition-colors ${
-                isDarkMode ? 'text-gray-300 hover:text-blue-400' : 'text-gray-700'
-              }`}>
-                My Tasks
-              </a>
-              <a href="/analytics" className={`text-sm font-medium hover:text-blue-600 transition-colors ${
-                isDarkMode ? 'text-gray-300 hover:text-blue-400' : 'text-gray-700'
-              }`}>
-                Analytics
-              </a>
-            </nav>
-          </div>
-
-          {/* Right side: Actions et profil */}
-          <div className="flex items-center space-x-3">
-            {/* Quick Actions - cachées sur très petit écran */}
-            <div className="hidden sm:flex items-center space-x-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsDarkMode(!isDarkMode)}
-                className={`h-9 w-9 p-0 ${isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
-                title="Toggle Theme"
-              >
-                {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={toggleFullScreen}
-                className={`h-9 w-9 p-0 ${isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
-                title="Toggle Fullscreen"
-              >
-                {isFullScreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => document.getElementById('json-file-input')?.click()}
-                className={`h-9 w-9 p-0 ${isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
-                title="Import"
-              >
-                <Upload className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleExportJSON}
-                className={`h-9 w-9 p-0 ${isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
-                title="Export"
-              >
-                <Download className="h-4 w-4" />
-              </Button>
-            </div>
-
-            {/* Notifications */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className={`h-9 w-9 p-0 relative ${isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
-              title="Notifications"
-            >
-              <Bell className="h-4 w-4" />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center font-medium">
-                3
-              </span>
+      {/* Simple Return Home Navbar */}
+      <div className={`border-b sticky top-0 z-50 ${isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'}`}>
+        <div className="flex items-center h-16 px-6">
+          <a href="/dashboard">
+            <Button variant="outline" className="flex items-center space-x-2">
+              <ArrowLeft className="h-4 w-4" />
+              <span>Return Home</span>
             </Button>
-
-            {/* User Profile Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className={`h-9 px-3 ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-7 h-7 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
-                      <span className="text-white text-sm font-medium">A</span>
-                    </div>
-                    <div className="text-left hidden md:block">
-                      <div className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                        {user?.firstName || 'Admin'}
-                      </div>
-                      <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                        {user?.role === 'admin' ? 'Administrator' : 'User'} • <span className="text-green-500">Online</span>
-                      </div>
-                    </div>
-                    <ChevronDown className="h-4 w-4 ml-1" />
-                  </div>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-64">
-                <div className="px-4 py-3 border-b">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
-                      <span className="text-white font-medium">A</span>
-                    </div>
-                    <div>
-                      <div className="font-medium">{user?.firstName || 'Admin'}</div>
-                      <div className="text-sm text-gray-500">{user?.email || 'admin@formcraft.pro'}</div>
-                    </div>
-                  </div>
-                </div>
-                <DropdownMenuItem>
-                  <Users className="h-4 w-4 mr-3" />
-                  Profile Settings
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setIsGuideOpen(true)}>
-                  <HelpCircle className="h-4 w-4 mr-3" />
-                  Help & Guide
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setIsCodeGenerationOpen(true)}>
-                  <Code className="h-4 w-4 mr-3" />
-                  Generate Code
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setIsExternalLibraryOpen(true)}>
-                  <Package className="h-4 w-4 mr-3" />
-                  External Components
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setIsShareModalOpen(true)}>
-                  <Share className="h-4 w-4 mr-3" />
-                  Collaborate
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={resetForm} className="text-red-600">
-                  <Trash2 className="h-4 w-4 mr-3" />
-                  Clear All
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Save Button */}
-            <Button
-              onClick={saveFormManually}
-              size="sm"
-              className="h-9 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium"
-              disabled={saveFormMutation.isPending}
-            >
-              {saveFormMutation.isPending ? (
-                <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>Saving...</span>
-                </div>
-              ) : (
-                <div className="flex items-center space-x-2">
-                  <Save className="h-4 w-4" />
-                  <span>Save</span>
-                </div>
-              )}
-            </Button>
-
-            {/* Mobile Menu - visible seulement sur mobile */}
-            <div className="lg:hidden">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className={`h-9 w-9 p-0 ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
-                    <Grid3X3 className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuItem>
-                    <Home className="h-4 w-4 mr-3" />
-                    Dashboard
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <CheckSquare className="h-4 w-4 mr-3" />
-                    My Tasks
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Database className="h-4 w-4 mr-3" />
-                    Analytics
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="sm:hidden" onClick={() => setIsDarkMode(!isDarkMode)}>
-                    {isDarkMode ? <Sun className="h-4 w-4 mr-3" /> : <Moon className="h-4 w-4 mr-3" />}
-                    Toggle Theme
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="sm:hidden" onClick={toggleFullScreen}>
-                    {isFullScreen ? <Minimize className="h-4 w-4 mr-3" /> : <Maximize className="h-4 w-4 mr-3" />}
-                    Fullscreen
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
+          </a>
         </div>
-
-        {/* Hidden file input for import */}
-        <input
-          type="file"
-          accept=".json"
-          onChange={handleFileUpload}
-          style={{ display: 'none' }}
-          id="json-file-input"
-        />
       </div>
 
       {/* External Components Dialog */}
