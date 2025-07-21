@@ -280,28 +280,39 @@ export default function MFactFormBuilder() {
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Status Indicator */}
+            {formData.fields.length > 0 && (
+              <div className="flex items-center gap-2 px-3 py-1 bg-green-50 border border-green-200 rounded-full text-green-700 text-sm mr-2">
+                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                {formData.fields.length} Components
+              </div>
+            )}
+            
             <Button
               variant="outline"
               size="sm"
               onClick={exportJSON}
+              className="hover:bg-gray-50"
             >
               <Download className="w-4 h-4 mr-2" />
-              Export JSON
+              Export
             </Button>
             
             <Button
               variant="outline"
               size="sm"
               onClick={generateCode}
+              className="hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300"
             >
               <Code className="w-4 h-4 mr-2" />
-              Generate Code
+              Generate
             </Button>
             
             <Button
               onClick={() => saveForm.mutate()}
               disabled={saveForm.isPending}
               size="sm"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-md"
             >
               <Save className="w-4 h-4 mr-2" />
               {saveForm.isPending ? 'Saving...' : 'Save Program'}
@@ -310,76 +321,98 @@ export default function MFactFormBuilder() {
         </div>
       </div>
 
-      {/* Main Content - Simplified Layout */}
-      <div className="flex-1 flex overflow-hidden bg-gray-50">
-        {/* Left Panel - Form Settings */}
-        <div className="w-72 bg-white border-r border-gray-200 overflow-y-auto">
-          <div className="p-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">Form Settings</h3>
+      {/* Main Content - Enhanced Layout */}
+      <div className="flex-1 flex overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+        {/* Left Panel - Enhanced Form Settings */}
+        <div className="w-72 bg-white border-r border-gray-200 overflow-y-auto shadow-sm">
+          <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <div className="p-2 bg-gradient-to-r from-gray-500 to-gray-600 rounded-lg">
+                <Settings className="w-4 h-4 text-white" />
+              </div>
+              Form Settings
+            </h3>
+            <p className="text-sm text-gray-500 mt-1">Configure your program structure</p>
           </div>
-          <div className="p-4 space-y-4">
-            <div>
-              <Label htmlFor="menu-id">Menu ID</Label>
+          <div className="p-4 space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="menu-id" className="text-sm font-medium text-gray-700">
+                Menu ID
+                <span className="text-xs text-gray-500 ml-2">(System identifier)</span>
+              </Label>
               <Input
                 id="menu-id"
                 value={formData.menuId}
                 onChange={(e) => setFormData(prev => ({ ...prev, menuId: e.target.value }))}
                 placeholder="e.g., ACCADJ, BUYTYP"
-                className="font-mono"
+                className="font-mono bg-gray-50 border-gray-300 focus:bg-white transition-colors"
               />
             </div>
 
-            <div>
-              <Label htmlFor="form-label">Program Label</Label>
+            <div className="space-y-2">
+              <Label htmlFor="form-label" className="text-sm font-medium text-gray-700">
+                Program Label
+                <span className="text-xs text-gray-500 ml-2">(Display name)</span>
+              </Label>
               <Input
                 id="form-label"
                 value={formData.label}
                 onChange={(e) => setFormData(prev => ({ ...prev, label: e.target.value }))}
                 placeholder="Enter program label"
+                className="bg-gray-50 border-gray-300 focus:bg-white transition-colors"
               />
             </div>
 
-            <div>
-              <Label htmlFor="form-width">Form Width</Label>
+            <div className="space-y-2">
+              <Label htmlFor="form-width" className="text-sm font-medium text-gray-700">
+                Form Width
+                <span className="text-xs text-gray-500 ml-2">(Layout size)</span>
+              </Label>
               <Select
                 value={formData.formWidth}
                 onValueChange={(value) => setFormData(prev => ({ ...prev, formWidth: value }))}
               >
-                <SelectTrigger>
+                <SelectTrigger className="bg-gray-50 border-gray-300 focus:bg-white">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="600px">600px - Compact</SelectItem>
-                  <SelectItem value="700px">700px - Standard</SelectItem>
-                  <SelectItem value="800px">800px - Wide</SelectItem>
-                  <SelectItem value="1000px">1000px - Extra Wide</SelectItem>
-                  <SelectItem value="100%">100% - Full Width</SelectItem>
+                  <SelectItem value="600px">📱 600px - Compact</SelectItem>
+                  <SelectItem value="700px">💻 700px - Standard</SelectItem>
+                  <SelectItem value="800px">🖥️ 800px - Wide</SelectItem>
+                  <SelectItem value="1000px">📺 1000px - Extra Wide</SelectItem>
+                  <SelectItem value="100%">🔄 100% - Full Width</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            <div>
-              <Label htmlFor="form-layout">Layout Type</Label>
+            <div className="space-y-2">
+              <Label htmlFor="form-layout" className="text-sm font-medium text-gray-700">
+                Layout Type
+                <span className="text-xs text-gray-500 ml-2">(UI behavior)</span>
+              </Label>
               <Select
                 value={formData.layout}
                 onValueChange={(value) => setFormData(prev => ({ ...prev, layout: value as FormLayout }))}
               >
-                <SelectTrigger>
+                <SelectTrigger className="bg-gray-50 border-gray-300 focus:bg-white">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="PROCESS">Process Form</SelectItem>
-                  <SelectItem value="MASTERMENU">Master Menu</SelectItem>
-                  <SelectItem value="DIALOG">Dialog</SelectItem>
-                  <SelectItem value="POPUP">Popup</SelectItem>
-                  <SelectItem value="FULLSCREEN">Full Screen</SelectItem>
-                  <SelectItem value="WIZARD">Wizard</SelectItem>
+                  <SelectItem value="PROCESS">⚙️ Process Form</SelectItem>
+                  <SelectItem value="MASTERMENU">📋 Master Menu</SelectItem>
+                  <SelectItem value="DIALOG">💬 Dialog</SelectItem>
+                  <SelectItem value="POPUP">🔲 Popup</SelectItem>
+                  <SelectItem value="FULLSCREEN">🖥️ Full Screen</SelectItem>
+                  <SelectItem value="WIZARD">🪄 Wizard</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            <div>
-              <Label htmlFor="program-category">Category</Label>
+            <div className="space-y-2">
+              <Label htmlFor="program-category" className="text-sm font-medium text-gray-700">
+                Category
+                <span className="text-xs text-gray-500 ml-2">(Business type)</span>
+              </Label>
               <Select
                 value={formData.metadata?.category}
                 onValueChange={(value) => setFormData(prev => ({ 
@@ -387,24 +420,24 @@ export default function MFactFormBuilder() {
                   metadata: { ...prev.metadata!, category: value as ProgramCategory }
                 }))}
               >
-                <SelectTrigger>
+                <SelectTrigger className="bg-gray-50 border-gray-300 focus:bg-white">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="FINANCIAL">Financial</SelectItem>
-                  <SelectItem value="INVENTORY">Inventory</SelectItem>
-                  <SelectItem value="PURCHASING">Purchasing</SelectItem>
-                  <SelectItem value="REPORTING">Reporting</SelectItem>
-                  <SelectItem value="ADMINISTRATION">Administration</SelectItem>
-                  <SelectItem value="CUSTOM">Custom</SelectItem>
+                  <SelectItem value="FINANCIAL">💰 Financial</SelectItem>
+                  <SelectItem value="INVENTORY">📦 Inventory</SelectItem>
+                  <SelectItem value="PURCHASING">🛒 Purchasing</SelectItem>
+                  <SelectItem value="REPORTING">📊 Reporting</SelectItem>
+                  <SelectItem value="ADMINISTRATION">⚙️ Administration</SelectItem>
+                  <SelectItem value="CUSTOM">✨ Custom</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
         </div>
 
-        {/* Center Panel - Construction Zone */}
-        <div className="flex-1 bg-white overflow-hidden">
+        {/* Center Panel - Enhanced Construction Zone */}
+        <div className="flex-1 bg-white overflow-hidden shadow-lg border border-gray-200 rounded-lg m-2">
           <div className="h-full">
             <MFactConstructionZone
               formData={formData}
@@ -415,10 +448,18 @@ export default function MFactFormBuilder() {
           </div>
         </div>
 
-        {/* Right Panel - Properties */}
-        <div className="w-80 bg-white border-l border-gray-200 overflow-y-auto">
-          <div className="p-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">Properties Panel</h3>
+        {/* Right Panel - Enhanced Properties */}
+        <div className="w-80 bg-white border-l border-gray-200 overflow-y-auto shadow-sm">
+          <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-white to-gray-50">
+            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <div className="p-2 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-lg">
+                <Settings className="w-4 h-4 text-white" />
+              </div>
+              Properties Panel
+            </h3>
+            <p className="text-sm text-gray-500 mt-1">
+              {selectedField ? `Editing: ${selectedField.Label || selectedField.Type}` : 'Select a component to edit properties'}
+            </p>
           </div>
           <div className="p-4">
             <MFactPropertiesPanel

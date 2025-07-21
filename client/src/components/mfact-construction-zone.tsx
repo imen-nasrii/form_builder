@@ -92,15 +92,24 @@ function DraggableComponent({ component, isNew = false }: DraggableComponentProp
       {...attributes}
       {...listeners}
       className={`
-        relative w-full p-3 border border-dashed border-gray-300 rounded-lg cursor-move transition-all duration-200
-        hover:shadow-md hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20
+        relative w-full p-3 border rounded-lg cursor-move transition-all duration-200 group
+        ${isDragging ? 
+          'border-blue-400 bg-blue-100 shadow-lg scale-105 z-10' : 
+          'border-gray-200 dark:border-gray-700 hover:border-blue-300 hover:shadow-md hover:bg-gradient-to-r hover:from-white hover:to-blue-50'
+        }
         flex items-center gap-3 text-sm
         ${isNew ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30' : 'bg-white dark:bg-gray-800'}
-        ${isDragging ? 'shadow-lg scale-105' : ''}
       `}
     >
-      <div className={`p-2 rounded ${component.color} bg-opacity-10`}>
-        <IconComponent className={`w-4 h-4 ${component.color}`} />
+      <div className={`p-2 rounded-lg bg-gradient-to-br ${
+        component.color?.includes('blue') ? 'from-blue-100 to-blue-200' :
+        component.color?.includes('green') ? 'from-green-100 to-green-200' :
+        component.color?.includes('purple') ? 'from-purple-100 to-purple-200' :
+        component.color?.includes('orange') ? 'from-orange-100 to-orange-200' :
+        component.color?.includes('red') ? 'from-red-100 to-red-200' :
+        'from-gray-100 to-gray-200'
+      } shadow-sm`}>
+        <IconComponent className={`w-4 h-4 ${component.color || 'text-gray-600'}`} />
       </div>
       <div className="flex-1">
         <div className="font-medium text-gray-900 dark:text-white">{component.label}</div>
@@ -320,12 +329,15 @@ function ComponentPalette({ onTemplateSelect, expandedSections, onToggleSection 
               key={key}
               variant="outline"
               size="sm"
-              className="w-full justify-start text-left"
+              className="w-full justify-start text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:border-blue-300 transition-all duration-200"
               onClick={() => onTemplateSelect(key)}
             >
-              <div>
-                <div className="font-medium">{template.label}</div>
-                <div className="text-xs text-gray-500">{template.metadata?.description}</div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></div>
+                <div>
+                  <div className="font-medium">{template.label}</div>
+                  <div className="text-xs text-gray-500">{template.metadata?.description}</div>
+                </div>
               </div>
             </Button>
           ))}
@@ -468,11 +480,19 @@ export default function MFactConstructionZone({
       onDragEnd={handleDragEnd}
     >
       <div className="grid grid-cols-12 gap-6 h-full">
-        {/* Component Palette */}
+        {/* Enhanced Component Palette */}
         <div className="col-span-3">
-          <Card className="h-full">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg font-semibold">Component Palette</CardTitle>
+          <Card className="h-full shadow-lg border-0 bg-gradient-to-b from-white to-gray-50">
+            <CardHeader className="pb-3 bg-gradient-to-r from-indigo-50 to-purple-50 border-b">
+              <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                <div className="p-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg">
+                  <Plus className="w-4 h-4 text-white" />
+                </div>
+                Component Palette
+                <Badge variant="secondary" className="ml-auto text-xs">
+                  25+ Components
+                </Badge>
+              </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               <ScrollArea className="h-[calc(100vh-200px)]">
@@ -491,20 +511,30 @@ export default function MFactConstructionZone({
         {/* Construction Zone */}
         <div className="col-span-9">
           <Card className="h-full">
-            <CardHeader className="pb-3">
+            <CardHeader className="pb-3 bg-gradient-to-r from-purple-50 to-blue-50 border-b">
               <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                <Move className="w-5 h-5" />
+                <div className="p-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg">
+                  <Grid3X3 className="w-5 h-5 text-white" />
+                </div>
                 Construction Zone
-                <Badge variant="secondary" className="ml-auto">
-                  {formData.fields.length} Component{formData.fields.length !== 1 ? 's' : ''}
-                </Badge>
+                <div className="ml-auto flex items-center gap-2">
+                  {formData.fields.length > 0 && (
+                    <div className="flex items-center gap-2 px-3 py-1 bg-green-100 border border-green-200 rounded-full text-green-700 text-sm">
+                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                      {formData.fields.length} Component{formData.fields.length !== 1 ? 's' : ''}
+                    </div>
+                  )}
+                  <Badge variant="outline" className="text-xs">
+                    4×6 Grid
+                  </Badge>
+                </div>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <ScrollArea className="h-[calc(100vh-200px)]">
                 {formData.fields.length === 0 ? (
                   <div 
-                    className="flex flex-col items-center justify-center h-96 text-center border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg relative"
+                    className="flex flex-col items-center justify-center h-96 text-center border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg relative bg-gradient-to-br from-gray-50 to-gray-100"
                     onDragOver={(e) => {
                       e.preventDefault();
                       e.currentTarget.classList.add('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
