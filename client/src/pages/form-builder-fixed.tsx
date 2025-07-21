@@ -4238,9 +4238,9 @@ export default function FormBuilderFixed() {
               </DialogContent>
             </Dialog>
 
-      <div className="flex h-[calc(100vh-60px)] mx-4 mt-4 rounded-lg overflow-hidden shadow-lg">
-        <div className={`${isPaletteCollapsed ? 'w-12' : 'w-72'} border-r overflow-y-auto transition-all duration-300 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
-          <div className="p-4">
+      <div className="flex h-[calc(100vh-60px)] mx-2 mt-2 rounded-lg overflow-hidden shadow-lg">
+        <div className={`${isPaletteCollapsed ? 'w-12' : 'w-64'} border-r overflow-y-auto transition-all duration-300 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
+          <div className="p-3">
             <div className="flex items-center justify-between mb-3">
               <h3 className={`font-semibold text-sm ${isDarkMode ? 'text-white' : 'text-gray-900'} ${isPaletteCollapsed ? 'hidden' : 'block'}`}>Components</h3>
               <Button
@@ -4319,7 +4319,7 @@ export default function FormBuilderFixed() {
         </div>
 
         {!isAdmin && (
-          <div className="flex-1 p-6">
+          <div className="flex-1 p-3">
             <div className={`rounded-lg border h-full ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
               <div className={`p-4 border-b ${isDarkMode ? 'border-gray-700' : ''}`}>
                 <div className="flex items-center justify-between">
@@ -4507,14 +4507,14 @@ export default function FormBuilderFixed() {
           </div>
         )}
 
-        <div className={`w-80 border-l overflow-y-auto ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
+        <div className={`w-72 border-l overflow-y-auto ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
           <Tabs defaultValue="properties" className="h-full">
-            <TabsList className={`grid w-full grid-cols-2 m-4 ${isDarkMode ? 'bg-gray-700' : ''}`}>
+            <TabsList className={`grid w-full grid-cols-2 m-3 ${isDarkMode ? 'bg-gray-700' : ''}`}>
               <TabsTrigger value="properties" className={isDarkMode ? 'data-[state=active]:bg-gray-600 text-gray-300' : ''}>Properties</TabsTrigger>
               <TabsTrigger value="json" className={isDarkMode ? 'data-[state=active]:bg-gray-600 text-gray-300' : ''}>JSON</TabsTrigger>
             </TabsList>
             
-            <TabsContent value="properties" className="h-full mx-4">
+            <TabsContent value="properties" className="h-full mx-3">
               {isAdmin ? (
                 // Panneau admin pour affecter le formulaire
                 <div className="p-6 space-y-6">
@@ -4569,7 +4569,7 @@ export default function FormBuilderFixed() {
               )}
             </TabsContent>
             
-            <TabsContent value="json" className="h-full p-6">
+            <TabsContent value="json" className="h-full p-3">
               <JsonValidator formData={formData} customComponents={customComponents} isDarkMode={isDarkMode} />
             </TabsContent>
           </Tabs>
