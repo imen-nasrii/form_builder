@@ -3703,7 +3703,7 @@ export default function FormBuilderFixed() {
 
   return (
     <div className={`min-h-screen transition-colors ${isDarkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
-      <div className={`border-b px-6 py-4 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
+      <div className={`border-b px-8 py-6 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             {/* Modern Dropdown Actions Menu */}
@@ -4219,9 +4219,9 @@ export default function FormBuilderFixed() {
               </DialogContent>
             </Dialog>
 
-      <div className="flex h-[calc(100vh-80px)]">
+      <div className="flex h-[calc(100vh-80px)] mx-4 mt-4 rounded-lg overflow-hidden shadow-lg">
         <div className={`${isPaletteCollapsed ? 'w-12' : 'w-72'} border-r overflow-y-auto transition-all duration-300 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
-          <div className="p-3">
+          <div className="p-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className={`font-semibold text-sm ${isDarkMode ? 'text-white' : 'text-gray-900'} ${isPaletteCollapsed ? 'hidden' : 'block'}`}>Components</h3>
               <Button
@@ -4490,12 +4490,12 @@ export default function FormBuilderFixed() {
 
         <div className={`w-80 border-l overflow-y-auto ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
           <Tabs defaultValue="properties" className="h-full">
-            <TabsList className={`grid w-full grid-cols-2 ${isDarkMode ? 'bg-gray-700' : ''}`}>
+            <TabsList className={`grid w-full grid-cols-2 m-4 ${isDarkMode ? 'bg-gray-700' : ''}`}>
               <TabsTrigger value="properties" className={isDarkMode ? 'data-[state=active]:bg-gray-600 text-gray-300' : ''}>Properties</TabsTrigger>
               <TabsTrigger value="json" className={isDarkMode ? 'data-[state=active]:bg-gray-600 text-gray-300' : ''}>JSON</TabsTrigger>
             </TabsList>
             
-            <TabsContent value="properties" className="h-full">
+            <TabsContent value="properties" className="h-full mx-4">
               {isAdmin ? (
                 // Panneau admin pour affecter le formulaire
                 <div className="p-6 space-y-6">
@@ -4550,7 +4550,7 @@ export default function FormBuilderFixed() {
               )}
             </TabsContent>
             
-            <TabsContent value="json" className="h-full p-4">
+            <TabsContent value="json" className="h-full p-6">
               <JsonValidator formData={formData} customComponents={customComponents} isDarkMode={isDarkMode} />
             </TabsContent>
           </Tabs>
