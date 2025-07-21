@@ -305,183 +305,122 @@ export default function MFactFormBuilder() {
           </div>
         </div>
 
-        {/* Enhanced Dropdown Navigation Toolbar */}
-        <div className="px-6 py-3 bg-gradient-to-r from-gray-50 via-white to-gray-50 dark:from-gray-900/50 dark:to-gray-800/50 border-b border-gray-100 shadow-sm backdrop-blur-sm">
+        {/* Simple Dropdown Navigation */}
+        <div className="px-6 py-3 bg-white border-b border-gray-200">
           <div className="flex items-center justify-between">
             <div className="relative">
-              {/* Dropdown Trigger Button */}
+              {/* Menu Button */}
               <Button
                 variant="outline"
                 size="sm"
-                className="h-8 px-4 text-sm bg-white hover:bg-gray-50 border-gray-300 shadow-sm transition-all duration-200"
+                className="h-9 px-3 text-sm"
                 onClick={() => setShowMenuDropdown(!showMenuDropdown)}
               >
-                <span className="flex items-center gap-2">
-                  ⚡ Quick Actions
-                  <svg className={`w-4 h-4 transition-transform duration-200 ${showMenuDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </span>
+                Menu ▼
               </Button>
 
-              {/* Dropdown Menu */}
+              {/* Dropdown */}
               {showMenuDropdown && (
-                <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 z-50 overflow-hidden animate-in slide-in-from-top-2 duration-200">
-                  {/* Navigation Section */}
-                  <div className="p-3 border-b border-gray-100 bg-gradient-to-r from-blue-50/50 to-indigo-50/50">
-                    <h3 className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Navigation</h3>
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 justify-start text-xs text-gray-600 hover:text-blue-700 hover:bg-blue-50"
-                        onClick={() => {
-                          setLocation('/');
-                          setShowMenuDropdown(false);
-                        }}
-                      >
-                        🏠 Home
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 justify-start text-xs text-gray-600 hover:text-blue-700 hover:bg-blue-50"
-                        onClick={() => {
-                          window.open('/guide', '_blank');
-                          setShowMenuDropdown(false);
-                        }}
-                      >
-                        📖 Guide
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Actions Section */}
-                  <div className="p-3 border-b border-gray-100 bg-gradient-to-r from-purple-50/50 to-pink-50/50">
-                    <h3 className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Actions</h3>
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 justify-start text-xs text-green-600 hover:text-green-700 hover:bg-green-50"
-                        onClick={() => {
-                          console.log('Import functionality');
-                          setShowMenuDropdown(false);
-                        }}
-                      >
-                        📥 Import
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 justify-start text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                        onClick={() => {
-                          exportJSON();
-                          setShowMenuDropdown(false);
-                        }}
-                      >
-                        📤 Export
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 justify-start text-xs text-purple-600 hover:text-purple-700 hover:bg-purple-50"
-                        onClick={() => {
-                          generateCode();
-                          setShowMenuDropdown(false);
-                        }}
-                      >
-                        💻 Generate
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 justify-start text-xs text-gray-600 hover:text-gray-700 hover:bg-gray-50"
-                        onClick={() => {
-                          console.log('Saving form...', formData);
-                          setShowMenuDropdown(false);
-                        }}
-                      >
-                        💾 Save
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Tools Section */}
-                  <div className="p-3 border-b border-gray-100 bg-gradient-to-r from-emerald-50/50 to-teal-50/50">
-                    <h3 className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Tools</h3>
-                    <div className="grid grid-cols-1 gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 justify-start text-xs text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
-                        onClick={() => {
-                          console.log('External Components');
-                          setShowMenuDropdown(false);
-                        }}
-                      >
-                        🔗 External Components
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 justify-start text-xs text-orange-600 hover:text-orange-700 hover:bg-orange-50"
-                        onClick={() => setShowMenuDropdown(false)}
-                      >
-                        👥 Collaborate (0)
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Danger Zone */}
-                  <div className="p-3 bg-gradient-to-r from-red-50/50 to-pink-50/50">
-                    <h3 className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Danger Zone</h3>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 w-full justify-start text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
-                      onClick={() => {
-                        if (confirm('Clear all components?')) {
-                          setFormData(prev => ({ ...prev, fields: [] }));
-                          setSelectedField(null);
-                        }
-                        setShowMenuDropdown(false);
-                      }}
-                    >
-                      🗑️ Clear All Components
-                    </Button>
-                  </div>
+                <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50 py-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full justify-start px-3 py-2 text-sm hover:bg-gray-50"
+                    onClick={() => {
+                      setLocation('/');
+                      setShowMenuDropdown(false);
+                    }}
+                  >
+                    Home
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full justify-start px-3 py-2 text-sm hover:bg-gray-50"
+                    onClick={() => {
+                      window.open('/guide', '_blank');
+                      setShowMenuDropdown(false);
+                    }}
+                  >
+                    Guide
+                  </Button>
+                  <hr className="my-1" />
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full justify-start px-3 py-2 text-sm hover:bg-gray-50"
+                    onClick={() => {
+                      console.log('Import functionality');
+                      setShowMenuDropdown(false);
+                    }}
+                  >
+                    Import
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full justify-start px-3 py-2 text-sm hover:bg-gray-50"
+                    onClick={() => {
+                      exportJSON();
+                      setShowMenuDropdown(false);
+                    }}
+                  >
+                    Export
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full justify-start px-3 py-2 text-sm hover:bg-gray-50"
+                    onClick={() => {
+                      console.log('External Components');
+                      setShowMenuDropdown(false);
+                    }}
+                  >
+                    External Components
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full justify-start px-3 py-2 text-sm hover:bg-gray-50"
+                    onClick={() => setShowMenuDropdown(false)}
+                  >
+                    Collaborate (0)
+                  </Button>
+                  <hr className="my-1" />
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full justify-start px-3 py-2 text-sm text-red-600 hover:bg-red-50"
+                    onClick={() => {
+                      if (confirm('Clear all components?')) {
+                        setFormData(prev => ({ ...prev, fields: [] }));
+                        setSelectedField(null);
+                      }
+                      setShowMenuDropdown(false);
+                    }}
+                  >
+                    Clear
+                  </Button>
                 </div>
               )}
             </div>
             
             <div className="flex items-center gap-3">
-              {/* Status Indicator */}
-              {formData.fields.length > 0 && (
-                <div className="flex items-center gap-2 px-3 py-1 bg-green-50 border border-green-200 rounded-full text-green-700 text-sm">
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                  {formData.fields.length} Components
-                </div>
-              )}
-              
-              {/* Save Button */}
               <Button
                 variant="default"
                 size="sm"
-                className="h-8 px-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-md transition-all duration-200"
+                className="h-9 px-4"
                 onClick={() => {
-                  // Save functionality
                   console.log('Saving form...', formData);
-                  // You can implement actual save logic here
                 }}
               >
-                💾 Save
+                Save
               </Button>
             </div>
           </div>
         </div>
 
-        {/* Click outside to close dropdown */}
+        {/* Click outside to close */}
         {showMenuDropdown && (
           <div 
             className="fixed inset-0 z-40" 
