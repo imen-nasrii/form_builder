@@ -429,20 +429,20 @@ export default function MFactFormBuilder() {
         )}
       </div>
 
-      {/* Main Content - Enhanced Layout */}
-      <div className="flex-1 flex overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
-        {/* Left Panel - Enhanced Form Settings */}
-        <div className="w-72 bg-white border-r border-gray-200 overflow-y-auto shadow-sm">
-          <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-              <div className="p-2 bg-gradient-to-r from-gray-500 to-gray-600 rounded-lg">
-                <Settings className="w-4 h-4 text-white" />
+      {/* Main Content - Modern Layout */}
+      <div className="flex-1 flex overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20">
+        {/* Left Panel - Modern Components Palette */}
+        <div className="w-80 bg-white/95 backdrop-blur-sm border-r border-slate-200/60 overflow-y-auto shadow-xl">
+          <div className="p-5 border-b border-slate-200/60 bg-gradient-to-r from-slate-50 to-white/80">
+            <h3 className="text-lg font-bold text-slate-900 flex items-center gap-3">
+              <div className="p-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl shadow-lg">
+                <Settings className="w-5 h-5 text-white" />
               </div>
-              Form Settings
+              Components
             </h3>
-            <p className="text-sm text-gray-500 mt-1">Configure your program structure</p>
+            <p className="text-sm text-slate-600 mt-1.5">Drag and drop to build your form</p>
           </div>
-          <div className="p-4 space-y-6">
+          <div className="p-5 space-y-6">
             <div className="space-y-2">
               <Label htmlFor="menu-id" className="text-sm font-medium text-gray-700">
                 Menu ID
@@ -556,20 +556,25 @@ export default function MFactFormBuilder() {
           </div>
         </div>
 
-        {/* Right Panel - Enhanced Properties */}
-        <div className="w-80 bg-white border-l border-gray-200 overflow-y-auto shadow-sm">
-          <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-white to-gray-50">
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-              <div className="p-2 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-lg">
-                <Settings className="w-4 h-4 text-white" />
+        {/* Right Panel - Modern Properties */}
+        <div className="w-96 bg-white/95 backdrop-blur-sm border-l border-slate-200/60 overflow-y-auto shadow-xl">
+          <div className="p-5 border-b border-slate-200/60 bg-gradient-to-r from-emerald-50/80 to-teal-50/60">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl shadow-lg">
+                <Settings className="w-5 h-5 text-white" />
               </div>
-              Properties Panel
-            </h3>
-            <p className="text-sm text-gray-500 mt-1">
-              {selectedField ? `Editing: ${selectedField.Label || selectedField.Type}` : 'Select a component to edit properties'}
-            </p>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">Properties</h3>
+                <p className="text-sm text-slate-600 mt-0.5">
+                  {selectedField 
+                    ? `Configure ${selectedField.Label || selectedField.Type}` 
+                    : 'Select a component to configure'
+                  }
+                </p>
+              </div>
+            </div>
           </div>
-          <div className="p-4">
+          <div className="p-5">
             <MFactPropertiesPanel
               selectedField={selectedField}
               onFieldUpdate={handleFieldUpdate}
