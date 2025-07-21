@@ -61,6 +61,7 @@ import { Badge } from '@/components/ui/badge';
 import { ComponentCategories as EnterpriseComponentCategories, ComponentSpecificProperties, CommonProperties, renderFormComponent } from '@/components/enterprise-form-components';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { FormFieldProperties } from '@/components/form-field-properties';
+import ComponentConfigManager from '@/components/form-builder/component-config-manager';
 
 // Model Dropdown Selector Component
 function ModelDropdownSelector({ 
@@ -2838,6 +2839,7 @@ export default function FormBuilderFixed() {
 
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [importedData, setImportedData] = useState<any>(null);
+  const [showGuide, setShowGuide] = useState(false);
   const [isPaletteCollapsed, setIsPaletteCollapsed] = useState(false);
   const [isDragZoneCollapsed, setIsDragZoneCollapsed] = useState(false);
   const [showMenuDropdown, setShowMenuDropdown] = useState(false);
@@ -3716,27 +3718,17 @@ export default function FormBuilderFixed() {
         <div className="flex items-center justify-between h-16 px-6">
           {/* Left side: Quick access buttons */}
           <div className="flex items-center space-x-3">
-            <Button
-              variant="outline"
-              size="sm"
-              className={`text-xs ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
-              onClick={() => {
-                // TODO: Implement External Components functionality
-                alert("External Components - Functionality to be implemented");
-              }}
-            >
-              <Package className="w-3 h-3 mr-1" />
-              External Components
-            </Button>
+            {/* External Components avec ComponentConfigManager */}
+            <ComponentConfigManager
+              customComponents={customComponents}
+              onLoadComponents={(components) => setCustomComponents(components)}
+            />
             
             <Button
               variant="outline"
               size="sm"
               className={`text-xs ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
-              onClick={() => {
-                // TODO: Implement Guide functionality
-                alert("Guide - Functionality to be implemented");
-              }}
+              onClick={() => setShowGuide(true)}
             >
               <BookOpen className="w-3 h-3 mr-1" />
               Guide
@@ -4656,6 +4648,61 @@ export default function FormBuilderFixed() {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Guide Modal */}
+      <Dialog open={showGuide} onOpenChange={setShowGuide}>
+        <DialogContent className={`max-w-4xl ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
+          <DialogHeader>
+            <DialogTitle className={isDarkMode ? 'text-white' : ''}>
+              <BookOpen className="w-5 h-5 inline mr-2" />
+              FormBuilder Guide
+            </DialogTitle>
+          </DialogHeader>
+          <div className={`space-y-6 max-h-96 overflow-y-auto ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+            <div>
+              <h3 className={`font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Getting Started</h3>
+              <ul className="space-y-1 text-sm">
+                <li>• Drag components from the left palette to the construction zone</li>
+                <li>• Click on any component to edit its properties in the right panel</li>
+                <li>• Use the grid system to organize your form layout</li>
+                <li>• Save your work frequently using the Save button</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className={`font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Component Types</h3>
+              <ul className="space-y-1 text-sm">
+                <li>• <strong>TEXT:</strong> Single line text input</li>
+                <li>• <strong>TEXTAREA:</strong> Multi-line text input</li>
+                <li>• <strong>SELECT:</strong> Dropdown selection</li>
+                <li>• <strong>CHECKBOX:</strong> True/false checkbox</li>
+                <li>• <strong>RADIOGRP:</strong> Single choice from multiple options</li>
+                <li>• <strong>DATEPKR:</strong> Date picker component</li>
+                <li>• <strong>GRIDLKP:</strong> Data grid with lookup capabilities</li>
+                <li>• <strong>LSTLKP:</strong> List lookup component</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className={`font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>External Components</h3>
+              <ul className="space-y-1 text-sm">
+                <li>• Click "External Components" to import custom JSON configurations</li>
+                <li>• Upload JSON files with custom component definitions</li>
+                <li>• Export your custom components for reuse in other projects</li>
+                <li>• Create specialized components for your business needs</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className={`font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Tips & Shortcuts</h3>
+              <ul className="space-y-1 text-sm">
+                <li>• Use the search box to quickly find components</li>
+                <li>• Toggle dark mode with the theme button</li>
+                <li>• Use fullscreen mode for better workspace</li>
+                <li>• Check the JSON validator to ensure form integrity</li>
+                <li>• Import/Export functionality for form templates</li>
+              </ul>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
