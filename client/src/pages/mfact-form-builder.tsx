@@ -251,72 +251,132 @@ export default function MFactFormBuilder() {
           </div>
         </div>
       )}
-      {/* Header */}
-      <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setLocation('/dashboard')}
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Dashboard
-            </Button>
-            
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <Wand2 className="w-4 h-4 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-                  MFact Form Builder
-                </h1>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {formId ? `Editing: ${formData.label || 'Untitled Program'}` : 'Create New MFact Program'}
-                </p>
+      {/* Enhanced Header with Secondary Navigation */}
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        {/* Main Header */}
+        <div className="px-6 py-3 border-b border-gray-100">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setLocation('/dashboard')}
+                className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Dashboard
+              </Button>
+              
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                  <Wand2 className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+                    MFact Form Builder
+                  </h1>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {formId ? `Editing: ${formData.label || 'Untitled Program'}` : 'Create New MFact Program'}
+                  </p>
+                </div>
               </div>
             </div>
+            
+            <div className="flex items-center gap-2">
+              {/* Status Indicator */}
+              {formData.fields.length > 0 && (
+                <div className="flex items-center gap-2 px-3 py-1 bg-green-50 border border-green-200 rounded-full text-green-700 text-sm mr-2">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  {formData.fields.length} Components
+                </div>
+              )}
+              
+              <Button
+                onClick={() => saveForm.mutate()}
+                disabled={saveForm.isPending}
+                size="sm"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-md"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                {saveForm.isPending ? 'Saving...' : 'Save Program'}
+              </Button>
+            </div>
           </div>
+        </div>
 
-          <div className="flex items-center gap-2">
-            {/* Status Indicator */}
-            {formData.fields.length > 0 && (
-              <div className="flex items-center gap-2 px-3 py-1 bg-green-50 border border-green-200 rounded-full text-green-700 text-sm mr-2">
-                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                {formData.fields.length} Components
-              </div>
-            )}
+        {/* Secondary Navigation Toolbar */}
+        <div className="px-6 py-2 bg-gray-50 dark:bg-gray-900/50">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 text-xs text-gray-600 hover:text-gray-900 hover:bg-white hover:shadow-sm"
+                onClick={() => setLocation('/')}
+              >
+                🏠 Home
+              </Button>
+              
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 text-xs text-gray-600 hover:text-gray-900 hover:bg-white hover:shadow-sm"
+                onClick={() => window.open('/guide', '_blank')}
+              >
+                📖 Guide
+              </Button>
+              
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 hover:shadow-sm"
+                onClick={exportJSON}
+              >
+                📤 Export
+              </Button>
+              
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 text-xs text-purple-600 hover:text-purple-700 hover:bg-purple-50 hover:shadow-sm"
+                onClick={generateCode}
+              >
+                💻 Generate Code
+              </Button>
+              
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 text-xs text-gray-600 hover:text-gray-900 hover:bg-white hover:shadow-sm"
+                onClick={() => console.log('External Components')}
+              >
+                🔗 External Components
+              </Button>
+              
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 text-xs text-gray-600 hover:text-gray-900 hover:bg-white hover:shadow-sm"
+              >
+                👥 Collaborate (0)
+              </Button>
+            </div>
             
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={exportJSON}
-              className="hover:bg-gray-50"
-            >
-              <Download className="w-4 h-4 mr-2" />
-              Export
-            </Button>
-            
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={generateCode}
-              className="hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300"
-            >
-              <Code className="w-4 h-4 mr-2" />
-              Generate
-            </Button>
-            
-            <Button
-              onClick={() => saveForm.mutate()}
-              disabled={saveForm.isPending}
-              size="sm"
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-md"
-            >
-              <Save className="w-4 h-4 mr-2" />
-              {saveForm.isPending ? 'Saving...' : 'Save Program'}
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
+                onClick={() => {
+                  if (confirm('Clear all components?')) {
+                    setFormData(prev => ({ ...prev, fields: [] }));
+                    setSelectedField(null);
+                  }
+                }}
+              >
+                🗑️ Clear
+              </Button>
+            </div>
           </div>
         </div>
       </div>
