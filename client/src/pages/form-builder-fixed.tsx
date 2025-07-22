@@ -67,6 +67,7 @@ import {
 } from 'lucide-react';
 import { type FormData, type FormField } from '@/lib/form-builder-types';
 import FlexibleExcelGrid from '@/components/form-builder/flexible-excel-grid';
+import ExternalComponentsDialog from '@/components/form-builder/external-components-dialog';
 
 // ComponentCategories based on your exact specifications
 const ComponentCategories = {
@@ -703,6 +704,7 @@ export default function FormBuilderPage() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [customComponents, setCustomComponents] = useState<any[]>([]);
+  const [isExternalComponentsOpen, setIsExternalComponentsOpen] = useState(false);
 
   // Clean up duplicate components that appear both in groups and root level
   const cleanupDuplicateComponents = (fields: FormField[]): FormField[] => {
@@ -778,6 +780,21 @@ export default function FormBuilderPage() {
         variant: "default"
       });
     }
+  };
+
+  const handleAddExternalComponent = (externalComponent: any) => {
+    const newField = {
+      ...externalComponent,
+      Id: `${externalComponent.Type}_${Date.now()}`
+    };
+    
+    setFormData(prev => ({
+      ...prev,
+      fields: [...prev.fields, newField]
+    }));
+    
+    setSelectedField(newField);
+    setIsExternalComponentsOpen(false);
   };
 
   const removeField = (fieldId: string) => {
@@ -941,13 +958,7 @@ export default function FormBuilderPage() {
                       <Eye className="h-4 w-4 mr-2" />
                       {isPreviewMode ? 'Edit Mode' : 'Preview Mode'}
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => {
-                      // External Components functionality
-                      toast({
-                        title: "External Components",
-                        description: "Opening component library...",
-                      });
-                    }} className={isDarkMode ? 'text-white hover:bg-gray-700' : ''}>
+                    <DropdownMenuItem onClick={() => setIsExternalComponentsOpen(true)} className={isDarkMode ? 'text-white hover:bg-gray-700' : ''}>
                       <Package className="h-4 w-4 mr-2" />
                       External Components
                     </DropdownMenuItem>
@@ -1178,6 +1189,14 @@ export default function FormBuilderPage() {
           </Card>
         )}
       </div>
+
+      {/* External Components Dialog */}
+      <ExternalComponentsDialog
+        isOpen={isExternalComponentsOpen}
+        onOpenChange={setIsExternalComponentsOpen}
+        onAddComponent={handleAddExternalComponent}
+        isDarkMode={isDarkMode}
+      />
     </div>
   );
 }
