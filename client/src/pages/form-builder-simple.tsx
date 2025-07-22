@@ -168,13 +168,28 @@ const ComponentTypes = {
     icon: Hash, 
     label: 'Number', 
     color: 'indigo',
-    category: 'Basic',
+    category: 'Business',
     defaultProps: {
+      required: false,
       DecimalPlaces: 2,
       MinValue: 0,
       MaxValue: 999999,
       ShowSpinner: true,
-      Step: 1
+      Step: 1,
+      EndpointOnchange: false,
+      EndpointDepend: {
+        Conditions: []
+      },
+      RequestedFields: [],
+      EnabledWhen: {
+        LogicalOperator: 'AND',
+        Conditions: []
+      },
+      VisibleWhen: {
+        LogicalOperator: 'AND',
+        Conditions: []
+      },
+      Validations: []
     }
   },
   PERCENTAGE: { 
@@ -241,60 +256,127 @@ const ComponentTypes = {
     icon: List, 
     label: 'Select Dropdown', 
     color: 'purple',
-    category: 'Selection',
+    category: 'Business',
     defaultProps: {
-      Items: ['Option 1', 'Option 2', 'Option 3'],
-      DefaultValue: 'Option 1',
-      Required: true
+      required: false,
+      Outlined: true,
+      UserIntKey: true,
+      OptionValues: {
+        '0': '',
+        '1': 'Option 1',
+        '2': 'Option 2',
+        '3': 'Option 3'
+      },
+      Validations: []
     }
   },
   LSTLKP: { 
     icon: ListOrdered, 
     label: 'List Lookup', 
     color: 'indigo',
-    category: 'Selection',
+    category: 'Business',
     defaultProps: {
-      LookupSource: 'DataTable',
-      ValueColumn: 'ID',
-      TextColumn: 'Name',
-      DisplayColumns: ['Name', 'Description'],
-      FilterExpression: 'Active = true'
+      Entity: 'LookupTable',
+      EntitykeyField: 'id',
+      KeyColumn: 'id',
+      required: true,
+      endpoint: 'GetAllItems',
+      MainPropItemList: 'id',
+      SecondPropItemList: 'description',
+      ShowSecndPropItemList: true,
+      ColumnDefinitions: [
+        {
+          DataField: 'id',
+          DataType: 'STRING'
+        },
+        {
+          DataField: 'description',
+          DataType: 'STRING'
+        }
+      ],
+      ItemInfo: {
+        MainProperty: 'id',
+        DescProperty: 'description',
+        ShowDescription: true
+      }
     }
   },
   GRIDLKP: { 
     icon: Table, 
     label: 'Grid Lookup', 
     color: 'green',
-    category: 'Selection',
+    category: 'Business',
     defaultProps: {
-      LookupSource: 'DataTable',
-      ValueColumn: 'ID',
-      TextColumn: 'Name',
-      DisplayColumns: ['ID', 'Name', 'Category', 'Status'],
-      ShowCheckboxes: false,
-      MultiSelect: false,
-      Height: '300px'
+      Entity: 'DataTable',
+      EntitykeyField: 'id',
+      KeyColumn: 'id',
+      required: true,
+      showAliasBox: true,
+      EndpointOnchange: false,
+      ColumnDefinitions: [
+        {
+          DataField: 'id',
+          Caption: 'ID',
+          DataType: 'STRING'
+        },
+        {
+          DataField: 'name',
+          Caption: 'Name',
+          DataType: 'STRING'
+        }
+      ],
+      ItemInfo: {
+        MainProperty: 'id',
+        DescProperty: 'name',
+        ShowDescription: true
+      },
+      LoadDataInfo: {
+        DataModel: 'DefaultModel',
+        ColumnsDefinition: []
+      }
     }
   },
   CHECKBOX: { 
     icon: CheckSquare, 
     label: 'Checkbox', 
     color: 'cyan',
-    category: 'Selection',
+    category: 'Business',
     defaultProps: {
-      DefaultValue: 'false',
-      TextColor: '#333333'
+      CheckboxValue: true,
+      Value: false,
+      spacing: 0,
+      Width: '600px',
+      EnabledWhen: {
+        Conditions: []
+      },
+      Validations: []
     }
   },
   RADIO: { 
     icon: Radio, 
     label: 'Radio Button', 
     color: 'orange',
-    category: 'Selection',
+    category: 'Business',
     defaultProps: {
       Items: ['Yes', 'No', 'Maybe'],
       DefaultValue: 'Yes',
       Inline: true
+    }
+  },
+  RADIOGRP: { 
+    icon: Radio, 
+    label: 'Radio Group', 
+    color: 'purple',
+    category: 'Business',
+    defaultProps: {
+      value: 'option1',
+      Spacing: '0',
+      Width: '100',
+      OptionValues: {
+        'option1': 'Option 1',
+        'option2': 'Option 2',
+        'option3': 'Option 3'
+      }
     }
   },
   TOGGLE: { 
@@ -314,13 +396,34 @@ const ComponentTypes = {
     icon: Calendar, 
     label: 'Date Picker', 
     color: 'orange',
-    category: 'DateTime',
+    category: 'Business',
     defaultProps: {
+      required: true,
       DateFormat: 'DD/MM/YYYY',
       ShowTime: false,
       MinDate: '01/01/2020',
       MaxDate: '31/12/2030',
-      DefaultValue: 'Today'
+      DefaultValue: 'Today',
+      Validations: [],
+      EnabledWhen: {
+        Conditions: []
+      }
+    }
+  },
+  DATEPKR: { 
+    icon: Calendar, 
+    label: 'Date Picker (DATEPKR)', 
+    color: 'orange',
+    category: 'Business',
+    defaultProps: {
+      required: true,
+      DateFormat: 'DD/MM/YYYY',
+      ShowTime: false,
+      EnabledWhen: {
+        LogicalOperator: 'AND',
+        Conditions: []
+      },
+      Validations: []
     }
   },
   DATETIMEPICKER: { 
@@ -391,11 +494,15 @@ const ComponentTypes = {
     icon: FileText, 
     label: 'Label', 
     color: 'gray',
-    category: 'Display',
+    category: 'Business',
     defaultProps: {
       FontWeight: 'bold',
       FontSize: '14px',
-      TextColor: '#333333'
+      TextColor: '#333333',
+      VisibleWhen: {
+        LogicalOperator: 'AND',
+        Conditions: []
+      }
     }
   },
   HEADER: { 
@@ -448,12 +555,14 @@ const ComponentTypes = {
     icon: Package, 
     label: 'Group Box', 
     color: 'teal',
-    category: 'Layout',
+    category: 'Business',
     defaultProps: {
+      isGroup: true,
+      Spacing: '0',
+      ChildFields: [],
       BorderRadius: '4px',
       Padding: '15px',
-      BorderColor: '#cccccc',
-      Children: []
+      BorderColor: '#cccccc'
     }
   },
 
@@ -835,7 +944,7 @@ export default function SimpleFormBuilder() {
               <h3 className="font-semibold mb-4">All Components</h3>
               
               {/* Group components by category */}
-              {['Basic', 'Selection', 'DateTime', 'Media', 'Display', 'Layout', 'Action', 'Advanced'].map(categoryName => {
+              {['Business', 'Basic', 'Selection', 'DateTime', 'Media', 'Display', 'Layout', 'Action', 'Advanced'].map(categoryName => {
                 const categoryComponents = Object.entries(ComponentTypes).filter(([_, config]) => 
                   config.category === categoryName
                 );
