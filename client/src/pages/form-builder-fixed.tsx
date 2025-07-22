@@ -3718,6 +3718,96 @@ export default function FormBuilderFixed() {
         ShowPercentage: true,
         Animated: true,
         Color: '#28a745'
+      },
+      'GRID': {
+        Id: `DATAGRID_${timestamp}`,
+        Type: 'GRID',
+        Label: 'DATA GRID',
+        DataField: 'data_grid',
+        Entity: 'GridData',
+        Width: '100%',
+        Spacing: 'md',
+        Required: false,
+        Inline: false,
+        Outlined: true,
+        Value: '',
+        Columns: [
+          {
+            DataField: 'id',
+            Caption: 'ID',
+            DataType: 'STRING',
+            Width: '80px',
+            Visible: true,
+            Sortable: true
+          },
+          {
+            DataField: 'name',
+            Caption: 'Name',
+            DataType: 'STRING',
+            Width: '150px',
+            Visible: true,
+            Sortable: true
+          },
+          {
+            DataField: 'value',
+            Caption: 'Value',
+            DataType: 'NUMBER',
+            Width: '100px',
+            Visible: true,
+            Sortable: true
+          }
+        ],
+        Pagination: true,
+        PageSize: 10,
+        ShowHeader: true,
+        ShowFooter: true,
+        AllowSelection: true,
+        SelectionMode: 'single'
+      },
+      'DIALOG': {
+        Id: `MODAL_${timestamp}`,
+        Type: 'DIALOG',
+        Label: 'MODAL DIALOG',
+        DataField: 'modal_dialog',
+        Entity: 'UIElements',
+        Width: '500px',
+        Spacing: 'md',
+        Required: false,
+        Inline: false,
+        Outlined: true,
+        Value: '',
+        Title: 'Dialog Title',
+        Modal: true,
+        Resizable: true,
+        Draggable: true,
+        ShowCloseButton: true,
+        CloseOnEscape: true,
+        CloseOnBackdrop: false,
+        ChildFields: []
+      },
+      'FILEUPLOAD': {
+        Id: `FILEUPLOAD_${timestamp}`,
+        Type: 'FILEUPLOAD',
+        Label: 'FILE UPLOAD',
+        DataField: 'file_upload',
+        Entity: 'FileStorage',
+        Width: '100%',
+        Spacing: 'md',
+        Required: false,
+        Inline: false,
+        Outlined: true,
+        Value: '',
+        AcceptedTypes: '.pdf,.doc,.docx,.xls,.xlsx,.jpg,.png,.gif',
+        MaxFileSize: '50MB',
+        Multiple: true,
+        ShowPreview: true,
+        AllowDragDrop: true,
+        UploadEndpoint: '/api/upload',
+        ValidationRules: {
+          MinFiles: 0,
+          MaxFiles: 10,
+          RequiredFileTypes: ['.pdf', '.doc', '.docx']
+        }
       }
     };
 
@@ -3815,7 +3905,7 @@ export default function FormBuilderFixed() {
       'GRIDLKP', 'LSTLKP', 'DATEPICKER', 'DATEPKR', 'SELECT', 'RADIOGRP', 'CHECKBOX', 
       'GROUP', 'NUMERIC', 'TEXT', 'TEXTAREA', 'BUTTON', 'HIDDEN', 'LABEL', 'SEPARATOR', 
       'IMAGE', 'PASSWORD', 'EMAIL', 'PHONE', 'URL', 'TIME', 'COLOR', 'RANGE', 'FILE', 
-      'RATING', 'TOGGLE', 'PROGRESS'
+      'RATING', 'TOGGLE', 'PROGRESS', 'GRID', 'DIALOG', 'FILEUPLOAD'
     ];
     if (smartComponents.includes(componentType)) {
       toast({
