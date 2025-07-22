@@ -12,8 +12,161 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { AlertCircle, Save, Download, Upload, Eye, Settings, Trash2, Edit, Plus, X, Code, Package, Users, Help, FileJson, Star, Archive, Copy, RotateCcw, Grid, Layout, Type, Calendar, CheckSquare, List, RadioIcon, Palette, Bug, Home, ChevronDown, ChevronRight, HelpCircle, Monitor, Layers, Paintbrush, Share } from 'lucide-react';
-import { ComponentTypes, type FormData, type FormField } from '@/lib/form-builder-types';
+import { 
+  Type, 
+  AlignLeft, 
+  CheckSquare, 
+  List, 
+  Calendar, 
+  Upload, 
+  Table, 
+  Square,
+  Search, 
+  Grid3X3,
+  Hash,
+  ChevronDown,
+  ChevronRight,
+  Settings,
+  Save,
+  Download,
+  Eye,
+  Trash2,
+  Package,
+  X
+} from 'lucide-react';
+import { type FormData, type FormField } from '@/lib/form-builder-types';
+
+// Comprehensive ComponentCategories based on original design
+const ComponentCategories = {
+  inputFields: {
+    name: 'Input Fields',
+    icon: Type,
+    color: 'blue',
+    components: {
+      TEXT: { icon: Type, label: 'Text Input', color: 'blue' },
+      NUMERIC: { icon: Hash, label: 'Numeric Input', color: 'green' },
+      DATEPKR: { icon: Calendar, label: 'Date Picker', color: 'purple' },
+      DATEPICKER: { icon: Calendar, label: 'Date Picker Alt', color: 'purple' }
+    }
+  },
+  selection: {
+    name: 'Selection Controls',
+    icon: List,
+    color: 'orange',
+    components: {
+      SELECT: { icon: List, label: 'Select Dropdown', color: 'orange' },
+      CHECKBOX: { icon: CheckSquare, label: 'Checkbox', color: 'cyan' },
+      RADIOGRP: { icon: CheckSquare, label: 'Radio Group', color: 'purple' }
+    }
+  },
+  lookup: {
+    name: 'Lookup Components',
+    icon: Search,
+    color: 'indigo',
+    components: {
+      GRIDLKP: { icon: Grid3X3, label: 'Grid Lookup', color: 'indigo' },
+      LSTLKP: { icon: Search, label: 'List Lookup', color: 'teal' }
+    }
+  },
+  dataDisplay: {
+    name: 'Data & Display',
+    icon: Table,
+    color: 'emerald',
+    components: {
+      GRID: { icon: Table, label: 'Data Grid', color: 'emerald' },
+      LABEL: { icon: Type, label: 'Label', color: 'gray' }
+    }
+  },
+  containerLayout: {
+    name: 'Container & Layout',
+    icon: Square,
+    color: 'violet',
+    components: {
+      GROUP: { icon: Square, label: 'Group Container', color: 'violet' },
+      DIALOG: { icon: Settings, label: 'Dialog Container', color: 'pink' }
+    }
+  },
+  fileUpload: {
+    name: 'File & Upload',
+    icon: Upload,
+    color: 'red',
+    components: {
+      FILEUPLOAD: { icon: Upload, label: 'File Upload', color: 'red' }
+    }
+  }
+};
+
+// Flatten for compatibility
+const ComponentTypes = Object.values(ComponentCategories).reduce((acc, category) => {
+  return { ...acc, ...category.components };
+}, {} as Record<string, { icon: any; label: string; color: string }>);
+
+function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMode = false, addField }: {
+  componentType: string;
+  label: string;
+  icon: any;
+  color: string;
+  isDarkMode?: boolean;
+  addField: (type: string) => void;
+}) {
+  const getColorClasses = () => {
+    if (isDarkMode) {
+      return {
+        bg: 'bg-gray-700 hover:bg-gray-600',
+        border: 'border-gray-500 hover:border-gray-400',
+        text: 'text-gray-200',
+        icon: 'text-gray-300'
+      };
+    }
+    return {
+      bg: `bg-${color}-50 hover:bg-${color}-100`,
+      border: `border-${color}-200 hover:border-${color}-400`,
+      text: 'text-gray-900',
+      icon: `text-${color}-600`
+    };
+  };
+
+  const getIconBackgroundClass = (color: string, isDarkMode: boolean) => {
+    if (isDarkMode) {
+      return 'bg-gray-600';
+    }
+    const colorMap: Record<string, string> = {
+      blue: 'bg-blue-100',
+      green: 'bg-green-100',
+      purple: 'bg-purple-100',
+      orange: 'bg-orange-100',
+      cyan: 'bg-cyan-100',
+      indigo: 'bg-indigo-100',
+      teal: 'bg-teal-100',
+      emerald: 'bg-emerald-100',
+      gray: 'bg-gray-100',
+      violet: 'bg-violet-100',
+      pink: 'bg-pink-100',
+      red: 'bg-red-100'
+    };
+    return colorMap[color] || 'bg-gray-100';
+  };
+
+  const colorClasses = getColorClasses();
+
+  return (
+    <div
+      onClick={() => addField(componentType)}
+      className={`
+        relative cursor-pointer border rounded-lg p-2 transition-all duration-200
+        ${colorClasses.bg} ${colorClasses.border} ${colorClasses.text}
+        transform hover:scale-105 hover:shadow-md
+        flex flex-col items-center space-y-1
+      `}
+      title={label}
+    >
+      <div className={`w-6 h-6 rounded-md flex items-center justify-center ${getIconBackgroundClass(color, isDarkMode)}`}>
+        <Icon className={`w-3 h-3 ${colorClasses.icon}`} />
+      </div>
+      <span className="text-xs font-medium text-center leading-tight">{label}</span>
+    </div>
+  );
+}
 
 // Component Templates based on user specifications
 const createDefaultField = (componentType: string, customComponent?: any): FormField => {
@@ -364,33 +517,36 @@ export default function FormBuilderPage() {
     <div className="min-h-screen bg-gray-50">
       <div className="flex h-screen">
         {/* Sidebar - Component Palette */}
-        <Card className="w-80 rounded-none border-r">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Palette className="h-5 w-5" />
-              Component Palette
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 space-y-4">
-            {/* Primary Components */}
-            <div>
-              <h4 className="font-medium mb-2">Primary Components</h4>
-              <div className="grid grid-cols-2 gap-2">
-                {Object.entries(ComponentTypes).map(([key, component]) => (
-                  <Button
-                    key={key}
-                    variant="outline"
-                    size="sm"
-                    onClick={() => addField(key)}
-                    className="justify-start text-xs"
-                  >
-                    {component.label}
-                  </Button>
-                ))}
-              </div>
+        <div className={`w-64 border-r overflow-y-auto ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
+          <div className="p-3">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className={`font-semibold text-sm ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Components</h3>
             </div>
-          </CardContent>
-        </Card>
+            <div className="space-y-2">
+              {Object.entries(ComponentCategories).map(([categoryKey, category]) => (
+                <div key={categoryKey} className="space-y-1">
+                  <div className={`flex items-center space-x-2 text-xs font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    <category.icon className="w-3 h-3" />
+                    <span>{category.name}</span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 pl-2">
+                    {Object.entries(category.components).map(([type, config]) => (
+                      <DraggableComponent
+                        key={type}
+                        componentType={type}
+                        label={(config as any).label}
+                        icon={(config as any).icon}
+                        color={(config as any).color}
+                        isDarkMode={isDarkMode}
+                        addField={addField}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
 
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
@@ -428,7 +584,7 @@ export default function FormBuilderPage() {
               <CardContent>
                 {formData.fields.length === 0 ? (
                   <div className="text-center py-12 text-gray-500">
-                    <Layout className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <Square className="h-12 w-12 mx-auto mb-4 opacity-50" />
                     <p>No components added yet. Drag components from the palette to get started.</p>
                   </div>
                 ) : (
