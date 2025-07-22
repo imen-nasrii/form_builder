@@ -428,25 +428,110 @@ export default function AdminManagement() {
             </div>
           </TabsContent>
 
-          {/* Program Tracker - Simple Layout */}
-          <TabsContent value="programs" className="space-y-4">
-            {programsLoading ? (
-              <div className="text-center py-8">Loading programs...</div>
-            ) : (
-              <ProgramCompletionTracker
-                programs={programs}
-                users={users}
-                onViewProgram={(programId) => {
-                  window.open(`/form-builder/${programId}`, '_blank');
-                }}
-                onEditProgram={(programId) => {
-                  window.open(`/form-builder/${programId}`, '_blank');
-                }}
-                onAssignProgram={(programId, userId) => {
-                  assignProgramMutation.mutate({ programId, userId });
-                }}
-              />
-            )}
+          {/* Program Tracker */}
+          <TabsContent value="programs" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Program Management Panel */}
+              <div className="lg:col-span-2">
+                <Card className="bg-white dark:bg-gray-800">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Settings className="w-5 h-5" />
+                      Program Completion Tracker
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {programsLoading ? (
+                      <div className="text-center py-8">Loading programs...</div>
+                    ) : (
+                      <ProgramCompletionTracker
+                        programs={programs}
+                        users={users}
+                        onViewProgram={(programId) => {
+                          window.open(`/form-builder/${programId}`, '_blank');
+                        }}
+                        onEditProgram={(programId) => {
+                          window.open(`/form-builder/${programId}`, '_blank');
+                        }}
+                        onAssignProgram={(programId, userId) => {
+                          assignProgramMutation.mutate({ programId, userId });
+                        }}
+                      />
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Program Stats */}
+              <div className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Program Stats</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {statsLoading ? (
+                      <div className="text-center py-4">Loading stats...</div>
+                    ) : (
+                      <>
+                        <div className="text-center">
+                          <div className="text-3xl font-bold text-green-600">
+                            {adminStats?.programs?.total || programs.length}
+                          </div>
+                          <div className="text-sm text-gray-500">Total Programs</div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4 text-center">
+                          <div>
+                            <div className="text-2xl font-bold text-blue-600">
+                              {adminStats?.programs?.assigned || programs.filter(p => p.assignedTo).length}
+                            </div>
+                            <div className="text-xs text-gray-500">Assigned</div>
+                          </div>
+                          <div>
+                            <div className="text-2xl font-bold text-orange-600">
+                              {adminStats?.programs?.completed || programs.filter(p => p.status === 'completed').length}
+                            </div>
+                            <div className="text-xs text-gray-500">Completed</div>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Recent Activity</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3 text-sm">
+                      {adminStats && adminStats.recentActivity ? (
+                        <>
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <span>{adminStats.recentActivity.programs} programs created</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                            <span>{adminStats.recentActivity.assignments} assignments made</span>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <span>Real-time data loading...</span>
+                          </div>
+                        </>
+                      )}
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                        <span>Program tracker accessed</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
           </TabsContent>
 
           {/* Assignment Management */}
