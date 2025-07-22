@@ -503,7 +503,7 @@ function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMod
   isDarkMode: boolean;
   addField: (type: string) => void;
 }) {
-  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+  const { attributes, listeners, setNodeRef, isDragging, transform } = useDraggable({
     id: `palette-${componentType}`,
     data: {
       type: 'palette-component',
@@ -511,23 +511,26 @@ function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMod
     }
   });
 
+  const style = {
+    transform: CSS.Translate.toString(transform),
+    opacity: isDragging ? 0.5 : 1,
+  };
+
   return (
     <div
       ref={setNodeRef}
+      style={style}
       {...listeners}
       {...attributes}
       className={`
         flex flex-col items-center p-2 rounded-lg cursor-grab transition-all text-xs
-        ${isDragging ? 'opacity-50 scale-95' : ''}
+        ${isDragging ? 'scale-95' : ''}
         ${isDarkMode 
           ? 'hover:bg-gray-700 text-gray-300 hover:text-white' 
           : 'hover:bg-gray-100 text-gray-600 hover:text-gray-900'
         }
         active:cursor-grabbing
       `}
-      style={{
-        touchAction: 'none',
-      }}
       onDoubleClick={() => addField(componentType)}
     >
       <div 
@@ -891,17 +894,26 @@ export default function FormBuilderPage() {
   };
 
   const handleDragStart = (event: DragStartEvent) => {
+    console.log('Drag started:', event.active.id, event.active.data.current);
     const field = formData.fields.find((f: FormField) => f.Id === event.active.id);
     setActiveField(field || null);
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
+    console.log('Drag ended:', {
+      activeId: active.id,
+      overId: over?.id,
+      activeData: active.data.current,
+      overData: over?.data.current
+    });
+    
     setActiveField(null);
 
     // Handle drag from palette
     if (active.id.toString().startsWith('palette-') && over?.id === 'construction-zone') {
       const componentType = active.id.toString().replace('palette-', '');
+      console.log('Adding component from palette:', componentType);
       addField(componentType);
       return;
     }
@@ -1006,8 +1018,14 @@ export default function FormBuilderPage() {
   };
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
-      <div className="flex h-screen">
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+        <div className="flex h-screen">
         {/* Sidebar - Component Palette */}
         <div className={`w-64 border-r overflow-y-auto ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
           <div className="p-3">
@@ -1362,13 +1380,24 @@ export default function FormBuilderPage() {
         )}
       </div>
 
-      {/* External Components Dialog */}
-      <ExternalComponentsDialog
-        isOpen={isExternalComponentsOpen}
-        onClose={() => setIsExternalComponentsOpen(false)}
-        onAddComponent={handleAddExternalComponent}
-        isDarkMode={isDarkMode}
-      />
-    </div>
+        {/* External Components Dialog */}
+        <ExternalComponentsDialog
+          isOpen={isExternalComponentsOpen}
+          onClose={() => setIsExternalComponentsOpen(false)}
+          onAddComponent={handleAddExternalComponent}
+          isDarkMode={isDarkMode}
+        />
+        
+        <DragOverlay>
+          {activeField ? (
+            <div className={`p-3 border rounded-lg shadow-lg ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'}`}>
+              <div className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                {activeField.Label}
+              </div>
+            </div>
+          ) : null}
+        </DragOverlay>
+      </div>
+    </DndContext>
   );
 }
