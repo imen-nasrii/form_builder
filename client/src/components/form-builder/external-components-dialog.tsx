@@ -41,7 +41,14 @@ export function ExternalComponentsDialog({ isOpen, onClose, onAddComponent, isDa
     description: '',
     icon: 'Type',
     color: 'blue',
-    category: 'Input'
+    category: 'Input',
+    label: '',
+    dataField: '',
+    entity: '',
+    width: '',
+    required: false,
+    inline: false,
+    outlined: false
   });
 
   const handleImportJSON = () => {
@@ -64,7 +71,13 @@ export function ExternalComponentsDialog({ isOpen, onClose, onAddComponent, isDa
       icon: componentForm.icon,
       color: componentForm.color,
       category: componentForm.category,
-      label: componentForm.name,
+      label: componentForm.label || componentForm.name,
+      dataField: componentForm.dataField,
+      entity: componentForm.entity,
+      width: componentForm.width,
+      required: componentForm.required,
+      inline: componentForm.inline,
+      outlined: componentForm.outlined,
       isCustom: true
     };
     onAddComponent(newComponent);
@@ -75,7 +88,14 @@ export function ExternalComponentsDialog({ isOpen, onClose, onAddComponent, isDa
       description: '',
       icon: 'Type',
       color: 'blue',
-      category: 'Input'
+      category: 'Input',
+      label: '',
+      dataField: '',
+      entity: '',
+      width: '',
+      required: false,
+      inline: false,
+      outlined: false
     });
   };
 
@@ -157,6 +177,7 @@ export function ExternalComponentsDialog({ isOpen, onClose, onAddComponent, isDa
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                {/* Basic Component Info */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
@@ -171,12 +192,83 @@ export function ExternalComponentsDialog({ isOpen, onClose, onAddComponent, isDa
                   </div>
                   <div>
                     <Label className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
-                      Component Type
+                      Label
                     </Label>
                     <Input
-                      value={componentForm.type}
-                      onChange={(e) => setComponentForm(prev => ({ ...prev, type: e.target.value }))}
-                      placeholder="CUSTOM"
+                      value={componentForm.label || ''}
+                      onChange={(e) => setComponentForm(prev => ({ ...prev, label: e.target.value }))}
+                      placeholder="Display Label"
+                      className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                    />
+                  </div>
+                </div>
+
+                {/* Data and Entity Fields */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
+                      Data Field
+                    </Label>
+                    <Input
+                      value={componentForm.dataField || ''}
+                      onChange={(e) => setComponentForm(prev => ({ ...prev, dataField: e.target.value }))}
+                      placeholder="datepkr_1753171590916"
+                      className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                    />
+                  </div>
+                  <div>
+                    <Label className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
+                      Entity
+                    </Label>
+                    <Input
+                      value={componentForm.entity || ''}
+                      onChange={(e) => setComponentForm(prev => ({ ...prev, entity: e.target.value }))}
+                      placeholder="DateFields"
+                      className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                    />
+                  </div>
+                </div>
+
+                {/* Component Type and Width */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
+                      Component Type
+                    </Label>
+                    <Select 
+                      value={componentForm.type} 
+                      onValueChange={(value) => setComponentForm(prev => ({ ...prev, type: value }))}
+                    >
+                      <SelectTrigger className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}>
+                        <SelectValue placeholder="Select type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="TEXT">Text Input</SelectItem>
+                        <SelectItem value="DATEPICKER">Date Picker</SelectItem>
+                        <SelectItem value="DATEPKR">Date Picker (DATEPKR)</SelectItem>
+                        <SelectItem value="SELECT">Select List</SelectItem>
+                        <SelectItem value="GRIDLKP">Grid Lookup</SelectItem>
+                        <SelectItem value="LSTLKP">List Lookup</SelectItem>
+                        <SelectItem value="CHECKBOX">Checkbox</SelectItem>
+                        <SelectItem value="TEXTAREA">Text Area</SelectItem>
+                        <SelectItem value="NUMERIC">Numeric Input</SelectItem>
+                        <SelectItem value="RADIOGRP">Radio Group</SelectItem>
+                        <SelectItem value="GROUP">Field Group</SelectItem>
+                        <SelectItem value="BUTTON">Button</SelectItem>
+                        <SelectItem value="HIDDEN">Hidden Field</SelectItem>
+                        <SelectItem value="LABEL">Label</SelectItem>
+                        <SelectItem value="CUSTOM">Custom</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
+                      Width
+                    </Label>
+                    <Input
+                      value={componentForm.width || ''}
+                      onChange={(e) => setComponentForm(prev => ({ ...prev, width: e.target.value }))}
+                      placeholder="150px"
                       className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
                     />
                   </div>
@@ -259,6 +351,53 @@ export function ExternalComponentsDialog({ isOpen, onClose, onAddComponent, isDa
                         <SelectItem value="Action">Action</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+                </div>
+
+                {/* Boolean Properties */}
+                <div className="border-t pt-4">
+                  <Label className={`mb-3 block ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                    Component Properties
+                  </Label>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="flex items-center space-x-2">
+                      <input 
+                        type="checkbox" 
+                        id="required"
+                        checked={componentForm.required || false}
+                        onChange={(e) => setComponentForm(prev => ({ ...prev, required: e.target.checked }))}
+                        className="w-4 h-4 rounded border-gray-300"
+                      />
+                      <Label htmlFor="required" className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                        Required
+                      </Label>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <input 
+                        type="checkbox" 
+                        id="inline"
+                        checked={componentForm.inline || false}
+                        onChange={(e) => setComponentForm(prev => ({ ...prev, inline: e.target.checked }))}
+                        className="w-4 h-4 rounded border-gray-300"
+                      />
+                      <Label htmlFor="inline" className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                        Inline
+                      </Label>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <input 
+                        type="checkbox" 
+                        id="outlined"
+                        checked={componentForm.outlined || false}
+                        onChange={(e) => setComponentForm(prev => ({ ...prev, outlined: e.target.checked }))}
+                        className="w-4 h-4 rounded border-gray-300"
+                      />
+                      <Label htmlFor="outlined" className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                        Outlined
+                      </Label>
+                    </div>
                   </div>
                 </div>
 
