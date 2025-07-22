@@ -58,6 +58,7 @@ import {
   BookOpen
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
 import { ComponentCategories as EnterpriseComponentCategories, ComponentSpecificProperties, CommonProperties, renderFormComponent } from '@/components/enterprise-form-components';
 
 // Icon mapping for custom components
@@ -2840,6 +2841,7 @@ export default function FormBuilderFixed() {
   const { formId } = useParams<{ formId?: string }>();
   const queryClient = useQueryClient();
   const { user } = useAuth();
+  const { toast } = useToast();
   
   // Check if user is admin
   const isAdmin = user && (user as any).role === 'admin';
