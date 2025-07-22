@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams, useLocation } from 'wouter';
 import { apiRequest } from '@/lib/queryClient';
@@ -11,7 +11,27 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  closestCenter,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  arrayMove,
+} from '@dnd-kit/sortable';
+import {
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { 
   Type, 
   AlignLeft, 
@@ -32,7 +52,17 @@ import {
   Eye,
   Trash2,
   Package,
-  X
+  X,
+  Moon,
+  Sun,
+  Home,
+  HelpCircle,
+  Code,
+  FileUp,
+  Users,
+  GripVertical,
+  Move,
+  MoreVertical
 } from 'lucide-react';
 import { type FormData, type FormField } from '@/lib/form-builder-types';
 
@@ -98,6 +128,7 @@ const ComponentTypes = Object.values(ComponentCategories).reduce((acc, category)
   return { ...acc, ...category.components };
 }, {} as Record<string, { icon: any; label: string; color: string }>);
 
+// Draggable Component for Palette
 function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMode = false, addField }: {
   componentType: string;
   label: string;
@@ -434,6 +465,218 @@ const createDefaultField = (componentType: string, customComponent?: any): FormF
   };
 };
 
+// Sortable Field Component for Excel-like Grid
+function SortableFieldItem({ field, onSelect, onRemove, isSelected, isDarkMode }: {
+  field: FormField;
+  onSelect: () => void;
+  onRemove: () => void;
+  isSelected: boolean;
+  isDarkMode: boolean;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: field.Id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  const componentType = ComponentTypes[field.Type as keyof typeof ComponentTypes];
+  const Icon = componentType?.icon || Type;
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      onClick={onSelect}
+      className={`
+        group flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-all
+        ${isSelected 
+          ? `border-blue-500 ${isDarkMode ? 'bg-blue-900/50' : 'bg-blue-50'}` 
+          : `${isDarkMode ? 'border-gray-600 hover:border-gray-500 bg-gray-700' : 'border-gray-200 hover:border-gray-300 bg-white'}`
+        }
+      `}
+    >
+      <div className="flex items-center space-x-3 flex-1">
+        <div 
+          {...attributes} 
+          {...listeners}
+          className={`p-1 rounded ${isDarkMode ? 'hover:bg-gray-600' : 'hover:bg-gray-100'} cursor-grab active:cursor-grabbing`}
+        >
+          <GripVertical className="w-4 h-4 text-gray-400" />
+        </div>
+        <div className={`w-8 h-8 rounded-md flex items-center justify-center ${isDarkMode ? 'bg-gray-600' : 'bg-gray-100'}`}>
+          <Icon className="w-4 h-4 text-gray-600" />
+        </div>
+        <div className="flex-1">
+          <div className={`font-medium text-sm ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+            {field.Label}
+          </div>
+          <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+            {field.Type} • {field.Id}
+          </div>
+        </div>
+      </div>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={(e) => {
+          e.stopPropagation();
+          onRemove();
+        }}
+        className={`opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0 ${isDarkMode ? 'hover:bg-gray-600' : 'hover:bg-gray-100'}`}
+      >
+        <Trash2 className="w-3 h-3" />
+      </Button>
+    </div>
+  );
+}
+
+// Excel-like Grid Drop Zone
+function ExcelGrid({ formData, setFormData, selectedField, setSelectedField, isDarkMode }: {
+  formData: FormData;
+  setFormData: (data: FormData) => void;
+  selectedField: FormField | null;
+  setSelectedField: (field: FormField | null) => void;
+  isDarkMode: boolean;
+}) {
+  const [draggedField, setDraggedField] = useState<FormField | null>(null);
+  const [gridSize] = useState({ rows: 20, cols: 12 });
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const field = formData.fields.find(f => f.Id === event.active.id);
+    setDraggedField(field || null);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    
+    if (!over || !active) {
+      setDraggedField(null);
+      return;
+    }
+
+    const activeIndex = formData.fields.findIndex(f => f.Id === active.id);
+    const overIndex = formData.fields.findIndex(f => f.Id === over.id);
+
+    if (activeIndex !== -1 && overIndex !== -1 && activeIndex !== overIndex) {
+      const newFields = arrayMove(formData.fields, activeIndex, overIndex);
+      setFormData({
+        ...formData,
+        fields: newFields
+      });
+    }
+
+    setDraggedField(null);
+  };
+
+  // Generate grid cells
+  const gridCells = [];
+  for (let row = 0; row < gridSize.rows; row++) {
+    for (let col = 0; col < gridSize.cols; col++) {
+      const cellId = `${row}-${col}`;
+      gridCells.push(
+        <div
+          key={cellId}
+          className={`
+            border border-dashed border-gray-300 min-h-[60px] p-2 transition-colors
+            ${isDarkMode ? 'border-gray-600 hover:border-gray-500' : 'border-gray-200 hover:border-gray-400'}
+            hover:bg-blue-50 dark:hover:bg-blue-900/20
+          `}
+          style={{ gridColumn: col + 1, gridRow: row + 1 }}
+        >
+          {/* Cell content can be added here */}
+        </div>
+      );
+    }
+  }
+
+  return (
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="h-full overflow-auto">
+        <div 
+          className="grid gap-1 p-4 min-h-full"
+          style={{ 
+            gridTemplateColumns: `repeat(${gridSize.cols}, minmax(100px, 1fr))`,
+            gridTemplateRows: `repeat(${gridSize.rows}, 60px)`
+          }}
+        >
+          {gridCells}
+        </div>
+
+        {/* Field List Overlay */}
+        <div className="absolute top-4 right-4 w-80">
+          <Card className={isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}>
+            <CardHeader className="pb-3">
+              <CardTitle className={`text-sm ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                Form Fields ({formData.fields.length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 max-h-96 overflow-y-auto">
+              <SortableContext items={formData.fields.map(f => f.Id)} strategy={verticalListSortingStrategy}>
+                {formData.fields.map((field) => (
+                  <SortableFieldItem
+                    key={field.Id}
+                    field={field}
+                    onSelect={() => setSelectedField(field)}
+                    onRemove={() => {
+                      const newFields = formData.fields.filter(f => f.Id !== field.Id);
+                      setFormData({ ...formData, fields: newFields });
+                      if (selectedField?.Id === field.Id) {
+                        setSelectedField(null);
+                      }
+                    }}
+                    isSelected={selectedField?.Id === field.Id}
+                    isDarkMode={isDarkMode}
+                  />
+                ))}
+              </SortableContext>
+              {formData.fields.length === 0 && (
+                <div className={`text-center py-8 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                  <Grid3X3 className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">No fields added yet</p>
+                  <p className="text-xs mt-1">Drag components from the palette</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      <DragOverlay>
+        {draggedField ? (
+          <div className="bg-white border border-blue-500 rounded-lg p-3 shadow-lg">
+            <div className="flex items-center space-x-2">
+              <Type className="w-4 h-4" />
+              <span className="font-medium">{draggedField.Label}</span>
+            </div>
+          </div>
+        ) : null}
+      </DragOverlay>
+    </DndContext>
+  );
+}
+
 export default function FormBuilderPage() {
   const { id } = useParams<{ id: string }>();
   const [location, navigate] = useLocation();
@@ -573,7 +816,7 @@ export default function FormBuilderPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       <div className="flex h-screen">
         {/* Sidebar - Component Palette */}
         <div className={`w-64 border-r overflow-y-auto ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
@@ -609,143 +852,281 @@ export default function FormBuilderPage() {
 
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
-          {/* Top Toolbar */}
-          <div className="bg-white border-b px-4 py-2 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <h1 className="text-lg font-semibold">Form Builder</h1>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsPreviewMode(!isPreviewMode)}
-              >
-                <Eye className="h-4 w-4 mr-2" />
-                {isPreviewMode ? 'Edit' : 'Preview'}
-              </Button>
+          {/* Enhanced Navigation with Dark Mode & External Components */}
+          <div className={`border-b ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+            {/* Primary Navigation */}
+            <div className="flex items-center justify-between px-4 py-3">
+              <div className="flex items-center gap-4">
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate('/')}
+                  className={`flex items-center gap-2 ${isDarkMode ? 'text-white hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'}`}
+                >
+                  <Home className="h-4 w-4" />
+                  Home
+                </Button>
+                <Separator orientation="vertical" className="h-6" />
+                <h1 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                  {formData.title}
+                </h1>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                {/* Dark Mode Toggle */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsDarkMode(!isDarkMode)}
+                  className={`${isDarkMode ? 'text-white hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'}`}
+                >
+                  {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                </Button>
+                
+                {/* Actions Dropdown */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className={isDarkMode ? 'border-gray-600 text-white hover:bg-gray-700' : ''}>
+                      <MoreVertical className="h-4 w-4 mr-2" />
+                      Actions
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className={isDarkMode ? 'bg-gray-800 border-gray-700' : ''}>
+                    <DropdownMenuItem onClick={() => setIsPreviewMode(!isPreviewMode)} className={isDarkMode ? 'text-white hover:bg-gray-700' : ''}>
+                      <Eye className="h-4 w-4 mr-2" />
+                      {isPreviewMode ? 'Edit Mode' : 'Preview Mode'}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => {
+                      // External Components functionality
+                      toast({
+                        title: "External Components",
+                        description: "Opening component library...",
+                      });
+                    }} className={isDarkMode ? 'text-white hover:bg-gray-700' : ''}>
+                      <Package className="h-4 w-4 mr-2" />
+                      External Components
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleSave} className={isDarkMode ? 'text-white hover:bg-gray-700' : ''}>
+                      <Save className="h-4 w-4 mr-2" />
+                      Save Program
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleExport} className={isDarkMode ? 'text-white hover:bg-gray-700' : ''}>
+                      <Download className="h-4 w-4 mr-2" />
+                      Export JSON
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                
+                {/* Quick Actions */}
+                <Button 
+                  onClick={() => setIsPreviewMode(!isPreviewMode)}
+                  variant="outline"
+                  size="sm"
+                  className={isDarkMode ? 'border-gray-600 text-white hover:bg-gray-700' : ''}
+                >
+                  <Eye className="h-4 w-4 mr-2" />
+                  {isPreviewMode ? 'Edit' : 'Preview'}
+                </Button>
+                <Button 
+                  onClick={handleSave}
+                  size="sm"
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  Save
+                </Button>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Button size="sm">
-                <Save className="h-4 w-4 mr-2" />
-                Save
-              </Button>
-              <Button variant="outline" size="sm">
-                <Download className="h-4 w-4 mr-2" />
-                Export
-              </Button>
+
+            {/* Secondary Toolbar */}
+            <div className={`px-4 py-2 border-t ${isDarkMode ? 'border-gray-700 bg-gray-750' : 'border-gray-100 bg-gray-50'}`}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Button variant="ghost" size="sm" className={isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600'}>
+                    <HelpCircle className="h-4 w-4 mr-1" />
+                    Guide
+                  </Button>
+                  <Button variant="ghost" size="sm" className={isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600'}>
+                    <FileUp className="h-4 w-4 mr-1" />
+                    Import
+                  </Button>
+                  <Button variant="ghost" size="sm" className={isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600'}>
+                    <Code className="h-4 w-4 mr-1" />
+                    Generate Code
+                  </Button>
+                  <Button variant="ghost" size="sm" className={isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600'}>
+                    <Users className="h-4 w-4 mr-1" />
+                    Collaborate
+                  </Button>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className={isDarkMode ? 'border-gray-600 text-gray-300' : ''}>
+                    {formData.fields.length} Components
+                  </Badge>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => {
+                      setFormData(prev => ({ ...prev, fields: [] }));
+                      setSelectedField(null);
+                      toast({
+                        title: "Form Cleared",
+                        description: "All components have been removed.",
+                      });
+                    }}
+                    className={`${isDarkMode ? 'text-red-400 hover:bg-red-900/20' : 'text-red-600 hover:bg-red-50'}`}
+                  >
+                    <Trash2 className="h-3 w-3 mr-1" />
+                    Clear
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Canvas Area */}
-          <div className="flex-1 p-6 overflow-auto">
-            <Card className="max-w-4xl mx-auto">
-              <CardHeader>
-                <CardTitle>Form Canvas</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {formData.fields.length === 0 ? (
-                  <div className="text-center py-12 text-gray-500">
-                    <Square className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>No components added yet. Drag components from the palette to get started.</p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {formData.fields.map((field) => (
-                      <div
-                        key={field.Id}
-                        className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-                          selectedField?.Id === field.Id
-                            ? 'border-blue-500 bg-blue-50'
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                        onClick={() => setSelectedField(field)}
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="font-medium">{field.Label}</span>
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                              {field.Type}
-                            </span>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                removeField(field.Id);
-                              }}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          ID: {field.Id} | Entity: {field.Entity} | Width: {field.Width}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+          {/* Excel-like Grid Construction Zone */}
+          <div className={`flex-1 relative ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+            <ExcelGrid
+              formData={formData}
+              setFormData={setFormData}
+              selectedField={selectedField}
+              setSelectedField={setSelectedField}
+              isDarkMode={isDarkMode}
+            />
           </div>
         </div>
 
-        {/* Properties Panel */}
+        {/* Enhanced Properties Panel with Dark Mode */}
         {selectedField && (
-          <Card className="w-80 rounded-none border-l">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+          <Card className={`w-80 rounded-none border-l ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+            <CardHeader className={isDarkMode ? 'border-gray-700' : ''}>
+              <CardTitle className={`flex items-center gap-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                 <Settings className="h-5 w-5" />
                 Properties
               </CardTitle>
             </CardHeader>
             <CardContent className="p-4 space-y-4">
               <div>
-                <Label>Label</Label>
+                <Label className={isDarkMode ? 'text-gray-300' : ''}>Label</Label>
                 <Input
                   value={selectedField.Label}
                   onChange={(e) => updateFieldInFormData(selectedField.Id, { Label: e.target.value })}
+                  className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
                 />
               </div>
               <div>
-                <Label>Data Field</Label>
+                <Label className={isDarkMode ? 'text-gray-300' : ''}>Data Field</Label>
                 <Input
                   value={selectedField.DataField}
                   onChange={(e) => updateFieldInFormData(selectedField.Id, { DataField: e.target.value })}
+                  className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
                 />
               </div>
               <div>
-                <Label>Entity</Label>
+                <Label className={isDarkMode ? 'text-gray-300' : ''}>Entity</Label>
                 <Input
                   value={selectedField.Entity}
                   onChange={(e) => updateFieldInFormData(selectedField.Id, { Entity: e.target.value })}
+                  className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
                 />
               </div>
               <div>
-                <Label>Width</Label>
+                <Label className={isDarkMode ? 'text-gray-300' : ''}>Width</Label>
                 <Input
                   value={selectedField.Width}
                   onChange={(e) => updateFieldInFormData(selectedField.Id, { Width: e.target.value })}
+                  className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
                 />
               </div>
+              
+              {/* Advanced Properties based on component type */}
+              {selectedField.Type === 'TEXT' && (
+                <>
+                  <div>
+                    <Label className={isDarkMode ? 'text-gray-300' : ''}>Max Length</Label>
+                    <Input
+                      value={(selectedField as any).MaxLength || ''}
+                      onChange={(e) => updateFieldInFormData(selectedField.Id, { MaxLength: parseInt(e.target.value) || 255 })}
+                      type="number"
+                      className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                    />
+                  </div>
+                  <div>
+                    <Label className={isDarkMode ? 'text-gray-300' : ''}>Placeholder</Label>
+                    <Input
+                      value={(selectedField as any).Placeholder || ''}
+                      onChange={(e) => updateFieldInFormData(selectedField.Id, { Placeholder: e.target.value })}
+                      className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                    />
+                  </div>
+                </>
+              )}
+
+              {selectedField.Type === 'GRIDLKP' && (
+                <>
+                  <div>
+                    <Label className={isDarkMode ? 'text-gray-300' : ''}>Lookup Source</Label>
+                    <Input
+                      value={(selectedField as any).LookupSource || ''}
+                      onChange={(e) => updateFieldInFormData(selectedField.Id, { LookupSource: e.target.value })}
+                      className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                    />
+                  </div>
+                  <div>
+                    <Label className={isDarkMode ? 'text-gray-300' : ''}>Display Columns</Label>
+                    <Input
+                      value={(selectedField as any).DisplayColumns || ''}
+                      onChange={(e) => updateFieldInFormData(selectedField.Id, { DisplayColumns: e.target.value })}
+                      className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                    />
+                  </div>
+                </>
+              )}
+
+              <Separator className={isDarkMode ? 'bg-gray-600' : ''} />
+              
+              {/* Universal Properties */}
               <div className="flex items-center space-x-2">
                 <Switch
                   checked={selectedField.Required}
                   onCheckedChange={(checked) => updateFieldInFormData(selectedField.Id, { Required: checked })}
                 />
-                <Label>Required</Label>
+                <Label className={isDarkMode ? 'text-gray-300' : ''}>Required</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <Switch
                   checked={selectedField.Inline}
                   onCheckedChange={(checked) => updateFieldInFormData(selectedField.Id, { Inline: checked })}
                 />
-                <Label>Inline</Label>
+                <Label className={isDarkMode ? 'text-gray-300' : ''}>Inline</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <Switch
                   checked={selectedField.Outlined}
                   onCheckedChange={(checked) => updateFieldInFormData(selectedField.Id, { Outlined: checked })}
                 />
-                <Label>Outlined</Label>
+                <Label className={isDarkMode ? 'text-gray-300' : ''}>Outlined</Label>
+              </div>
+
+              {/* Advanced Field Properties */}
+              <Separator className={isDarkMode ? 'bg-gray-600' : ''} />
+              <div>
+                <Label className={isDarkMode ? 'text-gray-300' : ''}>Visible When</Label>
+                <Textarea
+                  value={(selectedField as any).VisibleWhen || ''}
+                  onChange={(e) => updateFieldInFormData(selectedField.Id, { VisibleWhen: e.target.value })}
+                  placeholder="Conditional expression"
+                  className={`min-h-[60px] ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
+                />
+              </div>
+              <div>
+                <Label className={isDarkMode ? 'text-gray-300' : ''}>Enabled When</Label>
+                <Textarea
+                  value={(selectedField as any).EnabledWhen || ''}
+                  onChange={(e) => updateFieldInFormData(selectedField.Id, { EnabledWhen: e.target.value })}
+                  placeholder="Conditional expression"
+                  className={`min-h-[60px] ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
+                />
               </div>
             </CardContent>
           </Card>
