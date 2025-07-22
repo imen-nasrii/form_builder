@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, requireAuth, requireAdmin } from "./auth";
 import { setupEnhancedAuth, requireAuth as requireAuthEnhanced, requireAdmin as requireAdminEnhanced, requireUser } from "./auth-enhanced";
+import bcrypt from "bcryptjs";
 import { insertFormSchema, insertTemplateSchema, insertNotificationSchema } from "@shared/schema";
 import { notificationService } from "./notification-service";
 import type { User } from "@shared/schema";
@@ -113,10 +114,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: 'User already exists' });
       }
 
+      // Hash password before creating user
+      const hashedPassword = await bcrypt.hash(password, 10);
+      
       // Create user
       const newUser = await storage.createUser({
         email,
-        password,
+        password: hashedPassword,
         role: role || 'user'
       });
 
