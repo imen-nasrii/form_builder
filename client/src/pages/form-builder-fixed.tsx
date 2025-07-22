@@ -136,97 +136,7 @@ const ComponentTypes = Object.values(ComponentCategories).reduce((acc, category)
   return { ...acc, ...category.components };
 }, {} as Record<string, { icon: any; label: string; color: string }>);
 
-// Draggable Component for Palette
-function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMode = false, addField }: {
-  componentType: string;
-  label: string;
-  icon: any;
-  color: string;
-  isDarkMode?: boolean;
-  addField: (type: string) => void;
-}) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    isDragging,
-  } = useDraggable({
-    id: `palette-${componentType}`,
-    data: {
-      type: 'component',
-      componentType: componentType
-    }
-  });
 
-  const style = {
-    transform: CSS.Translate.toString(transform),
-    opacity: isDragging ? 0.5 : 1,
-  };
-
-  const getColorClasses = () => {
-    if (isDarkMode) {
-      return {
-        bg: 'bg-gray-700 hover:bg-gray-600',
-        border: 'border-gray-500 hover:border-gray-400',
-        text: 'text-gray-200',
-        icon: 'text-gray-300'
-      };
-    }
-    return {
-      bg: `bg-${color}-50 hover:bg-${color}-100`,
-      border: `border-${color}-200 hover:border-${color}-400`,
-      text: 'text-gray-900',
-      icon: `text-${color}-600`
-    };
-  };
-
-  const getIconBackgroundClass = (color: string, isDarkMode: boolean) => {
-    if (isDarkMode) {
-      return 'bg-gray-600';
-    }
-    const colorMap: Record<string, string> = {
-      blue: 'bg-blue-100',
-      green: 'bg-green-100',
-      purple: 'bg-purple-100',
-      orange: 'bg-orange-100',
-      cyan: 'bg-cyan-100',
-      indigo: 'bg-indigo-100',
-      teal: 'bg-teal-100',
-      emerald: 'bg-emerald-100',
-      gray: 'bg-gray-100',
-      violet: 'bg-violet-100',
-      pink: 'bg-pink-100',
-      red: 'bg-red-100'
-    };
-    return colorMap[color] || 'bg-gray-100';
-  };
-
-  const colorClasses = getColorClasses();
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...listeners}
-      {...attributes}
-      onClick={() => addField(componentType)}
-      className={`
-        relative cursor-pointer border rounded-lg p-2 transition-all duration-200
-        ${colorClasses.bg} ${colorClasses.border} ${colorClasses.text}
-        transform hover:scale-105 hover:shadow-md
-        flex flex-col items-center space-y-1
-        ${isDragging ? 'shadow-lg z-50' : ''}
-      `}
-      title={label}
-    >
-      <div className={`w-6 h-6 rounded-md flex items-center justify-center ${getIconBackgroundClass(color, isDarkMode)}`}>
-        <Icon className={`w-3 h-3 ${colorClasses.icon}`} />
-      </div>
-      <span className="text-xs font-medium text-center leading-tight">{label}</span>
-    </div>
-  );
-}
 
 // Component Templates based on user specifications
 const createDefaultField = (componentType: string, customComponent?: any): FormField => {
@@ -496,6 +406,53 @@ const createDefaultField = (componentType: string, customComponent?: any): FormF
     ChildFields: componentType === 'GROUP' ? [] : undefined
   };
 };
+
+// DraggableComponent for the palette
+function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMode, addField }: {
+  componentType: string;
+  label: string;
+  icon: any;
+  color: string;
+  isDarkMode: boolean;
+  addField: (type: string) => void;
+}) {
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: `palette-${componentType}`,
+    data: {
+      type: 'palette-component',
+      componentType: componentType,
+    }
+  });
+
+  return (
+    <div
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      className={`
+        flex flex-col items-center p-2 rounded-lg cursor-grab transition-all text-xs
+        ${isDragging ? 'opacity-50 scale-95' : ''}
+        ${isDarkMode 
+          ? 'hover:bg-gray-700 text-gray-300 hover:text-white' 
+          : 'hover:bg-gray-100 text-gray-600 hover:text-gray-900'
+        }
+        active:cursor-grabbing
+      `}
+      style={{
+        touchAction: 'none',
+      }}
+      onDoubleClick={() => addField(componentType)}
+    >
+      <div 
+        className={`w-8 h-8 rounded-md flex items-center justify-center mb-1`}
+        style={{ backgroundColor: color + '20', color: color }}
+      >
+        <Icon className="w-4 h-4" />
+      </div>
+      <span className="text-center leading-tight">{label}</span>
+    </div>
+  );
+}
 
 // Droppable Construction Zone Component
 function DroppableConstructionZone({ isDarkMode, formData, selectedField, setSelectedField, removeField }: {
