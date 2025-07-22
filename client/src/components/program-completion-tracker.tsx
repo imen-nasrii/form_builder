@@ -93,12 +93,8 @@ export default function ProgramCompletionTracker({
 
   return (
     <div className="space-y-6">
-      {/* Header with sorting options */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold">Program Completion Tracker</h2>
-          <p className="text-gray-600">Monitor progress and completion status of all programs</p>
-        </div>
+      {/* Sorting options only */}
+      <div className="flex items-center justify-end">
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-500">Sort by:</span>
           <Button
