@@ -1,0 +1,136 @@
+Liste des Types & Leurs Propriétés
+1. GRIDLKP (Grid Lookup)
+🔹 Un champ avec sélection depuis une grille (tableau), souvent utilisé pour sélectionner un fonds, un titre, etc.
+
+Propriétés typiques :
+
+Id, label, Width
+
+KeyColumn → clé d’identification
+
+ItemInfo, Inline, SelectedRecord
+
+LeftlinkFrom, LeftlinkTo → pour lier les champs
+
+Readonly, VisibleWhen, EnabledWhen
+
+2. DATEPKR (Date Picker)
+🔹 Champ pour sélectionner une date.
+
+Propriétés :
+
+Id, label, Width
+
+ValueFormat → format d'affichage ex. dd-MMM-yyyy
+
+DefaultToToday, Readonly, VisibleWhen
+
+EnabledWhen, DateValidation → logique de validation dynamique
+
+3. TEXT (Champ de texte simple)
+🔹 Champ pour saisir ou afficher du texte libre.
+
+Propriétés :
+
+Id, label, Width, Height
+
+Readonly, Multiline, MaskFormat
+
+VisibleWhen, EnabledWhen
+
+Value, DefaultValue, TextColor
+
+4. GROUP
+🔹 Conteneur logique regroupant plusieurs champs ou composants (souvent boutons radio).
+
+Propriétés :
+
+Id, label
+
+Children → liste de composants inclus
+
+VisibleWhen, EnabledWhen
+
+5. RADIO (Boutons radio)
+🔹 Permet à l’utilisateur de choisir une seule option parmi plusieurs.
+
+Propriétés :
+
+Id, label
+
+Options → valeurs à choisir (label + valeur)
+
+SelectedValue, VisibleWhen, EnabledWhen
+
+6. LOOKUP (Liste déroulante simple)
+🔹 Liste déroulante avec options définies ou dynamiques.
+
+Propriétés :
+
+Id, label, Width
+
+Options → liste des choix (static ou via API)
+
+SelectedValue, LookupCategory
+
+VisibleWhen, EnabledWhen
+
+7. LABEL (Texte affiché, non éditable)
+🔹 Texte statique ou dynamique.
+
+Propriétés :
+
+Id, label, TextColor
+
+Value ou Formula (ex. "isABS || isDiscInst")
+
+VisibleWhen
+
+8. TEXTAREA (Zone de texte multiline)
+🔹 Champ de saisie texte avec plusieurs lignes.
+
+Propriétés :
+
+Id, label, Height, Width
+
+Readonly, VisibleWhen, Multiline, WordWrap
+
+9. BUTTON
+🔹 Bouton déclencheur d'action.
+
+Propriétés :
+
+Id, label, OnClick, ActionType
+
+VisibleWhen, EnabledWhen, ButtonStyle
+
+10. GRID (Grille de données)
+🔹 Tableau de données affiché à l’utilisateur.
+
+Propriétés :
+
+Id, Columns, DataSource
+
+Editable, RowActions, VisibleWhen
+
+11. HIDDEN (Champ invisible mais utilisé en backend)
+🔹 Utilisé pour stocker des données techniques.
+
+Propriétés :
+
+Id, Value, Formula
+
+VisibleWhen (souvent à false), EnabledWhen
+
+🧠 Types secondaires ou logiques (hors Fields)
+✅ Variables
+Id, Formula, UsedIn
+
+Permet de stocker une formule (ex. logique booléenne) utilisable dans les autres champs (VisibleWhen, EnabledWhen, etc.)
+
+✅ Validations
+Id, Message, ValidationType
+
+Condition, VariableId, LinkedControlId
+
+Gère les erreurs et règles métiers (par ex. : FxRate > 0)
