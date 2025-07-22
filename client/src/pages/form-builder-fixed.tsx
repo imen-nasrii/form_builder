@@ -3383,6 +3383,341 @@ export default function FormBuilderFixed() {
         Value: '',
         MaxLength: 255,
         Placeholder: 'Enter your comment here...'
+      },
+      'TEXTAREA': {
+        Id: `NOTES_${timestamp}`,
+        Type: 'TEXTAREA',
+        Label: 'NOTES',
+        DataField: 'notes',
+        Entity: 'Notesmas',
+        Width: '100%',
+        Spacing: 'md',
+        Required: false,
+        Inline: false,
+        Outlined: true,
+        Value: '',
+        Rows: 4,
+        MaxLength: 1000,
+        Placeholder: 'Enter detailed notes here...',
+        ResizeMode: 'vertical'
+      },
+      'BUTTON': {
+        Id: `SUBMIT_${timestamp}`,
+        Type: 'BUTTON',
+        Label: 'SUBMIT',
+        DataField: 'submit_action',
+        Entity: 'Actions',
+        Width: '120px',
+        Spacing: 'md',
+        Required: false,
+        Inline: true,
+        Outlined: false,
+        Value: '',
+        ButtonType: 'submit',
+        ActionType: 'PROCESS',
+        ConfirmMessage: 'Are you sure you want to submit?',
+        EnabledWhen: {
+          LogicalOperator: 'AND',
+          Conditions: [
+            {
+              RightField: 'FundID',
+              Operator: 'ISNN'
+            },
+            {
+              RightField: 'TradeDate',
+              Operator: 'ISNN'
+            }
+          ]
+        }
+      },
+      'HIDDEN': {
+        Id: `SESSIONID_${timestamp}`,
+        Type: 'HIDDEN',
+        Label: 'SESSIONID',
+        DataField: 'session_id',
+        Entity: 'Sessions',
+        Width: '0',
+        Spacing: '0',
+        Required: false,
+        Inline: false,
+        Outlined: false,
+        Value: 'AUTO_GENERATED',
+        SystemGenerated: true,
+        Persistent: true
+      },
+      'LABEL': {
+        Id: `HEADER_${timestamp}`,
+        Type: 'LABEL',
+        Label: 'FORM HEADER',
+        DataField: 'header_text',
+        Entity: 'FormElements',
+        Width: '100%',
+        Spacing: 'md',
+        Required: false,
+        Inline: false,
+        Outlined: false,
+        Value: 'Form Header Text',
+        FontSize: '18px',
+        FontWeight: 'bold',
+        TextAlign: 'center',
+        Color: '#333333'
+      },
+      'SEPARATOR': {
+        Id: `DIVIDER_${timestamp}`,
+        Type: 'SEPARATOR',
+        Label: 'DIVIDER',
+        DataField: 'separator_line',
+        Entity: 'FormElements',
+        Width: '100%',
+        Spacing: 'md',
+        Required: false,
+        Inline: false,
+        Outlined: false,
+        Value: '',
+        LineStyle: 'solid',
+        LineWidth: '1px',
+        LineColor: '#cccccc',
+        Margin: '20px'
+      },
+      'IMAGE': {
+        Id: `LOGO_${timestamp}`,
+        Type: 'IMAGE',
+        Label: 'LOGO',
+        DataField: 'logo_image',
+        Entity: 'Assets',
+        Width: '200px',
+        Spacing: 'md',
+        Required: false,
+        Inline: false,
+        Outlined: false,
+        Value: '',
+        ImageSource: 'url',
+        ImageUrl: '',
+        AltText: 'Company Logo',
+        Alignment: 'center'
+      },
+      'DATEPKR': {
+        Id: `VALUEDATE_${timestamp}`,
+        Type: 'DATEPKR',
+        Label: 'VALUEDATE',
+        DataField: 'valuedate',
+        Entity: 'Trademas',
+        Width: '32',
+        Spacing: '30',
+        Required: true,
+        Inline: true,
+        Outlined: false,
+        Value: '',
+        EnabledWhen: {
+          LogicalOperator: 'AND',
+          Conditions: [
+            {
+              RightField: 'FundID',
+              Operator: 'ISNN'
+            }
+          ]
+        },
+        Validations: [
+          {
+            Id: '25',
+            Type: 'ERROR',
+            ConditionExpression: {
+              Conditions: [
+                {
+                  RightField: `VALUEDATE_${timestamp}`,
+                  Operator: 'ISN',
+                  ValueType: 'DATE'
+                }
+              ]
+            }
+          }
+        ]
+      },
+      'PASSWORD': {
+        Id: `PASSWORD_${timestamp}`,
+        Type: 'PASSWORD',
+        Label: 'PASSWORD',
+        DataField: 'password',
+        Entity: 'Security',
+        Width: '200px',
+        Spacing: 'md',
+        Required: true,
+        Inline: false,
+        Outlined: true,
+        Value: '',
+        MinLength: 8,
+        MaxLength: 50,
+        Placeholder: 'Enter secure password...',
+        ShowStrengthIndicator: true
+      },
+      'EMAIL': {
+        Id: `EMAIL_${timestamp}`,
+        Type: 'EMAIL',
+        Label: 'EMAIL',
+        DataField: 'email',
+        Entity: 'Contacts',
+        Width: '250px',
+        Spacing: 'md',
+        Required: true,
+        Inline: false,
+        Outlined: true,
+        Value: '',
+        Placeholder: 'user@company.com',
+        Validations: [
+          {
+            Id: '30',
+            Type: 'ERROR',
+            ConditionExpression: {
+              Conditions: [
+                {
+                  RightField: `EMAIL_${timestamp}`,
+                  Operator: 'REGEX',
+                  Value: '^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$',
+                  ValueType: 'STRING'
+                }
+              ]
+            }
+          }
+        ]
+      },
+      'PHONE': {
+        Id: `PHONE_${timestamp}`,
+        Type: 'PHONE',
+        Label: 'PHONE',
+        DataField: 'phone',
+        Entity: 'Contacts',
+        Width: '180px',
+        Spacing: 'md',
+        Required: false,
+        Inline: false,
+        Outlined: true,
+        Value: '',
+        InputMask: '(999) 999-9999',
+        Placeholder: '(555) 123-4567'
+      },
+      'URL': {
+        Id: `WEBSITE_${timestamp}`,
+        Type: 'URL',
+        Label: 'WEBSITE',
+        DataField: 'website',
+        Entity: 'Contacts',
+        Width: '300px',
+        Spacing: 'md',
+        Required: false,
+        Inline: false,
+        Outlined: true,
+        Value: '',
+        Placeholder: 'https://www.example.com'
+      },
+      'TIME': {
+        Id: `TRADETIME_${timestamp}`,
+        Type: 'TIME',
+        Label: 'TRADETIME',
+        DataField: 'tradetime',
+        Entity: 'Trademas',
+        Width: '120px',
+        Spacing: 'md',
+        Required: false,
+        Inline: true,
+        Outlined: false,
+        Value: '',
+        Format24Hour: true,
+        ShowSeconds: false
+      },
+      'COLOR': {
+        Id: `THEMECOLOR_${timestamp}`,
+        Type: 'COLOR',
+        Label: 'THEMECOLOR',
+        DataField: 'theme_color',
+        Entity: 'Preferences',
+        Width: '80px',
+        Spacing: 'md',
+        Required: false,
+        Inline: true,
+        Outlined: false,
+        Value: '#0066CC',
+        ShowPalette: true,
+        AllowCustom: true
+      },
+      'RANGE': {
+        Id: `TOLERANCE_${timestamp}`,
+        Type: 'RANGE',
+        Label: 'TOLERANCE',
+        DataField: 'tolerance',
+        Entity: 'Parameters',
+        Width: '200px',
+        Spacing: 'md',
+        Required: false,
+        Inline: false,
+        Outlined: false,
+        Value: 50,
+        MinValue: 0,
+        MaxValue: 100,
+        Step: 1,
+        ShowValue: true
+      },
+      'FILE': {
+        Id: `ATTACHMENT_${timestamp}`,
+        Type: 'FILE',
+        Label: 'ATTACHMENT',
+        DataField: 'attachment',
+        Entity: 'Documents',
+        Width: '300px',
+        Spacing: 'md',
+        Required: false,
+        Inline: false,
+        Outlined: true,
+        Value: '',
+        AcceptedTypes: '.pdf,.doc,.docx,.xls,.xlsx',
+        MaxFileSize: '10MB',
+        Multiple: true
+      },
+      'RATING': {
+        Id: `RATING_${timestamp}`,
+        Type: 'RATING',
+        Label: 'RATING',
+        DataField: 'rating',
+        Entity: 'Reviews',
+        Width: '150px',
+        Spacing: 'md',
+        Required: false,
+        Inline: true,
+        Outlined: false,
+        Value: 0,
+        MaxRating: 5,
+        ShowLabels: true,
+        AllowHalf: true
+      },
+      'TOGGLE': {
+        Id: `ACTIVE_${timestamp}`,
+        Type: 'TOGGLE',
+        Label: 'ACTIVE',
+        DataField: 'active',
+        Entity: 'Status',
+        Width: '80px',
+        Spacing: 'md',
+        Required: false,
+        Inline: true,
+        Outlined: false,
+        Value: true,
+        OnLabel: 'ON',
+        OffLabel: 'OFF'
+      },
+      'PROGRESS': {
+        Id: `COMPLETION_${timestamp}`,
+        Type: 'PROGRESS',
+        Label: 'COMPLETION',
+        DataField: 'completion',
+        Entity: 'Tasks',
+        Width: '200px',
+        Spacing: 'md',
+        Required: false,
+        Inline: false,
+        Outlined: false,
+        Value: 75,
+        ShowPercentage: true,
+        Animated: true,
+        Color: '#28a745'
       }
     };
 
@@ -3476,7 +3811,12 @@ export default function FormBuilderFixed() {
     setSelectedField(newField);
 
     // Afficher notification avec détails du template généré
-    const smartComponents = ['GRIDLKP', 'LSTLKP', 'DATEPICKER', 'SELECT', 'RADIOGRP', 'CHECKBOX', 'GROUP', 'NUMERIC', 'TEXT'];
+    const smartComponents = [
+      'GRIDLKP', 'LSTLKP', 'DATEPICKER', 'DATEPKR', 'SELECT', 'RADIOGRP', 'CHECKBOX', 
+      'GROUP', 'NUMERIC', 'TEXT', 'TEXTAREA', 'BUTTON', 'HIDDEN', 'LABEL', 'SEPARATOR', 
+      'IMAGE', 'PASSWORD', 'EMAIL', 'PHONE', 'URL', 'TIME', 'COLOR', 'RANGE', 'FILE', 
+      'RATING', 'TOGGLE', 'PROGRESS'
+    ];
     if (smartComponents.includes(componentType)) {
       toast({
         title: "Smart Component Added!",
