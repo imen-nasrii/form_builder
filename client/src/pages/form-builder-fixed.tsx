@@ -36,17 +36,16 @@ import {
 } from 'lucide-react';
 import { type FormData, type FormField } from '@/lib/form-builder-types';
 
-// Comprehensive ComponentCategories based on original design
+// ComponentCategories based on your exact specifications
 const ComponentCategories = {
   inputFields: {
     name: 'Input Fields',
     icon: Type,
     color: 'blue',
     components: {
-      TEXT: { icon: Type, label: 'Text Input', color: 'blue' },
-      NUMERIC: { icon: Hash, label: 'Numeric Input', color: 'green' },
-      DATEPKR: { icon: Calendar, label: 'Date Picker', color: 'purple' },
-      DATEPICKER: { icon: Calendar, label: 'Date Picker Alt', color: 'purple' }
+      TEXT: { icon: Type, label: 'Text Field', color: 'blue' },
+      TEXTAREA: { icon: AlignLeft, label: 'Text Area', color: 'blue' },
+      DATEPKR: { icon: Calendar, label: 'Date Picker', color: 'purple' }
     }
   },
   selection: {
@@ -54,9 +53,8 @@ const ComponentCategories = {
     icon: List,
     color: 'orange',
     components: {
-      SELECT: { icon: List, label: 'Select Dropdown', color: 'orange' },
-      CHECKBOX: { icon: CheckSquare, label: 'Checkbox', color: 'cyan' },
-      RADIOGRP: { icon: CheckSquare, label: 'Radio Group', color: 'purple' }
+      LOOKUP: { icon: List, label: 'Lookup Dropdown', color: 'orange' },
+      RADIO: { icon: CheckSquare, label: 'Radio Buttons', color: 'purple' }
     }
   },
   lookup: {
@@ -64,8 +62,7 @@ const ComponentCategories = {
     icon: Search,
     color: 'indigo',
     components: {
-      GRIDLKP: { icon: Grid3X3, label: 'Grid Lookup', color: 'indigo' },
-      LSTLKP: { icon: Search, label: 'List Lookup', color: 'teal' }
+      GRIDLKP: { icon: Grid3X3, label: 'Grid Lookup', color: 'indigo' }
     }
   },
   dataDisplay: {
@@ -74,7 +71,8 @@ const ComponentCategories = {
     color: 'emerald',
     components: {
       GRID: { icon: Table, label: 'Data Grid', color: 'emerald' },
-      LABEL: { icon: Type, label: 'Label', color: 'gray' }
+      LABEL: { icon: Type, label: 'Label', color: 'gray' },
+      HIDDEN: { icon: Eye, label: 'Hidden Field', color: 'gray' }
     }
   },
   containerLayout: {
@@ -82,16 +80,15 @@ const ComponentCategories = {
     icon: Square,
     color: 'violet',
     components: {
-      GROUP: { icon: Square, label: 'Group Container', color: 'violet' },
-      DIALOG: { icon: Settings, label: 'Dialog Container', color: 'pink' }
+      GROUP: { icon: Square, label: 'Group Container', color: 'violet' }
     }
   },
-  fileUpload: {
-    name: 'File & Upload',
-    icon: Upload,
+  actions: {
+    name: 'Actions',
+    icon: Settings,
     color: 'red',
     components: {
-      FILEUPLOAD: { icon: Upload, label: 'File Upload', color: 'red' }
+      BUTTON: { icon: Settings, label: 'Button', color: 'red' }
     }
   }
 };
@@ -250,31 +247,30 @@ const createDefaultField = (componentType: string, customComponent?: any): FormF
       Placeholder: 'Enter text...',
       Validation: ''
     },
-    'SELECT': {
-      Id: `SELECT_${timestamp}`,
-      Type: 'SELECT',
-      Label: 'Select List',
-      DataField: `select_${timestamp}`,
-      Entity: 'SelectData',
-      Width: '200px',
+    'TEXTAREA': {
+      Id: `TEXTAREA_${timestamp}`,
+      Type: 'TEXTAREA',
+      Label: 'Text Area',
+      DataField: `textarea_${timestamp}`,
+      Entity: 'TextData',
+      Width: '300px',
+      Height: '100px',
       Spacing: 'md',
       Required: false,
       Inline: false,
       Outlined: true,
       Value: '',
-      Options: [
-        { label: 'Option 1', value: 'opt1' },
-        { label: 'Option 2', value: 'opt2' }
-      ],
-      SelectedValue: '',
+      Readonly: false,
+      Multiline: true,
+      WordWrap: true,
       VisibleWhen: '',
       EnabledWhen: ''
     },
-    'RADIOGRP': {
-      Id: `RADIOGRP_${timestamp}`,
-      Type: 'RADIOGRP',
-      Label: 'Radio Group',
-      DataField: `radiogrp_${timestamp}`,
+    'RADIO': {
+      Id: `RADIO_${timestamp}`,
+      Type: 'RADIO',
+      Label: 'Radio Buttons',
+      DataField: `radio_${timestamp}`,
       Entity: 'RadioData',
       Width: '200px',
       Spacing: 'md',
@@ -283,34 +279,41 @@ const createDefaultField = (componentType: string, customComponent?: any): FormF
       Outlined: false,
       Value: '',
       Options: [
-        { label: 'Option 1', value: 'opt1' },
-        { label: 'Option 2', value: 'opt2' }
+        { label: 'Option A', value: 'optA' },
+        { label: 'Option B', value: 'optB' },
+        { label: 'Option C', value: 'optC' }
       ],
       SelectedValue: '',
       VisibleWhen: '',
       EnabledWhen: ''
     },
-    'CHECKBOX': {
-      Id: `CHECKBOX_${timestamp}`,
-      Type: 'CHECKBOX',
-      Label: 'Checkbox',
-      DataField: `checkbox_${timestamp}`,
-      Entity: 'CheckboxData',
+    'LOOKUP': {
+      Id: `LOOKUP_${timestamp}`,
+      Type: 'LOOKUP',
+      Label: 'Lookup Dropdown',
+      DataField: `lookup_${timestamp}`,
+      Entity: 'LookupData',
       Width: '200px',
       Spacing: 'md',
       Required: false,
       Inline: false,
-      Outlined: false,
-      Value: false,
-      CheckedValue: true,
-      UncheckedValue: false,
+      Outlined: true,
+      Value: '',
+      Options: [
+        { label: 'Select an option', value: '' },
+        { label: 'Option 1', value: 'option1' },
+        { label: 'Option 2', value: 'option2' },
+        { label: 'Option 3', value: 'option3' }
+      ],
+      SelectedValue: '',
+      LookupCategory: 'General',
       VisibleWhen: '',
       EnabledWhen: ''
     },
     'GROUP': {
       Id: `GROUP_${timestamp}`,
       Type: 'GROUP',
-      Label: 'Field Group',
+      Label: 'Group Container',
       DataField: `group_${timestamp}`,
       Entity: 'GroupData',
       Width: '100%',
@@ -319,24 +322,80 @@ const createDefaultField = (componentType: string, customComponent?: any): FormF
       Inline: false,
       Outlined: true,
       Value: '',
-      ChildFields: []
+      Children: [],
+      VisibleWhen: '',
+      EnabledWhen: ''
     },
-    'NUMERIC': {
-      Id: `NUMERIC_${timestamp}`,
-      Type: 'NUMERIC',
-      Label: 'Numeric Input',
-      DataField: `numeric_${timestamp}`,
-      Entity: 'NumericData',
-      Width: '150px',
+    'GRID': {
+      Id: `GRID_${timestamp}`,
+      Type: 'GRID',
+      Label: 'Data Grid',
+      DataField: `grid_${timestamp}`,
+      Entity: 'GridData',
+      Width: '100%',
+      Spacing: 'md',
+      Required: false,
+      Inline: false,
+      Outlined: true,
+      Value: '',
+      Columns: [
+        { name: 'Column1', width: '100px', type: 'string' },
+        { name: 'Column2', width: '100px', type: 'string' }
+      ],
+      DataSource: '',
+      Editable: false,
+      RowActions: ['Edit', 'Delete'],
+      VisibleWhen: ''
+    },
+    'LABEL': {
+      Id: `LABEL_${timestamp}`,
+      Type: 'LABEL',
+      Label: 'Label',
+      DataField: `label_${timestamp}`,
+      Entity: 'LabelData',
+      Width: '200px',
       Spacing: 'md',
       Required: false,
       Inline: false,
       Outlined: false,
+      Value: 'Label Text',
+      TextColor: '#000000',
+      Formula: '',
+      VisibleWhen: ''
+    },
+    'HIDDEN': {
+      Id: `HIDDEN_${timestamp}`,
+      Type: 'HIDDEN',
+      Label: 'Hidden Field',
+      DataField: `hidden_${timestamp}`,
+      Entity: 'HiddenData',
+      Width: '0px',
+      Spacing: 'none',
+      Required: false,
+      Inline: false,
+      Outlined: false,
       Value: '',
-      MinValue: 0,
-      MaxValue: 999999,
-      DecimalPlaces: 2,
-      Format: '#,##0.00'
+      Formula: '',
+      VisibleWhen: 'false',
+      EnabledWhen: ''
+    },
+    'BUTTON': {
+      Id: `BUTTON_${timestamp}`,
+      Type: 'BUTTON',
+      Label: 'Button',
+      DataField: `button_${timestamp}`,
+      Entity: 'ButtonData',
+      Width: '120px',
+      Spacing: 'md',
+      Required: false,
+      Inline: false,
+      Outlined: true,
+      Value: '',
+      OnClick: '',
+      ActionType: 'submit',
+      ButtonStyle: 'primary',
+      VisibleWhen: '',
+      EnabledWhen: ''
     }
   };
 
