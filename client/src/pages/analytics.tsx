@@ -74,6 +74,7 @@ export default function Analytics() {
   const assignedTasks = (stats && 'assignedTasks' in stats) ? stats.assignedTasks : 0;
   const completedTasks = (stats && 'completedTasks' in stats) ? stats.completedTasks : 0;
   const recentActivity = (stats && 'recentActivity' in stats) ? stats.recentActivity : 0;
+  const createdPrograms = totalPrograms; // Programs created by user
 
   // Calculate user's form type distribution from real database data
   const myFormUsageData = (stats && 'programTypes' in stats && stats.programTypes) ? [
