@@ -4324,13 +4324,10 @@ export default function FormBuilderFixed() {
     
     const componentType = e.dataTransfer.getData('componentType');
     if (componentType) {
-      // Use the existing addField function to create the component
-      addField(componentType);
+      // Generate complete component with all properties
+      const newComponent = createDefaultField(componentType);
       
-      // Get the newly created field (it will be the last one)
-      const newFieldId = `${componentType}_${Date.now()}`;
-      
-      // Add reference to grid cell
+      // Add to grid cell
       setGridConfig(prev => {
         const cellIndex = prev.cells.findIndex(c => c.id === cellId);
         if (cellIndex === -1) return prev;
@@ -4338,10 +4335,7 @@ export default function FormBuilderFixed() {
         const updatedCells: GridCell[] = [...prev.cells];
         updatedCells[cellIndex] = {
           ...updatedCells[cellIndex],
-          component: { 
-            Type: componentType, 
-            Label: ComponentTypes[componentType as keyof typeof ComponentTypes]?.label || componentType 
-          },
+          component: newComponent,
           isEmpty: false
         };
         
@@ -4350,6 +4344,16 @@ export default function FormBuilderFixed() {
           cells: updatedCells
         };
       });
+
+      // Also add to formData.fields for consistency
+      setFormData(prev => ({
+        ...prev,
+        fields: [...prev.fields, newComponent]
+      }));
+
+      // Auto-select the new component
+      setSelectedField(newComponent);
+      setSelectedGridCell(cellId);
     }
   };
 
