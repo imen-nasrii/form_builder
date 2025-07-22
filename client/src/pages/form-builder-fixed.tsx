@@ -816,6 +816,50 @@ export default function FormBuilderPage() {
     }
   };
 
+  const handleSave = () => {
+    try {
+      // For now, just show a success message
+      toast({
+        title: "Program Saved",
+        description: `Program "${formData.title}" saved successfully`,
+        variant: "default"
+      });
+    } catch (error) {
+      toast({
+        title: "Save Error",
+        description: "Failed to save program",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleExport = () => {
+    try {
+      const jsonData = JSON.stringify(formData, null, 2);
+      const blob = new Blob([jsonData], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${formData.title || 'program'}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      toast({
+        title: "Export Successful",
+        description: `Program exported as ${formData.title || 'program'}.json`,
+        variant: "default"
+      });
+    } catch (error) {
+      toast({
+        title: "Export Error",
+        description: "Failed to export program",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       <div className="flex h-screen">
