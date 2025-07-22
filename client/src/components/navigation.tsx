@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation, useRouter } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -236,8 +236,7 @@ export default function Navigation() {
 function CreateProgramButton() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [, navigate] = useRouter();
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
 
   const isActive = (path: string) => {
     if (path === "/" && location === "/") return true;
