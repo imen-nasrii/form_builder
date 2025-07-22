@@ -3082,18 +3082,341 @@ export default function FormBuilderFixed() {
     // Check if it's a custom component
     const customComponent = customComponents.find(comp => comp.id === componentType);
     
-    return {
+    // Templates complets basés sur ACCADJ et BUYTYP pour chaque type de composant
+    const componentTemplates: Record<string, any> = {
+      'GRIDLKP': {
+        Id: `FUND_${timestamp}`,
+        Type: 'GRIDLKP',
+        Label: 'FUND',
+        DataField: 'fund',
+        Entity: 'Fndmas',
+        Width: '32',
+        Spacing: 'md',
+        Required: true,
+        Inline: true,
+        Outlined: false,
+        Value: '',
+        KeyColumn: 'fund',
+        ItemInfo: {
+          MainProperty: 'fund',
+          DescProperty: 'acnam1',
+          ShowDescription: true
+        },
+        LoadDataInfo: {
+          DataModel: 'Fndmas',
+          ColumnsDefinition: [
+            {
+              DataField: 'fund',
+              Caption: 'Fund ID',
+              DataType: 'STRING',
+              Visible: true
+            },
+            {
+              DataField: 'acnam1',
+              Caption: 'Fund Name', 
+              DataType: 'STRING',
+              Visible: true
+            }
+          ]
+        },
+        showAliasBox: true,
+        EntitykeyField: 'fund',
+        EndpointOnchange: true,
+        RequestedFields: ['TradeDate'],
+        Validations: [
+          {
+            Id: '24',
+            Type: 'ERROR',
+            ConditionExpression: {
+              Conditions: [
+                {
+                  RightField: `FUND_${timestamp}`,
+                  Operator: 'ISN'
+                }
+              ]
+            }
+          }
+        ]
+      },
+      'LSTLKP': {
+        Id: `SECCAT_${timestamp}`,
+        Type: 'LSTLKP',
+        Label: 'SECCAT',
+        DataField: 'seccat',
+        Entity: 'Seccat',
+        Width: '32',
+        Spacing: 'md',
+        Required: true,
+        Inline: true,
+        Outlined: false,
+        Value: '',
+        KeyColumn: 'seccat',
+        LoadDataInfo: {
+          DataModel: 'Seccat',
+          ColumnsDefinition: [
+            {
+              DataField: 'seccat',
+              DataType: 'STRING'
+            },
+            {
+              DataField: 'descr',
+              DataType: 'STRING'
+            }
+          ]
+        },
+        ItemInfo: {
+          MainProperty: 'seccat',
+          DescProperty: 'descr',
+          ShowDescription: true
+        },
+        EntitykeyField: 'seccat',
+        MainPropItemList: 'seccat',
+        SecondPropItemList: 'descr',
+        ShowSecndPropItemList: true
+      },
+      'DATEPICKER': {
+        Id: `TRADEDATE_${timestamp}`,
+        Type: 'DATEPICKER',
+        Label: 'TRADEDATE',
+        DataField: 'tradedate',
+        Entity: 'Trademas',
+        Width: '32',
+        Spacing: '30',
+        Required: true,
+        Inline: true,
+        Outlined: false,
+        Value: '',
+        EnabledWhen: {
+          LogicalOperator: 'AND',
+          Conditions: [
+            {
+              RightField: 'FundID',
+              Operator: 'ISNN'
+            },
+            {
+              RightField: 'Ticker', 
+              Operator: 'ISNN'
+            }
+          ]
+        },
+        Validations: [
+          {
+            Id: '26',
+            Type: 'ERROR',
+            ConditionExpression: {
+              Conditions: [
+                {
+                  RightField: `TRADEDATE_${timestamp}`,
+                  Operator: 'ISN',
+                  ValueType: 'DATE'
+                }
+              ]
+            }
+          },
+          {
+            Id: '19',
+            Type: 'ERROR', 
+            ConditionExpression: {
+              Conditions: [
+                {
+                  RightField: `TRADEDATE_${timestamp}`,
+                  Operator: 'ISNN',
+                  ValueType: 'DATE'
+                },
+                {
+                  RightField: `TRADEDATE_${timestamp}`,
+                  Operator: 'GT',
+                  Value: 'SYSDATE',
+                  ValueType: 'DATE'
+                }
+              ]
+            }
+          }
+        ]
+      },
+      'SELECT': {
+        Id: `MBSTYPE_${timestamp}`,
+        Type: 'SELECT',
+        Label: 'MBSTYPE',
+        DataField: 'mbstype',
+        Entity: 'Secmas',
+        Width: '32',
+        Spacing: 'md',
+        Required: false,
+        Inline: true,
+        Outlined: true,
+        Value: '',
+        UserIntKey: true,
+        OptionValues: {
+          '0': '',
+          '1': 'GNMA I',
+          '2': 'GNMA II', 
+          '3': 'FNMA',
+          '4': 'FHLMC',
+          '5': 'CMO',
+          '6': 'PO',
+          '7': 'IO',
+          '8': 'GPM'
+        }
+      },
+      'RADIOGRP': {
+        Id: `DOASOF_${timestamp}`,
+        Type: 'RADIOGRP',
+        Label: 'DOASOF',
+        DataField: 'doasof',
+        Entity: 'Processmas',
+        Width: '100',
+        Spacing: '0',
+        Required: false,
+        Inline: false,
+        Outlined: false,
+        Value: 'dfCurrent',
+        OptionValues: {
+          dfCurrent: 'DFCURRENT',
+          dfPosting: 'DFPOST',
+          dfReval: 'DFVAL',
+          dfTrade: 'DFTRADE'
+        }
+      },
+      'CHECKBOX': {
+        Id: `UPDATERATE_${timestamp}`,
+        Type: 'CHECKBOX',
+        Label: 'UPDATERATE',
+        DataField: 'updaterate',
+        Entity: 'Processmas',
+        Width: '600px',
+        Spacing: 'md',
+        Required: false,
+        Inline: false,
+        Outlined: false,
+        Value: false,
+        CheckboxValue: true,
+        EnabledWhen: {
+          Conditions: [
+            {
+              RightField: 'ReportOnly',
+              Operator: 'ISF'
+            }
+          ]
+        }
+      },
+      'GROUP': {
+        Id: `PROCAGAINST_${timestamp}`,
+        Type: 'GROUP',
+        Label: 'PROCAGAINST',
+        DataField: 'procagainst',
+        Entity: 'Processmas',
+        Width: '100%',
+        Spacing: '0',
+        Required: false,
+        Inline: false,
+        Outlined: false,
+        Value: '',
+        isGroup: true,
+        ChildFields: [
+          {
+            Id: 'Doasof',
+            Type: 'RADIOGRP',
+            Label: 'DOASOF',
+            Value: 'dfCurrent',
+            Spacing: '0',
+            Width: '100',
+            OptionValues: {
+              dfCurrent: 'DFCURRENT',
+              dfPosting: 'DFPOST',
+              dfReval: 'DFVAL',
+              dfTrade: 'DFTRADE'
+            }
+          },
+          {
+            Id: 'ValDate',
+            Type: 'DATEPICKER',
+            Label: 'VALDATE',
+            Spacing: '0',
+            Width: '25',
+            EnabledWhen: {
+              Conditions: [
+                {
+                  RightField: 'Doasof',
+                  Operator: 'NEQ',
+                  Value: 'dfCurrent',
+                  ValueType: 'STRING'
+                }
+              ]
+            }
+          }
+        ]
+      },
+      'NUMERIC': {
+        Id: `QUANTITY_${timestamp}`,
+        Type: 'NUMERIC',
+        Label: 'QUANTITY',
+        DataField: 'quantity',
+        Entity: 'Trademas',
+        Width: '32',
+        Spacing: 'md',
+        Required: true,
+        Inline: true,
+        Outlined: false,
+        Value: '',
+        EndpointOnchange: true,
+        EndpointDepend: {
+          Conditions: [
+            {
+              RightField: 'FundID',
+              Operator: 'ISNN'
+            }
+          ]
+        }
+      },
+      'TEXT': {
+        Id: `COMMENT_${timestamp}`,
+        Type: 'TEXT',
+        Label: 'COMMENT',
+        DataField: 'comment',
+        Entity: 'Commentmas',
+        Width: '100%',
+        Spacing: 'md',
+        Required: false,
+        Inline: false,
+        Outlined: true,
+        Value: '',
+        MaxLength: 255,
+        Placeholder: 'Enter your comment here...'
+      }
+    };
+
+    // Utiliser le template spécifique ou créer un template de base pour les composants personnalisés
+    if (customComponent) {
+      return {
+        Id: `${componentType}_${timestamp}`,
+        Type: componentType,
+        Label: customComponent.label,
+        DataField: `field_${timestamp}`,
+        Entity: 'CustomEntity',
+        Width: '100%',
+        Spacing: 'md',
+        Required: false,
+        Inline: false,
+        Outlined: false,
+        Value: JSON.stringify(customComponent.properties),
+        ChildFields: componentType === 'GROUP' ? [] : undefined
+      };
+    }
+
+    // Retourner le template complet ou un template de base
+    return componentTemplates[componentType] || {
       Id: `${componentType}_${timestamp}`,
       Type: componentType,
-      Label: customComponent ? customComponent.label : (ComponentTypes[componentType as keyof typeof ComponentTypes]?.label || componentType),
+      Label: ComponentTypes[componentType as keyof typeof ComponentTypes]?.label || componentType,
       DataField: `field_${timestamp}`,
-      Entity: 'TableName',
+      Entity: 'DefaultEntity',
       Width: '100%',
       Spacing: 'md',
       Required: false,
       Inline: false,
       Outlined: false,
-      Value: customComponent ? JSON.stringify(customComponent.properties) : '',
+      Value: '',
       ChildFields: componentType === 'GROUP' ? [] : undefined
     };
   };
@@ -3151,6 +3474,22 @@ export default function FormBuilderFixed() {
     }
     
     setSelectedField(newField);
+
+    // Afficher notification avec détails du template généré
+    const smartComponents = ['GRIDLKP', 'LSTLKP', 'DATEPICKER', 'SELECT', 'RADIOGRP', 'CHECKBOX', 'GROUP', 'NUMERIC', 'TEXT'];
+    if (smartComponents.includes(componentType)) {
+      toast({
+        title: "Smart Component Added!",
+        description: `${componentType} component with advanced properties generated (like ACCADJ/BUYTYP templates)`,
+        variant: "default"
+      });
+    } else {
+      toast({
+        title: "Component Added",
+        description: `${componentType} component added to form`,
+        variant: "default"
+      });
+    }
     
     // Auto-save after adding a component
     if (formData.id) {
