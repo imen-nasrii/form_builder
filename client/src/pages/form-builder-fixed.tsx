@@ -797,6 +797,7 @@ export default function FormBuilderPage() {
     Calendar,
     Square,
     List,
+    Toggle: ToggleLeft,
     ToggleLeft,
     Upload,
     CheckSquare,
