@@ -5344,7 +5344,15 @@ export default function FormBuilderFixed() {
                   {gridConfig.cells.map(cell => (
                     <div
                       key={cell.id}
-                      onClick={() => setSelectedGridCell(cell.id)}
+                      onClick={() => {
+                        setSelectedGridCell(cell.id);
+                        // If cell has a component, also select it for properties panel
+                        if (cell.component) {
+                          setSelectedField(cell.component);
+                        } else {
+                          setSelectedField(null);
+                        }
+                      }}
                       className={`
                         min-h-[80px] border-2 rounded-lg p-2 cursor-pointer transition-all duration-200
                         ${selectedGridCell === cell.id ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30 ring-2 ring-blue-200' : 'border-gray-200 dark:border-gray-700'}
@@ -5382,30 +5390,12 @@ export default function FormBuilderFixed() {
                             <Button 
                               size="sm" 
                               variant="ghost" 
-                              className="p-1 h-6 w-6"
+                              className="p-1 h-6 w-6 text-red-500 hover:text-red-700"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                // Find the field in formData.fields and select it
-                                const matchingField = formData.fields.find(f => f.Type === cell.component?.Type);
-                                if (matchingField) {
-                                  setSelectedField(matchingField);
-                                }
-                              }}
-                            >
-                              <Settings className="w-3 h-3" />
-                            </Button>
-                            <Button 
-                              size="sm" 
-                              variant="ghost" 
-                              className="p-1 h-6 w-6"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                // Find and remove the corresponding field
-                                const fieldToRemove = formData.fields.find(f => f.Type === cell.component?.Type);
-                                if (fieldToRemove) {
-                                  removeField(fieldToRemove.Id);
-                                }
+                                // Clear the component from the cell and clear selection
                                 clearGridCell(cell.id);
+                                setSelectedField(null);
                               }}
                             >
                               <Trash2 className="w-3 h-3" />
