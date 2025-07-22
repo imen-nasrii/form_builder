@@ -47,91 +47,74 @@ export default function Navigation() {
           </div>
         </Link>
         
-        {/* Main Navigation */}
-        <div className="flex items-center gap-8">
-          <Link href="/dashboard">
-            <button className={`px-4 py-2 rounded-lg transition-all ${
+        {/* Beautiful Simplified Navigation */}
+        <div className="flex items-center gap-2">
+          <Link href="/">
+            <button className={`px-6 py-2 rounded-full font-medium transition-all ${
               isActive("/dashboard") || isActive("/") 
-                ? "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 font-medium" 
-                : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+                ? "bg-blue-500 text-white shadow-md" 
+                : "text-gray-600 hover:bg-blue-50 hover:text-blue-600"
             }`}>
               Dashboard
             </button>
           </Link>
           
-          {user?.role === 'admin' ? (
+          {user?.role === 'admin' && (
             <Link href="/admin-management">
-              <button className={`px-4 py-2 rounded-lg transition-all ${
+              <button className={`px-6 py-2 rounded-full font-medium transition-all ${
                 isActive("/admin-management") 
-                  ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 font-medium" 
-                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+                  ? "bg-red-500 text-white shadow-md" 
+                  : "text-gray-600 hover:bg-red-50 hover:text-red-600"
               }`}>
                 Admin Dashboard
               </button>
             </Link>
-          ) : (
-            <Link href="/task-board">
-              <button className={`px-4 py-2 rounded-lg transition-all ${
-                isActive("/task-board") 
-                  ? "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 font-medium" 
-                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
-              }`}>
-                My Tasks
-              </button>
-            </Link>
           )}
-          
-
-
-
 
           <Link href="/analytics">
-            <button className={`px-4 py-2 rounded-lg transition-all ${
+            <button className={`px-6 py-2 rounded-full font-medium transition-all ${
               isActive("/analytics") 
-                ? "bg-gradient-to-r from-orange-100 to-red-100 dark:from-orange-900/30 dark:to-red-900/30 text-orange-700 dark:text-orange-300 font-medium" 
-                : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+                ? "bg-orange-500 text-white shadow-md" 
+                : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
             }`}>
               Analytics
             </button>
           </Link>
 
-          {/* JSON Validator - Available for ALL users */}
           <Link href="/json-validator">
-            <button className={`px-4 py-2 rounded-lg transition-all ${
+            <button className={`px-6 py-2 rounded-full font-medium transition-all ${
               isActive("/json-validator") 
-                ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 font-medium" 
-                : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+                ? "bg-green-500 text-white shadow-md" 
+                : "text-gray-600 hover:bg-green-50 hover:text-green-600"
             }`}>
-              ✅ JSON Validator
+              JSON Validator
             </button>
           </Link>
 
-          {/* Admin-only features */}
           {user?.role === 'admin' && (
             <>
               <Link href="/ai-assistant">
-                <button className={`px-4 py-2 rounded-lg transition-all ${
+                <button className={`px-6 py-2 rounded-full font-medium transition-all ${
                   isActive("/ai-assistant") 
-                    ? "bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-700 dark:text-blue-300 font-medium" 
-                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+                    ? "bg-purple-500 text-white shadow-md" 
+                    : "text-gray-600 hover:bg-purple-50 hover:text-purple-600"
                 }`}>
-                  🤖 AI Assistant
+                  AI Assistant
                 </button>
               </Link>
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className={`px-4 py-2 rounded-lg transition-all ${
+                  <button className={`px-6 py-2 rounded-full font-medium transition-all flex items-center gap-1 ${
                     isActive("/form-builder") || isActive("/mfact-builder") 
-                      ? "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 font-medium" 
-                      : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+                      ? "bg-indigo-500 text-white shadow-md" 
+                      : "text-gray-600 hover:bg-indigo-50 hover:text-indigo-600"
                   }`}>
-                    <Plus className="w-4 h-4 mr-2" />
                     Create Program
-                    <ChevronDown className="w-4 h-4 ml-2" />
+                    <ChevronDown className="w-4 h-4" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="center" className="w-56">
+                <DropdownMenuContent align="center" className="w-48">
                   <DropdownMenuItem asChild>
                     <Link href="/form-builder" className="flex items-center gap-2 w-full">
                       <FileText className="w-4 h-4" />
@@ -149,10 +132,9 @@ export default function Navigation() {
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="px-4 py-2 rounded-lg transition-all text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100">
-                    <Upload className="w-4 h-4 mr-2" />
+                  <button className="px-6 py-2 rounded-full font-medium transition-all flex items-center gap-1 text-gray-600 hover:bg-teal-50 hover:text-teal-600">
                     Import/Export
-                    <ChevronDown className="w-4 h-4 ml-2" />
+                    <ChevronDown className="w-4 h-4" />
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="center" className="w-48">
@@ -172,6 +154,18 @@ export default function Navigation() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </>
+          )}
+
+          {user?.role !== 'admin' && (
+            <Link href="/task-board">
+              <button className={`px-6 py-2 rounded-full font-medium transition-all ${
+                isActive("/task-board") 
+                  ? "bg-purple-500 text-white shadow-md" 
+                  : "text-gray-600 hover:bg-purple-50 hover:text-purple-600"
+              }`}>
+                My Tasks
+              </button>
+            </Link>
           )}
           
 
