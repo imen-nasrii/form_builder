@@ -115,7 +115,6 @@ import ComponentConfigManager from '@/components/form-builder/component-config-m
 import AdvancedComponentCreator from '@/components/form-builder/advanced-component-creator';
 import InteractiveGuide from '@/components/form-builder/interactive-guide';
 import ComponentHelpPopup from '@/components/form-builder/component-help-popup';
-import TemplateJsonGenerator from '@/components/form-builder/template-json-generator';
 
 // Model Dropdown Selector Component
 function ModelDropdownSelector({ 
@@ -2918,7 +2917,7 @@ export default function FormBuilderFixed() {
   const [isCodeGenerationOpen, setIsCodeGenerationOpen] = useState(false);
   const [isExternalLibraryOpen, setIsExternalLibraryOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-  const [showTemplateGenerator, setShowTemplateGenerator] = useState(false);
+
   const formBuilderRef = useRef<HTMLDivElement>(null);
 
   // Grid configuration state for ultra-advanced grid system
@@ -5158,19 +5157,6 @@ export default function FormBuilderFixed() {
             </div>
             {!isPaletteCollapsed && (
               <div className="space-y-2">
-                {/* Smart JSON Generator Button */}
-                <div className="mb-4">
-                  <Button
-                    onClick={() => setShowTemplateGenerator(true)}
-                    className="w-full text-sm bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium py-2 px-3 rounded-lg shadow-sm transition-all duration-200 transform hover:scale-105"
-                  >
-                    <Database className="w-4 h-4 mr-2" />
-                    Smart JSON Generator
-                  </Button>
-                  <p className="text-xs text-gray-500 mt-1 text-center">
-                    Generate ACCADJ/BUYTYP templates
-                  </p>
-                </div>
                 
                 {Object.entries(ComponentCategories).map(([categoryKey, category]) => (
                   <div key={categoryKey} className="space-y-1">
@@ -5581,56 +5567,7 @@ export default function FormBuilderFixed() {
         isDarkMode={isDarkMode}
       />
 
-      {/* Template JSON Generator */}
-      <TemplateJsonGenerator
-        isOpen={showTemplateGenerator}
-        onClose={() => setShowTemplateGenerator(false)}
-        onImportGenerated={(jsonData) => {
-          // Importer le JSON généré automatiquement dans le form builder
-          if (jsonData && jsonData.Fields) {
-            const convertedFields = jsonData.Fields.map((field: any) => ({
-              Id: field.Id || `field_${Date.now()}`,
-              Type: field.type || field.Type || 'TEXT',
-              Label: field.label || field.Label || 'New Field',
-              DataField: field.Id || `field_${Date.now()}`,
-              Entity: field.Entity || 'TableName',
-              Width: field.Width || '100%',
-              Spacing: 'md',
-              Required: field.required || field.Required || false,
-              Inline: field.Inline || false,
-              Outlined: field.Outlined || false,
-              Value: field.Value || field.value || '',
-              // Propriétés spécifiques pour GRIDLKP
-              KeyColumn: field.KeyColumn || '',
-              ItemInfo: field.ItemInfo || {},
-              LoadDataInfo: field.LoadDataInfo || {},
-              ColumnDefinitions: field.ColumnDefinitions || [],
-              // Propriétés spécifiques pour SELECT/RADIO
-              OptionValues: field.OptionValues || {},
-              // Propriétés spécifiques pour les validations
-              Validations: field.Validations || [],
-              EnabledWhen: field.EnabledWhen || {},
-              VisibleWhen: field.VisibleWhen || {}
-            }));
 
-            setFormData(prev => ({
-              ...prev,
-              menuId: jsonData.MenuID || prev.menuId,
-              label: jsonData.Label || prev.label,
-              formWidth: jsonData.FormWidth || prev.formWidth,
-              layout: jsonData.Layout || prev.layout,
-              fields: [...prev.fields, ...convertedFields]
-            }));
-
-            toast({
-              title: "Template Generated & Imported",
-              description: `Successfully imported ${convertedFields.length} components from ${jsonData.MenuID} template`,
-              variant: "default"
-            });
-          }
-        }}
-        isDarkMode={isDarkMode}
-      />
     </div>
   );
 }
