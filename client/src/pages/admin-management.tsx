@@ -220,21 +220,33 @@ export default function AdminManagement() {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-            <p className="text-gray-600">Complete administration panel with real-time system management</p>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Badge variant="outline" className="bg-blue-50 text-blue-700">
-              {adminStats?.users?.total || users.length} Users
-            </Badge>
-            <Badge variant="outline" className="bg-green-50 text-green-700">
-              {adminStats?.programs?.total || programs.length} Programs
-            </Badge>
-            <Badge variant="outline" className="bg-orange-50 text-orange-700">
-              {adminStats?.notifications?.unread || notifications.filter(n => !n.read).length} Unread Notifications
-            </Badge>
+        <div className="relative mb-12">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-pink-600/10 blur-3xl rounded-3xl"></div>
+          <div className="relative bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-3xl p-8 border border-gray-200/20 dark:border-gray-700/20 shadow-2xl">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-3">
+                  Admin Dashboard
+                </h1>
+                <p className="text-xl text-gray-600 dark:text-gray-400 font-medium">
+                  Advanced system management with real-time analytics
+                </p>
+              </div>
+              <div className="flex items-center space-x-4">
+                <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white px-4 py-2 rounded-xl shadow-lg">
+                  <div className="text-2xl font-bold">{adminStats?.users?.total || users.length}</div>
+                  <div className="text-xs opacity-90">Users</div>
+                </div>
+                <div className="bg-gradient-to-br from-green-500 to-green-600 text-white px-4 py-2 rounded-xl shadow-lg">
+                  <div className="text-2xl font-bold">{adminStats?.programs?.total || programs.length}</div>
+                  <div className="text-xs opacity-90">Programs</div>
+                </div>
+                <div className="bg-gradient-to-br from-orange-500 to-orange-600 text-white px-4 py-2 rounded-xl shadow-lg">
+                  <div className="text-2xl font-bold">{adminStats?.notifications?.unread || notifications.filter(n => !n.read).length}</div>
+                  <div className="text-xs opacity-90">Alerts</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -244,52 +256,73 @@ export default function AdminManagement() {
 
 
         <Tabs defaultValue="users" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="users" className="flex items-center gap-2">
-              <Users className="w-4 h-4" />
-              Users Management
-            </TabsTrigger>
-            <TabsTrigger value="programs" className="flex items-center gap-2">
-              <Settings className="w-4 h-4" />
-              Programs Tracker
-            </TabsTrigger>
-            <TabsTrigger value="assignments" className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4" />
-              Assignment Center
-            </TabsTrigger>
-            <TabsTrigger value="activity" className="flex items-center gap-2">
-              <Bell className="w-4 h-4" />
-              Activity & Notifications
-            </TabsTrigger>
-          </TabsList>
+          <div className="relative mb-8">
+            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 blur-2xl rounded-2xl"></div>
+            <TabsList className="relative grid w-full grid-cols-4 bg-white/60 dark:bg-gray-900/60 backdrop-blur-xl border border-gray-200/30 dark:border-gray-700/30 shadow-2xl rounded-2xl p-2">
+              <TabsTrigger 
+                value="users" 
+                className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 rounded-xl"
+              >
+                <Users className="w-5 h-5" />
+                <span className="font-semibold">Users Management</span>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="programs" 
+                className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500 data-[state=active]:to-green-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 rounded-xl"
+              >
+                <Settings className="w-5 h-5" />
+                <span className="font-semibold">Programs Tracker</span>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="assignments" 
+                className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 rounded-xl"
+              >
+                <CheckCircle2 className="w-5 h-5" />
+                <span className="font-semibold">Assignment Center</span>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="activity" 
+                className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 rounded-xl"
+              >
+                <Bell className="w-5 h-5" />
+                <span className="font-semibold">Activity & Notifications</span>
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
 
 
           {/* Users Management */}
-          <TabsContent value="users" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <TabsContent value="users" className="space-y-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* User Management Panel */}
               <div className="lg:col-span-2">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Users className="w-5 h-5" />
-                        Users Management
-                      </div>
-                      <Button 
-                        size="sm" 
-                        className="flex items-center gap-2"
-                        onClick={() => {
-                          console.log('Add User button clicked');
-                          setShowAddUser(true);
-                        }}
-                      >
-                        <UserPlus className="w-4 h-4" />
-                        Add User
-                      </Button>
-                    </CardTitle>
-                  </CardHeader>
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-indigo-500/5 to-purple-500/5 blur-2xl rounded-3xl"></div>
+                  <Card className="relative bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/20 dark:border-gray-700/20 shadow-2xl rounded-3xl overflow-hidden">
+                    <CardHeader className="bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-blue-900/20 dark:to-indigo-900/20 border-b border-gray-200/30">
+                      <CardTitle className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl text-white shadow-lg">
+                            <Users className="w-6 h-6" />
+                          </div>
+                          <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                            Users Management
+                          </span>
+                        </div>
+                        <Button 
+                          size="sm" 
+                          className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg border-0 rounded-xl transition-all duration-300"
+                          onClick={() => {
+                            console.log('Add User button clicked');
+                            setShowAddUser(true);
+                          }}
+                        >
+                          <UserPlus className="w-4 h-4" />
+                          Add User
+                        </Button>
+                      </CardTitle>
+                    </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
                       {usersLoading ? (
@@ -423,6 +456,7 @@ export default function AdminManagement() {
                 </Card>
               </div>
             </div>
+          </div>
           </TabsContent>
 
           {/* Program Tracker */}
