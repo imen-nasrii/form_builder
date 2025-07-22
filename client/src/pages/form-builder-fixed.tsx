@@ -68,7 +68,7 @@ import {
   GripVertical,
   Move,
   MoreVertical,
-  Toggle
+  ToggleLeft
 } from 'lucide-react';
 import { type FormData, type FormField } from '@/lib/form-builder-types';
 import FlexibleExcelGrid from '@/components/form-builder/flexible-excel-grid';
@@ -797,7 +797,6 @@ export default function FormBuilderPage() {
     Calendar,
     Square,
     List,
-    Toggle: ToggleLeft,
     ToggleLeft,
     Upload,
     CheckSquare,
