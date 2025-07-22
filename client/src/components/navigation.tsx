@@ -37,7 +37,7 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 px-6 py-3 fixed top-0 left-0 right-0 z-50">
+    <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-2 fixed top-0 left-0 right-0 z-50 shadow-sm">
       <div className="flex items-center justify-between max-w-7xl mx-auto">
         {/* FormBuilder Logo */}
         <Link href="/">
@@ -45,18 +45,18 @@ export default function Navigation() {
             <img 
               src={formBuilderLogo}
               alt="FormBuilder Logo" 
-              className="h-16 w-auto transition-all duration-300 group-hover:scale-105"
+              className="h-12 w-auto transition-all duration-300 group-hover:scale-105"
             />
           </div>
         </Link>
         
-        {/* Beautiful Simplified Navigation */}
-        <div className="flex items-center gap-2">
+        {/* Modern Navigation Tabs */}
+        <div className="flex items-center gap-1 bg-gray-50 dark:bg-gray-800 p-1 rounded-lg">
           <Link href="/">
-            <button className={`px-6 py-2 rounded-full font-medium transition-all ${
+            <button className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
               isActive("/dashboard") || isActive("/") 
-                ? "bg-blue-500 text-white shadow-md" 
-                : "text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                ? "bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm" 
+                : "text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-white/50 dark:hover:bg-gray-700/50"
             }`}>
               Dashboard
             </button>
@@ -64,31 +64,31 @@ export default function Navigation() {
           
           {user?.role === 'admin' && (
             <Link href="/admin-management">
-              <button className={`px-6 py-2 rounded-full font-medium transition-all ${
+              <button className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
                 isActive("/admin-management") 
-                  ? "bg-red-500 text-white shadow-md" 
-                  : "text-gray-600 hover:bg-red-50 hover:text-red-600"
+                  ? "bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm" 
+                  : "text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-white/50 dark:hover:bg-gray-700/50"
               }`}>
-                Admin Dashboard
+              Admin Dashboard
               </button>
             </Link>
           )}
 
           <Link href="/analytics">
-            <button className={`px-6 py-2 rounded-full font-medium transition-all ${
+            <button className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
               isActive("/analytics") 
-                ? "bg-orange-500 text-white shadow-md" 
-                : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
+                ? "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400" 
+                : "text-gray-600 dark:text-gray-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20"
             }`}>
               Analytics
             </button>
           </Link>
 
           <Link href="/json-validator">
-            <button className={`px-6 py-2 rounded-full font-medium transition-all ${
+            <button className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
               isActive("/json-validator") 
-                ? "bg-green-500 text-white shadow-md" 
-                : "text-gray-600 hover:bg-green-50 hover:text-green-600"
+                ? "bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm" 
+                : "text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-white/50 dark:hover:bg-gray-700/50"
             }`}>
               JSON Validator
             </button>
@@ -97,61 +97,83 @@ export default function Navigation() {
           {user?.role === 'admin' && (
             <>
               <Link href="/ai-assistant">
-                <button className={`px-6 py-2 rounded-full font-medium transition-all ${
+                <button className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
                   isActive("/ai-assistant") 
-                    ? "bg-purple-500 text-white shadow-md" 
-                    : "text-gray-600 hover:bg-purple-50 hover:text-purple-600"
+                    ? "bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm" 
+                    : "text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-white/50 dark:hover:bg-gray-700/50"
                 }`}>
                   AI Assistant
                 </button>
               </Link>
-
-              <CreateProgramButton />
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="px-6 py-2 rounded-full font-medium transition-all flex items-center gap-1 text-gray-600 hover:bg-teal-50 hover:text-teal-600">
-                    Import/Export
-                    <ChevronDown className="w-4 h-4" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="center" className="w-48">
-                  <DropdownMenuItem>
-                    <Download className="w-4 h-4 mr-2" />
-                    Import Programs
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Upload className="w-4 h-4 mr-2" />
-                    Export Programs
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <FileJson className="w-4 h-4 mr-2" />
-                    Bulk Import JSON
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
             </>
           )}
 
           {user?.role !== 'admin' && (
             <Link href="/task-board">
-              <button className={`px-6 py-2 rounded-full font-medium transition-all ${
+              <button className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
                 isActive("/task-board") 
-                  ? "bg-purple-500 text-white shadow-md" 
-                  : "text-gray-600 hover:bg-purple-50 hover:text-purple-600"
+                  ? "bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm" 
+                  : "text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-white/50 dark:hover:bg-gray-700/50"
               }`}>
                 My Tasks
               </button>
             </Link>
           )}
-          
-
         </div>
 
-        {/* User Progress & Profile */}
-        <div className="flex items-center gap-4">
-
+        {/* Right Side Actions */}
+        <div className="flex items-center gap-3">
+          {user?.role === 'admin' && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-2">
+                  Create Program
+                  <ChevronDown className="w-3 h-3" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="center" className="w-48">
+                <DropdownMenuItem asChild>
+                  <Link href="/form-builder" className="flex items-center gap-2 w-full">
+                    <Plus className="w-4 h-4" />
+                    New MFact Program
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/form-builder-fixed" className="flex items-center gap-2 w-full">
+                    <FileText className="w-4 h-4" />
+                    Advanced Builder
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+          
+          {/* Import/Export Dropdown - Only for admins */}
+          {user?.role === 'admin' && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-all duration-200 flex items-center gap-1">
+                  Import/Export
+                  <ChevronDown className="w-3 h-3" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="center" className="w-48">
+                <DropdownMenuItem>
+                  <Download className="w-4 h-4 mr-2" />
+                  Import Programs
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Upload className="w-4 h-4 mr-2" />
+                  Export Programs
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <FileJson className="w-4 h-4 mr-2" />
+                  Bulk Import JSON
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
           
           {/* Notification Bell */}
           <NotificationBell />
