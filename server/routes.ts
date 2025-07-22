@@ -162,6 +162,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get admin dashboard statistics
+  app.get('/api/admin/stats', requireAdmin, async (req: any, res) => {
+    try {
+      const stats = await storage.getAdminStatistics();
+      res.json(stats);
+    } catch (error) {
+      console.error('Error fetching admin statistics:', error);
+      res.status(500).json({ message: 'Failed to fetch admin statistics' });
+    }
+  });
+
   // Update form status, priority, and comments (for task management)
   app.patch('/api/forms/:id/status', requireAuth, async (req: any, res) => {
     try {

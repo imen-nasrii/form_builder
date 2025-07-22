@@ -81,6 +81,13 @@ export default function AdminManagement() {
     refetchInterval: 5000 // Refresh every 5 seconds
   });
 
+  // Fetch admin statistics
+  const { data: adminStats, isLoading: statsLoading } = useQuery({
+    queryKey: ['/api/admin/stats'],
+    enabled: user?.role === 'admin',
+    refetchInterval: 30000 // Refresh every 30 seconds
+  });
+
   // Calculate program completion percentage
   const calculateCompletion = (fields: any[]) => {
     if (!fields || fields.length === 0) return 0;
@@ -217,13 +224,13 @@ export default function AdminManagement() {
           </div>
           <div className="flex items-center space-x-4">
             <Badge variant="outline" className="bg-blue-50 text-blue-700">
-              {users.length} Users
+              {adminStats?.users?.total || users.length} Users
             </Badge>
             <Badge variant="outline" className="bg-green-50 text-green-700">
-              {programs.length} Programs
+              {adminStats?.programs?.total || programs.length} Programs
             </Badge>
             <Badge variant="outline" className="bg-orange-50 text-orange-700">
-              {notifications.filter(n => !n.read).length} Unread Notifications
+              {adminStats?.notifications?.unread || notifications.filter(n => !n.read).length} Unread Notifications
             </Badge>
           </div>
         </div>
@@ -342,24 +349,32 @@ export default function AdminManagement() {
                     <CardTitle className="text-lg">Quick Stats</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-blue-600">{users.length}</div>
-                      <div className="text-sm text-gray-500">Total Users</div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4 text-center">
-                      <div>
-                        <div className="text-2xl font-bold text-green-600">
-                          {users.filter(u => u.role === 'user').length}
+                    {statsLoading ? (
+                      <div className="text-center py-4">Loading stats...</div>
+                    ) : (
+                      <>
+                        <div className="text-center">
+                          <div className="text-3xl font-bold text-blue-600">
+                            {adminStats?.users?.total || users.length}
+                          </div>
+                          <div className="text-sm text-gray-500">Total Users</div>
                         </div>
-                        <div className="text-xs text-gray-500">Regular Users</div>
-                      </div>
-                      <div>
-                        <div className="text-2xl font-bold text-purple-600">
-                          {users.filter(u => u.role === 'admin').length}
+                        <div className="grid grid-cols-2 gap-4 text-center">
+                          <div>
+                            <div className="text-2xl font-bold text-green-600">
+                              {adminStats?.users?.regular || users.filter(u => u.role === 'user').length}
+                            </div>
+                            <div className="text-xs text-gray-500">Regular Users</div>
+                          </div>
+                          <div>
+                            <div className="text-2xl font-bold text-purple-600">
+                              {adminStats?.users?.admins || users.filter(u => u.role === 'admin').length}
+                            </div>
+                            <div className="text-xs text-gray-500">Administrators</div>
+                          </div>
                         </div>
-                        <div className="text-xs text-gray-500">Administrators</div>
-                      </div>
-                    </div>
+                      </>
+                    )}
                   </CardContent>
                 </Card>
 
@@ -369,10 +384,29 @@ export default function AdminManagement() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3 text-sm">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        <span>Program assigned successfully</span>
-                      </div>
+                      {adminStats?.recentActivity ? (
+                        <>
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <span>{adminStats.recentActivity.users} new users this week</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                            <span>{adminStats.recentActivity.programs} programs created</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                            <span>{adminStats.recentActivity.notifications} notifications sent</span>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <span>Real-time data loading...</span>
+                          </div>
+                        </>
+                      )}
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                         <span>Admin dashboard accessed</span>

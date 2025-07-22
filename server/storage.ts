@@ -574,6 +574,104 @@ export class DatabaseStorage implements IStorage {
       throw error;
     }
   }
+
+  async getAdminStatistics() {
+    try {
+      // Get all users
+      const allUsers = await db.select().from(users);
+      const allForms = await db.select().from(forms);
+      const allNotifications = await db.select().from(notifications);
+
+      // Calculate user statistics
+      const totalUsers = allUsers.length;
+      const adminUsers = allUsers.filter(u => u.role === 'admin').length;
+      const regularUsers = allUsers.filter(u => u.role === 'user').length;
+      const verifiedUsers = allUsers.filter(u => u.emailVerified).length;
+      const users2FA = allUsers.filter(u => u.twoFactorEnabled).length;
+
+      // Calculate program statistics
+      const totalPrograms = allForms.length;
+      const assignedPrograms = allForms.filter(f => f.assignedTo).length;
+      const completedPrograms = allForms.filter(f => f.status === 'completed').length;
+      const inProgressPrograms = allForms.filter(f => f.status === 'in_progress').length;
+
+      // Calculate notification statistics
+      const totalNotifications = allNotifications.length;
+      const unreadNotifications = allNotifications.filter(n => !n.read).length;
+
+      // Recent activity (last 7 days)
+      const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+      const recentUsers = allUsers.filter(u => new Date(u.createdAt) > weekAgo).length;
+      const recentPrograms = allForms.filter(f => new Date(f.createdAt) > weekAgo).length;
+      const recentNotifications = allNotifications.filter(n => new Date(n.createdAt) > weekAgo).length;
+
+      // Program type breakdown
+      const programTypes = {
+        process: allForms.filter(f => f.layout === 'PROCESS').length,
+        masterMenu: allForms.filter(f => f.layout === 'MASTER_MENU' || f.layout === 'MASTERMENU').length,
+        transaction: allForms.filter(f => f.layout === 'TRANSACTION').length,
+        other: allForms.filter(f => !['PROCESS', 'MASTER_MENU', 'MASTERMENU', 'TRANSACTION'].includes(f.layout)).length,
+      };
+
+      // User activity by creation date (last 6 months)
+      const monthlyStats = [];
+      for (let i = 5; i >= 0; i--) {
+        const date = new Date();
+        date.setMonth(date.getMonth() - i);
+        const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
+        const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+        
+        const monthUsers = allUsers.filter(u => {
+          const createdAt = new Date(u.createdAt);
+          return createdAt >= monthStart && createdAt <= monthEnd;
+        }).length;
+
+        const monthPrograms = allForms.filter(f => {
+          const createdAt = new Date(f.createdAt);
+          return createdAt >= monthStart && createdAt <= monthEnd;
+        }).length;
+
+        monthlyStats.push({
+          month: date.toLocaleDateString('en', { month: 'short' }),
+          users: monthUsers,
+          programs: monthPrograms,
+        });
+      }
+
+      return {
+        users: {
+          total: totalUsers,
+          admins: adminUsers,
+          regular: regularUsers,
+          verified: verifiedUsers,
+          with2FA: users2FA,
+          recent: recentUsers,
+        },
+        programs: {
+          total: totalPrograms,
+          assigned: assignedPrograms,
+          completed: completedPrograms,
+          inProgress: inProgressPrograms,
+          recent: recentPrograms,
+          types: programTypes,
+        },
+        notifications: {
+          total: totalNotifications,
+          unread: unreadNotifications,
+          recent: recentNotifications,
+        },
+        monthlyStats,
+        recentActivity: {
+          users: recentUsers,
+          programs: recentPrograms,
+          notifications: recentNotifications,
+        },
+      };
+    } catch (error) {
+      console.error('Error getting admin statistics:', error);
+      throw error;
+    }
+  }
   // External components operations
   async getExternalComponents(): Promise<any[]> {
     try {
