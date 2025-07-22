@@ -13,7 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import type { User } from "@shared/schema";
-import { Bell, ChevronDown, User as UserIcon, LogOut } from "lucide-react";
+import { Bell, ChevronDown, User as UserIcon, LogOut, Plus, FileText, Upload, Download, FileJson, Settings } from "lucide-react";
 import LanguageToggle from "@/components/language-toggle";
 import NotificationBell from "@/components/notification-bell";
 import formBuilderLogo from "@/assets/formbuilder-logo-3d.png";
@@ -95,6 +95,18 @@ export default function Navigation() {
             </button>
           </Link>
 
+          {/* JSON Validator - Available for ALL users */}
+          <Link href="/json-validator">
+            <button className={`px-4 py-2 rounded-lg transition-all ${
+              isActive("/json-validator") 
+                ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 font-medium" 
+                : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+            }`}>
+              ✅ JSON Validator
+            </button>
+          </Link>
+
+          {/* Admin-only features */}
           {user?.role === 'admin' && (
             <>
               <Link href="/ai-assistant">
@@ -106,18 +118,59 @@ export default function Navigation() {
                   🤖 AI Assistant
                 </button>
               </Link>
-              
 
-              
-              <Link href="/json-validator">
-                <button className={`px-4 py-2 rounded-lg transition-all ${
-                  isActive("/json-validator") 
-                    ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 font-medium" 
-                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
-                }`}>
-                  ✅ Validateur JSON
-                </button>
-              </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className={`px-4 py-2 rounded-lg transition-all ${
+                    isActive("/form-builder") || isActive("/mfact-builder") 
+                      ? "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 font-medium" 
+                      : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+                  }`}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create Program
+                    <ChevronDown className="w-4 h-4 ml-2" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="center" className="w-56">
+                  <DropdownMenuItem asChild>
+                    <Link href="/form-builder" className="flex items-center gap-2 w-full">
+                      <FileText className="w-4 h-4" />
+                      Form Builder
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/mfact-builder" className="flex items-center gap-2 w-full">
+                      <Settings className="w-4 h-4" />
+                      MFact Builder
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="px-4 py-2 rounded-lg transition-all text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100">
+                    <Upload className="w-4 h-4 mr-2" />
+                    Import/Export
+                    <ChevronDown className="w-4 h-4 ml-2" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="center" className="w-48">
+                  <DropdownMenuItem>
+                    <Download className="w-4 h-4 mr-2" />
+                    Import Programs
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Upload className="w-4 h-4 mr-2" />
+                    Export Programs
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <FileJson className="w-4 h-4 mr-2" />
+                    Bulk Import JSON
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </>
           )}
           
