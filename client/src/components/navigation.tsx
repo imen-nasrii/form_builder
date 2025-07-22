@@ -103,32 +103,15 @@ export default function Navigation() {
                 </button>
               </Link>
 
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className={`px-6 py-2 rounded-full font-medium transition-all flex items-center gap-1 ${
-                    isActive("/form-builder") || isActive("/mfact-builder") 
-                      ? "bg-indigo-500 text-white shadow-md" 
-                      : "text-gray-600 hover:bg-indigo-50 hover:text-indigo-600"
-                  }`}>
-                    Create Program
-                    <ChevronDown className="w-4 h-4" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="center" className="w-48">
-                  <DropdownMenuItem asChild>
-                    <Link href="/form-builder" className="flex items-center gap-2 w-full">
-                      <FileText className="w-4 h-4" />
-                      Form Builder
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/mfact-builder" className="flex items-center gap-2 w-full">
-                      <Settings className="w-4 h-4" />
-                      MFact Builder
-                    </Link>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <Link href="/form-builder">
+                <button className={`px-6 py-2 rounded-full font-medium transition-all ${
+                  isActive("/form-builder") 
+                    ? "bg-indigo-500 text-white shadow-md" 
+                    : "text-gray-600 hover:bg-indigo-50 hover:text-indigo-600"
+                }`}>
+                  Create Program
+                </button>
+              </Link>
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
