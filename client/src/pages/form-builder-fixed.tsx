@@ -32,6 +32,10 @@ import {
 import {
   useSortable,
 } from '@dnd-kit/sortable';
+import {
+  useDraggable,
+  useDroppable,
+} from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { 
   Type, 
@@ -140,6 +144,25 @@ function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMod
   isDarkMode?: boolean;
   addField: (type: string) => void;
 }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    isDragging,
+  } = useDraggable({
+    id: `palette-${componentType}`,
+    data: {
+      type: 'component',
+      componentType: componentType
+    }
+  });
+
+  const style = {
+    transform: CSS.Translate.toString(transform),
+    opacity: isDragging ? 0.5 : 1,
+  };
+
   const getColorClasses = () => {
     if (isDarkMode) {
       return {
@@ -182,12 +205,17 @@ function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMod
 
   return (
     <div
+      ref={setNodeRef}
+      style={style}
+      {...listeners}
+      {...attributes}
       onClick={() => addField(componentType)}
       className={`
         relative cursor-pointer border rounded-lg p-2 transition-all duration-200
         ${colorClasses.bg} ${colorClasses.border} ${colorClasses.text}
         transform hover:scale-105 hover:shadow-md
         flex flex-col items-center space-y-1
+        ${isDragging ? 'shadow-lg z-50' : ''}
       `}
       title={label}
     >
@@ -468,6 +496,61 @@ const createDefaultField = (componentType: string, customComponent?: any): FormF
   };
 };
 
+// Droppable Construction Zone Component
+function DroppableConstructionZone({ isDarkMode, formData, selectedField, setSelectedField, removeField }: {
+  isDarkMode: boolean;
+  formData: any;
+  selectedField: FormField | null;
+  setSelectedField: (field: FormField | null) => void;
+  removeField: (id: string) => void;
+}) {
+  const { setNodeRef, isOver } = useDroppable({
+    id: 'construction-zone',
+  });
+
+  return (
+    <div 
+      ref={setNodeRef}
+      className={`min-h-full border-2 border-dashed rounded-lg p-8 transition-colors ${
+        isDarkMode 
+          ? `border-gray-600 bg-gray-800/50 ${isOver ? 'border-blue-400 bg-blue-900/20' : ''}` 
+          : `border-gray-300 bg-white/50 ${isOver ? 'border-blue-400 bg-blue-50' : ''}`
+      }`}
+    >
+      {formData.fields.length === 0 ? (
+        <div className="text-center py-20">
+          <div className={`w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center ${
+            isDarkMode ? 'bg-gray-700' : 'bg-gray-100'
+          }`}>
+            <Square className={`w-12 h-12 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
+          </div>
+          <h3 className={`text-xl font-medium mb-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+            Start Building Your Program
+          </h3>
+          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} mb-6`}>
+            Drag components from the palette to create your form
+          </p>
+        </div>
+      ) : (
+        <SortableContext items={formData.fields.map((f: FormField) => f.Id)} strategy={verticalListSortingStrategy}>
+          <div className="space-y-4">
+            {formData.fields.map((field: FormField) => (
+              <SortableFieldItem
+                key={field.Id}
+                field={field}
+                onSelect={() => setSelectedField(field)}
+                onRemove={() => removeField(field.Id)}
+                isSelected={selectedField?.Id === field.Id}
+                isDarkMode={isDarkMode}
+              />
+            ))}
+          </div>
+        </SortableContext>
+      )}
+    </div>
+  );
+}
+
 // Sortable Field Component for Excel-like Grid
 function SortableFieldItem({ field, onSelect, onRemove, isSelected, isDarkMode }: {
   field: FormField;
@@ -705,6 +788,16 @@ export default function FormBuilderPage() {
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [customComponents, setCustomComponents] = useState<any[]>([]);
   const [isExternalComponentsOpen, setIsExternalComponentsOpen] = useState(false);
+  const [activeField, setActiveField] = useState<FormField | null>(null);
+  
+  // Drag and drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
 
   // Clean up duplicate components that appear both in groups and root level
   const cleanupDuplicateComponents = (fields: FormField[]): FormField[] => {
@@ -795,6 +888,40 @@ export default function FormBuilderPage() {
     
     setSelectedField(newField);
     setIsExternalComponentsOpen(false);
+  };
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const field = formData.fields.find((f: FormField) => f.Id === event.active.id);
+    setActiveField(field || null);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    setActiveField(null);
+
+    // Handle drag from palette
+    if (active.id.toString().startsWith('palette-') && over?.id === 'construction-zone') {
+      const componentType = active.id.toString().replace('palette-', '');
+      addField(componentType);
+      return;
+    }
+
+    // Handle reordering within construction zone
+    if (active.id !== over?.id && over?.id) {
+      setFormData((prev: any) => {
+        const oldIndex = prev.fields.findIndex((f: FormField) => f.Id === active.id);
+        const newIndex = prev.fields.findIndex((f: FormField) => f.Id === over?.id);
+        
+        if (oldIndex !== -1 && newIndex !== -1) {
+          return {
+            ...prev,
+            fields: arrayMove(prev.fields, oldIndex, newIndex)
+          };
+        }
+        
+        return prev;
+      });
+    }
   };
 
   const removeField = (fieldId: string) => {
@@ -1041,15 +1168,34 @@ export default function FormBuilderPage() {
             </div>
           </div>
 
-          {/* Flexible Excel-like Grid Construction Zone */}
+          {/* Enhanced Construction Zone with Drag & Drop */}
           <div className={`flex-1 relative ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
-            <FlexibleExcelGrid
-              formData={formData}
-              setFormData={setFormData}
-              selectedField={selectedField}
-              setSelectedField={setSelectedField}
-              isDarkMode={isDarkMode}
-            />
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+            >
+              <div className="h-full overflow-auto p-6">
+                <DroppableConstructionZone 
+                  isDarkMode={isDarkMode} 
+                  formData={formData} 
+                  selectedField={selectedField} 
+                  setSelectedField={setSelectedField} 
+                  removeField={removeField} 
+                />
+              </div>
+              
+              <DragOverlay>
+                {activeField ? (
+                  <div className={`p-3 border rounded-lg shadow-lg ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'}`}>
+                    <div className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                      {activeField.Label}
+                    </div>
+                  </div>
+                ) : null}
+              </DragOverlay>
+            </DndContext>
           </div>
         </div>
 
