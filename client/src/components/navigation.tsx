@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "wouter";
+import { Link, useLocation, useRouter } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -12,6 +12,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 import type { User } from "@shared/schema";
 import { Bell, ChevronDown, User as UserIcon, LogOut, Plus, FileText, Upload, Download, FileJson, Settings } from "lucide-react";
 import LanguageToggle from "@/components/language-toggle";
@@ -103,15 +106,7 @@ export default function Navigation() {
                 </button>
               </Link>
 
-              <Link href="/form-builder">
-                <button className={`px-6 py-2 rounded-full font-medium transition-all ${
-                  isActive("/form-builder") 
-                    ? "bg-indigo-500 text-white shadow-md" 
-                    : "text-gray-600 hover:bg-indigo-50 hover:text-indigo-600"
-                }`}>
-                  Create Program
-                </button>
-              </Link>
+              <CreateProgramButton />
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -234,5 +229,60 @@ export default function Navigation() {
         </div>
       </div>
     </nav>
+  );
+}
+
+// Create Program Button Component
+function CreateProgramButton() {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [, navigate] = useRouter();
+  const [location] = useLocation();
+
+  const isActive = (path: string) => {
+    if (path === "/" && location === "/") return true;
+    if (path !== "/" && location.startsWith(path)) return true;
+    return false;
+  };
+
+  const createFormMutation = useMutation({
+    mutationFn: async () => {
+      return await apiRequest('/api/forms/create', 'POST', {
+        menuId: `PROGRAM_${Date.now()}`,
+        label: "New Program",
+        formWidth: "700px",
+        layout: "PROCESS"
+      });
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/forms'] });
+      navigate(`/form-builder/${data.id}`);
+      toast({
+        title: "Program Created",
+        description: "New program created successfully!",
+      });
+    },
+    onError: (error) => {
+      console.error("Error creating program:", error);
+      toast({
+        title: "Error",
+        description: "Failed to create program. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  return (
+    <button 
+      onClick={() => createFormMutation.mutate()}
+      disabled={createFormMutation.isPending}
+      className={`px-6 py-2 rounded-full font-medium transition-all ${
+        isActive("/form-builder") 
+          ? "bg-indigo-500 text-white shadow-md" 
+          : "text-gray-600 hover:bg-indigo-50 hover:text-indigo-600"
+      } ${createFormMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
+    >
+      {createFormMutation.isPending ? 'Creating...' : 'Create Program'}
+    </button>
   );
 }
