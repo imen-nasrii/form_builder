@@ -478,6 +478,102 @@ export class DatabaseStorage implements IStorage {
       throw error;
     }
   }
+
+  async getUserStatistics(userId: string) {
+    try {
+      // Get all forms for the user (created by or assigned to)
+      const myCreatedForms = await db.select().from(forms).where(eq(forms.createdBy, userId));
+      const myAssignedForms = await db.select().from(forms).where(eq(forms.assignedTo, userId));
+      
+      // Combine and deduplicate
+      const allMyForms = [...myCreatedForms];
+      myAssignedForms.forEach(form => {
+        if (!allMyForms.find(f => f.id === form.id)) {
+          allMyForms.push(form);
+        }
+      });
+
+      // Calculate statistics
+      const totalPrograms = myCreatedForms.length;
+      const assignedTasks = myAssignedForms.length;
+      const completedTasks = myAssignedForms.filter(f => f.status === 'completed').length;
+      
+      // Recent activity (forms updated in last 7 days)
+      const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+      const recentActivity = allMyForms.filter(f => 
+        f.updatedAt && new Date(f.updatedAt) > weekAgo
+      ).length;
+
+      // Program types breakdown
+      const programTypes = {
+        process: allMyForms.filter(f => f.layout === 'PROCESS').length,
+        masterMenu: allMyForms.filter(f => f.layout === 'MASTER_MENU' || f.layout === 'MASTERMENU').length,
+        transaction: allMyForms.filter(f => f.layout === 'TRANSACTION').length,
+        other: allMyForms.filter(f => !['PROCESS', 'MASTER_MENU', 'MASTERMENU', 'TRANSACTION'].includes(f.layout)).length,
+      };
+
+      // Status breakdown for assigned tasks
+      const statusBreakdown = {
+        todo: myAssignedForms.filter(f => f.status === 'todo').length,
+        inProgress: myAssignedForms.filter(f => f.status === 'in_progress').length,
+        review: myAssignedForms.filter(f => f.status === 'review').length,
+        completed: completedTasks,
+      };
+
+      // Priority breakdown for assigned tasks
+      const priorityBreakdown = {
+        low: myAssignedForms.filter(f => f.priority === 'low').length,
+        medium: myAssignedForms.filter(f => f.priority === 'medium').length,
+        high: myAssignedForms.filter(f => f.priority === 'high').length,
+      };
+
+      // Monthly activity for the last 6 months
+      const monthlyActivity = [];
+      for (let i = 5; i >= 0; i--) {
+        const date = new Date();
+        date.setMonth(date.getMonth() - i);
+        const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
+        const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+        
+        const monthForms = allMyForms.filter(f => {
+          const createdAt = new Date(f.createdAt);
+          return createdAt >= monthStart && createdAt <= monthEnd;
+        });
+
+        const monthAssigned = myAssignedForms.filter(f => {
+          const createdAt = new Date(f.createdAt);
+          return createdAt >= monthStart && createdAt <= monthEnd;
+        });
+
+        const monthCompleted = myAssignedForms.filter(f => {
+          const updatedAt = new Date(f.updatedAt || f.createdAt);
+          return f.status === 'completed' && updatedAt >= monthStart && updatedAt <= monthEnd;
+        });
+
+        monthlyActivity.push({
+          month: date.toLocaleDateString('en', { month: 'short' }),
+          created: monthForms.length,
+          assigned: monthAssigned.length,
+          completed: monthCompleted.length,
+        });
+      }
+
+      return {
+        totalPrograms,
+        assignedTasks,
+        completedTasks,
+        recentActivity,
+        programTypes,
+        statusBreakdown,
+        priorityBreakdown,
+        monthlyActivity,
+        allMyForms: allMyForms.length,
+      };
+    } catch (error) {
+      console.error('Error getting user statistics:', error);
+      throw error;
+    }
+  }
   // External components operations
   async getExternalComponents(): Promise<any[]> {
     try {

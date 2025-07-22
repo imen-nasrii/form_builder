@@ -150,6 +150,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get user-specific statistics
+  app.get('/api/analytics/stats', requireAuth, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const stats = await storage.getUserStatistics(userId);
+      res.json(stats);
+    } catch (error) {
+      console.error('Error fetching user statistics:', error);
+      res.status(500).json({ message: 'Failed to fetch statistics' });
+    }
+  });
+
   // Update form status, priority, and comments (for task management)
   app.patch('/api/forms/:id/status', requireAuth, async (req: any, res) => {
     try {

@@ -38,6 +38,12 @@ export default function Analytics() {
     enabled: isAuthenticated,
   });
 
+  // Fetch real user statistics from database
+  const { data: stats, isLoading: statsLoading } = useQuery({
+    queryKey: ["/api/analytics/stats"],
+    enabled: isAuthenticated,
+  });
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -49,62 +55,58 @@ export default function Analytics() {
     );
   }
 
-  // Calculate user-specific metrics from data
-  const userForms = Array.isArray(forms) ? forms.filter((form: any) => 
-    form.assignedTo === user?.id || form.createdBy === user?.id
-  ) : [];
-  
-  const myAssignedTasks = Array.isArray(forms) ? forms.filter((form: any) => 
-    form.assignedTo === user?.id
-  ) : [];
-  
-  const myCreatedPrograms = Array.isArray(forms) ? forms.filter((form: any) => 
-    form.createdBy === user?.id
-  ) : [];
-  
-  const completedTasks = myAssignedTasks.filter((task: any) => task.status === 'completed');
-  const inProgressTasks = myAssignedTasks.filter((task: any) => task.status === 'in-progress');
-  const totalMyForms = userForms.length;
-  
-  const recentActivity = Array.isArray(forms) ? forms.filter((form: any) => {
-    const updated = new Date(form.updatedAt || "");
-    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-    const isMyForm = form.assignedTo === user?.id || form.createdBy === user?.id;
-    return updated > weekAgo && isMyForm;
-  }).length : 0;
+  // Use real database statistics or show loading/empty states
+  if (statsLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <Navigation />
+        <div className="container mx-auto px-6 py-8 max-w-7xl">
+          <div className="flex items-center justify-center min-h-[60vh]">
+            <p className="text-gray-500">Loading analytics data...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-  // Calculate user's form type distribution from real data
-  const myFormUsageData = Array.isArray(userForms) && userForms.length > 0 ? [
+  // Use real statistics from database with proper type checking
+  const totalPrograms = (stats && 'totalPrograms' in stats) ? stats.totalPrograms : 0;
+  const assignedTasks = (stats && 'assignedTasks' in stats) ? stats.assignedTasks : 0;
+  const completedTasks = (stats && 'completedTasks' in stats) ? stats.completedTasks : 0;
+  const recentActivity = (stats && 'recentActivity' in stats) ? stats.recentActivity : 0;
+
+  // Calculate user's form type distribution from real database data
+  const myFormUsageData = (stats && 'programTypes' in stats && stats.programTypes) ? [
     { 
       name: 'Process Programs', 
-      value: userForms.filter((f: any) => f.layout === 'PROCESS').length, 
+      value: stats.programTypes.process, 
       color: '#3B82F6' 
     },
     { 
       name: 'Master Menu', 
-      value: userForms.filter((f: any) => f.layout === 'MASTER_MENU').length, 
+      value: stats.programTypes.masterMenu, 
       color: '#10B981' 
     },
     { 
       name: 'Transaction', 
-      value: userForms.filter((f: any) => f.layout === 'TRANSACTION').length, 
+      value: stats.programTypes.transaction, 
       color: '#F59E0B' 
     },
     { 
       name: 'Other', 
-      value: userForms.filter((f: any) => !['PROCESS', 'MASTER_MENU', 'TRANSACTION'].includes(f.layout)).length, 
+      value: stats.programTypes.other, 
       color: '#EF4444' 
     }
   ].filter(item => item.value > 0) : [{ name: 'No Data', value: 1, color: '#9CA3AF' }];
 
-  // Generate user activity data for charts
-  const myActivityData = [
-    { month: 'Jan', completed: 0, assigned: 0 },
-    { month: 'Feb', completed: 0, assigned: 0 },
-    { month: 'Mar', completed: 0, assigned: 0 },
-    { month: 'Apr', completed: 0, assigned: 0 },
-    { month: 'May', completed: 0, assigned: 0 },
-    { month: 'Jun', completed: completedTasks.length, assigned: myAssignedTasks.length }
+  // Use real monthly activity data from database
+  const myActivityData = (stats && 'monthlyActivity' in stats && stats.monthlyActivity) ? stats.monthlyActivity : [
+    { month: 'Jan', created: 0, assigned: 0, completed: 0 },
+    { month: 'Feb', created: 0, assigned: 0, completed: 0 },
+    { month: 'Mar', created: 0, assigned: 0, completed: 0 },
+    { month: 'Apr', created: 0, assigned: 0, completed: 0 },
+    { month: 'May', created: 0, assigned: 0, completed: 0 },
+    { month: 'Jun', created: 0, assigned: 0, completed: 0 }
   ];
 
   return (
@@ -141,9 +143,9 @@ export default function Analytics() {
               <FileText className="h-4 w-4 text-blue-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-900 dark:text-blue-100">{totalMyForms}</div>
+              <div className="text-2xl font-bold text-blue-900 dark:text-blue-100">{totalPrograms}</div>
               <p className="text-xs text-blue-600 dark:text-blue-400">
-                {myCreatedPrograms.length} created, {myAssignedTasks.length} assigned
+                {totalPrograms} created, {assignedTasks} assigned
               </p>
             </CardContent>
           </Card>
@@ -154,9 +156,9 @@ export default function Analytics() {
               <Clock className="h-4 w-4 text-green-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-900 dark:text-green-100">{myAssignedTasks.length}</div>
+              <div className="text-2xl font-bold text-green-900 dark:text-green-100">{assignedTasks}</div>
               <p className="text-xs text-green-600 dark:text-green-400">
-                {completedTasks.length} completed, {inProgressTasks.length} in progress
+                {completedTasks} completed, {(stats && 'statusBreakdown' in stats && stats.statusBreakdown) ? stats.statusBreakdown.inProgress : 0} in progress
               </p>
             </CardContent>
           </Card>
@@ -167,9 +169,9 @@ export default function Analytics() {
               <UserCheck className="h-4 w-4 text-purple-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-purple-900 dark:text-purple-100">{completedTasks.length}</div>
+              <div className="text-2xl font-bold text-purple-900 dark:text-purple-100">{completedTasks}</div>
               <p className="text-xs text-purple-600 dark:text-purple-400">
-                {myAssignedTasks.length > 0 ? `${Math.round((completedTasks.length / myAssignedTasks.length) * 100)}% completion rate` : 'No tasks assigned yet'}
+                {assignedTasks > 0 ? `${Math.round((completedTasks / assignedTasks) * 100)}% completion rate` : 'No tasks assigned yet'}
               </p>
             </CardContent>
           </Card>
