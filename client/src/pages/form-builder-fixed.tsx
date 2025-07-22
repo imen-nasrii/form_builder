@@ -2917,6 +2917,7 @@ export default function FormBuilderFixed() {
   const [isCodeGenerationOpen, setIsCodeGenerationOpen] = useState(false);
   const [isExternalLibraryOpen, setIsExternalLibraryOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isJsonFullscreen, setIsJsonFullscreen] = useState(false);
 
   const formBuilderRef = useRef<HTMLDivElement>(null);
 
@@ -5467,7 +5468,23 @@ export default function FormBuilderFixed() {
             </TabsContent>
             
             <TabsContent value="json" className="h-full p-3">
-              <JsonValidator formData={formData} customComponents={customComponents} isDarkMode={isDarkMode} />
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                    JSON Schema with Validation
+                  </h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsJsonFullscreen(true)}
+                    className={`h-8 w-8 p-0 ${isDarkMode ? 'hover:bg-gray-700 text-gray-400 hover:text-white' : 'hover:bg-gray-100 text-gray-600 hover:text-gray-900'}`}
+                    title="View JSON in fullscreen"
+                  >
+                    <Maximize2 className="w-4 h-4" />
+                  </Button>
+                </div>
+                <JsonValidator formData={formData} customComponents={customComponents} isDarkMode={isDarkMode} />
+              </div>
             </TabsContent>
           </Tabs>
         </div>
@@ -5567,6 +5584,27 @@ export default function FormBuilderFixed() {
         isDarkMode={isDarkMode}
       />
 
+      {/* JSON Fullscreen Modal */}
+      <Dialog open={isJsonFullscreen} onOpenChange={setIsJsonFullscreen}>
+        <DialogContent className={`max-w-[95vw] max-h-[95vh] w-full h-full ${isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-white'}`}>
+          <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <DialogTitle className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              JSON Schema - Fullscreen View
+            </DialogTitle>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsJsonFullscreen(false)}
+              className={`h-8 w-8 p-0 ${isDarkMode ? 'hover:bg-gray-700 text-gray-400 hover:text-white' : 'hover:bg-gray-100 text-gray-600 hover:text-gray-900'}`}
+            >
+              <Minimize2 className="w-4 h-4" />
+            </Button>
+          </DialogHeader>
+          <div className="flex-1 overflow-hidden">
+            <JsonValidator formData={formData} customComponents={customComponents} isDarkMode={isDarkMode} />
+          </div>
+        </DialogContent>
+      </Dialog>
 
     </div>
   );
