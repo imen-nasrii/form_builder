@@ -694,62 +694,55 @@ function ExcelGrid({ formData, setFormData, selectedField, setSelectedField, isD
   }
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-    >
-      <div className="h-full overflow-auto">
-        <div 
-          className="grid gap-1 p-4 min-h-full"
-          style={{ 
-            gridTemplateColumns: `repeat(${gridSize.cols}, minmax(100px, 1fr))`,
-            gridTemplateRows: `repeat(${gridSize.rows}, 60px)`
-          }}
-        >
-          {gridCells}
-        </div>
-
-        {/* Field List Overlay */}
-        <div className="absolute top-4 right-4 w-80">
-          <Card className={isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}>
-            <CardHeader className="pb-3">
-              <CardTitle className={`text-sm ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                Form Fields ({formData.fields.length})
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2 max-h-96 overflow-y-auto">
-              <SortableContext items={formData.fields.map(f => f.Id)} strategy={verticalListSortingStrategy}>
-                {formData.fields.map((field) => (
-                  <SortableFieldItem
-                    key={field.Id}
-                    field={field}
-                    onSelect={() => setSelectedField(field)}
-                    onRemove={() => {
-                      const newFields = formData.fields.filter(f => f.Id !== field.Id);
-                      setFormData({ ...formData, fields: newFields });
-                      if (selectedField?.Id === field.Id) {
-                        setSelectedField(null);
-                      }
-                    }}
-                    isSelected={selectedField?.Id === field.Id}
-                    isDarkMode={isDarkMode}
-                  />
-                ))}
-              </SortableContext>
-              {formData.fields.length === 0 && (
-                <div className={`text-center py-8 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                  <Grid3X3 className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">No fields added yet</p>
-                  <p className="text-xs mt-1">Drag components from the palette</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+    <div className="h-full overflow-auto relative">
+      <div 
+        className="grid gap-1 p-4 min-h-full"
+        style={{ 
+          gridTemplateColumns: `repeat(${gridSize.cols}, minmax(100px, 1fr))`,
+          gridTemplateRows: `repeat(${gridSize.rows}, 60px)`
+        }}
+      >
+        {gridCells}
       </div>
 
+      {/* Field List Overlay */}
+      <div className="absolute top-4 right-4 w-80">
+        <Card className={isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}>
+          <CardHeader className="pb-3">
+            <CardTitle className={`text-sm ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              Form Fields ({formData.fields.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2 max-h-96 overflow-y-auto">
+            <SortableContext items={formData.fields.map(f => f.Id)} strategy={verticalListSortingStrategy}>
+              {formData.fields.map((field) => (
+                <SortableFieldItem
+                  key={field.Id}
+                  field={field}
+                  onSelect={() => setSelectedField(field)}
+                  onRemove={() => {
+                    const newFields = formData.fields.filter(f => f.Id !== field.Id);
+                    setFormData({ ...formData, fields: newFields });
+                    if (selectedField?.Id === field.Id) {
+                      setSelectedField(null);
+                    }
+                  }}
+                  isSelected={selectedField?.Id === field.Id}
+                  isDarkMode={isDarkMode}
+                />
+              ))}
+            </SortableContext>
+            {formData.fields.length === 0 && (
+              <div className={`text-center py-8 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                <Grid3X3 className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">No fields added yet</p>
+                <p className="text-xs mt-1">Drag components from the palette</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+      
       <DragOverlay>
         {draggedField ? (
           <div className="bg-white border border-blue-500 rounded-lg p-3 shadow-lg">
@@ -760,7 +753,7 @@ function ExcelGrid({ formData, setFormData, selectedField, setSelectedField, isD
           </div>
         ) : null}
       </DragOverlay>
-    </DndContext>
+    </div>
   );
 }
 
