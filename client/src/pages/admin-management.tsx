@@ -430,13 +430,6 @@ export default function AdminManagement() {
 
           {/* Program Tracker - Simple Layout */}
           <TabsContent value="programs" className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Program Completion Tracker</h2>
-                <p className="text-gray-600 dark:text-gray-400">Monitor progress and completion status of all programs</p>
-              </div>
-            </div>
-            
             {programsLoading ? (
               <div className="text-center py-8">Loading programs...</div>
             ) : (
