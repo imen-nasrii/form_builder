@@ -246,11 +246,14 @@ function CreateProgramButton() {
 
   const createFormMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest('/api/forms/create', 'POST', {
-        menuId: `PROGRAM_${Date.now()}`,
-        label: "New Program",
-        formWidth: "700px",
-        layout: "PROCESS"
+      return await apiRequest('/api/forms/create', {
+        method: 'POST',
+        body: {
+          menuId: `PROGRAM_${Date.now()}`,
+          label: "New Program",
+          formWidth: "700px",
+          layout: "PROCESS"
+        }
       });
     },
     onSuccess: (data) => {
