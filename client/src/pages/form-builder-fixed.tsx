@@ -2481,9 +2481,59 @@ function JsonValidator({ formData, customComponents, isDarkMode }: {
         if (field.Type === 'GROUP' && field.ChildFields && field.ChildFields.length === 0) {
           warns.push(`${fieldPrefix}: Empty group (no child fields)`);
         }
+        
+        // Validate child fields in groups
+        if (field.Type === 'GROUP' && field.ChildFields && field.ChildFields.length > 0) {
+          field.ChildFields.forEach((childField: any, childIndex: number) => {
+            const childPrefix = `${fieldPrefix} > Child ${childIndex + 1}`;
+            
+            // Required child field validation
+            if (childField.required === true || childField.Required === true) {
+              let childIsEmpty = true;
+              
+              if (childField.value !== undefined && childField.value !== null && childField.value !== '') {
+                childIsEmpty = false;
+              } else if (childField.Value !== undefined && childField.Value !== null && childField.Value !== '') {
+                childIsEmpty = false;
+              } else if (childField.CheckboxValue !== undefined) {
+                childIsEmpty = false;
+              }
+              
+              if (childIsEmpty) {
+                errors.push(`${childPrefix}: Required child field "${childField.Label || childField.label || childField.Id}" is empty`);
+              }
+            }
+          });
+        }
 
         if (field.Type === 'SELECT' && !field.Value) {
           warns.push(`${fieldPrefix}: SELECT without defined options`);
+        }
+
+        // Required field validation
+        if (field.required === true || field.Required === true) {
+          let isEmpty = true;
+          
+          // Check for various value properties and handle different field types
+          if (field.value !== undefined && field.value !== null && field.value !== '') {
+            isEmpty = false;
+          } else if (field.Value !== undefined && field.Value !== null && field.Value !== '') {
+            isEmpty = false;
+          } else if (field.defaultValue !== undefined && field.defaultValue !== null && field.defaultValue !== '') {
+            isEmpty = false;
+          } else if (field.CheckboxValue !== undefined) {
+            isEmpty = false; // Checkboxes have a value even if false
+          } else if (field.OptionValues && Object.keys(field.OptionValues).length > 0) {
+            // For SELECT/RADIO fields, check if a default option is selected
+            const defaultKey = Object.keys(field.OptionValues)[0];
+            if (field.OptionValues[defaultKey] && field.OptionValues[defaultKey] !== '') {
+              isEmpty = false;
+            }
+          }
+          
+          if (isEmpty) {
+            errors.push(`${fieldPrefix}: Required field "${field.Label || field.label || field.Id}" is empty`);
+          }
         }
 
         // Required properties validation
