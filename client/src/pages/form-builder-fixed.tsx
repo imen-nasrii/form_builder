@@ -138,6 +138,93 @@ const ComponentTypes = Object.values(ComponentCategories).reduce((acc, category)
 
 
 
+// DroppableConstructionZone Component
+function DroppableConstructionZone({ isDarkMode, formData, selectedField, setSelectedField, removeField }: {
+  isDarkMode: boolean;
+  formData: FormData;
+  selectedField: FormField | null;
+  setSelectedField: (field: FormField | null) => void;
+  removeField: (id: string) => void;
+}) {
+  const { setNodeRef, isOver } = useDroppable({
+    id: 'construction-zone',
+    data: {
+      type: 'construction-zone',
+    },
+  });
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={`
+        min-h-[400px] w-full border-2 border-dashed rounded-lg p-6 transition-all
+        ${isOver 
+          ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/20' 
+          : isDarkMode 
+            ? 'border-gray-600 bg-gray-800/50' 
+            : 'border-gray-300 bg-white/50'
+        }
+      `}
+    >
+      {formData.fields.length === 0 ? (
+        <div className={`text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+          <div className="mb-4">
+            <Square className="h-12 w-12 mx-auto opacity-50" />
+          </div>
+          <h3 className="text-lg font-medium mb-2">
+            {isOver ? 'Drop component here!' : 'Start building your form'}
+          </h3>
+          <p className="text-sm">
+            Drag components from the palette on the left to start building your form.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {formData.fields.map((field) => (
+            <div
+              key={field.Id}
+              className={`
+                p-4 border rounded-lg cursor-pointer transition-all
+                ${selectedField?.Id === field.Id
+                  ? isDarkMode
+                    ? 'border-blue-400 bg-blue-900/20'
+                    : 'border-blue-400 bg-blue-50'
+                  : isDarkMode
+                    ? 'border-gray-600 bg-gray-700/50 hover:bg-gray-700'
+                    : 'border-gray-200 bg-white hover:bg-gray-50'
+                }
+              `}
+              onClick={() => setSelectedField(field)}
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                    {field.Label}
+                  </div>
+                  <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                    Type: {field.Type} | Field: {field.DataField}
+                  </div>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeField(field.Id);
+                  }}
+                  className={isDarkMode ? 'text-red-400 hover:bg-red-900/20' : 'text-red-600 hover:bg-red-50'}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // Component Templates based on user specifications
 const createDefaultField = (componentType: string, customComponent?: any): FormField => {
   const timestamp = Date.now();
@@ -454,60 +541,7 @@ function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMod
   );
 }
 
-// Droppable Construction Zone Component
-function DroppableConstructionZone({ isDarkMode, formData, selectedField, setSelectedField, removeField }: {
-  isDarkMode: boolean;
-  formData: any;
-  selectedField: FormField | null;
-  setSelectedField: (field: FormField | null) => void;
-  removeField: (id: string) => void;
-}) {
-  const { setNodeRef, isOver } = useDroppable({
-    id: 'construction-zone',
-  });
 
-  return (
-    <div 
-      ref={setNodeRef}
-      className={`min-h-full border-2 border-dashed rounded-lg p-8 transition-colors ${
-        isDarkMode 
-          ? `border-gray-600 bg-gray-800/50 ${isOver ? 'border-blue-400 bg-blue-900/20' : ''}` 
-          : `border-gray-300 bg-white/50 ${isOver ? 'border-blue-400 bg-blue-50' : ''}`
-      }`}
-    >
-      {formData.fields.length === 0 ? (
-        <div className="text-center py-20">
-          <div className={`w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center ${
-            isDarkMode ? 'bg-gray-700' : 'bg-gray-100'
-          }`}>
-            <Square className={`w-12 h-12 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-          </div>
-          <h3 className={`text-xl font-medium mb-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
-            Start Building Your Program
-          </h3>
-          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} mb-6`}>
-            Drag components from the palette to create your form
-          </p>
-        </div>
-      ) : (
-        <SortableContext items={formData.fields.map((f: FormField) => f.Id)} strategy={verticalListSortingStrategy}>
-          <div className="space-y-4">
-            {formData.fields.map((field: FormField) => (
-              <SortableFieldItem
-                key={field.Id}
-                field={field}
-                onSelect={() => setSelectedField(field)}
-                onRemove={() => removeField(field.Id)}
-                isSelected={selectedField?.Id === field.Id}
-                isDarkMode={isDarkMode}
-              />
-            ))}
-          </div>
-        </SortableContext>
-      )}
-    </div>
-  );
-}
 
 // Sortable Field Component for Excel-like Grid
 function SortableFieldItem({ field, onSelect, onRemove, isSelected, isDarkMode }: {
