@@ -12,7 +12,6 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -867,7 +866,7 @@ export default function FormBuilderPage() {
                   <Home className="h-4 w-4" />
                   Home
                 </Button>
-                <Separator orientation="vertical" className="h-6" />
+                <div className={`w-px h-6 ${isDarkMode ? 'bg-gray-600' : 'bg-gray-300'}`} />
                 <h1 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                   {formData.title}
                 </h1>
@@ -1085,7 +1084,7 @@ export default function FormBuilderPage() {
                 </>
               )}
 
-              <Separator className={isDarkMode ? 'bg-gray-600' : ''} />
+              <div className={`h-px w-full ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`} />
               
               {/* Universal Properties */}
               <div className="flex items-center space-x-2">
@@ -1111,7 +1110,7 @@ export default function FormBuilderPage() {
               </div>
 
               {/* Advanced Field Properties */}
-              <Separator className={isDarkMode ? 'bg-gray-600' : ''} />
+              <div className={`h-px w-full ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`} />
               <div>
                 <Label className={isDarkMode ? 'text-gray-300' : ''}>Visible When</Label>
                 <Textarea
