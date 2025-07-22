@@ -66,6 +66,7 @@ import {
   MoreVertical
 } from 'lucide-react';
 import { type FormData, type FormField } from '@/lib/form-builder-types';
+import FlexibleExcelGrid from '@/components/form-builder/flexible-excel-grid';
 
 // ComponentCategories based on your exact specifications
 const ComponentCategories = {
@@ -1029,9 +1030,9 @@ export default function FormBuilderPage() {
             </div>
           </div>
 
-          {/* Excel-like Grid Construction Zone */}
+          {/* Flexible Excel-like Grid Construction Zone */}
           <div className={`flex-1 relative ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
-            <ExcelGrid
+            <FlexibleExcelGrid
               formData={formData}
               setFormData={setFormData}
               selectedField={selectedField}
