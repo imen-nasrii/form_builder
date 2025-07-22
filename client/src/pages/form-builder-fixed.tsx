@@ -5463,57 +5463,17 @@ export default function FormBuilderFixed() {
             </TabsList>
             
             <TabsContent value="properties" className="h-full mx-3">
-              {isAdmin ? (
-                // Panneau admin pour affecter le formulaire
-                <div className="p-6 space-y-6">
-                  <div className="text-center mb-6">
-                    <Users className="w-12 h-12 mx-auto mb-4 text-orange-500" />
-                    <h3 className="font-semibold text-gray-900">Gestion Administrative</h3>
-                    <p className="text-sm text-gray-600">Affecter ce formulaire à un utilisateur</p>
-                  </div>
-                  
-                  {/* Informations du formulaire */}
-                  <div className="bg-gray-50 rounded-lg p-4 space-y-3">
-                    <h4 className="font-medium text-gray-900">Informations du formulaire</h4>
-                    <div className="space-y-2 text-sm">
-                      <div><strong>ID:</strong> {formData.menuId}</div>
-                      <div><strong>Label:</strong> {formData.label}</div>
-                      <div><strong>Largeur:</strong> {formData.formWidth}</div>
-                      <div><strong>Layout:</strong> {formData.layout}</div>
-                      <div><strong>Composants:</strong> {formData.fields.length}</div>
-                    </div>
-                  </div>
-
-                  {/* Section d'affectation */}
-                  <div className="space-y-4">
-                    <h4 className="font-medium text-gray-900">Affecter à un utilisateur</h4>
-                    
-                    {/* Liste des utilisateurs disponibles - à implémenter */}
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                      <p className="text-sm text-blue-700">
-                        <Users className="w-4 h-4 inline mr-1" />
-                        Fonctionnalité d'affectation en cours de développement
-                      </p>
-                      <p className="text-xs text-blue-600 mt-1">
-                        Bientôt disponible: sélection d'utilisateur et affectation de formulaire
-                      </p>
-                    </div>
-                  </div>
-                </div>
+              {selectedField ? (
+                <FormFieldProperties 
+                  field={selectedField as any}
+                  updateField={updateFieldInFormData as any}
+                  isDarkMode={isDarkMode}
+                />
               ) : (
-                // Panneau propriétés normal pour les utilisateurs
-                selectedField ? (
-                  <FormFieldProperties 
-                    field={selectedField as any}
-                    updateField={updateFieldInFormData as any}
-                    isDarkMode={isDarkMode}
-                  />
-                ) : (
-                  <div className={`p-6 text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                    <Settings className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                    <p>Select a component to view its properties</p>
-                  </div>
-                )
+                <div className={`p-6 text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                  <Settings className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>Select a component to view its properties</p>
+                </div>
               )}
             </TabsContent>
             
