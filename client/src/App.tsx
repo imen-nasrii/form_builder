@@ -15,6 +15,7 @@ import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import FormBuilderExact from "@/pages/form-builder-exact";
 import FormBuilderFixed from "@/pages/form-builder-fixed";
+import SimpleFormBuilder from "@/pages/form-builder-simple";
 import MFactFormBuilder from "@/pages/mfact-form-builder";
 import AdvancedGridPage from "@/pages/advanced-grid-page";
 import UltraGridPage from "@/pages/ultra-grid-page";
@@ -77,8 +78,8 @@ function Router() {
       <Route path="/verify-email" component={VerifyEmail} />
       
       {/* Authenticated routes */}
-      <Route path="/form-builder" component={FormBuilderFixed} />
-      <Route path="/form-builder/:formId" component={FormBuilderFixed} />
+      <Route path="/form-builder" component={SimpleFormBuilder} />
+      <Route path="/form-builder/:formId" component={SimpleFormBuilder} />
       <Route path="/mfact-builder" component={MFactFormBuilder} />
       <Route path="/mfact-builder/:formId" component={MFactFormBuilder} />
       <Route path="/advanced-grid" component={AdvancedGridPage} />
