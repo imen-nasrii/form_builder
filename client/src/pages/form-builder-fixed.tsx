@@ -67,7 +67,8 @@ import {
   Users,
   GripVertical,
   Move,
-  MoreVertical
+  MoreVertical,
+  Toggle
 } from 'lucide-react';
 import { type FormData, type FormField } from '@/lib/form-builder-types';
 import FlexibleExcelGrid from '@/components/form-builder/flexible-excel-grid';
@@ -789,6 +790,22 @@ export default function FormBuilderPage() {
   const [customComponents, setCustomComponents] = useState<any[]>([]);
   const [isExternalComponentsOpen, setIsExternalComponentsOpen] = useState(false);
   const [activeField, setActiveField] = useState<FormField | null>(null);
+
+  // Icon mapping for custom components
+  const iconMap: Record<string, any> = {
+    Type,
+    Calendar,
+    Square,
+    List,
+    ToggleLeft,
+    Upload,
+    CheckSquare,
+    Hash,
+    Grid3X3,
+    Package
+  };
+
+
   
   // Drag and drop sensors
   const sensors = useSensors(
@@ -876,17 +893,16 @@ export default function FormBuilderPage() {
   };
 
   const handleAddExternalComponent = (externalComponent: any) => {
-    const newField = {
-      ...externalComponent,
-      Id: `${externalComponent.Type}_${Date.now()}`
-    };
+    // Add to custom components palette
+    setCustomComponents(prev => [...prev, externalComponent]);
     
-    setFormData(prev => ({
-      ...prev,
-      fields: [...prev.fields, newField]
-    }));
+    // Show success notification
+    toast({
+      title: "Custom Component Added",
+      description: `${externalComponent.name} added to palette`,
+      variant: "default"
+    });
     
-    setSelectedField(newField);
     setIsExternalComponentsOpen(false);
   };
 
@@ -1037,6 +1053,32 @@ export default function FormBuilderPage() {
                 </div>
               ))}
             </div>
+
+            {/* Custom Components Section */}
+            {customComponents.length > 0 && (
+              <div className="space-y-1 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div className={`flex items-center space-x-2 text-xs font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                  <Package className="w-3 h-3" />
+                  <span>Custom Components</span>
+                </div>
+                <div className="grid grid-cols-3 gap-2 pl-2">
+                  {customComponents.map((component, index) => {
+                    const IconComponent = iconMap[component.icon] || Type;
+                    return (
+                      <DraggableComponent
+                        key={`custom-${index}`}
+                        componentType={component.type}
+                        label={component.name}
+                        icon={IconComponent}
+                        color={component.color}
+                        isDarkMode={isDarkMode}
+                        addField={addField}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -1339,7 +1381,7 @@ export default function FormBuilderPage() {
       {/* External Components Dialog */}
       <ExternalComponentsDialog
         isOpen={isExternalComponentsOpen}
-        onOpenChange={setIsExternalComponentsOpen}
+        onClose={() => setIsExternalComponentsOpen(false)}
         onAddComponent={handleAddExternalComponent}
         isDarkMode={isDarkMode}
       />
