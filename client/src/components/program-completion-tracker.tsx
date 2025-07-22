@@ -47,9 +47,12 @@ export default function ProgramCompletionTracker({
   const calculateCompletion = (fields: any[]) => {
     if (!fields || fields.length === 0) return 0;
     
-    const maxComponents = 10; // Define what constitutes 100%
+    // If program has 10 or more components, it's 100% complete
     const currentComponents = fields.length;
-    const percentage = Math.min((currentComponents / maxComponents) * 100, 100);
+    if (currentComponents >= 10) return 100;
+    
+    // Calculate percentage based on 10 components = 100%
+    const percentage = (currentComponents / 10) * 100;
     
     return Math.round(percentage);
   };
