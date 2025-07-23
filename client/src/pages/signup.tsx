@@ -47,7 +47,7 @@ export default function SignUp() {
 
     setIsLoading(true);
     try {
-      await apiRequest('/api/auth/signup', {
+      await apiRequest('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
