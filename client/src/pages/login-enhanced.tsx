@@ -21,11 +21,9 @@ interface LoginResponse {
     id: string;
     email: string;
     role: string;
-    emailVerified: boolean;
     twoFactorEnabled: boolean;
   };
   require2FA?: boolean;
-  requireEmailVerification?: boolean;
 }
 
 export default function LoginEnhanced() {
@@ -37,7 +35,6 @@ export default function LoginEnhanced() {
     twoFactorToken: '',
   });
   const [showTwoFactor, setShowTwoFactor] = useState(false);
-  const [showEmailVerification, setShowEmailVerification] = useState(false);
 
   const loginMutation = useMutation({
     mutationFn: async (data: LoginData) => {
@@ -53,13 +50,6 @@ export default function LoginEnhanced() {
         toast({
           title: "Code 2FA requis",
           description: "Entrez le code de votre application d'authentification",
-        });
-      } else if (data.requireEmailVerification) {
-        setShowEmailVerification(true);
-        toast({
-          title: "Email non vérifié",
-          description: "Vérifiez votre boîte email pour activer votre compte",
-          variant: "destructive",
         });
       } else {
         toast({
@@ -78,21 +68,7 @@ export default function LoginEnhanced() {
     },
   });
 
-  const resendVerificationMutation = useMutation({
-    mutationFn: async () => {
-      return await apiRequest('/api/auth/resend-verification', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: formData.email }),
-      });
-    },
-    onSuccess: () => {
-      toast({
-        title: "Email envoyé",
-        description: "Un nouveau lien de vérification a été envoyé",
-      });
-    },
-  });
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -163,22 +139,7 @@ export default function LoginEnhanced() {
               </div>
             )}
 
-            {showEmailVerification && (
-              <Alert className="border-yellow-200 bg-yellow-50">
-                <AlertDescription className="space-y-2">
-                  <p>Votre email n'est pas encore vérifié. Vérifiez votre boîte email.</p>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => resendVerificationMutation.mutate()}
-                    disabled={resendVerificationMutation.isPending}
-                  >
-                    {resendVerificationMutation.isPending ? 'Envoi...' : 'Renvoyer l\'email'}
-                  </Button>
-                </AlertDescription>
-              </Alert>
-            )}
+
 
             <Button 
               type="submit" 
