@@ -2,7 +2,6 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, requireAuth, requireAdmin } from "./auth";
-import { setupEnhancedAuth, requireAuth as requireAuthEnhanced, requireAdmin as requireAdminEnhanced, requireUser } from "./auth-enhanced";
 import bcrypt from "bcryptjs";
 import { insertFormSchema, insertTemplateSchema, insertNotificationSchema } from "@shared/schema";
 import { notificationService } from "./notification-service";
