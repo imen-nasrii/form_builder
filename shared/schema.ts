@@ -36,8 +36,7 @@ export const users = pgTable("users", {
   role: varchar("role").notNull().default("user"), // "user" or "admin"
   twoFactorEnabled: boolean("two_factor_enabled").notNull().default(false),
   twoFactorSecret: varchar("two_factor_secret"),
-  emailVerified: boolean("email_verified").notNull().default(false),
-  emailVerificationToken: varchar("email_verification_token"),
+
   isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -83,14 +82,7 @@ export const twoFactorTokens = pgTable("two_factor_tokens", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-// Email verification tokens table
-export const emailVerificationTokens = pgTable("email_verification_tokens", {
-  id: serial("id").primaryKey(),
-  userId: varchar("user_id").notNull(),
-  token: varchar("token").notNull().unique(),
-  expiresAt: timestamp("expires_at").notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
-});
+
 
 // Password reset tokens table
 export const passwordResetTokens = pgTable("password_reset_tokens", {
@@ -151,8 +143,7 @@ export type FormTemplate = typeof formTemplates.$inferSelect;
 export type InsertTwoFactorToken = typeof twoFactorTokens.$inferInsert;
 export type TwoFactorToken = typeof twoFactorTokens.$inferSelect;
 
-export type InsertEmailVerificationToken = typeof emailVerificationTokens.$inferInsert;
-export type EmailVerificationToken = typeof emailVerificationTokens.$inferSelect;
+
 
 export type InsertPasswordResetToken = typeof passwordResetTokens.$inferInsert;
 export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;

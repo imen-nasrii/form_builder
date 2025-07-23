@@ -25,7 +25,7 @@ import AdminPage from "@/pages/admin";
 import AdminPanel from "@/pages/admin-panel-en";
 import Analytics from "@/pages/analytics";
 import Setup2FA from "@/pages/setup-2fa";
-import VerifyEmail from "@/pages/verify-email";
+
 import ApiIntegration from "@/pages/api-integration";
 import AdminManagement from "@/pages/admin-management";
 import UserTaskBoard from "@/pages/user-task-board";
@@ -75,7 +75,7 @@ function Router() {
       <Route path="/signin" component={SignIn} />
       <Route path="/modern-login" component={ModernLogin} />
       <Route path="/modern-signup" component={ModernSignup} />
-      <Route path="/verify-email" component={VerifyEmail} />
+
       
       {/* Authenticated routes */}
       <Route path="/form-builder" component={SimpleFormBuilder} />

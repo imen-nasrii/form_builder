@@ -3,7 +3,6 @@ import {
   forms,
   formTemplates,
   twoFactorTokens,
-  emailVerificationTokens,
   passwordResetTokens,
   notifications,
   type User,
@@ -14,8 +13,6 @@ import {
   type InsertFormTemplate,
   type TwoFactorToken,
   type InsertTwoFactorToken,
-  type EmailVerificationToken,
-  type InsertEmailVerificationToken,
   type PasswordResetToken,
   type InsertPasswordResetToken,
   type Notification,
@@ -37,7 +34,6 @@ export interface IStorage {
   updateUserProfile(userId: string, profileData: { firstName?: string; lastName?: string; profileImageUrl?: string; }): Promise<User>;
   enableTwoFactor(userId: string, secret: string): Promise<void>;
   disableTwoFactor(userId: string): Promise<void>;
-  verifyUserEmail(userId: string): Promise<void>;
   updateUserPassword(userId: string, hashedPassword: string): Promise<void>;
   
   // Form operations
@@ -59,9 +55,7 @@ export interface IStorage {
   verifyTwoFactorToken(userId: string, token: string): Promise<boolean>;
   cleanupExpiredTokens(): Promise<void>;
   
-  // Email verification operations
-  createEmailVerificationToken(token: InsertEmailVerificationToken): Promise<EmailVerificationToken>;
-  verifyEmailToken(token: string): Promise<string | null>;
+
   
   // Password reset operations
   createPasswordResetToken(token: InsertPasswordResetToken): Promise<PasswordResetToken>;
@@ -161,16 +155,7 @@ export class DatabaseStorage implements IStorage {
       .where(eq(users.id, userId));
   }
 
-  async verifyUserEmail(userId: string): Promise<void> {
-    await db
-      .update(users)
-      .set({ 
-        emailVerified: true,
-        emailVerificationToken: null,
-        updatedAt: new Date()
-      })
-      .where(eq(users.id, userId));
-  }
+
 
   async updateUserPassword(userId: string, hashedPassword: string): Promise<void> {
     await db
@@ -374,26 +359,7 @@ export class DatabaseStorage implements IStorage {
     await db.delete(twoFactorTokens).where(eq(twoFactorTokens.expiresAt, new Date()));
   }
 
-  // Email verification operations
-  async createEmailVerificationToken(token: InsertEmailVerificationToken): Promise<EmailVerificationToken> {
-    const [newToken] = await db.insert(emailVerificationTokens).values(token).returning();
-    return newToken;
-  }
 
-  async verifyEmailToken(token: string): Promise<string | null> {
-    const [tokenRecord] = await db
-      .select()
-      .from(emailVerificationTokens)
-      .where(eq(emailVerificationTokens.token, token));
-
-    if (!tokenRecord || new Date() > tokenRecord.expiresAt) {
-      return null;
-    }
-
-    // Delete used token
-    await db.delete(emailVerificationTokens).where(eq(emailVerificationTokens.id, tokenRecord.id));
-    return tokenRecord.userId;
-  }
 
   // Password reset operations
   async createPasswordResetToken(token: InsertPasswordResetToken): Promise<PasswordResetToken> {
