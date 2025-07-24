@@ -53,7 +53,6 @@ export default function MFactFormBuilder() {
   const [selectedField, setSelectedField] = useState<MFactField | null>(null);
   const [activeTab, setActiveTab] = useState("design");
   const [showHelloAnimation, setShowHelloAnimation] = useState(true);
-  const [showMenuDropdown, setShowMenuDropdown] = useState(false);
 
   // Load form data
   const { data: form, isLoading: formLoading } = useQuery({
@@ -72,15 +71,15 @@ export default function MFactFormBuilder() {
 
   // Load form data into state
   useEffect(() => {
-    if (form && typeof form === 'object' && 'definition' in form && form.definition) {
+    if (form?.definition) {
       try {
         const parsed = typeof form.definition === 'string' 
           ? JSON.parse(form.definition) 
           : form.definition;
         
         setFormData({
-          menuId: (form as any).menuId || "",
-          label: (form as any).label || "",
+          menuId: form.menuId || "",
+          label: form.label || "",
           formWidth: parsed.formWidth || "700px",
           layout: parsed.layout || "PROCESS",
           fields: parsed.fields || [],
@@ -252,331 +251,135 @@ export default function MFactFormBuilder() {
           </div>
         </div>
       )}
-      {/* Enhanced Header with Secondary Navigation */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-        {/* Main Header */}
-        <div className="px-6 py-3 border-b border-gray-100">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setLocation('/dashboard')}
-                className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Dashboard
-              </Button>
-              
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                  <Wand2 className="w-4 h-4 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-                    MFact Form Builder
-                  </h1>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {formId ? `Editing: ${formData.label || 'Untitled Program'}` : 'Create New MFact Program'}
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              {/* Status Indicator */}
-              {formData.fields.length > 0 && (
-                <div className="flex items-center gap-2 px-3 py-1 bg-green-50 border border-green-200 rounded-full text-green-700 text-sm mr-2">
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                  {formData.fields.length} Components
-                </div>
-              )}
-              
-              <Button
-                onClick={() => saveForm.mutate()}
-                disabled={saveForm.isPending}
-                size="sm"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-md"
-              >
-                <Save className="w-4 h-4 mr-2" />
-                {saveForm.isPending ? 'Saving...' : 'Save Program'}
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Modern Dropdown Toolbar */}
-        <div className="px-6 py-4 bg-gradient-to-r from-slate-50 to-indigo-50/30 border-b border-slate-200/60 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div className="relative">
-              {/* Modern Menu Button */}
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-10 px-6 bg-white/80 border-slate-300 hover:bg-white hover:border-indigo-400 transition-all duration-200 flex items-center gap-2 shadow-sm"
-                onClick={() => setShowMenuDropdown(!showMenuDropdown)}
-              >
-                <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
-                Actions
-                <div className={`transition-transform duration-200 ${showMenuDropdown ? 'rotate-180' : ''}`}>
-                  ▼
-                </div>
-              </Button>
-
-              {/* Enhanced Dropdown */}
-              {showMenuDropdown && (
-                <div className="absolute top-full left-0 mt-2 w-64 bg-white/95 backdrop-blur-md border border-slate-200/60 rounded-xl shadow-2xl z-50 overflow-hidden">
-                  <div className="p-2 space-y-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full justify-start h-11 px-4 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-200 rounded-lg"
-                      onClick={() => {
-                        setLocation('/');
-                        setShowMenuDropdown(false);
-                      }}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                          🏠
-                        </div>
-                        <span className="font-medium">Home</span>
-                      </div>
-                    </Button>
-                    
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full justify-start h-11 px-4 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-200 rounded-lg"
-                      onClick={() => {
-                        alert('Guide feature coming soon!');
-                        setShowMenuDropdown(false);
-                      }}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
-                          📖
-                        </div>
-                        <span className="font-medium">Guide</span>
-                      </div>
-                    </Button>
-                    
-                    <div className="h-px bg-slate-200 my-2"></div>
-                    
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full justify-start h-11 px-4 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-200 rounded-lg"
-                      onClick={() => {
-                        alert('Import feature coming soon!');
-                        setShowMenuDropdown(false);
-                      }}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                          📥
-                        </div>
-                        <span className="font-medium">Import</span>
-                      </div>
-                    </Button>
-                    
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full justify-start h-11 px-4 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-200 rounded-lg"
-                      onClick={() => {
-                        exportJSON();
-                        setShowMenuDropdown(false);
-                      }}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
-                          📤
-                        </div>
-                        <span className="font-medium">Export</span>
-                      </div>
-                    </Button>
-                    
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full justify-start h-11 px-4 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-200 rounded-lg"
-                      onClick={() => {
-                        alert('External Components feature coming soon!');
-                        setShowMenuDropdown(false);
-                      }}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-teal-100 rounded-lg flex items-center justify-center">
-                          🧩
-                        </div>
-                        <span className="font-medium">External Components</span>
-                      </div>
-                    </Button>
-                    
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full justify-start h-11 px-4 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-200 rounded-lg"
-                      onClick={() => {
-                        alert('Collaborate feature coming soon!');
-                        setShowMenuDropdown(false);
-                      }}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-pink-100 rounded-lg flex items-center justify-center">
-                          👥
-                        </div>
-                        <div className="flex flex-col items-start">
-                          <span className="font-medium">Collaborate</span>
-                          <span className="text-xs text-slate-500">0 active</span>
-                        </div>
-                      </div>
-                    </Button>
-                    
-                    <div className="h-px bg-slate-200 my-2"></div>
-                    
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full justify-start h-11 px-4 text-red-600 hover:bg-red-50 hover:text-red-700 transition-all duration-200 rounded-lg"
-                      onClick={() => {
-                        if (confirm('Clear all components?')) {
-                          setFormData(prev => ({ ...prev, fields: [] }));
-                          setSelectedField(null);
-                        }
-                        setShowMenuDropdown(false);
-                      }}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
-                          🗑️
-                        </div>
-                        <span className="font-medium">Clear All</span>
-                      </div>
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </div>
+      {/* Header */}
+      <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setLocation('/dashboard')}
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Dashboard
+            </Button>
             
             <div className="flex items-center gap-3">
-              <Button
-                variant="default"
-                size="sm"
-                className="h-10 px-6 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
-                onClick={() => {
-                  saveForm.mutate();
-                }}
-                disabled={saveForm.isPending}
-              >
-                💾 {saveForm.isPending ? 'Saving...' : 'Save'}
-              </Button>
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <Wand2 className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  MFact Form Builder
+                </h1>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {formId ? `Editing: ${formData.label || 'Untitled Program'}` : 'Create New MFact Program'}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Click outside to close */}
-        {showMenuDropdown && (
-          <div 
-            className="fixed inset-0 z-40" 
-            onClick={() => setShowMenuDropdown(false)}
-          />
-        )}
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={exportJSON}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Export JSON
+            </Button>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={generateCode}
+            >
+              <Code className="w-4 h-4 mr-2" />
+              Generate Code
+            </Button>
+            
+            <Button
+              onClick={() => saveForm.mutate()}
+              disabled={saveForm.isPending}
+              size="sm"
+            >
+              <Save className="w-4 h-4 mr-2" />
+              {saveForm.isPending ? 'Saving...' : 'Save Program'}
+            </Button>
+          </div>
+        </div>
       </div>
 
-      {/* Main Content - Modern Layout */}
-      <div className="flex-1 flex overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20">
-        {/* Left Panel - Modern Components Palette */}
-        <div className="w-80 bg-white/95 backdrop-blur-sm border-r border-slate-200/60 overflow-y-auto shadow-xl">
-          <div className="p-5 border-b border-slate-200/60 bg-gradient-to-r from-slate-50 to-white/80">
-            <h3 className="text-lg font-bold text-slate-900 flex items-center gap-3">
-              <div className="p-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl shadow-lg">
-                <Settings className="w-5 h-5 text-white" />
-              </div>
-              Components
-            </h3>
-            <p className="text-sm text-slate-600 mt-1.5">Drag and drop to build your form</p>
+      {/* Main Content - Simplified Layout */}
+      <div className="flex-1 flex overflow-hidden bg-gray-50">
+        {/* Left Panel - Form Settings */}
+        <div className="w-72 bg-white border-r border-gray-200 overflow-y-auto">
+          <div className="p-4 border-b border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900">Form Settings</h3>
           </div>
-          <div className="p-5 space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="menu-id" className="text-sm font-medium text-gray-700">
-                Menu ID
-                <span className="text-xs text-gray-500 ml-2">(System identifier)</span>
-              </Label>
+          <div className="p-4 space-y-4">
+            <div>
+              <Label htmlFor="menu-id">Menu ID</Label>
               <Input
                 id="menu-id"
                 value={formData.menuId}
                 onChange={(e) => setFormData(prev => ({ ...prev, menuId: e.target.value }))}
                 placeholder="e.g., ACCADJ, BUYTYP"
-                className="font-mono bg-gray-50 border-gray-300 focus:bg-white transition-colors"
+                className="font-mono"
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="form-label" className="text-sm font-medium text-gray-700">
-                Program Label
-                <span className="text-xs text-gray-500 ml-2">(Display name)</span>
-              </Label>
+            <div>
+              <Label htmlFor="form-label">Program Label</Label>
               <Input
                 id="form-label"
                 value={formData.label}
                 onChange={(e) => setFormData(prev => ({ ...prev, label: e.target.value }))}
                 placeholder="Enter program label"
-                className="bg-gray-50 border-gray-300 focus:bg-white transition-colors"
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="form-width" className="text-sm font-medium text-gray-700">
-                Form Width
-                <span className="text-xs text-gray-500 ml-2">(Layout size)</span>
-              </Label>
+            <div>
+              <Label htmlFor="form-width">Form Width</Label>
               <Select
                 value={formData.formWidth}
                 onValueChange={(value) => setFormData(prev => ({ ...prev, formWidth: value }))}
               >
-                <SelectTrigger className="bg-gray-50 border-gray-300 focus:bg-white">
+                <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="600px">📱 600px - Compact</SelectItem>
-                  <SelectItem value="700px">💻 700px - Standard</SelectItem>
-                  <SelectItem value="800px">🖥️ 800px - Wide</SelectItem>
-                  <SelectItem value="1000px">📺 1000px - Extra Wide</SelectItem>
-                  <SelectItem value="100%">🔄 100% - Full Width</SelectItem>
+                  <SelectItem value="600px">600px - Compact</SelectItem>
+                  <SelectItem value="700px">700px - Standard</SelectItem>
+                  <SelectItem value="800px">800px - Wide</SelectItem>
+                  <SelectItem value="1000px">1000px - Extra Wide</SelectItem>
+                  <SelectItem value="100%">100% - Full Width</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="form-layout" className="text-sm font-medium text-gray-700">
-                Layout Type
-                <span className="text-xs text-gray-500 ml-2">(UI behavior)</span>
-              </Label>
+            <div>
+              <Label htmlFor="form-layout">Layout Type</Label>
               <Select
                 value={formData.layout}
                 onValueChange={(value) => setFormData(prev => ({ ...prev, layout: value as FormLayout }))}
               >
-                <SelectTrigger className="bg-gray-50 border-gray-300 focus:bg-white">
+                <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="PROCESS">⚙️ Process Form</SelectItem>
-                  <SelectItem value="MASTERMENU">📋 Master Menu</SelectItem>
-                  <SelectItem value="DIALOG">💬 Dialog</SelectItem>
-                  <SelectItem value="POPUP">🔲 Popup</SelectItem>
-                  <SelectItem value="FULLSCREEN">🖥️ Full Screen</SelectItem>
-                  <SelectItem value="WIZARD">🪄 Wizard</SelectItem>
+                  <SelectItem value="PROCESS">Process Form</SelectItem>
+                  <SelectItem value="MASTERMENU">Master Menu</SelectItem>
+                  <SelectItem value="DIALOG">Dialog</SelectItem>
+                  <SelectItem value="POPUP">Popup</SelectItem>
+                  <SelectItem value="FULLSCREEN">Full Screen</SelectItem>
+                  <SelectItem value="WIZARD">Wizard</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="program-category" className="text-sm font-medium text-gray-700">
-                Category
-                <span className="text-xs text-gray-500 ml-2">(Business type)</span>
-              </Label>
+            <div>
+              <Label htmlFor="program-category">Category</Label>
               <Select
                 value={formData.metadata?.category}
                 onValueChange={(value) => setFormData(prev => ({ 
@@ -584,24 +387,24 @@ export default function MFactFormBuilder() {
                   metadata: { ...prev.metadata!, category: value as ProgramCategory }
                 }))}
               >
-                <SelectTrigger className="bg-gray-50 border-gray-300 focus:bg-white">
+                <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="FINANCIAL">💰 Financial</SelectItem>
-                  <SelectItem value="INVENTORY">📦 Inventory</SelectItem>
-                  <SelectItem value="PURCHASING">🛒 Purchasing</SelectItem>
-                  <SelectItem value="REPORTING">📊 Reporting</SelectItem>
-                  <SelectItem value="ADMINISTRATION">⚙️ Administration</SelectItem>
-                  <SelectItem value="CUSTOM">✨ Custom</SelectItem>
+                  <SelectItem value="FINANCIAL">Financial</SelectItem>
+                  <SelectItem value="INVENTORY">Inventory</SelectItem>
+                  <SelectItem value="PURCHASING">Purchasing</SelectItem>
+                  <SelectItem value="REPORTING">Reporting</SelectItem>
+                  <SelectItem value="ADMINISTRATION">Administration</SelectItem>
+                  <SelectItem value="CUSTOM">Custom</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
         </div>
 
-        {/* Center Panel - Enhanced Construction Zone */}
-        <div className="flex-1 bg-white overflow-hidden shadow-lg border border-gray-200 rounded-lg m-2">
+        {/* Center Panel - Construction Zone */}
+        <div className="flex-1 bg-white overflow-hidden">
           <div className="h-full">
             <MFactConstructionZone
               formData={formData}
@@ -612,25 +415,12 @@ export default function MFactFormBuilder() {
           </div>
         </div>
 
-        {/* Right Panel - Modern Properties */}
-        <div className="w-96 bg-white/95 backdrop-blur-sm border-l border-slate-200/60 overflow-y-auto shadow-xl">
-          <div className="p-5 border-b border-slate-200/60 bg-gradient-to-r from-emerald-50/80 to-teal-50/60">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl shadow-lg">
-                <Settings className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-slate-900">Properties</h3>
-                <p className="text-sm text-slate-600 mt-0.5">
-                  {selectedField 
-                    ? `Configure ${selectedField.Label || selectedField.Type}` 
-                    : 'Select a component to configure'
-                  }
-                </p>
-              </div>
-            </div>
+        {/* Right Panel - Properties */}
+        <div className="w-80 bg-white border-l border-gray-200 overflow-y-auto">
+          <div className="p-4 border-b border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900">Properties Panel</h3>
           </div>
-          <div className="p-5">
+          <div className="p-4">
             <MFactPropertiesPanel
               selectedField={selectedField}
               onFieldUpdate={handleFieldUpdate}

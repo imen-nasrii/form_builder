@@ -78,26 +78,16 @@ export default function AdminManagement() {
   const { data: notifications = [] } = useQuery({
     queryKey: ['/api/notifications'],
     enabled: user?.role === 'admin',
-    refetchInterval: 60000 // Refresh every 60 seconds (less aggressive)
-  });
-
-  // Fetch admin statistics
-  const { data: adminStats, isLoading: statsLoading } = useQuery({
-    queryKey: ['/api/admin/stats'],
-    enabled: user?.role === 'admin',
-    refetchInterval: 120000 // Refresh every 2 minutes (less aggressive)
+    refetchInterval: 5000 // Refresh every 5 seconds
   });
 
   // Calculate program completion percentage
   const calculateCompletion = (fields: any[]) => {
     if (!fields || fields.length === 0) return 0;
     
-    // If program has 10 or more components, it's 100% complete
+    const maxComponents = 10; // Define what constitutes 100%
     const currentComponents = fields.length;
-    if (currentComponents >= 10) return 100;
-    
-    // Calculate percentage based on 10 components = 100%
-    const percentage = (currentComponents / 10) * 100;
+    const percentage = Math.min((currentComponents / maxComponents) * 100, 100);
     
     return Math.round(percentage);
   };
@@ -220,25 +210,21 @@ export default function AdminManagement() {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Simple Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">Advanced system management with real-time analytics</p>
+            <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+            <p className="text-gray-600">Complete administration panel with real-time system management</p>
           </div>
           <div className="flex items-center space-x-4">
-            <div className="bg-blue-500 text-white px-4 py-2 rounded-lg">
-              <div className="text-2xl font-bold">{adminStats?.users?.total || users.length}</div>
-              <div className="text-xs">Users</div>
-            </div>
-            <div className="bg-green-500 text-white px-4 py-2 rounded-lg">
-              <div className="text-2xl font-bold">{adminStats?.programs?.total || programs.length}</div>
-              <div className="text-xs">Programs</div>
-            </div>
-            <div className="bg-orange-500 text-white px-4 py-2 rounded-lg">
-              <div className="text-2xl font-bold">{adminStats?.notifications?.unread || notifications.filter(n => !n.read).length}</div>
-              <div className="text-xs">Alerts</div>
-            </div>
+            <Badge variant="outline" className="bg-blue-50 text-blue-700">
+              {users.length} Users
+            </Badge>
+            <Badge variant="outline" className="bg-green-50 text-green-700">
+              {programs.length} Programs
+            </Badge>
+            <Badge variant="outline" className="bg-orange-50 text-orange-700">
+              {notifications.filter(n => !n.read).length} Unread Notifications
+            </Badge>
           </div>
         </div>
 
@@ -248,7 +234,7 @@ export default function AdminManagement() {
 
 
         <Tabs defaultValue="users" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 bg-white dark:bg-gray-800 border rounded-lg p-1 mb-6">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="users" className="flex items-center gap-2">
               <Users className="w-4 h-4" />
               Users Management
@@ -274,7 +260,7 @@ export default function AdminManagement() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* User Management Panel */}
               <div className="lg:col-span-2">
-                <Card className="bg-white dark:bg-gray-800">
+                <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -283,6 +269,7 @@ export default function AdminManagement() {
                       </div>
                       <Button 
                         size="sm" 
+                        className="flex items-center gap-2"
                         onClick={() => {
                           console.log('Add User button clicked');
                           setShowAddUser(true);
@@ -355,32 +342,24 @@ export default function AdminManagement() {
                     <CardTitle className="text-lg">Quick Stats</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    {statsLoading ? (
-                      <div className="text-center py-4">Loading stats...</div>
-                    ) : (
-                      <>
-                        <div className="text-center">
-                          <div className="text-3xl font-bold text-blue-600">
-                            {adminStats?.users?.total || users.length}
-                          </div>
-                          <div className="text-sm text-gray-500">Total Users</div>
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-blue-600">{users.length}</div>
+                      <div className="text-sm text-gray-500">Total Users</div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 text-center">
+                      <div>
+                        <div className="text-2xl font-bold text-green-600">
+                          {users.filter(u => u.role === 'user').length}
                         </div>
-                        <div className="grid grid-cols-2 gap-4 text-center">
-                          <div>
-                            <div className="text-2xl font-bold text-green-600">
-                              {adminStats?.users?.regular || users.filter(u => u.role === 'user').length}
-                            </div>
-                            <div className="text-xs text-gray-500">Regular Users</div>
-                          </div>
-                          <div>
-                            <div className="text-2xl font-bold text-purple-600">
-                              {adminStats?.users?.admins || users.filter(u => u.role === 'admin').length}
-                            </div>
-                            <div className="text-xs text-gray-500">Administrators</div>
-                          </div>
+                        <div className="text-xs text-gray-500">Regular Users</div>
+                      </div>
+                      <div>
+                        <div className="text-2xl font-bold text-purple-600">
+                          {users.filter(u => u.role === 'admin').length}
                         </div>
-                      </>
-                    )}
+                        <div className="text-xs text-gray-500">Administrators</div>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
 
@@ -390,29 +369,10 @@ export default function AdminManagement() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3 text-sm">
-                      {adminStats?.recentActivity ? (
-                        <>
-                          <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                            <span>{adminStats.recentActivity.users} new users this week</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                            <span>{adminStats.recentActivity.programs} programs created</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                            <span>{adminStats.recentActivity.notifications} notifications sent</span>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                            <span>Real-time data loading...</span>
-                          </div>
-                        </>
-                      )}
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span>Program assigned successfully</span>
+                      </div>
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                         <span>Admin dashboard accessed</span>
@@ -430,108 +390,23 @@ export default function AdminManagement() {
 
           {/* Program Tracker */}
           <TabsContent value="programs" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Program Management Panel */}
-              <div className="lg:col-span-2">
-                <Card className="bg-white dark:bg-gray-800">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Settings className="w-5 h-5" />
-                      Program Completion Tracker
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {programsLoading ? (
-                      <div className="text-center py-8">Loading programs...</div>
-                    ) : (
-                      <ProgramCompletionTracker
-                        programs={programs}
-                        users={users}
-                        onViewProgram={(programId) => {
-                          window.open(`/form-builder/${programId}`, '_blank');
-                        }}
-                        onEditProgram={(programId) => {
-                          window.open(`/form-builder/${programId}`, '_blank');
-                        }}
-                        onAssignProgram={(programId, userId) => {
-                          assignProgramMutation.mutate({ programId, userId });
-                        }}
-                      />
-                    )}
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Program Stats */}
-              <div className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">Program Stats</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {statsLoading ? (
-                      <div className="text-center py-4">Loading stats...</div>
-                    ) : (
-                      <>
-                        <div className="text-center">
-                          <div className="text-3xl font-bold text-green-600">
-                            {adminStats?.programs?.total || programs.length}
-                          </div>
-                          <div className="text-sm text-gray-500">Total Programs</div>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4 text-center">
-                          <div>
-                            <div className="text-2xl font-bold text-blue-600">
-                              {adminStats?.programs?.assigned || programs.filter(p => p.assignedTo).length}
-                            </div>
-                            <div className="text-xs text-gray-500">Assigned</div>
-                          </div>
-                          <div>
-                            <div className="text-2xl font-bold text-orange-600">
-                              {adminStats?.programs?.completed || programs.filter(p => p.status === 'completed').length}
-                            </div>
-                            <div className="text-xs text-gray-500">Completed</div>
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">Recent Activity</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3 text-sm">
-                      {adminStats && adminStats.recentActivity ? (
-                        <>
-                          <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                            <span>{adminStats.recentActivity.programs} programs created</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                            <span>{adminStats.recentActivity.assignments} assignments made</span>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                            <span>Real-time data loading...</span>
-                          </div>
-                        </>
-                      )}
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                        <span>Program tracker accessed</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
+            {programsLoading ? (
+              <div className="text-center py-8">Loading programs...</div>
+            ) : (
+              <ProgramCompletionTracker
+                programs={programs}
+                users={users}
+                onViewProgram={(programId) => {
+                  window.open(`/form-builder/${programId}`, '_blank');
+                }}
+                onEditProgram={(programId) => {
+                  window.open(`/form-builder/${programId}`, '_blank');
+                }}
+                onAssignProgram={(programId, userId) => {
+                  assignProgramMutation.mutate({ programId, userId });
+                }}
+              />
+            )}
           </TabsContent>
 
           {/* Assignment Management */}

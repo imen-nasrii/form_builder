@@ -47,12 +47,9 @@ export default function ProgramCompletionTracker({
   const calculateCompletion = (fields: any[]) => {
     if (!fields || fields.length === 0) return 0;
     
-    // If program has 10 or more components, it's 100% complete
+    const maxComponents = 10; // Define what constitutes 100%
     const currentComponents = fields.length;
-    if (currentComponents >= 10) return 100;
-    
-    // Calculate percentage based on 10 components = 100%
-    const percentage = (currentComponents / 10) * 100;
+    const percentage = Math.min((currentComponents / maxComponents) * 100, 100);
     
     return Math.round(percentage);
   };
@@ -93,8 +90,12 @@ export default function ProgramCompletionTracker({
 
   return (
     <div className="space-y-6">
-      {/* Sorting options only */}
-      <div className="flex items-center justify-end">
+      {/* Header with sorting options */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold">Program Completion Tracker</h2>
+          <p className="text-gray-600">Monitor progress and completion status of all programs</p>
+        </div>
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-500">Sort by:</span>
           <Button
