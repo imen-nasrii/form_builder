@@ -52,9 +52,17 @@ import {
   Minus,
   Maximize2,
   Minimize2,
-  Hash
+  Hash,
+  MoreHorizontal
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import { ComponentCategories as EnterpriseComponentCategories, ComponentSpecificProperties, CommonProperties, renderFormComponent } from '@/components/enterprise-form-components';
 import { FormFieldProperties } from '@/components/form-field-properties';
 
@@ -2830,6 +2838,7 @@ export default function FormBuilderFixed() {
   });
   const [componentCreationStep, setComponentCreationStep] = useState(1);
   const [showAddComponent, setShowAddComponent] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
 
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [importedData, setImportedData] = useState<any>(null);
@@ -3726,48 +3735,89 @@ export default function FormBuilderFixed() {
               {isFullScreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
             </Button>
 
-            <StepByStepGuide isDarkMode={isDarkMode} />
-
-            {/* Import/Export JSON */}
-            <div className="flex space-x-2">
-              <input
-                type="file"
-                accept=".json"
-                onChange={handleFileUpload}
-                style={{ display: 'none' }}
-                id="json-file-input"
-              />
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => document.getElementById('json-file-input')?.click()}
-                className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
-              >
-                <Upload className="w-4 h-4 mr-2" />
-                Import
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleExportJSON}
-                className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Export
-              </Button>
-            </div>
-
-            {/* Add External Components */}
-            <Dialog>
-              <DialogTrigger asChild>
+            {/* Actions Dropdown Menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
                   size="sm"
                   className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
                 >
+                  <MoreHorizontal className="w-4 h-4 mr-2" />
+                  Actions
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className={isDarkMode ? 'bg-gray-800 border-gray-700' : ''}>
+                <DropdownMenuItem
+                  onClick={() => setShowGuide(true)}
+                  className={isDarkMode ? 'text-gray-300 hover:bg-gray-700' : ''}
+                >
+                  <HelpCircle className="w-4 h-4 mr-2" />
+                  Guide
+                </DropdownMenuItem>
+                
+                <DropdownMenuSeparator className={isDarkMode ? 'bg-gray-600' : ''} />
+                
+                <DropdownMenuItem
+                  onClick={() => document.getElementById('json-file-input')?.click()}
+                  className={isDarkMode ? 'text-gray-300 hover:bg-gray-700' : ''}
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  Import
+                </DropdownMenuItem>
+                
+                <DropdownMenuItem
+                  onClick={handleExportJSON}
+                  className={isDarkMode ? 'text-gray-300 hover:bg-gray-700' : ''}
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Export
+                </DropdownMenuItem>
+                
+                <DropdownMenuSeparator className={isDarkMode ? 'bg-gray-600' : ''} />
+                
+                <DropdownMenuItem
+                  onClick={() => setShowAddComponent(true)}
+                  className={isDarkMode ? 'text-gray-300 hover:bg-gray-700' : ''}
+                >
                   <Plus className="w-4 h-4 mr-2" />
                   External Components
-                </Button>
+                </DropdownMenuItem>
+                
+                <DropdownMenuItem
+                  onClick={resetForm}
+                  className={isDarkMode ? 'text-gray-300 hover:bg-gray-700' : ''}
+                >
+                  <RotateCcw className="w-4 h-4 mr-2" />
+                  Clear
+                </DropdownMenuItem>
+                
+                <DropdownMenuSeparator className={isDarkMode ? 'bg-gray-600' : ''} />
+                
+                <DropdownMenuItem
+                  onClick={saveFormManually}
+                  disabled={saveFormMutation.isPending}
+                  className={isDarkMode ? 'text-gray-300 hover:bg-gray-700' : ''}
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  {saveFormMutation.isPending ? 'Saving...' : 'Save'}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Hidden file input for import */}
+            <input
+              type="file"
+              accept=".json"
+              onChange={handleFileUpload}
+              style={{ display: 'none' }}
+              id="json-file-input"
+            />
+
+            {/* Add External Components Dialog */}
+            <Dialog open={showAddComponent} onOpenChange={setShowAddComponent}>
+              <DialogTrigger asChild>
+                <div style={{ display: 'none' }} />
               </DialogTrigger>
               <DialogContent className={`max-w-3xl ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
                 <DialogHeader>
@@ -4112,23 +4162,7 @@ export default function FormBuilderFixed() {
 
 
 
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={resetForm}
-              className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
-            >
-              <RotateCcw className="w-4 h-4 mr-2" />
-              Clear
-            </Button>
-            <Button 
-              size="sm" 
-              onClick={saveFormManually}
-              disabled={saveFormMutation.isPending}
-            >
-              <Save className="w-4 h-4 mr-2" />
-              {saveFormMutation.isPending ? 'Saving...' : 'Save'}
-            </Button>
+
           </div>
         </div>
 
@@ -4534,6 +4568,45 @@ export default function FormBuilderFixed() {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Guide Dialog */}
+      <Dialog open={showGuide} onOpenChange={setShowGuide}>
+        <DialogContent className={`max-w-md ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
+          <DialogHeader>
+            <DialogTitle className={isDarkMode ? 'text-white' : ''}>Quick Start Guide</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-3">
+              <div className={`p-3 rounded ${isDarkMode ? 'bg-gray-700' : 'bg-blue-50'}`}>
+                <h4 className={`font-medium mb-2 ${isDarkMode ? 'text-white' : 'text-blue-900'}`}>1. Add Components</h4>
+                <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-blue-700'}`}>
+                  Drag components from the left panel into the construction zone to build your form.
+                </p>
+              </div>
+              
+              <div className={`p-3 rounded ${isDarkMode ? 'bg-gray-700' : 'bg-green-50'}`}>
+                <h4 className={`font-medium mb-2 ${isDarkMode ? 'text-white' : 'text-green-900'}`}>2. Configure Properties</h4>
+                <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-green-700'}`}>
+                  Click on any component to edit its properties in the right panel.
+                </p>
+              </div>
+              
+              <div className={`p-3 rounded ${isDarkMode ? 'bg-gray-700' : 'bg-purple-50'}`}>
+                <h4 className={`font-medium mb-2 ${isDarkMode ? 'text-white' : 'text-purple-900'}`}>3. Save & Export</h4>
+                <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-purple-700'}`}>
+                  Use the Actions menu to save your form or export it as JSON.
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex justify-end">
+              <Button onClick={() => setShowGuide(false)}>
+                Got it!
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
