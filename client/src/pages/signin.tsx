@@ -70,8 +70,8 @@ export default function SignIn() {
 
       showSuccess("Success", "Signed in successfully!");
       
-      // Redirect to dashboard/home after successful login
-      window.location.href = '/';
+      // Redirect to dashboard after successful login
+      setLocation('/');
     } catch (error: any) {
       showError("Login Error", error.message || "Invalid email or password");
       setShowMascot(true);

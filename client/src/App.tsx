@@ -93,7 +93,7 @@ function Router() {
       <Route path="/setup-2fa" component={Setup2FA} />
       
       {/* Root route */}
-      <Route path="/" component={isAuthenticated ? Dashboard : SignUp} />
+      <Route path="/" component={isAuthenticated ? Dashboard : SignIn} />
       
       {/* 404 fallback */}
           <Route component={NotFound} />
