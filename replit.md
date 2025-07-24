@@ -211,3 +211,5 @@ System Requirements: Admin users cannot access Construction Zone (read-only mode
 ✓ Streamlined registration process to auto-verify all user accounts for immediate access (July 24, 2025)
 ✓ Enhanced navigation with user profile dropdown menu including profile access and logout functionality (July 24, 2025)
 ✓ Cleaned Analytics page by removing unnecessary stat cards that displayed empty data (July 24, 2025)
+✓ Fixed root route redirect issue - unauthenticated users now go to SignIn instead of SignUp (July 24, 2025)
+✓ Resolved authentication flow confusion by correcting routing logic in App.tsx (July 24, 2025)
