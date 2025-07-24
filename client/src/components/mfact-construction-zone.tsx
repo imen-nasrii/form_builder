@@ -32,7 +32,8 @@ import {
   Zap,
   Copy,
   Maximize2,
-  Database
+  Database,
+  Layers
 } from 'lucide-react';
 import type { MFactField, MFactForm, ComponentDefinition, ComponentCategory } from '@shared/mfact-models';
 import { COMPONENT_REGISTRY, MFACT_TEMPLATES } from '@shared/mfact-models';
@@ -92,32 +93,15 @@ function DraggableComponent({ component, isNew = false }: DraggableComponentProp
       {...attributes}
       {...listeners}
       className={`
-        relative w-full p-3 border rounded-lg cursor-move transition-all duration-200 group
-        ${isDragging ? 
-          'border-blue-400 bg-blue-100 shadow-lg scale-105 z-10' : 
-          'border-gray-200 dark:border-gray-700 hover:border-blue-300 hover:shadow-md hover:bg-gradient-to-r hover:from-white hover:to-blue-50'
-        }
-        flex items-center gap-3 text-sm
-        ${isNew ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30' : 'bg-white dark:bg-gray-800'}
+        flex flex-col items-center p-3 border rounded-lg cursor-grab hover:bg-gray-50 transition-colors text-xs
+        ${isDragging ? 'border-blue-400 bg-blue-50' : 'border-gray-200'}
       `}
     >
-      <div className={`p-2 rounded-lg bg-gradient-to-br ${
-        component.color?.includes('blue') ? 'from-blue-100 to-blue-200' :
-        component.color?.includes('green') ? 'from-green-100 to-green-200' :
-        component.color?.includes('purple') ? 'from-purple-100 to-purple-200' :
-        component.color?.includes('orange') ? 'from-orange-100 to-orange-200' :
-        component.color?.includes('red') ? 'from-red-100 to-red-200' :
-        'from-gray-100 to-gray-200'
-      } shadow-sm`}>
-        <IconComponent className={`w-4 h-4 ${component.color || 'text-gray-600'}`} />
+      <div className={`w-8 h-8 rounded-md flex items-center justify-center mb-1`}
+           style={{ backgroundColor: component.color + '20', color: component.color }}>
+        <IconComponent className="w-4 h-4" />
       </div>
-      <div className="flex-1">
-        <div className="font-medium text-gray-900 dark:text-white">{component.label}</div>
-        <div className="text-xs text-gray-500 dark:text-gray-400">{component.description}</div>
-      </div>
-      <Badge variant="secondary" className="text-xs">
-        {component.type}
-      </Badge>
+      <span className="text-center leading-tight">{component.label}</span>
     </div>
   );
 }
@@ -314,67 +298,38 @@ function ComponentPalette({ onTemplateSelect, expandedSections, onToggleSection 
   };
 
   return (
-    <div className="space-y-4">
-      {/* MFact Templates */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <Grid3X3 className="w-4 h-4" />
-            MFact Program Templates
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
+    <div className="space-y-3">
+      {/* Program Templates - Simple Section */}
+      <div className="border-b pb-3">
+        <h3 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+          <Grid3X3 className="w-4 h-4" />
+          Templates
+        </h3>
+        <div className="grid grid-cols-2 gap-2">
           {Object.entries(MFACT_TEMPLATES).map(([key, template]) => (
-            <Button
+            <button
               key={key}
-              variant="outline"
-              size="sm"
-              className="w-full justify-start text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:border-blue-300 transition-all duration-200"
+              className="p-2 text-xs bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-md hover:from-blue-100 hover:to-purple-100 transition-colors"
               onClick={() => onTemplateSelect(key)}
             >
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></div>
-                <div>
-                  <div className="font-medium">{template.label}</div>
-                  <div className="text-xs text-gray-500">{template.metadata?.description}</div>
-                </div>
-              </div>
-            </Button>
+              <div className="font-medium text-blue-700">{template.label}</div>
+              <div className="text-gray-600">{template.menuId}</div>
+            </button>
           ))}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      <Separator />
-
-      {/* Component Categories */}
-      <div className="space-y-3">
-        {Object.entries(componentsByCategory).map(([category, components]) => (
-          <Card key={category}>
-            <CardHeader 
-              className="pb-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
-              onClick={() => onToggleSection(category)}
-            >
-              <CardTitle className="text-sm font-medium flex items-center justify-between">
-                <span>{categoryLabels[category as ComponentCategory]}</span>
-                {expandedSections[category] ? (
-                  <ChevronDown className="w-4 h-4" />
-                ) : (
-                  <ChevronRight className="w-4 h-4" />
-                )}
-              </CardTitle>
-            </CardHeader>
-            
-            {expandedSections[category] && (
-              <CardContent className="space-y-2">
-                <SortableContext items={components.map(c => `component-${c.type}`)} strategy={rectSortingStrategy}>
-                  {components.map((component) => (
-                    <DraggableComponent key={component.type} component={component} isNew />
-                  ))}
-                </SortableContext>
-              </CardContent>
-            )}
-          </Card>
-        ))}
+      {/* All Components - Simple Grid Layout */}
+      <div>
+        <h3 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+          <Layers className="w-4 h-4" />
+          Components
+        </h3>
+        <div className="grid grid-cols-2 gap-2">
+          {COMPONENT_REGISTRY.map((component) => (
+            <DraggableComponent key={component.type} component={component} isNew />
+          ))}
+        </div>
       </div>
     </div>
   );
