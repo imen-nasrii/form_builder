@@ -70,8 +70,10 @@ export default function SignIn() {
 
       showSuccess("Success", "Signed in successfully!");
       
-      // Redirect to dashboard after successful login
-      setLocation('/');
+      // Force reload to update authentication state
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     } catch (error: any) {
       showError("Login Error", error.message || "Invalid email or password");
       setShowMascot(true);
