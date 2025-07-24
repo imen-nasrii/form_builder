@@ -12,11 +12,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
 import type { User } from "@shared/schema";
-import { Bell, ChevronDown, User as UserIcon, LogOut, Plus, FileText, Upload, Download, FileJson, Settings } from "lucide-react";
+import { Bell, ChevronDown, User as UserIcon, LogOut } from "lucide-react";
 import LanguageToggle from "@/components/language-toggle";
 import NotificationBell from "@/components/notification-bell";
 import formBuilderLogo from "@/assets/formbuilder-logo-3d.png";
@@ -37,7 +34,7 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-2 fixed top-0 left-0 right-0 z-50 shadow-sm">
+    <nav className="bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 px-6 py-3 fixed top-0 left-0 right-0 z-50">
       <div className="flex items-center justify-between max-w-7xl mx-auto">
         {/* FormBuilder Logo */}
         <Link href="/">
@@ -45,135 +42,91 @@ export default function Navigation() {
             <img 
               src={formBuilderLogo}
               alt="FormBuilder Logo" 
-              className="h-12 w-auto transition-all duration-300 group-hover:scale-105"
+              className="h-16 w-auto transition-all duration-300 group-hover:scale-105"
             />
           </div>
         </Link>
         
-        {/* Modern Navigation Tabs */}
-        <div className="flex items-center gap-1 bg-gray-50 dark:bg-gray-800 p-1 rounded-lg">
-          <Link href="/">
-            <button className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+        {/* Main Navigation */}
+        <div className="flex items-center gap-8">
+          <Link href="/dashboard">
+            <button className={`px-4 py-2 rounded-lg transition-all ${
               isActive("/dashboard") || isActive("/") 
-                ? "bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm" 
-                : "text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-white/50 dark:hover:bg-gray-700/50"
+                ? "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 font-medium" 
+                : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
             }`}>
               Dashboard
             </button>
           </Link>
           
-          {user?.role === 'admin' && (
+          {user?.role === 'admin' ? (
             <Link href="/admin-management">
-              <button className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+              <button className={`px-4 py-2 rounded-lg transition-all ${
                 isActive("/admin-management") 
-                  ? "bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm" 
-                  : "text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-white/50 dark:hover:bg-gray-700/50"
+                  ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 font-medium" 
+                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
               }`}>
-              Admin Dashboard
+                Admin Dashboard
+              </button>
+            </Link>
+          ) : (
+            <Link href="/task-board">
+              <button className={`px-4 py-2 rounded-lg transition-all ${
+                isActive("/task-board") 
+                  ? "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 font-medium" 
+                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+              }`}>
+                My Tasks
               </button>
             </Link>
           )}
+          
+
+
+
 
           <Link href="/analytics">
-            <button className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+            <button className={`px-4 py-2 rounded-lg transition-all ${
               isActive("/analytics") 
-                ? "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400" 
-                : "text-gray-600 dark:text-gray-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20"
+                ? "bg-gradient-to-r from-orange-100 to-red-100 dark:from-orange-900/30 dark:to-red-900/30 text-orange-700 dark:text-orange-300 font-medium" 
+                : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
             }`}>
               Analytics
-            </button>
-          </Link>
-
-          <Link href="/json-validator">
-            <button className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-              isActive("/json-validator") 
-                ? "bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm" 
-                : "text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-white/50 dark:hover:bg-gray-700/50"
-            }`}>
-              JSON Validator
             </button>
           </Link>
 
           {user?.role === 'admin' && (
             <>
               <Link href="/ai-assistant">
-                <button className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                <button className={`px-4 py-2 rounded-lg transition-all ${
                   isActive("/ai-assistant") 
-                    ? "bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm" 
-                    : "text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-white/50 dark:hover:bg-gray-700/50"
+                    ? "bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-700 dark:text-blue-300 font-medium" 
+                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
                 }`}>
-                  AI Assistant
+                  🤖 AI Assistant
+                </button>
+              </Link>
+              
+
+              
+              <Link href="/json-validator">
+                <button className={`px-4 py-2 rounded-lg transition-all ${
+                  isActive("/json-validator") 
+                    ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 font-medium" 
+                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+                }`}>
+                  ✅ Validateur JSON
                 </button>
               </Link>
             </>
           )}
+          
 
-          {user?.role !== 'admin' && (
-            <Link href="/task-board">
-              <button className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-                isActive("/task-board") 
-                  ? "bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm" 
-                  : "text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-white/50 dark:hover:bg-gray-700/50"
-              }`}>
-                My Tasks
-              </button>
-            </Link>
-          )}
         </div>
 
-        {/* Right Side Actions */}
-        <div className="flex items-center gap-3">
-          {user?.role === 'admin' && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-2">
-                  Create Program
-                  <ChevronDown className="w-3 h-3" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="center" className="w-48">
-                <DropdownMenuItem asChild>
-                  <Link href="/form-builder" className="flex items-center gap-2 w-full">
-                    <Plus className="w-4 h-4" />
-                    New MFact Program
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/form-builder-fixed" className="flex items-center gap-2 w-full">
-                    <FileText className="w-4 h-4" />
-                    Advanced Builder
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
-          
-          {/* Import/Export Dropdown - Only for admins */}
-          {user?.role === 'admin' && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-all duration-200 flex items-center gap-1">
-                  Import/Export
-                  <ChevronDown className="w-3 h-3" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="center" className="w-48">
-                <DropdownMenuItem>
-                  <Download className="w-4 h-4 mr-2" />
-                  Import Programs
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Upload className="w-4 h-4 mr-2" />
-                  Export Programs
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <FileJson className="w-4 h-4 mr-2" />
-                  Bulk Import JSON
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+        {/* User Progress & Profile */}
+        <div className="flex items-center gap-4">
+
           
           {/* Notification Bell */}
           <NotificationBell />
@@ -251,62 +204,5 @@ export default function Navigation() {
         </div>
       </div>
     </nav>
-  );
-}
-
-// Create Program Button Component
-function CreateProgramButton() {
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-  const [location, navigate] = useLocation();
-
-  const isActive = (path: string) => {
-    if (path === "/" && location === "/") return true;
-    if (path !== "/" && location.startsWith(path)) return true;
-    return false;
-  };
-
-  const createFormMutation = useMutation({
-    mutationFn: async () => {
-      return await apiRequest('/api/forms/create', {
-        method: 'POST',
-        body: {
-          menuId: `PROGRAM_${Date.now()}`,
-          label: "New Program",
-          formWidth: "700px",
-          layout: "PROCESS"
-        }
-      });
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['/api/forms'] });
-      navigate(`/form-builder/${data.id}`);
-      toast({
-        title: "Program Created",
-        description: "New program created successfully!",
-      });
-    },
-    onError: (error) => {
-      console.error("Error creating program:", error);
-      toast({
-        title: "Error",
-        description: "Failed to create program. Please try again.",
-        variant: "destructive",
-      });
-    },
-  });
-
-  return (
-    <button 
-      onClick={() => createFormMutation.mutate()}
-      disabled={createFormMutation.isPending}
-      className={`px-6 py-2 rounded-full font-medium transition-all ${
-        isActive("/form-builder") 
-          ? "bg-indigo-500 text-white shadow-md" 
-          : "text-gray-600 hover:bg-indigo-50 hover:text-indigo-600"
-      } ${createFormMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
-    >
-      {createFormMutation.isPending ? 'Creating...' : 'Create Program'}
-    </button>
   );
 }

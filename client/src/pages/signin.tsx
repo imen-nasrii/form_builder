@@ -62,7 +62,7 @@ export default function SignIn() {
     
     setIsLoading(true);
     try {
-      await apiRequest('/api/login', {
+      await apiRequest('/api/auth/signin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)

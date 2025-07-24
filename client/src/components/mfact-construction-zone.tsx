@@ -32,8 +32,7 @@ import {
   Zap,
   Copy,
   Maximize2,
-  Database,
-  Layers
+  Database
 } from 'lucide-react';
 import type { MFactField, MFactForm, ComponentDefinition, ComponentCategory } from '@shared/mfact-models';
 import { COMPONENT_REGISTRY, MFACT_TEMPLATES } from '@shared/mfact-models';
@@ -93,15 +92,23 @@ function DraggableComponent({ component, isNew = false }: DraggableComponentProp
       {...attributes}
       {...listeners}
       className={`
-        flex flex-col items-center p-3 border rounded-lg cursor-grab hover:bg-gray-50 transition-colors text-xs
-        ${isDragging ? 'border-blue-400 bg-blue-50' : 'border-gray-200'}
+        relative w-full p-3 border border-dashed border-gray-300 rounded-lg cursor-move transition-all duration-200
+        hover:shadow-md hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20
+        flex items-center gap-3 text-sm
+        ${isNew ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30' : 'bg-white dark:bg-gray-800'}
+        ${isDragging ? 'shadow-lg scale-105' : ''}
       `}
     >
-      <div className={`w-8 h-8 rounded-md flex items-center justify-center mb-1`}
-           style={{ backgroundColor: component.color + '20', color: component.color }}>
-        <IconComponent className="w-4 h-4" />
+      <div className={`p-2 rounded ${component.color} bg-opacity-10`}>
+        <IconComponent className={`w-4 h-4 ${component.color}`} />
       </div>
-      <span className="text-center leading-tight">{component.label}</span>
+      <div className="flex-1">
+        <div className="font-medium text-gray-900 dark:text-white">{component.label}</div>
+        <div className="text-xs text-gray-500 dark:text-gray-400">{component.description}</div>
+      </div>
+      <Badge variant="secondary" className="text-xs">
+        {component.type}
+      </Badge>
     </div>
   );
 }
@@ -298,38 +305,64 @@ function ComponentPalette({ onTemplateSelect, expandedSections, onToggleSection 
   };
 
   return (
-    <div className="space-y-3">
-      {/* Program Templates - Simple Section */}
-      <div className="border-b pb-3">
-        <h3 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-          <Grid3X3 className="w-4 h-4" />
-          Templates
-        </h3>
-        <div className="grid grid-cols-2 gap-2">
+    <div className="space-y-4">
+      {/* MFact Templates */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-medium flex items-center gap-2">
+            <Grid3X3 className="w-4 h-4" />
+            MFact Program Templates
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
           {Object.entries(MFACT_TEMPLATES).map(([key, template]) => (
-            <button
+            <Button
               key={key}
-              className="p-2 text-xs bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-md hover:from-blue-100 hover:to-purple-100 transition-colors"
+              variant="outline"
+              size="sm"
+              className="w-full justify-start text-left"
               onClick={() => onTemplateSelect(key)}
             >
-              <div className="font-medium text-blue-700">{template.label}</div>
-              <div className="text-gray-600">{template.menuId}</div>
-            </button>
+              <div>
+                <div className="font-medium">{template.label}</div>
+                <div className="text-xs text-gray-500">{template.metadata?.description}</div>
+              </div>
+            </Button>
           ))}
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
-      {/* All Components - Simple Grid Layout */}
-      <div>
-        <h3 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-          <Layers className="w-4 h-4" />
-          Components
-        </h3>
-        <div className="grid grid-cols-2 gap-2">
-          {COMPONENT_REGISTRY.map((component) => (
-            <DraggableComponent key={component.type} component={component} isNew />
-          ))}
-        </div>
+      <Separator />
+
+      {/* Component Categories */}
+      <div className="space-y-3">
+        {Object.entries(componentsByCategory).map(([category, components]) => (
+          <Card key={category}>
+            <CardHeader 
+              className="pb-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
+              onClick={() => onToggleSection(category)}
+            >
+              <CardTitle className="text-sm font-medium flex items-center justify-between">
+                <span>{categoryLabels[category as ComponentCategory]}</span>
+                {expandedSections[category] ? (
+                  <ChevronDown className="w-4 h-4" />
+                ) : (
+                  <ChevronRight className="w-4 h-4" />
+                )}
+              </CardTitle>
+            </CardHeader>
+            
+            {expandedSections[category] && (
+              <CardContent className="space-y-2">
+                <SortableContext items={components.map(c => `component-${c.type}`)} strategy={rectSortingStrategy}>
+                  {components.map((component) => (
+                    <DraggableComponent key={component.type} component={component} isNew />
+                  ))}
+                </SortableContext>
+              </CardContent>
+            )}
+          </Card>
+        ))}
       </div>
     </div>
   );
@@ -424,7 +457,7 @@ export default function MFactConstructionZone({
   const toggleSection = useCallback((section: string) => {
     setExpandedSections(prev => ({
       ...prev,
-      [section]: !prev[section as keyof typeof prev]
+      [section]: !prev[section]
     }));
   }, []);
 
@@ -435,22 +468,11 @@ export default function MFactConstructionZone({
       onDragEnd={handleDragEnd}
     >
       <div className="grid grid-cols-12 gap-6 h-full">
-        {/* Modern Component Palette */}
+        {/* Component Palette */}
         <div className="col-span-3">
-          <Card className="h-full shadow-xl border-0 bg-white/95 backdrop-blur-sm">
-            <CardHeader className="pb-4 bg-gradient-to-r from-indigo-50/80 to-purple-50/60 border-b border-slate-200/50">
-              <CardTitle className="text-lg font-bold flex items-center gap-3">
-                <div className="p-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl shadow-lg">
-                  <Plus className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <div className="text-slate-900">Components</div>
-                  <div className="text-xs text-slate-600 font-normal mt-0.5">Drag to add</div>
-                </div>
-                <Badge variant="secondary" className="ml-auto bg-white/80 border-slate-200">
-                  25+
-                </Badge>
-              </CardTitle>
+          <Card className="h-full">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg font-semibold">Component Palette</CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               <ScrollArea className="h-[calc(100vh-200px)]">
@@ -469,30 +491,20 @@ export default function MFactConstructionZone({
         {/* Construction Zone */}
         <div className="col-span-9">
           <Card className="h-full">
-            <CardHeader className="pb-3 bg-gradient-to-r from-purple-50 to-blue-50 border-b">
+            <CardHeader className="pb-3">
               <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                <div className="p-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg">
-                  <Grid3X3 className="w-5 h-5 text-white" />
-                </div>
+                <Move className="w-5 h-5" />
                 Construction Zone
-                <div className="ml-auto flex items-center gap-2">
-                  {formData.fields.length > 0 && (
-                    <div className="flex items-center gap-2 px-3 py-1 bg-green-100 border border-green-200 rounded-full text-green-700 text-sm">
-                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                      {formData.fields.length} Component{formData.fields.length !== 1 ? 's' : ''}
-                    </div>
-                  )}
-                  <Badge variant="outline" className="text-xs">
-                    4×6 Grid
-                  </Badge>
-                </div>
+                <Badge variant="secondary" className="ml-auto">
+                  {formData.fields.length} Component{formData.fields.length !== 1 ? 's' : ''}
+                </Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <ScrollArea className="h-[calc(100vh-200px)]">
                 {formData.fields.length === 0 ? (
                   <div 
-                    className="flex flex-col items-center justify-center h-96 text-center border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg relative bg-gradient-to-br from-gray-50 to-gray-100"
+                    className="flex flex-col items-center justify-center h-96 text-center border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg relative"
                     onDragOver={(e) => {
                       e.preventDefault();
                       e.currentTarget.classList.add('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');

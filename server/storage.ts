@@ -3,6 +3,7 @@ import {
   forms,
   formTemplates,
   twoFactorTokens,
+  emailVerificationTokens,
   passwordResetTokens,
   notifications,
   type User,
@@ -13,6 +14,8 @@ import {
   type InsertFormTemplate,
   type TwoFactorToken,
   type InsertTwoFactorToken,
+  type EmailVerificationToken,
+  type InsertEmailVerificationToken,
   type PasswordResetToken,
   type InsertPasswordResetToken,
   type Notification,
@@ -31,9 +34,10 @@ export interface IStorage {
   upsertUser(user: UpsertUser): Promise<User>;
   getAllUsers(): Promise<User[]>;
   updateUserRole(userId: string, role: string): Promise<void>;
-  updateUserProfile(userId: string, profileData: { firstName?: string; lastName?: string; profileImageUrl?: string; }): Promise<User>;
+  updateUserProfile(userId: string, profileData: { firstName?: string; lastName?: string; profileImageUrl?: string; }): Promise<void>;
   enableTwoFactor(userId: string, secret: string): Promise<void>;
   disableTwoFactor(userId: string): Promise<void>;
+  verifyUserEmail(userId: string): Promise<void>;
   updateUserPassword(userId: string, hashedPassword: string): Promise<void>;
   
   // Form operations
@@ -55,7 +59,9 @@ export interface IStorage {
   verifyTwoFactorToken(userId: string, token: string): Promise<boolean>;
   cleanupExpiredTokens(): Promise<void>;
   
-
+  // Email verification operations
+  createEmailVerificationToken(token: InsertEmailVerificationToken): Promise<EmailVerificationToken>;
+  verifyEmailToken(token: string): Promise<string | null>;
   
   // Password reset operations
   createPasswordResetToken(token: InsertPasswordResetToken): Promise<PasswordResetToken>;
@@ -75,12 +81,11 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  async createUser(userData: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<User> {
+  async createUser(userData: Omit<User, 'createdAt' | 'updatedAt'>): Promise<User> {
     const [user] = await db
       .insert(users)
       .values({
         ...userData,
-        id: `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         createdAt: new Date(),
         updatedAt: new Date(),
       })
@@ -115,22 +120,14 @@ export class DatabaseStorage implements IStorage {
       .where(eq(users.id, userId));
   }
 
-  async updateUserProfile(userId: string, profileData: { firstName?: string; lastName?: string; profileImageUrl?: string; }): Promise<User> {
-    try {
-      const [updatedUser] = await db
-        .update(users)
-        .set({ 
-          ...profileData,
-          updatedAt: new Date()
-        })
-        .where(eq(users.id, userId))
-        .returning();
-      
-      return updatedUser;
-    } catch (error) {
-      console.error('Error in updateUserProfile:', error);
-      throw error;
-    }
+  async updateUserProfile(userId: string, profileData: { firstName?: string; lastName?: string; profileImageUrl?: string; }): Promise<void> {
+    await db
+      .update(users)
+      .set({ 
+        ...profileData,
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, userId));
   }
 
   async enableTwoFactor(userId: string, secret: string): Promise<void> {
@@ -155,7 +152,16 @@ export class DatabaseStorage implements IStorage {
       .where(eq(users.id, userId));
   }
 
-
+  async verifyUserEmail(userId: string): Promise<void> {
+    await db
+      .update(users)
+      .set({ 
+        emailVerified: true,
+        emailVerificationToken: null,
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, userId));
+  }
 
   async updateUserPassword(userId: string, hashedPassword: string): Promise<void> {
     await db
@@ -359,7 +365,26 @@ export class DatabaseStorage implements IStorage {
     await db.delete(twoFactorTokens).where(eq(twoFactorTokens.expiresAt, new Date()));
   }
 
+  // Email verification operations
+  async createEmailVerificationToken(token: InsertEmailVerificationToken): Promise<EmailVerificationToken> {
+    const [newToken] = await db.insert(emailVerificationTokens).values(token).returning();
+    return newToken;
+  }
 
+  async verifyEmailToken(token: string): Promise<string | null> {
+    const [tokenRecord] = await db
+      .select()
+      .from(emailVerificationTokens)
+      .where(eq(emailVerificationTokens.token, token));
+
+    if (!tokenRecord || new Date() > tokenRecord.expiresAt) {
+      return null;
+    }
+
+    // Delete used token
+    await db.delete(emailVerificationTokens).where(eq(emailVerificationTokens.id, tokenRecord.id));
+    return tokenRecord.userId;
+  }
 
   // Password reset operations
   async createPasswordResetToken(token: InsertPasswordResetToken): Promise<PasswordResetToken> {
@@ -441,200 +466,6 @@ export class DatabaseStorage implements IStorage {
       await db.delete(users).where(eq(users.id, userId));
     } catch (error) {
       console.error("Error deleting user:", error);
-      throw error;
-    }
-  }
-
-  async getUserStatistics(userId: string) {
-    try {
-      // Get all forms for the user (created by or assigned to)
-      const myCreatedForms = await db.select().from(forms).where(eq(forms.createdBy, userId));
-      const myAssignedForms = await db.select().from(forms).where(eq(forms.assignedTo, userId));
-      
-      // Combine and deduplicate
-      const allMyForms = [...myCreatedForms];
-      myAssignedForms.forEach(form => {
-        if (!allMyForms.find(f => f.id === form.id)) {
-          allMyForms.push(form);
-        }
-      });
-
-      // Calculate statistics
-      const totalPrograms = myCreatedForms.length;
-      const assignedTasks = myAssignedForms.length;
-      const completedTasks = myAssignedForms.filter(f => f.status === 'completed').length;
-      
-      // Recent activity (forms updated in last 7 days)
-      const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-      const recentActivity = allMyForms.filter(f => 
-        f.updatedAt && new Date(f.updatedAt) > weekAgo
-      ).length;
-
-      // Program types breakdown
-      const programTypes = {
-        process: allMyForms.filter(f => f.layout === 'PROCESS').length,
-        masterMenu: allMyForms.filter(f => f.layout === 'MASTER_MENU' || f.layout === 'MASTERMENU').length,
-        transaction: allMyForms.filter(f => f.layout === 'TRANSACTION').length,
-        other: allMyForms.filter(f => !['PROCESS', 'MASTER_MENU', 'MASTERMENU', 'TRANSACTION'].includes(f.layout)).length,
-      };
-
-      // Status breakdown for assigned tasks
-      const statusBreakdown = {
-        todo: myAssignedForms.filter(f => f.status === 'todo').length,
-        inProgress: myAssignedForms.filter(f => f.status === 'in_progress').length,
-        review: myAssignedForms.filter(f => f.status === 'review').length,
-        completed: completedTasks,
-      };
-
-      // Priority breakdown for assigned tasks
-      const priorityBreakdown = {
-        low: myAssignedForms.filter(f => f.priority === 'low').length,
-        medium: myAssignedForms.filter(f => f.priority === 'medium').length,
-        high: myAssignedForms.filter(f => f.priority === 'high').length,
-      };
-
-      // Monthly activity for the last 6 months
-      const monthlyActivity = [];
-      for (let i = 5; i >= 0; i--) {
-        const date = new Date();
-        date.setMonth(date.getMonth() - i);
-        const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
-        const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-        
-        const monthForms = allMyForms.filter(f => {
-          const createdAt = new Date(f.createdAt);
-          return createdAt >= monthStart && createdAt <= monthEnd;
-        });
-
-        const monthAssigned = myAssignedForms.filter(f => {
-          const createdAt = new Date(f.createdAt);
-          return createdAt >= monthStart && createdAt <= monthEnd;
-        });
-
-        const monthCompleted = myAssignedForms.filter(f => {
-          const updatedAt = new Date(f.updatedAt || f.createdAt);
-          return f.status === 'completed' && updatedAt >= monthStart && updatedAt <= monthEnd;
-        });
-
-        monthlyActivity.push({
-          month: date.toLocaleDateString('en', { month: 'short' }),
-          created: monthForms.length,
-          assigned: monthAssigned.length,
-          completed: monthCompleted.length,
-        });
-      }
-
-      return {
-        totalPrograms,
-        assignedTasks,
-        completedTasks,
-        recentActivity,
-        programTypes,
-        statusBreakdown,
-        priorityBreakdown,
-        monthlyActivity,
-        allMyForms: allMyForms.length,
-      };
-    } catch (error) {
-      console.error('Error getting user statistics:', error);
-      throw error;
-    }
-  }
-
-  async getAdminStatistics() {
-    try {
-      // Get all users
-      const allUsers = await db.select().from(users);
-      const allForms = await db.select().from(forms);
-      const allNotifications = await db.select().from(notifications);
-
-      // Calculate user statistics
-      const totalUsers = allUsers.length;
-      const adminUsers = allUsers.filter(u => u.role === 'admin').length;
-      const regularUsers = allUsers.filter(u => u.role === 'user').length;
-      const verifiedUsers = allUsers.filter(u => u.emailVerified).length;
-      const users2FA = allUsers.filter(u => u.twoFactorEnabled).length;
-
-      // Calculate program statistics
-      const totalPrograms = allForms.length;
-      const assignedPrograms = allForms.filter(f => f.assignedTo).length;
-      const completedPrograms = allForms.filter(f => f.status === 'completed').length;
-      const inProgressPrograms = allForms.filter(f => f.status === 'in_progress').length;
-
-      // Calculate notification statistics
-      const totalNotifications = allNotifications.length;
-      const unreadNotifications = allNotifications.filter(n => !n.read).length;
-
-      // Recent activity (last 7 days)
-      const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-      const recentUsers = allUsers.filter(u => new Date(u.createdAt) > weekAgo).length;
-      const recentPrograms = allForms.filter(f => new Date(f.createdAt) > weekAgo).length;
-      const recentNotifications = allNotifications.filter(n => new Date(n.createdAt) > weekAgo).length;
-
-      // Program type breakdown
-      const programTypes = {
-        process: allForms.filter(f => f.layout === 'PROCESS').length,
-        masterMenu: allForms.filter(f => f.layout === 'MASTER_MENU' || f.layout === 'MASTERMENU').length,
-        transaction: allForms.filter(f => f.layout === 'TRANSACTION').length,
-        other: allForms.filter(f => !['PROCESS', 'MASTER_MENU', 'MASTERMENU', 'TRANSACTION'].includes(f.layout)).length,
-      };
-
-      // User activity by creation date (last 6 months)
-      const monthlyStats = [];
-      for (let i = 5; i >= 0; i--) {
-        const date = new Date();
-        date.setMonth(date.getMonth() - i);
-        const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
-        const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-        
-        const monthUsers = allUsers.filter(u => {
-          const createdAt = new Date(u.createdAt);
-          return createdAt >= monthStart && createdAt <= monthEnd;
-        }).length;
-
-        const monthPrograms = allForms.filter(f => {
-          const createdAt = new Date(f.createdAt);
-          return createdAt >= monthStart && createdAt <= monthEnd;
-        }).length;
-
-        monthlyStats.push({
-          month: date.toLocaleDateString('en', { month: 'short' }),
-          users: monthUsers,
-          programs: monthPrograms,
-        });
-      }
-
-      return {
-        users: {
-          total: totalUsers,
-          admins: adminUsers,
-          regular: regularUsers,
-          verified: verifiedUsers,
-          with2FA: users2FA,
-          recent: recentUsers,
-        },
-        programs: {
-          total: totalPrograms,
-          assigned: assignedPrograms,
-          completed: completedPrograms,
-          inProgress: inProgressPrograms,
-          recent: recentPrograms,
-          types: programTypes,
-        },
-        notifications: {
-          total: totalNotifications,
-          unread: unreadNotifications,
-          recent: recentNotifications,
-        },
-        monthlyStats,
-        recentActivity: {
-          users: recentUsers,
-          programs: recentPrograms,
-          notifications: recentNotifications,
-        },
-      };
-    } catch (error) {
-      console.error('Error getting admin statistics:', error);
       throw error;
     }
   }

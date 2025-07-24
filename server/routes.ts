@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, requireAuth, requireAdmin } from "./auth";
-import bcrypt from "bcryptjs";
+import { setupEnhancedAuth, requireAuth as requireAuthEnhanced, requireAdmin as requireAdminEnhanced, requireUser } from "./auth-enhanced";
 import { insertFormSchema, insertTemplateSchema, insertNotificationSchema } from "@shared/schema";
 import { notificationService } from "./notification-service";
 import type { User } from "@shared/schema";
@@ -113,13 +113,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: 'User already exists' });
       }
 
-      // Hash password before creating user
-      const hashedPassword = await bcrypt.hash(password, 10);
-      
       // Create user
       const newUser = await storage.createUser({
         email,
-        password: hashedPassword,
+        password,
         role: role || 'user'
       });
 
@@ -146,29 +143,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error deleting user:', error);
       res.status(500).json({ message: 'Failed to delete user' });
-    }
-  });
-
-  // Get user-specific statistics
-  app.get('/api/analytics/stats', requireAuth, async (req: any, res) => {
-    try {
-      const userId = req.user.id;
-      const stats = await storage.getUserStatistics(userId);
-      res.json(stats);
-    } catch (error) {
-      console.error('Error fetching user statistics:', error);
-      res.status(500).json({ message: 'Failed to fetch statistics' });
-    }
-  });
-
-  // Get admin dashboard statistics
-  app.get('/api/admin/stats', requireAdmin, async (req: any, res) => {
-    try {
-      const stats = await storage.getAdminStatistics();
-      res.json(stats);
-    } catch (error) {
-      console.error('Error fetching admin statistics:', error);
-      res.status(500).json({ message: 'Failed to fetch admin statistics' });
     }
   });
 
@@ -1241,10 +1215,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "No valid fields to update" });
       }
 
-      const updatedUser = await storage.updateUserProfile(userId, updateData);
-      // Remove password from response
-      const { password: _, ...userResponse } = updatedUser;
-      res.json({ message: "Profile updated successfully", user: userResponse });
+      await storage.updateUserProfile(userId, updateData);
+      res.json({ message: "Profile updated successfully" });
     } catch (error) {
       console.error("Error updating profile:", error);
       res.status(500).json({ message: "Failed to update profile" });

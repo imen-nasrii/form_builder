@@ -1,4 +1,4 @@
-import { Switch, Route, useLocation } from "wouter";
+import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -15,7 +15,6 @@ import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import FormBuilderExact from "@/pages/form-builder-exact";
 import FormBuilderFixed from "@/pages/form-builder-fixed";
-import SimpleFormBuilder from "@/pages/form-builder-simple";
 import MFactFormBuilder from "@/pages/mfact-form-builder";
 import AdvancedGridPage from "@/pages/advanced-grid-page";
 import UltraGridPage from "@/pages/ultra-grid-page";
@@ -25,7 +24,7 @@ import AdminPage from "@/pages/admin";
 import AdminPanel from "@/pages/admin-panel-en";
 import Analytics from "@/pages/analytics";
 import Setup2FA from "@/pages/setup-2fa";
-
+import VerifyEmail from "@/pages/verify-email";
 import ApiIntegration from "@/pages/api-integration";
 import AdminManagement from "@/pages/admin-management";
 import UserTaskBoard from "@/pages/user-task-board";
@@ -40,7 +39,6 @@ import Navigation from "@/components/navigation";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
-  const [location] = useLocation();
 
   console.log('Auth state:', { isAuthenticated, isLoading });
 
@@ -57,16 +55,10 @@ function Router() {
     );
   }
 
-  // Pages that have their own integrated navbar
-  const pagesWithIntegratedNavbar = ['/form-builder', '/mfact-builder'];
-  const shouldShowNavigation = isAuthenticated && !pagesWithIntegratedNavbar.some(path => 
-    location.startsWith(path)
-  );
-
   return (
     <div className="min-h-screen bg-gray-50">
-      {shouldShowNavigation && <Navigation />}
-      <div className={shouldShowNavigation ? "pt-16" : ""}>
+      {isAuthenticated && <Navigation />}
+      <div className={isAuthenticated ? "pt-16" : ""}>
         <Switch>
           {/* Public routes */}
           <Route path="/register" component={Register} />
@@ -75,11 +67,11 @@ function Router() {
       <Route path="/signin" component={SignIn} />
       <Route path="/modern-login" component={ModernLogin} />
       <Route path="/modern-signup" component={ModernSignup} />
-
+      <Route path="/verify-email" component={VerifyEmail} />
       
       {/* Authenticated routes */}
-      <Route path="/form-builder" component={SimpleFormBuilder} />
-      <Route path="/form-builder/:formId" component={SimpleFormBuilder} />
+      <Route path="/form-builder" component={FormBuilderFixed} />
+      <Route path="/form-builder/:formId" component={FormBuilderFixed} />
       <Route path="/mfact-builder" component={MFactFormBuilder} />
       <Route path="/mfact-builder/:formId" component={MFactFormBuilder} />
       <Route path="/advanced-grid" component={AdvancedGridPage} />
