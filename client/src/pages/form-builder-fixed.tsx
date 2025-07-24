@@ -29,13 +29,13 @@ import {
   ChevronRight,
   Moon,
   Sun,
-  Users,
+
   Maximize,
   Minimize,
   HelpCircle,
   ArrowRight,
   ArrowDown,
-  Mail,
+
   Share,
   Plus,
   Code,
@@ -2584,8 +2584,8 @@ function TutorialDialog({ isOpen, onClose, step, onNextStep, onPrevStep, totalSt
       action: "Create a component"
     },
     {
-      title: "Save and Collaboration",
-      content: "Use the New/Clear/Save buttons to manage your forms. Invite collaborators to work together in real-time.",
+      title: "Save and Export",
+      content: "Use the New/Clear/Save buttons to manage your forms. Export your forms to different frameworks when ready.",
       highlight: "actions",
       action: "Save your work"
     }
@@ -2789,8 +2789,7 @@ export default function FormBuilderFixed() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
-  const [collaboratorEmail, setCollaboratorEmail] = useState('');
-  const [collaborators, setCollaborators] = useState<string[]>([]);
+
   const [customComponents, setCustomComponents] = useState<any[]>([]);
   const [newComponentConfig, setNewComponentConfig] = useState<{
     name: string;
@@ -3190,16 +3189,7 @@ export default function FormBuilderFixed() {
     }
   };
 
-  const addCollaborator = () => {
-    if (collaboratorEmail && !collaborators.includes(collaboratorEmail)) {
-      setCollaborators([...collaborators, collaboratorEmail]);
-      setCollaboratorEmail('');
-    }
-  };
 
-  const removeCollaborator = (email: string) => {
-    setCollaborators(collaborators.filter(c => c !== email));
-  };
 
   // Method 1: JSON Configuration for External Components
   const addComponentFromJSON = (jsonConfig: string) => {
@@ -4119,57 +4109,7 @@ export default function FormBuilderFixed() {
               </DialogContent>
             </Dialog>
 
-            {/* Collaboration */}
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
-                >
-                  <Users className="w-4 h-4 mr-2" />
-                  Collaborate ({collaborators.length})
-                </Button>
-              </DialogTrigger>
-              <DialogContent className={isDarkMode ? 'bg-gray-800 border-gray-700' : ''}>
-                <DialogHeader>
-                  <DialogTitle className={isDarkMode ? 'text-white' : ''}>Manage Collaborators</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div className="flex space-x-2">
-                    <Input
-                      placeholder="Collaborator email"
-                      value={collaboratorEmail}
-                      onChange={(e) => setCollaboratorEmail(e.target.value)}
-                      className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-                    />
-                    <Button onClick={addCollaborator} size="sm">
-                      <Mail className="w-4 h-4 mr-2" />
-                      Invite
-                    </Button>
-                  </div>
-                  
-                  {collaborators.length > 0 && (
-                    <div className="space-y-2">
-                      <h4 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Active Collaborators:</h4>
-                      {collaborators.map((email, index) => (
-                        <div key={index} className={`flex items-center justify-between p-2 rounded border ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50'}`}>
-                          <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{email}</span>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeCollaborator(email)}
-                            className={`p-1 h-6 w-6 ${isDarkMode ? 'text-gray-400 hover:text-red-400' : 'text-gray-400 hover:text-red-500'}`}
-                          >
-                            <X className="w-3 h-3" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </DialogContent>
-            </Dialog>
+
 
 
             <Button 
