@@ -67,7 +67,7 @@ export function setupAuth(app: Express) {
         role: role,
         twoFactorEnabled: false,
         twoFactorSecret: null,
-        emailVerified: role === 'admin' || isDevelopment ? true : false,
+        emailVerified: true, // Email verification removed per user request
         emailVerificationToken: null,
         isActive: true,
       });
@@ -111,14 +111,7 @@ export function setupAuth(app: Express) {
         return res.status(401).json({ message: "Invalid email or password" });
       }
 
-      // Check email verification for users (skip in development)
-      const isDevelopment = process.env.NODE_ENV === 'development';
-      if (user.role === 'user' && !user.emailVerified && !isDevelopment) {
-        return res.status(401).json({ 
-          message: "Please verify your email before logging in",
-          requireEmailVerification: true 
-        });
-      }
+      // Email verification removed per user request - all users can login directly
 
       // Create session
       (req.session as any).userId = user.id;
@@ -173,10 +166,7 @@ export function setupAuth(app: Express) {
       // Hash password
       const hashedPassword = await bcrypt.hash(password, 12);
 
-      // Create user with email verification
-      const isDevelopment = process.env.NODE_ENV === 'development';
-      const emailVerificationToken = isDevelopment ? null : crypto.randomBytes(32).toString('hex');
-      
+      // Create user without email verification (per user request)
       const user = await storage.createUser({
         id: nanoid(),
         email,
@@ -187,19 +177,12 @@ export function setupAuth(app: Express) {
         role: 'user',
         twoFactorEnabled: false,
         twoFactorSecret: null,
-        emailVerified: isDevelopment ? true : false,
-        emailVerificationToken,
+        emailVerified: true, // Auto-verify all accounts
+        emailVerificationToken: null,
         isActive: true,
       });
 
-      // Send verification email if not in development
-      if (!isDevelopment && emailVerificationToken) {
-        try {
-          await emailService.sendVerificationEmail(email, emailVerificationToken, firstName);
-        } catch (error) {
-          console.error("Failed to send verification email:", error);
-        }
-      }
+      // Email verification step removed per user request
 
       res.json({
         id: user.id,
@@ -208,7 +191,7 @@ export function setupAuth(app: Express) {
         lastName: user.lastName,
         role: user.role,
         emailVerified: user.emailVerified,
-        message: isDevelopment ? "Account created successfully" : "Account created! Please check your email to verify your account."
+        message: "Account created successfully"
       });
     } catch (error) {
       console.error("Signup error:", error);
@@ -237,14 +220,7 @@ export function setupAuth(app: Express) {
         return res.status(401).json({ message: "Invalid email or password" });
       }
 
-      // Check email verification for users (skip in development)
-      const isDevelopment = process.env.NODE_ENV === 'development';
-      if (user.role === 'user' && !user.emailVerified && !isDevelopment) {
-        return res.status(401).json({ 
-          message: "Please verify your email before logging in",
-          requireEmailVerification: true 
-        });
-      }
+      // Email verification removed per user request - all users can login directly
 
       // Create session
       (req.session as any).userId = user.id;
