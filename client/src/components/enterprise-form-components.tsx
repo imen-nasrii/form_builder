@@ -283,7 +283,7 @@ export const CommonProperties: ComponentProperty[] = [
   }
 ];
 
-// Propriétés spécifiques par composant selon les spécifications Excel actualisées
+// Excel-based component properties matching exact specifications
 export const ComponentSpecificProperties: Record<ComponentType, ComponentProperty[]> = {
   'TEXT': [
     {
@@ -331,12 +331,28 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
   ],
   'GRIDLKP': [
     {
+      id: 'Id',
+      label: 'Id',
+      type: 'text',
+      dataType: 'Chaîne de caractères',
+      defaultValue: '',
+      description: 'Identifiant unique du champ.'
+    },
+    {
+      id: 'label',
+      label: 'Label',
+      type: 'text',
+      dataType: 'Chaîne de caractères',
+      defaultValue: '',
+      description: 'Libellé affiché du champ.'
+    },
+    {
       id: 'Inline',
       label: 'Inline',
       type: 'boolean',
       dataType: 'Booléen',
       defaultValue: false,
-      description: 'Indique si le champ doit être affiché en ligne'
+      description: 'Indique si le champ doit être affiché en ligne.'
     },
     {
       id: 'Width',
@@ -463,12 +479,28 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
   ],
   'SELECT': [
     {
+      id: 'Id',
+      label: 'Id',
+      type: 'text',
+      dataType: 'Chaîne de caractères',
+      defaultValue: '',
+      description: 'Identifiant unique du champ.'
+    },
+    {
+      id: 'label',
+      label: 'Label',
+      type: 'text',
+      dataType: 'Chaîne de caractères',
+      defaultValue: '',
+      description: 'Libellé affiché du champ.'
+    },
+    {
       id: 'Inline',
       label: 'Inline',
       type: 'boolean',
       dataType: 'Booléen',
       defaultValue: false,
-      description: 'Indique si le champ doit être affiché en ligne'
+      description: 'Indique si le champ doit être affiché en ligne.'
     },
     {
       id: 'Width',
@@ -476,7 +508,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       type: 'text',
       dataType: 'Chaîne de caractères',
       defaultValue: '32',
-      description: 'Largeur du champ (ex: "32")'
+      description: 'Largeur du champ (ex: "32").'
     },
     {
       id: 'required',
@@ -484,7 +516,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       type: 'boolean',
       dataType: 'Booléen',
       defaultValue: false,
-      description: 'Indique si le champ est obligatoire'
+      description: 'Indique si le champ est obligatoire.'
     },
     {
       id: 'Outlined',
@@ -492,23 +524,23 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       type: 'boolean',
       dataType: 'Booléen',
       defaultValue: false,
-      description: 'Indique si la sélection doit avoir un style "outlined"'
+      description: 'Indique si la sélection doit avoir un style "outlined".'
     },
     {
       id: 'UserIntKey',
-      label: 'User Int Key',
+      label: 'UserIntKey',
       type: 'boolean',
       dataType: 'Booléen',
       defaultValue: false,
-      description: 'Suggère si les valeurs d\'options sont des clés entières définies par l\'utilisateur'
+      description: 'Suggère si les valeurs d\'options sont des clés entières définies par l\'utilisateur.'
     },
     {
       id: 'OptionValues',
-      label: 'Option Values',
+      label: 'OptionValues',
       type: 'textarea',
       dataType: 'Objet',
       defaultValue: '{}',
-      description: 'Paires clé-valeur pour les options de la liste déroulante (JSON)'
+      description: 'Paires clé-valeur pour les options de la liste déroulante.'
     }
   ],
   'DATEPICKER': [
