@@ -158,19 +158,21 @@ export interface FormComponent {
 
 // Définition des catégories et composants selon les spécifications Excel
 export const ComponentCategories = {
-  'Input Fields': [
+  'Lookup Components': [
     {
-      type: 'TEXT' as ComponentType,
-      label: 'Text Input',
-      icon: Type,
-      description: 'Basic text input field'
+      type: 'GRIDLKP' as ComponentType,
+      label: 'Grid Lookup',
+      icon: Grid3X3,
+      description: 'Grid-based data lookup with search functionality'
     },
     {
-      type: 'NUMERIC' as ComponentType,
-      label: 'Numeric Input',
-      icon: Hash,
-      description: 'Numeric input with validation'
-    },
+      type: 'LSTLKP' as ComponentType,
+      label: 'List Lookup',
+      icon: Search,
+      description: 'List-based data lookup with filtering'
+    }
+  ],
+  'Date & Time': [
     {
       type: 'DATEPICKER' as ComponentType,
       label: 'Date Picker',
@@ -204,54 +206,12 @@ export const ComponentCategories = {
       description: 'Radio button group with option values'
     }
   ],
-  'Lookup Components': [
-    {
-      type: 'GRIDLKP' as ComponentType,
-      label: 'Grid Lookup',
-      icon: Grid3X3,
-      description: 'Grid-based lookup with data model and column definitions'
-    },
-    {
-      type: 'LSTLKP' as ComponentType,
-      label: 'List Lookup',
-      icon: Search,
-      description: 'List lookup with item info and main/desc properties'
-    }
-  ],
-  'Data & Display': [
-    {
-      type: 'GRID' as ComponentType,
-      label: 'Data Grid',
-      icon: Table,
-      description: 'Editable data grid with actions'
-    },
-    {
-      type: 'LABEL' as ComponentType,
-      label: 'Label',
-      icon: Type,
-      description: 'Read-only display label'
-    }
-  ],
   'Container & Layout': [
     {
       type: 'GROUP' as ComponentType,
       label: 'Group Container',
       icon: Database,
       description: 'Container with child fields and spacing control'
-    },
-    {
-      type: 'DIALOG' as ComponentType,
-      label: 'Dialog Container',
-      icon: Settings,
-      description: 'Modal dialog container'
-    }
-  ],
-  'File & Upload': [
-    {
-      type: 'FILEUPLOAD' as ComponentType,
-      label: 'File Upload',
-      icon: ArrowRight,
-      description: 'File upload component'
     }
   ]
 };
@@ -759,22 +719,6 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       dataType: 'Objet',
       defaultValue: '{}',
       description: 'Paires clé-valeur pour les options des boutons radio (JSON)'
-    }
-  ],
-  'NUMERIC': [
-    {
-      id: 'EndpointOnchange',
-      label: 'Endpoint On Change',
-      type: 'boolean',
-      defaultValue: false,
-      description: 'Call endpoint when value changes'
-    },
-    {
-      id: 'Enabled',
-      label: 'Enabled',
-      type: 'boolean',
-      defaultValue: true,
-      description: 'Enable or disable the field'
     }
   ],
   'GRID': [
