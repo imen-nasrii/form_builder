@@ -187,6 +187,8 @@ System Requirements: Admin users cannot access Construction Zone (read-only mode
 ✓ Implemented comprehensive French data type localization across all components using "Chaîne de caractères", "Booléen", "Nombre", "Objet", "Tableau d'Objets" (July 29, 2025)
 ✓ Updated component properties interface to include French dataType field for proper localization (July 29, 2025)
 ✓ Enhanced properties panel with visual data type badges showing French terminology (July 29, 2025)
+✓ Reorganized component palette to focus on core business components: GRIDLKP, LSTLKP, SELECT, DATEPICKER, DATEPKR, CHECKBOX, RADIOGRP, GROUP (July 29, 2025)
+✓ Streamlined component categories into Lookup Components, Date & Time, Selection Controls, and Container & Layout sections (July 29, 2025)
 ✓ Transformed Analytics page from admin-focused to user-specific personal dashboard (July 20, 2025)
 ✓ Replaced system-wide metrics with personalized statistics showing user's own programs and tasks (July 20, 2025)
 ✓ Updated all charts and metrics to display individual user data instead of global system statistics (July 20, 2025)
