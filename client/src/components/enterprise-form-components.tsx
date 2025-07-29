@@ -155,7 +155,7 @@ export interface FormComponent {
   CheckboxValue?: boolean;
 }
 
-// Définition des catégories et composants
+// Définition des catégories et composants selon les spécifications Excel
 export const ComponentCategories = {
   'Input Fields': [
     {
@@ -171,16 +171,16 @@ export const ComponentCategories = {
       description: 'Numeric input with validation'
     },
     {
-      type: 'DATEPKR' as ComponentType,
+      type: 'DATEPICKER' as ComponentType,
       label: 'Date Picker',
       icon: Calendar,
-      description: 'Date selection component'
+      description: 'Date selection with validation rules'
     },
     {
-      type: 'DATEPICKER' as ComponentType,
+      type: 'DATEPKR' as ComponentType,
       label: 'Date Picker Alt',
       icon: Calendar,
-      description: 'Alternative date picker'
+      description: 'Alternative date picker with conditional logic'
     }
   ],
   'Selection Controls': [
@@ -188,19 +188,19 @@ export const ComponentCategories = {
       type: 'SELECT' as ComponentType,
       label: 'Select Dropdown',
       icon: List,
-      description: 'Dropdown selection with predefined options'
+      description: 'Dropdown with option values and user int key support'
     },
     {
       type: 'CHECKBOX' as ComponentType,
       label: 'Checkbox',
       icon: CheckSquare,
-      description: 'Boolean checkbox input'
+      description: 'Boolean checkbox with conditional enabling'
     },
     {
       type: 'RADIOGRP' as ComponentType,
       label: 'Radio Group',
       icon: Settings,
-      description: 'Radio button group selection'
+      description: 'Radio button group with option values'
     }
   ],
   'Lookup Components': [
@@ -208,13 +208,13 @@ export const ComponentCategories = {
       type: 'GRIDLKP' as ComponentType,
       label: 'Grid Lookup',
       icon: Grid3X3,
-      description: 'Grid-based lookup with search'
+      description: 'Grid-based lookup with data model and column definitions'
     },
     {
       type: 'LSTLKP' as ComponentType,
       label: 'List Lookup',
       icon: Search,
-      description: 'List-based lookup component'
+      description: 'List lookup with item info and main/desc properties'
     }
   ],
   'Data & Display': [
@@ -236,7 +236,7 @@ export const ComponentCategories = {
       type: 'GROUP' as ComponentType,
       label: 'Group Container',
       icon: Database,
-      description: 'Container for grouping fields'
+      description: 'Container with child fields and spacing control'
     },
     {
       type: 'DIALOG' as ComponentType,
@@ -369,7 +369,35 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       label: 'Key Column',
       type: 'text',
       defaultValue: '',
-      description: 'Primary key column for lookup'
+      description: 'Colonne clé dans le modèle de données pour la recherche'
+    },
+    {
+      id: 'LoadDataInfo_DataModel',
+      label: 'Data Model',
+      type: 'text',
+      defaultValue: '',
+      description: 'Nom du modèle de données'
+    },
+    {
+      id: 'ItemInfo_MainProperty',
+      label: 'Main Property',
+      type: 'text',
+      defaultValue: '',
+      description: 'Propriété principale à afficher pour l\'élément'
+    },
+    {
+      id: 'ItemInfo_DescProperty',
+      label: 'Description Property',
+      type: 'text',
+      defaultValue: '',
+      description: 'Propriété contenant la description de l\'élément'
+    },
+    {
+      id: 'ItemInfo_ShowDescription',
+      label: 'Show Description',
+      type: 'boolean',
+      defaultValue: true,
+      description: 'Indique si la description doit être affichée'
     },
     {
       id: 'showAliasBox',
@@ -399,7 +427,35 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       label: 'Key Column',
       type: 'text',
       defaultValue: '',
-      description: 'Primary key column for lookup'
+      description: 'Colonne clé dans le modèle de données pour la liste'
+    },
+    {
+      id: 'LoadDataInfo_DataModel',
+      label: 'Data Model',
+      type: 'text',
+      defaultValue: '',
+      description: 'Nom du modèle de données'
+    },
+    {
+      id: 'ItemInfo_MainProperty',
+      label: 'Main Property',
+      type: 'text',
+      defaultValue: '',
+      description: 'Propriété principale à afficher pour l\'élément'
+    },
+    {
+      id: 'ItemInfo_DescProperty',
+      label: 'Description Property',
+      type: 'text',
+      defaultValue: '',
+      description: 'Propriété contenant la description de l\'élément'
+    },
+    {
+      id: 'ItemInfo_ShowDescription',
+      label: 'Show Description',
+      type: 'boolean',
+      defaultValue: true,
+      description: 'Indique si la description doit être affichée'
     },
     {
       id: 'EntitykeyField',
@@ -417,10 +473,10 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
     },
     {
       id: 'MainPropItemList',
-      label: 'Main Property',
+      label: 'Main Property List',
       type: 'text',
       defaultValue: '',
-      description: 'Main property to display'
+      description: 'Main property to display in list'
     },
     {
       id: 'SecondPropItemList',
@@ -447,11 +503,18 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       description: 'Date display format'
     },
     {
-      id: 'minDate',
-      label: 'Minimum Date',
-      type: 'date',
+      id: 'EnabledWhen',
+      label: 'Enabled When',
+      type: 'textarea',
       defaultValue: '',
-      description: 'Earliest selectable date'
+      description: 'Conditions d\'activation du champ (format JSON avec LogicalOperator et Conditions)'
+    },
+    {
+      id: 'ValidationRules',
+      label: 'Validation Rules',
+      type: 'textarea',
+      defaultValue: '',
+      description: 'Règles de validation avec LogicalOperator, Conditions, RightField, Operator, ValueType'
     }
   ],
   'DATEPICKER': [
@@ -462,6 +525,13 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       defaultValue: 'DD/MM/YYYY',
       options: ['DD/MM/YYYY', 'MM/DD/YYYY', 'YYYY-MM-DD'],
       description: 'Date display format'
+    },
+    {
+      id: 'ValidationRules',
+      label: 'Validation Rules',
+      type: 'textarea',
+      defaultValue: '',
+      description: 'Règles de validation (format JSON avec conditions et opérateurs)'
     }
   ],
   'SELECT': [
@@ -470,7 +540,14 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       label: 'User Integer Key',
       type: 'boolean',
       defaultValue: false,
-      description: 'Use integer keys for options'
+      description: 'Suggère si les valeurs d\'options sont des clés entières définies par l\'utilisateur'
+    },
+    {
+      id: 'OptionValues',
+      label: 'Option Values',
+      type: 'textarea',
+      defaultValue: '',
+      description: 'Paires clé-valeur pour les options de la liste déroulante (format JSON)'
     }
   ],
   'CHECKBOX': [
@@ -478,24 +555,45 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'CheckboxValue',
       label: 'Checkbox Value',
       type: 'boolean',
+      defaultValue: true,
+      description: 'Valeur du champ lorsqu\'il est coché'
+    },
+    {
+      id: 'Value',
+      label: 'Default Value',
+      type: 'boolean',
       defaultValue: false,
-      description: 'Default checkbox state'
+      description: 'État initial ou par défaut de la case à cocher'
+    },
+    {
+      id: 'EnabledWhen',
+      label: 'Enabled When',
+      type: 'textarea',
+      defaultValue: '',
+      description: 'Conditions d\'activation du champ (format JSON)'
     }
   ],
   'RADIOGRP': [
     {
-      id: 'options',
-      label: 'Options',
-      type: 'textarea',
+      id: 'value',
+      label: 'Default Value',
+      type: 'text',
       defaultValue: '',
-      description: 'Options separated by new lines (key:value format)'
+      description: 'Valeur sélectionnée par défaut'
     },
     {
-      id: 'inline',
-      label: 'Inline Layout',
-      type: 'boolean',
-      defaultValue: false,
-      description: 'Display options horizontally'
+      id: 'OptionValues',
+      label: 'Option Values',
+      type: 'textarea',
+      defaultValue: '',
+      description: 'Paires clé-valeur pour les options des boutons radio (format JSON)'
+    },
+    {
+      id: 'label',
+      label: 'Group Label',
+      type: 'text',
+      defaultValue: '',
+      description: 'Libellé affiché du groupe de boutons radio'
     }
   ],
   'GRID': [
