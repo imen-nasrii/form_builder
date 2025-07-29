@@ -322,7 +322,7 @@ export const CommonProperties: ComponentProperty[] = [
   }
 ];
 
-// Propriétés spécifiques par type de composant
+// Propriétés spécifiques par composant selon les spécifications Excel actualisées
 export const ComponentSpecificProperties: Record<ComponentType, ComponentProperty[]> = {
   'TEXT': [
     {
@@ -365,18 +365,25 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
   ],
   'GRIDLKP': [
     {
+      id: 'Inline',
+      label: 'Inline',
+      type: 'boolean',
+      defaultValue: false,
+      description: 'Indique si le champ doit être affiché en ligne'
+    },
+    {
+      id: 'Width',
+      label: 'Width',
+      type: 'text',
+      defaultValue: '32',
+      description: 'Largeur du champ (ex: "32")'
+    },
+    {
       id: 'KeyColumn',
       label: 'Key Column',
       type: 'text',
       defaultValue: '',
       description: 'Colonne clé dans le modèle de données pour la recherche'
-    },
-    {
-      id: 'LoadDataInfo_DataModel',
-      label: 'Data Model',
-      type: 'text',
-      defaultValue: '',
-      description: 'Nom du modèle de données'
     },
     {
       id: 'ItemInfo_MainProperty',
@@ -400,28 +407,35 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       description: 'Indique si la description doit être affichée'
     },
     {
-      id: 'showAliasBox',
-      label: 'Show Alias Box',
-      type: 'boolean',
-      defaultValue: false,
-      description: 'Show alias input box'
-    },
-    {
-      id: 'EntitykeyField',
-      label: 'Entity Key Field',
+      id: 'LoadDataInfo_DataModel',
+      label: 'Data Model',
       type: 'text',
       defaultValue: '',
-      description: 'Key field in the entity'
+      description: 'Nom du modèle de données'
     },
     {
-      id: 'filter',
-      label: 'Filter',
-      type: 'text',
+      id: 'LoadDataInfo_ColumnsDefinition',
+      label: 'Columns Definition',
+      type: 'textarea',
       defaultValue: '',
-      description: 'Filter criteria for lookup'
+      description: 'Définit les colonnes de la grille de recherche (JSON)'
     }
   ],
   'LSTLKP': [
+    {
+      id: 'Inline',
+      label: 'Inline',
+      type: 'boolean',
+      defaultValue: false,
+      description: 'Indique si le champ doit être affiché en ligne'
+    },
+    {
+      id: 'Width',
+      label: 'Width',
+      type: 'text',
+      defaultValue: '32',
+      description: 'Largeur du champ (ex: "32")'
+    },
     {
       id: 'KeyColumn',
       label: 'Key Column',
@@ -437,6 +451,13 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       description: 'Nom du modèle de données'
     },
     {
+      id: 'LoadDataInfo_ColumnsDefinition',
+      label: 'Columns Definition',
+      type: 'textarea',
+      defaultValue: '',
+      description: 'Définit les colonnes de la liste (JSON)'
+    },
+    {
       id: 'ItemInfo_MainProperty',
       label: 'Main Property',
       type: 'text',
@@ -456,88 +477,40 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       type: 'boolean',
       defaultValue: true,
       description: 'Indique si la description doit être affichée'
-    },
-    {
-      id: 'EntitykeyField',
-      label: 'Entity Key Field',
-      type: 'text',
-      defaultValue: '',
-      description: 'Key field in the entity'
-    },
-    {
-      id: 'endpoint',
-      label: 'Endpoint',
-      type: 'text',
-      defaultValue: '',
-      description: 'API endpoint for data'
-    },
-    {
-      id: 'MainPropItemList',
-      label: 'Main Property List',
-      type: 'text',
-      defaultValue: '',
-      description: 'Main property to display in list'
-    },
-    {
-      id: 'SecondPropItemList',
-      label: 'Secondary Property',
-      type: 'text',
-      defaultValue: '',
-      description: 'Secondary property to display'
-    },
-    {
-      id: 'ShowSecndPropItemList',
-      label: 'Show Secondary Property',
-      type: 'boolean',
-      defaultValue: false,
-      description: 'Show secondary property'
-    }
-  ],
-  'DATEPKR': [
-    {
-      id: 'format',
-      label: 'Date Format',
-      type: 'select',
-      defaultValue: 'DD/MM/YYYY',
-      options: ['DD/MM/YYYY', 'MM/DD/YYYY', 'YYYY-MM-DD'],
-      description: 'Date display format'
-    },
-    {
-      id: 'EnabledWhen',
-      label: 'Enabled When',
-      type: 'textarea',
-      defaultValue: '',
-      description: 'Conditions d\'activation du champ (format JSON avec LogicalOperator et Conditions)'
-    },
-    {
-      id: 'ValidationRules',
-      label: 'Validation Rules',
-      type: 'textarea',
-      defaultValue: '',
-      description: 'Règles de validation avec LogicalOperator, Conditions, RightField, Operator, ValueType'
-    }
-  ],
-  'DATEPICKER': [
-    {
-      id: 'format',
-      label: 'Date Format',
-      type: 'select',
-      defaultValue: 'DD/MM/YYYY',
-      options: ['DD/MM/YYYY', 'MM/DD/YYYY', 'YYYY-MM-DD'],
-      description: 'Date display format'
-    },
-    {
-      id: 'ValidationRules',
-      label: 'Validation Rules',
-      type: 'textarea',
-      defaultValue: '',
-      description: 'Règles de validation (format JSON avec conditions et opérateurs)'
     }
   ],
   'SELECT': [
     {
+      id: 'Inline',
+      label: 'Inline',
+      type: 'boolean',
+      defaultValue: false,
+      description: 'Indique si le champ doit être affiché en ligne'
+    },
+    {
+      id: 'Width',
+      label: 'Width',
+      type: 'text',
+      defaultValue: '32',
+      description: 'Largeur du champ (ex: "32")'
+    },
+    {
+      id: 'required',
+      label: 'Required',
+      type: 'boolean',
+      defaultValue: false,
+      description: 'Indique si le champ est obligatoire'
+    },
+    {
+      id: 'Outlined',
+      label: 'Outlined',
+      type: 'boolean',
+      defaultValue: false,
+      description: 'Indique si la sélection doit avoir un style "outlined"'
+    },
+    {
       id: 'UserIntKey',
-      label: 'User Integer Key',
+      label: 'User Int Key',
       type: 'boolean',
       defaultValue: false,
       description: 'Suggère si les valeurs d\'options sont des clés entières définies par l\'utilisateur'
@@ -546,8 +519,75 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'OptionValues',
       label: 'Option Values',
       type: 'textarea',
-      defaultValue: '',
-      description: 'Paires clé-valeur pour les options de la liste déroulante (format JSON)'
+      defaultValue: '{}',
+      description: 'Paires clé-valeur pour les options de la liste déroulante (JSON)'
+    }
+  ],
+  'DATEPICKER': [
+    {
+      id: 'Inline',
+      label: 'Inline',
+      type: 'boolean',
+      defaultValue: false,
+      description: 'Indique si le champ doit être affiché en ligne'
+    },
+    {
+      id: 'Width',
+      label: 'Width',
+      type: 'text',
+      defaultValue: '32',
+      description: 'Largeur du champ (ex: "32")'
+    },
+    {
+      id: 'Spacing',
+      label: 'Spacing',
+      type: 'text',
+      defaultValue: '30',
+      description: 'Espacement autour du champ (ex: "30")'
+    },
+    {
+      id: 'required',
+      label: 'Required',
+      type: 'boolean',
+      defaultValue: false,
+      description: 'Indique si le champ est obligatoire'
+    },
+    {
+      id: 'Validations',
+      label: 'Validations',
+      type: 'textarea',
+      defaultValue: '[]',
+      description: 'Définit les règles de validation (JSON)'
+    }
+  ],
+  'DATEPKR': [
+    {
+      id: 'Spacing',
+      label: 'Spacing',
+      type: 'text',
+      defaultValue: '0',
+      description: 'Espacement autour du champ (ex: "0")'
+    },
+    {
+      id: 'Width',
+      label: 'Width',
+      type: 'text',
+      defaultValue: '25',
+      description: 'Largeur du champ (ex: "25")'
+    },
+    {
+      id: 'EnabledWhen',
+      label: 'Enabled When',
+      type: 'textarea',
+      defaultValue: '{}',
+      description: 'Définit les conditions d\'activation du champ (JSON)'
+    },
+    {
+      id: 'Validations',
+      label: 'Validations',
+      type: 'textarea',
+      defaultValue: '[]',
+      description: 'Définit les règles de validation (JSON)'
     }
   ],
   'CHECKBOX': [
@@ -559,6 +599,13 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       description: 'Valeur du champ lorsqu\'il est coché'
     },
     {
+      id: 'spacing',
+      label: 'Spacing',
+      type: 'number',
+      defaultValue: 0,
+      description: 'Espacement autour de la case à cocher'
+    },
+    {
       id: 'Value',
       label: 'Default Value',
       type: 'boolean',
@@ -566,11 +613,69 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       description: 'État initial ou par défaut de la case à cocher'
     },
     {
+      id: 'Width',
+      label: 'Width',
+      type: 'text',
+      defaultValue: '600px',
+      description: 'Largeur du composant case à cocher'
+    },
+    {
       id: 'EnabledWhen',
       label: 'Enabled When',
       type: 'textarea',
-      defaultValue: '',
-      description: 'Conditions d\'activation du champ (format JSON)'
+      defaultValue: '{}',
+      description: 'Définit les conditions d\'activation du champ (JSON)'
+    },
+    {
+      id: 'Inline',
+      label: 'Inline',
+      type: 'boolean',
+      defaultValue: false,
+      description: 'Indique si la case à cocher doit être affichée en ligne'
+    },
+    {
+      id: 'required',
+      label: 'Required',
+      type: 'boolean',
+      defaultValue: false,
+      description: 'Indique si la case à cocher est obligatoire'
+    }
+  ],
+  'GROUP': [
+    {
+      id: 'isGroup',
+      label: 'Is Group',
+      type: 'boolean',
+      defaultValue: true,
+      description: 'Indique que le champ est un groupe'
+    },
+    {
+      id: 'Spacing',
+      label: 'Spacing',
+      type: 'text',
+      defaultValue: '0',
+      description: 'Espacement autour du groupe (ex: "0")'
+    },
+    {
+      id: 'ChildFields',
+      label: 'Child Fields',
+      type: 'textarea',
+      defaultValue: '[]',
+      description: 'Définitions des champs enfants du groupe (JSON)'
+    },
+    {
+      id: 'Inline',
+      label: 'Inline',
+      type: 'boolean',
+      defaultValue: false,
+      description: 'Indique si le groupe doit être affiché en ligne'
+    },
+    {
+      id: 'required',
+      label: 'Required',
+      type: 'boolean',
+      defaultValue: false,
+      description: 'Indique si des champs à l\'intérieur du groupe sont obligatoires'
     }
   ],
   'RADIOGRP': [
@@ -582,56 +687,80 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       description: 'Valeur sélectionnée par défaut'
     },
     {
+      id: 'Spacing',
+      label: 'Spacing',
+      type: 'text',
+      defaultValue: '0',
+      description: 'Espacement autour du groupe (ex: "0")'
+    },
+    {
+      id: 'Width',
+      label: 'Width',
+      type: 'text',
+      defaultValue: '100',
+      description: 'Largeur du groupe de boutons radio (ex: "100", "600px")'
+    },
+    {
       id: 'OptionValues',
       label: 'Option Values',
       type: 'textarea',
-      defaultValue: '',
-      description: 'Paires clé-valeur pour les options des boutons radio (format JSON)'
+      defaultValue: '{}',
+      description: 'Paires clé-valeur pour les options des boutons radio (JSON)'
+    }
+  ],
+  'NUMERIC': [
+    {
+      id: 'EndpointOnchange',
+      label: 'Endpoint On Change',
+      type: 'boolean',
+      defaultValue: false,
+      description: 'Call endpoint when value changes'
     },
     {
-      id: 'label',
-      label: 'Group Label',
-      type: 'text',
-      defaultValue: '',
-      description: 'Libellé affiché du groupe de boutons radio'
+      id: 'Enabled',
+      label: 'Enabled',
+      type: 'boolean',
+      defaultValue: true,
+      description: 'Enable or disable the field'
     }
   ],
   'GRID': [
     {
-      id: 'Endpoint',
-      label: 'Data Endpoint',
-      type: 'text',
-      defaultValue: '',
-      description: 'API endpoint for grid data'
-    },
-    {
-      id: 'EntityKeyField',
+      id: 'EntitykeyField',
       label: 'Entity Key Field',
       type: 'text',
       defaultValue: '',
-      description: 'Primary key field for records'
+      description: 'Key field in the entity'
     }
   ],
   'DIALOG': [
     {
-      id: 'isGroup',
-      label: 'Is Group Container',
-      type: 'boolean',
-      defaultValue: true,
-      description: 'Container for child fields'
+      id: 'title',
+      label: 'Dialog Title',
+      type: 'text',
+      defaultValue: '',
+      description: 'Title of the dialog'
     }
   ],
-  'GROUP': [
+  'LABEL': [
     {
-      id: 'isGroup',
-      label: 'Is Group Container',
-      type: 'boolean',
-      defaultValue: true,
-      description: 'Container for child fields'
+      id: 'fontWeight',
+      label: 'Font Weight',
+      type: 'select',
+      defaultValue: 'normal',
+      options: ['normal', 'bold', 'lighter'],
+      description: 'Font weight of the label'
     }
   ],
-  'LABEL': [],
-  'FILEUPLOAD': []
+  'FILEUPLOAD': [
+    {
+      id: 'acceptedTypes',
+      label: 'Accepted File Types',
+      type: 'text',
+      defaultValue: '*',
+      description: 'Accepted file types (e.g., .pdf,.jpg,.png)'
+    }
+  ]
 };
 
 // Composant de rendu pour chaque type
