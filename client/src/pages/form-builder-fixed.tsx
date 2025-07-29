@@ -189,13 +189,13 @@ interface FormField {
   Type: string;
   Label: string;
   DataField: string;
-  Entity: string;
-  Width: string;
-  Spacing: string;
-  Required: boolean;
-  Inline: boolean;
-  Outlined: boolean;
-  Value: string;
+  Entity?: string;
+  Width?: string;
+  Spacing?: string;
+  Required?: boolean;
+  Inline?: boolean;
+  Outlined?: boolean;
+  Value?: any;
   ChildFields?: FormField[];
 }
 
