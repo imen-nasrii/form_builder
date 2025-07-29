@@ -201,27 +201,6 @@ interface FormField {
 
 // Comprehensive ComponentCategories based on JSON analysis
 const ComponentCategories = {
-  inputFields: {
-    name: 'Input Fields',
-    icon: Type,
-    color: 'blue',
-    components: {
-      TEXT: { icon: Type, label: 'Text Input', color: 'blue' },
-      NUMERIC: { icon: Hash, label: 'Numeric Input', color: 'green' },
-      DATEPKR: { icon: Calendar, label: 'Date Picker', color: 'purple' },
-      DATEPICKER: { icon: Calendar, label: 'Date Picker Alt', color: 'purple' }
-    }
-  },
-  selection: {
-    name: 'Selection Controls',
-    icon: List,
-    color: 'orange',
-    components: {
-      SELECT: { icon: List, label: 'Select Dropdown', color: 'orange' },
-      CHECKBOX: { icon: CheckSquare, label: 'Checkbox', color: 'cyan' },
-      RADIOGRP: { icon: CheckSquare, label: 'Radio Group', color: 'purple' }
-    }
-  },
   lookup: {
     name: 'Lookup Components',
     icon: Search,
@@ -231,30 +210,31 @@ const ComponentCategories = {
       LSTLKP: { icon: Search, label: 'List Lookup', color: 'teal' }
     }
   },
-  dataDisplay: {
-    name: 'Data & Display',
-    icon: Table,
-    color: 'emerald',
+  selection: {
+    name: 'Selection Controls',
+    icon: List,
+    color: 'orange',
     components: {
-      GRID: { icon: Table, label: 'Data Grid', color: 'emerald' },
-      LABEL: { icon: Type, label: 'Label', color: 'gray' }
+      SELECT: { icon: List, label: 'Select Dropdown', color: 'orange' },
+      CHECKBOX: { icon: CheckSquare, label: 'Checkbox', color: 'cyan' },
+      RADIOGRP: { icon: ArrowRight, label: 'Radio Group', color: 'purple' }
+    }
+  },
+  dateTime: {
+    name: 'Date & Time',
+    icon: Calendar,
+    color: 'purple',
+    components: {
+      DATEPICKER: { icon: Calendar, label: 'Date Picker', color: 'purple' },
+      DATEPKR: { icon: Calendar, label: 'Date Picker Alt', color: 'purple' }
     }
   },
   containerLayout: {
     name: 'Container & Layout',
-    icon: Square,
+    icon: Database,
     color: 'violet',
     components: {
-      GROUP: { icon: Square, label: 'Group Container', color: 'violet' },
-      DIALOG: { icon: Settings, label: 'Dialog Container', color: 'pink' }
-    }
-  },
-  fileUpload: {
-    name: 'File & Upload',
-    icon: Upload,
-    color: 'red',
-    components: {
-      FILEUPLOAD: { icon: Upload, label: 'File Upload', color: 'red' }
+      GROUP: { icon: Database, label: 'Group Container', color: 'violet' }
     }
   }
 };
