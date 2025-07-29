@@ -27,6 +27,7 @@ export interface ComponentProperty {
   id: string;
   label: string;
   type: 'text' | 'number' | 'boolean' | 'select' | 'textarea';
+  dataType?: 'Chaîne de caractères' | 'Booléen' | 'Nombre' | 'Objet' | 'Tableau d\'Objets';
   options?: string[];
   defaultValue?: any;
   description?: string;
@@ -329,6 +330,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'placeholder',
       label: 'Placeholder',
       type: 'text',
+      dataType: 'Chaîne de caractères',
       defaultValue: '',
       description: 'Placeholder text'
     },
@@ -336,6 +338,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'maxLength',
       label: 'Max Length',
       type: 'number',
+      dataType: 'Chaîne de caractères',
       defaultValue: 255,
       description: 'Maximum character length'
     },
@@ -343,6 +346,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'minLength',
       label: 'Min Length',
       type: 'number',
+      dataType: 'Booléen',
       defaultValue: 0,
       description: 'Minimum character length'
     }
@@ -352,6 +356,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'EndpointOnchange',
       label: 'Endpoint On Change',
       type: 'boolean',
+      dataType: 'Chaîne de caractères',
       defaultValue: false,
       description: 'Call endpoint when value changes'
     },
@@ -359,6 +364,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'Enabled',
       label: 'Enabled',
       type: 'boolean',
+      dataType: 'Chaîne de caractères',
       defaultValue: true,
       description: 'Enable or disable the field'
     }
@@ -368,6 +374,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'Inline',
       label: 'Inline',
       type: 'boolean',
+      dataType: 'Booléen',
       defaultValue: false,
       description: 'Indique si le champ doit être affiché en ligne'
     },
@@ -375,6 +382,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'Width',
       label: 'Width',
       type: 'text',
+      dataType: 'Chaîne de caractères',
       defaultValue: '32',
       description: 'Largeur du champ (ex: "32")'
     },
@@ -382,6 +390,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'KeyColumn',
       label: 'Key Column',
       type: 'text',
+      dataType: 'Chaîne de caractères',
       defaultValue: '',
       description: 'Colonne clé dans le modèle de données pour la recherche'
     },
@@ -389,6 +398,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'ItemInfo_MainProperty',
       label: 'Main Property',
       type: 'text',
+      dataType: 'Chaîne de caractères',
       defaultValue: '',
       description: 'Propriété principale à afficher pour l\'élément'
     },
@@ -396,6 +406,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'ItemInfo_DescProperty',
       label: 'Description Property',
       type: 'text',
+      dataType: 'Chaîne de caractères',
       defaultValue: '',
       description: 'Propriété contenant la description de l\'élément'
     },
@@ -403,6 +414,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'ItemInfo_ShowDescription',
       label: 'Show Description',
       type: 'boolean',
+      dataType: 'Booléen',
       defaultValue: true,
       description: 'Indique si la description doit être affichée'
     },
@@ -410,6 +422,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'LoadDataInfo_DataModel',
       label: 'Data Model',
       type: 'text',
+      dataType: 'Chaîne de caractères',
       defaultValue: '',
       description: 'Nom du modèle de données'
     },
@@ -417,6 +430,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'LoadDataInfo_ColumnsDefinition',
       label: 'Columns Definition',
       type: 'textarea',
+      dataType: 'Chaîne de caractères',
       defaultValue: '',
       description: 'Définit les colonnes de la grille de recherche (JSON)'
     }
@@ -426,6 +440,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'Inline',
       label: 'Inline',
       type: 'boolean',
+      dataType: 'Chaîne de caractères',
       defaultValue: false,
       description: 'Indique si le champ doit être affiché en ligne'
     },
@@ -433,6 +448,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'Width',
       label: 'Width',
       type: 'text',
+      dataType: 'Chaîne de caractères',
       defaultValue: '32',
       description: 'Largeur du champ (ex: "32")'
     },
@@ -440,6 +456,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'KeyColumn',
       label: 'Key Column',
       type: 'text',
+      dataType: 'Chaîne de caractères',
       defaultValue: '',
       description: 'Colonne clé dans le modèle de données pour la liste'
     },
@@ -447,6 +464,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'LoadDataInfo_DataModel',
       label: 'Data Model',
       type: 'text',
+      dataType: 'Chaîne de caractères',
       defaultValue: '',
       description: 'Nom du modèle de données'
     },
@@ -454,6 +472,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'LoadDataInfo_ColumnsDefinition',
       label: 'Columns Definition',
       type: 'textarea',
+      dataType: 'Chaîne de caractères',
       defaultValue: '',
       description: 'Définit les colonnes de la liste (JSON)'
     },
@@ -461,6 +480,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'ItemInfo_MainProperty',
       label: 'Main Property',
       type: 'text',
+      dataType: 'Chaîne de caractères',
       defaultValue: '',
       description: 'Propriété principale à afficher pour l\'élément'
     },
@@ -468,6 +488,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'ItemInfo_DescProperty',
       label: 'Description Property',
       type: 'text',
+      dataType: 'Chaîne de caractères',
       defaultValue: '',
       description: 'Propriété contenant la description de l\'élément'
     },
@@ -475,6 +496,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'ItemInfo_ShowDescription',
       label: 'Show Description',
       type: 'boolean',
+      dataType: 'Booléen',
       defaultValue: true,
       description: 'Indique si la description doit être affichée'
     }
@@ -484,6 +506,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'Inline',
       label: 'Inline',
       type: 'boolean',
+      dataType: 'Booléen',
       defaultValue: false,
       description: 'Indique si le champ doit être affiché en ligne'
     },
@@ -491,6 +514,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'Width',
       label: 'Width',
       type: 'text',
+      dataType: 'Chaîne de caractères',
       defaultValue: '32',
       description: 'Largeur du champ (ex: "32")'
     },
@@ -498,6 +522,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'required',
       label: 'Required',
       type: 'boolean',
+      dataType: 'Booléen',
       defaultValue: false,
       description: 'Indique si le champ est obligatoire'
     },
@@ -505,6 +530,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'Outlined',
       label: 'Outlined',
       type: 'boolean',
+      dataType: 'Booléen',
       defaultValue: false,
       description: 'Indique si la sélection doit avoir un style "outlined"'
     },
@@ -512,6 +538,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'UserIntKey',
       label: 'User Int Key',
       type: 'boolean',
+      dataType: 'Booléen',
       defaultValue: false,
       description: 'Suggère si les valeurs d\'options sont des clés entières définies par l\'utilisateur'
     },
@@ -519,6 +546,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'OptionValues',
       label: 'Option Values',
       type: 'textarea',
+      dataType: 'Objet',
       defaultValue: '{}',
       description: 'Paires clé-valeur pour les options de la liste déroulante (JSON)'
     }
@@ -528,6 +556,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'Inline',
       label: 'Inline',
       type: 'boolean',
+      dataType: 'Chaîne de caractères',
       defaultValue: false,
       description: 'Indique si le champ doit être affiché en ligne'
     },
@@ -535,6 +564,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'Width',
       label: 'Width',
       type: 'text',
+      dataType: 'Chaîne de caractères',
       defaultValue: '32',
       description: 'Largeur du champ (ex: "32")'
     },
@@ -542,6 +572,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'Spacing',
       label: 'Spacing',
       type: 'text',
+      dataType: 'Chaîne de caractères',
       defaultValue: '30',
       description: 'Espacement autour du champ (ex: "30")'
     },
@@ -549,6 +580,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'required',
       label: 'Required',
       type: 'boolean',
+      dataType: 'Chaîne de caractères',
       defaultValue: false,
       description: 'Indique si le champ est obligatoire'
     },
@@ -556,6 +588,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'Validations',
       label: 'Validations',
       type: 'textarea',
+      dataType: 'Chaîne de caractères',
       defaultValue: '[]',
       description: 'Définit les règles de validation (JSON)'
     }
@@ -565,6 +598,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'Spacing',
       label: 'Spacing',
       type: 'text',
+      dataType: 'Booléen',
       defaultValue: '0',
       description: 'Espacement autour du champ (ex: "0")'
     },
@@ -572,6 +606,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'Width',
       label: 'Width',
       type: 'text',
+      dataType: 'Chaîne de caractères',
       defaultValue: '25',
       description: 'Largeur du champ (ex: "25")'
     },
@@ -579,6 +614,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'EnabledWhen',
       label: 'Enabled When',
       type: 'textarea',
+      dataType: 'Chaîne de caractères',
       defaultValue: '{}',
       description: 'Définit les conditions d\'activation du champ (JSON)'
     },
@@ -586,6 +622,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'Validations',
       label: 'Validations',
       type: 'textarea',
+      dataType: 'Chaîne de caractères',
       defaultValue: '[]',
       description: 'Définit les règles de validation (JSON)'
     }
@@ -595,6 +632,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'CheckboxValue',
       label: 'Checkbox Value',
       type: 'boolean',
+      dataType: 'Chaîne de caractères',
       defaultValue: true,
       description: 'Valeur du champ lorsqu\'il est coché'
     },
@@ -602,6 +640,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'spacing',
       label: 'Spacing',
       type: 'number',
+      dataType: 'Chaîne de caractères',
       defaultValue: 0,
       description: 'Espacement autour de la case à cocher'
     },
@@ -609,6 +648,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'Value',
       label: 'Default Value',
       type: 'boolean',
+      dataType: 'Chaîne de caractères',
       defaultValue: false,
       description: 'État initial ou par défaut de la case à cocher'
     },
@@ -616,6 +656,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'Width',
       label: 'Width',
       type: 'text',
+      dataType: 'Chaîne de caractères',
       defaultValue: '600px',
       description: 'Largeur du composant case à cocher'
     },
@@ -623,6 +664,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'EnabledWhen',
       label: 'Enabled When',
       type: 'textarea',
+      dataType: 'Chaîne de caractères',
       defaultValue: '{}',
       description: 'Définit les conditions d\'activation du champ (JSON)'
     },
@@ -630,6 +672,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'Inline',
       label: 'Inline',
       type: 'boolean',
+      dataType: 'Booléen',
       defaultValue: false,
       description: 'Indique si la case à cocher doit être affichée en ligne'
     },
@@ -637,6 +680,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'required',
       label: 'Required',
       type: 'boolean',
+      dataType: 'Nombre',
       defaultValue: false,
       description: 'Indique si la case à cocher est obligatoire'
     }
@@ -646,6 +690,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'isGroup',
       label: 'Is Group',
       type: 'boolean',
+      dataType: 'Booléen',
       defaultValue: true,
       description: 'Indique que le champ est un groupe'
     },
@@ -653,6 +698,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'Spacing',
       label: 'Spacing',
       type: 'text',
+      dataType: 'Chaîne de caractères',
       defaultValue: '0',
       description: 'Espacement autour du groupe (ex: "0")'
     },
@@ -660,6 +706,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'ChildFields',
       label: 'Child Fields',
       type: 'textarea',
+      dataType: 'Tableau d\'Objets',
       defaultValue: '[]',
       description: 'Définitions des champs enfants du groupe (JSON)'
     },
@@ -667,6 +714,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'Inline',
       label: 'Inline',
       type: 'boolean',
+      dataType: 'Booléen',
       defaultValue: false,
       description: 'Indique si le groupe doit être affiché en ligne'
     },
@@ -674,6 +722,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'required',
       label: 'Required',
       type: 'boolean',
+      dataType: 'Booléen',
       defaultValue: false,
       description: 'Indique si des champs à l\'intérieur du groupe sont obligatoires'
     }
@@ -683,6 +732,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'value',
       label: 'Default Value',
       type: 'text',
+      dataType: 'Chaîne de caractères',
       defaultValue: '',
       description: 'Valeur sélectionnée par défaut'
     },
@@ -690,6 +740,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'Spacing',
       label: 'Spacing',
       type: 'text',
+      dataType: 'Chaîne de caractères',
       defaultValue: '0',
       description: 'Espacement autour du groupe (ex: "0")'
     },
@@ -697,6 +748,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'Width',
       label: 'Width',
       type: 'text',
+      dataType: 'Chaîne de caractères',
       defaultValue: '100',
       description: 'Largeur du groupe de boutons radio (ex: "100", "600px")'
     },
@@ -704,6 +756,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'OptionValues',
       label: 'Option Values',
       type: 'textarea',
+      dataType: 'Objet',
       defaultValue: '{}',
       description: 'Paires clé-valeur pour les options des boutons radio (JSON)'
     }
@@ -729,6 +782,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'EntitykeyField',
       label: 'Entity Key Field',
       type: 'text',
+      dataType: 'Chaîne de caractères',
       defaultValue: '',
       description: 'Key field in the entity'
     }
@@ -738,6 +792,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'title',
       label: 'Dialog Title',
       type: 'text',
+      dataType: 'Chaîne de caractères',
       defaultValue: '',
       description: 'Title of the dialog'
     }
@@ -747,6 +802,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'fontWeight',
       label: 'Font Weight',
       type: 'select',
+      dataType: 'Chaîne de caractères',
       defaultValue: 'normal',
       options: ['normal', 'bold', 'lighter'],
       description: 'Font weight of the label'
@@ -757,6 +813,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       id: 'acceptedTypes',
       label: 'Accepted File Types',
       type: 'text',
+      dataType: 'Chaîne de caractères',
       defaultValue: '*',
       description: 'Accepted file types (e.g., .pdf,.jpg,.png)'
     }
