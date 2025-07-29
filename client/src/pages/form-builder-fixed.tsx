@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'wouter';
+import type { FormField } from '@/lib/form-types';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -185,20 +186,7 @@ function ModelDropdownSelector({
   );
 }
 
-interface FormField {
-  Id: string;
-  Type: string;
-  Label: string;
-  DataField: string;
-  Entity?: string;
-  Width?: string;
-  Spacing?: string;
-  Required?: boolean;
-  Inline?: boolean;
-  Outlined?: boolean;
-  Value?: any;
-  ChildFields?: FormField[];
-}
+// FormField interface is now imported from @/lib/form-types
 
 // Comprehensive ComponentCategories based on JSON analysis
 const ComponentCategories = {
@@ -3084,6 +3072,40 @@ export default function FormBuilderFixed() {
     });
     
     // Auto-save after moving
+    if (formData.id) {
+      setTimeout(() => {
+        saveFormMutation.mutate();
+      }, 500);
+    }
+  };
+
+  const updateField = (fieldId: string, updates: Partial<FormField>) => {
+    const updateFieldRecursive = (fields: FormField[]): FormField[] => {
+      return fields.map(field => {
+        if (field.Id === fieldId) {
+          return { ...field, ...updates };
+        }
+        if (field.ChildFields && field.ChildFields.length > 0) {
+          return {
+            ...field,
+            ChildFields: updateFieldRecursive(field.ChildFields)
+          };
+        }
+        return field;
+      });
+    };
+
+    setFormData(prev => ({
+      ...prev,
+      fields: updateFieldRecursive(prev.fields)
+    }));
+    
+    // Update selected field if it's the one being updated
+    if (selectedField?.Id === fieldId) {
+      setSelectedField(prev => prev ? { ...prev, ...updates } : null);
+    }
+    
+    // Auto-save after updating a component
     if (formData.id) {
       setTimeout(() => {
         saveFormMutation.mutate();
