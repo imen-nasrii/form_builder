@@ -75,12 +75,10 @@ function DraggableComponent({ type, icon, label, description, color, onAddField 
 
 export default function CollapsibleComponentPalette({ onAddField }: ComponentPaletteProps) {
   const [expandedSections, setExpandedSections] = useState({
-    input: true,
-    selection: true,
-    dateTime: false,
-    files: false,
     lookup: true,
-    layout: false
+    selection: true,
+    dateTime: true,
+    layout: true
   });
 
   const toggleSection = (section: keyof typeof expandedSections) => {
@@ -90,20 +88,20 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
     }));
   };
 
-  const inputComponents = [
+  const lookupComponents = [
     {
-      type: "TEXT",
-      icon: <Type className="w-5 h-5 text-white" />,
-      label: "Text Input",
-      description: "TEXT",
-      color: "bg-blue-500"
+      type: "GRIDLKP",
+      icon: <Grid3X3 className="w-5 h-5 text-white" />,
+      label: "Grid Lookup",
+      description: "GRIDLKP",
+      color: "bg-blue-600"
     },
     {
-      type: "TEXTAREA", 
-      icon: <FileText className="w-5 h-5 text-white" />,
-      label: "Text Area",
-      description: "TEXTAREA",
-      color: "bg-green-500"
+      type: "LSTLKP", 
+      icon: <List className="w-5 h-5 text-white" />,
+      label: "List Lookup",
+      description: "LSTLKP",
+      color: "bg-green-600"
     }
   ];
 
@@ -113,92 +111,48 @@ export default function CollapsibleComponentPalette({ onAddField }: ComponentPal
       icon: <ChevronDown className="w-5 h-5 text-white" />,
       label: "Select Dropdown",
       description: "SELECT",
-      color: "bg-orange-500"
+      color: "bg-orange-600"
     },
     {
       type: "CHECKBOX",
       icon: <CheckSquare className="w-5 h-5 text-white" />,
       label: "Checkbox",
       description: "CHECKBOX",
-      color: "bg-indigo-500"
+      color: "bg-purple-600"
     },
     {
       type: "RADIOGRP",
       icon: <RadioIcon className="w-5 h-5 text-white" />,
       label: "Radio Group",
       description: "RADIOGRP",
-      color: "bg-pink-500"
+      color: "bg-pink-600"
     }
   ];
 
   const dateTimeComponents = [
     {
-      type: "DATEPKR",
+      type: "DATEPICKER",
       icon: <Calendar className="w-5 h-5 text-white" />,
       label: "Date Picker",
-      description: "DATEPKR",
-      color: "bg-purple-500"
-    }
-  ];
-
-  const filesComponents = [
-    {
-      type: "FILEUPLOAD",
-      icon: <FileText className="w-5 h-5 text-white" />,
-      label: "File Upload",
-      description: "FILEUPLOAD",
-      color: "bg-pink-500"
-    }
-  ];
-
-  const lookupComponents = [
-    {
-      type: "GRIDLKP",
-      icon: <Database className="w-5 h-5 text-white" />,
-      label: "Grid Lookup",
-      description: "GRIDLKP",
-      color: "bg-blue-500"
+      description: "DATEPICKER",
+      color: "bg-indigo-600"
     },
     {
-      type: "LSTLKP",
-      icon: <List className="w-5 h-5 text-white" />,
-      label: "List Lookup",
-      description: "LSTLKP",
-      color: "bg-teal-500"
+      type: "DATEPKR",
+      icon: <Calendar className="w-5 h-5 text-white" />,
+      label: "Date Picker Alt",
+      description: "DATEPKR",
+      color: "bg-teal-600"
     }
   ];
 
   const layoutComponents = [
     {
       type: "GROUP",
-      icon: <Grid3X3 className="w-5 h-5 text-white" />,
+      icon: <FolderOpen className="w-5 h-5 text-white" />,
       label: "Group",
       description: "GROUP",
-      color: "bg-purple-500"
-    }
-  ];
-
-  const specialComponents = [
-    {
-      type: "DIALOG",
-      icon: <MessageSquare className="w-5 h-5 text-white" />,
-      label: "Dialog Box",
-      description: "DIALOG",
-      color: "bg-purple-600"
-    },
-    {
-      type: "GROUP",
-      icon: <FolderOpen className="w-5 h-5 text-white" />,
-      label: "Field Group",
-      description: "GROUP",
-      color: "bg-gray-500"
-    },
-    {
-      type: "ACTION",
-      icon: <Play className="w-5 h-5 text-white" />,
-      label: "Action Button",
-      description: "ACTION",
-      color: "bg-red-500"
+      color: "bg-slate-600"
     }
   ];
 

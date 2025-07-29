@@ -545,12 +545,28 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
   ],
   'DATEPICKER': [
     {
+      id: 'Id',
+      label: 'Id',
+      type: 'text',
+      dataType: 'Chaîne de caractères',
+      defaultValue: '',
+      description: 'Identifiant unique du champ.'
+    },
+    {
+      id: 'label',
+      label: 'Label',
+      type: 'text',
+      dataType: 'Chaîne de caractères',
+      defaultValue: '',
+      description: 'Libellé affiché du champ.'
+    },
+    {
       id: 'Inline',
       label: 'Inline',
       type: 'boolean',
-      dataType: 'Chaîne de caractères',
+      dataType: 'Booléen',
       defaultValue: false,
-      description: 'Indique si le champ doit être affiché en ligne'
+      description: 'Indique si le champ doit être affiché en ligne.'
     },
     {
       id: 'Width',
@@ -558,7 +574,7 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       type: 'text',
       dataType: 'Chaîne de caractères',
       defaultValue: '32',
-      description: 'Largeur du champ (ex: "32")'
+      description: 'Largeur du champ (ex: "32").'
     },
     {
       id: 'Spacing',
@@ -566,23 +582,23 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
       type: 'text',
       dataType: 'Chaîne de caractères',
       defaultValue: '30',
-      description: 'Espacement autour du champ (ex: "30")'
+      description: 'Espacement autour du champ (ex: "30").'
     },
     {
       id: 'required',
       label: 'Required',
       type: 'boolean',
-      dataType: 'Chaîne de caractères',
+      dataType: 'Booléen',
       defaultValue: false,
-      description: 'Indique si le champ est obligatoire'
+      description: 'Indique si le champ est obligatoire.'
     },
     {
       id: 'Validations',
       label: 'Validations',
       type: 'textarea',
-      dataType: 'Chaîne de caractères',
+      dataType: 'Tableau d\'Objets',
       defaultValue: '[]',
-      description: 'Définit les règles de validation (JSON)'
+      description: 'Définit les règles de validation.'
     }
   ],
   'DATEPKR': [
