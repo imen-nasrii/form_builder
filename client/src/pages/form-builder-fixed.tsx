@@ -66,6 +66,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ComponentCategories as EnterpriseComponentCategories, ComponentSpecificProperties, CommonProperties, renderFormComponent } from '@/components/enterprise-form-components';
 import { FormFieldProperties } from '@/components/form-field-properties';
+import ExcelPropertiesPanel from '@/components/form-builder/excel-properties-panel';
 
 // Model Dropdown Selector Component
 function ModelDropdownSelector({ 
@@ -4466,18 +4467,20 @@ export default function FormBuilderFixed() {
                 </div>
               ) : (
                 // Panneau propriétés normal pour les utilisateurs
-                selectedField ? (
-                  <FormFieldProperties 
-                    field={selectedField}
-                    updateField={updateFieldInFormData}
-                    isDarkMode={isDarkMode}
-                  />
-                ) : (
-                  <div className={`p-6 text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                    <Settings className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                    <p>Select a component to view its properties</p>
-                  </div>
-                )
+                <ExcelPropertiesPanel
+                  selectedField={selectedField}
+                  onUpdateField={(fieldId, updates) => {
+                    if (selectedField) {
+                      const updatedField = { ...selectedField, ...updates };
+                      setSelectedField(updatedField);
+                      updateField(fieldId, updates);
+                    }
+                  }}
+                  onRemoveField={(fieldId) => {
+                    removeField(fieldId);
+                    setSelectedField(null);
+                  }}
+                />
               )}
             </TabsContent>
             

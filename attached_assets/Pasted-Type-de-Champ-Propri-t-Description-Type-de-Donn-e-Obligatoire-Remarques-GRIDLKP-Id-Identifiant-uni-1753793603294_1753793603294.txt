@@ -1,0 +1,98 @@
+Type de Champ	Propriété	Description	Type de Donnée	Obligatoire	Remarques
+GRIDLKP	Id	Identifiant unique du champ.	Chaîne de caractères	Oui	
+	label	Libellé affiché du champ.	Chaîne de caractères	Oui	
+	Inline	Indique si le champ doit être affiché en ligne.	Booléen	Oui	
+	Width	Largeur du champ (ex: "32").	Chaîne de caractères	Oui	
+	KeyColumn	Colonne clé dans le modèle de données pour la recherche.	Chaîne de caractères	Oui	
+	ItemInfo	Objet: Définit l'affichage des informations de l'élément sélectionné.		Oui	
+	    MainProperty	Propriété principale à afficher pour l'élément.	Chaîne de caractères	Oui	
+	    DescProperty	Propriété contenant la description de l'élément.	Chaîne de caractères	Oui	
+	    ShowDescription	Indique si la description doit être affichée.	Booléen	Oui	
+	LoadDataInfo	Objet: Spécifie comment les données sont chargées pour la recherche.		Oui	
+	    DataModel	Nom du modèle de données.	Chaîne de caractères	Oui	
+	    ColumnsDefinition	Tableau d'Objets: Définit les colonnes de la grille de recherche.		Oui	
+	        DataField	Nom du champ de données du modèle.	Chaîne de caractères	Oui	
+	        Caption	Texte d'en-tête de la colonne.	Chaîne de caractères	Oui	
+	        DataType	Type de données de la colonne (ex: "STRING").	Chaîne de caractères	Oui	
+	        Visible	Indique si la colonne est visible dans la grille.	Booléen	Oui	
+LSTLKP	Id	Identifiant unique du champ.	Chaîne de caractères	Oui	
+	label	Libellé affiché du champ.	Chaîne de caractères	Oui	
+	Inline	Indique si le champ doit être affiché en ligne.	Booléen	Oui	
+	Width	Largeur du champ (ex: "32").	Chaîne de caractères	Oui	
+	KeyColumn	Colonne clé dans le modèle de données pour la liste.	Chaîne de caractères	Oui	
+	LoadDataInfo	Objet: Spécifie comment les données sont chargées pour la liste.		Oui	
+	    DataModel	Nom du modèle de données.	Chaîne de caractères	Oui	
+	    ColumnsDefinition	Tableau d'Objets: Définit les colonnes de la liste.		Oui	
+	        DataField	Nom du champ de données du modèle.	Chaîne de caractères	Oui	
+	        DataType	Type de données de la colonne (ex: "STRING").	Chaîne de caractères	Oui	
+	ItemInfo	Objet: Définit l'affichage des informations de l'élément sélectionné.		Oui	
+	    MainProperty	Propriété principale à afficher pour l'élément.	Chaîne de caractères	Oui	
+	    DescProperty	Propriété contenant la description de l'élément.	Chaîne de caractères	Oui	
+	    ShowDescription	Indique si la description doit être affichée.	Booléen	Oui	
+SELECT	Id	Identifiant unique du champ.	Chaîne de caractères	Oui	
+	label	Libellé affiché du champ.	Chaîne de caractères	Oui	
+	Inline	Indique si le champ doit être affiché en ligne.	Booléen	Oui	
+	Width	Largeur du champ (ex: "32").	Chaîne de caractères	Oui	
+	required	Indique si le champ est obligatoire.	Booléen	Oui	
+	Outlined	Indique si la sélection doit avoir un style "outlined".	Booléen	Oui	
+	UserIntKey	Suggère si les valeurs d'options sont des clés entières définies par l'utilisateur.	Booléen	Oui	
+	OptionValues	Objet: Paires clé-valeur pour les options de la liste déroulante.	Objet	Oui	
+DATEPICKER	Id	Identifiant unique du champ.	Chaîne de caractères	Oui	
+	label	Libellé affiché du champ.	Chaîne de caractères	Oui	
+	Inline	Indique si le champ doit être affiché en ligne.	Booléen	Oui	
+	Width	Largeur du champ (ex: "32").	Chaîne de caractères	Oui	
+	Spacing	Espacement autour du champ (ex: "30").	Chaîne de caractères	Oui	
+	required	Indique si le champ est obligatoire.	Booléen	Oui	
+	Validations	Tableau d'Objets: Définit les règles de validation.		Oui	
+	    Id	Identifiant de la règle de validation.	Chaîne de caractères	Oui	
+	    Type	Type de validation (ex: "ERROR").	Chaîne de caractères	Oui	
+	    ConditionExpression	Objet: Définit les conditions de déclenchement de la validation.		Oui	
+	        Conditions	Tableau d'Objets: Conditions individuelles.		Oui	
+	            RightField	ID du champ à valider.	Chaîne de caractères	Oui	
+	            Operator	Opérateur de comparaison (ex: "ISN" pour "est nul").	Chaîne de caractères	Oui	
+	            ValueType	Type de données de la valeur comparée (ex: "DATE").	Chaîne de caractères	Oui	
+GROUP	Id	Identifiant unique du groupe.	Chaîne de caractères	Oui	
+	label	Libellé affiché du groupe.	Chaîne de caractères	Oui	
+	isGroup	Indique que le champ est un groupe.	Booléen	Oui	
+	Spacing	Espacement autour du groupe (ex: "0").	Chaîne de caractères	Oui	
+	ChildFields	Tableau d'Objets: Définitions des champs enfants du groupe.	Tableau d'Objets	Oui	Contient les définitions des champs individuels (comme RADIOGRP, DATEPKR).
+	Inline	Indique si le groupe doit être affiché en ligne.	Booléen	Non	
+	required	Indique si des champs à l'intérieur du groupe sont obligatoires.	Booléen	Non	
+RADIOGRP	Id	Identifiant unique du groupe de boutons radio.	Chaîne de caractères	Oui	
+	value	Valeur sélectionnée par défaut.	Chaîne de caractères	Oui	
+	Spacing	Espacement autour du groupe (ex: "0").	Chaîne de caractères	Oui	
+	Width	Largeur du groupe de boutons radio (ex: "100", "600px").	Chaîne de caractères	Oui	
+	OptionValues	Objet: Paires clé-valeur pour les options des boutons radio.	Objet	Oui	
+	label	Libellé affiché du groupe de boutons radio.	Chaîne de caractères	Non	
+DATEPKR	Id	Identifiant unique du champ.	Chaîne de caractères	Oui	Semblable à DATEPICKER, mais potentiellement une variante.
+	label	Libellé affiché du champ.	Chaîne de caractères	Oui	
+	Spacing	Espacement autour du champ (ex: "0").	Chaîne de caractères	Oui	
+	Width	Largeur du champ (ex: "25").	Chaîne de caractères	Oui	
+	EnabledWhen	Objet: Définit les conditions d'activation du champ.		Oui	
+	    Conditions	Tableau d'Objets: Conditions individuelles.		Oui	
+	        RightField	ID du champ à vérifier.	Chaîne de caractères	Oui	
+	        Operator	Opérateur de comparaison (ex: "NEQ" pour "n'est pas égal à").	Chaîne de caractères	Oui	
+	        Value	Valeur à comparer.	Chaîne de caractères	Oui	
+	        ValueType	Type de données de la valeur (ex: "STRING").	Chaîne de caractères	Oui	
+	Validations	Tableau d'Objets: Définit les règles de validation.		Oui	
+	    Id	Identifiant de la règle de validation.	Chaîne de caractères	Oui	
+	    Type	Type de validation (ex: "ERROR").	Chaîne de caractères	Oui	
+	    ConditionExpression	Objet: Définit les conditions de déclenchement de la validation.		Oui	
+	        LogicalOperator	Opérateur logique pour combiner les conditions (ex: "AND").	Chaîne de caractères	Oui	
+	        Conditions	Tableau d'Objets: Conditions individuelles.		Oui	
+	            RightField	ID du champ à valider.	Chaîne de caractères	Oui	
+	            Operator	Opérateur de comparaison (ex: "ISN" pour "est nul").	Chaîne de caractères	Oui	
+	            Value	Valeur à comparer.	Chaîne de caractères	Non	
+	            ValueType	Type de données de la valeur (ex: "DATE", "STRING").	Chaîne de caractères	Oui	
+CHECKBOX	Id	Identifiant unique de la case à cocher.	Chaîne de caractères	Oui	
+	label	Libellé affiché à côté de la case à cocher.	Chaîne de caractères	Oui	
+	CheckboxValue	Valeur du champ lorsqu'il est coché (ex: true).	Booléen	Oui	
+	spacing	Espacement autour de la case à cocher (ex: 0).	Nombre	Oui	
+	Value	État initial ou par défaut de la case à cocher (ex: false).	Booléen	Oui	
+	Width	Largeur du composant case à cocher (ex: "600px").	Chaîne de caractères	Oui	
+	EnabledWhen	Objet: Définit les conditions d'activation du champ.		Oui	
+	    Conditions	Tableau d'Objets: Conditions individuelles.		Oui	
+	        RightField	ID du champ à vérifier.	Chaîne de caractères	Oui	
+	        Operator	Opérateur de comparaison (ex: "ISF" pour "est faux").	Chaîne de caractères	Oui	
+	Inline	Indique si la case à cocher doit être affichée en ligne.	Booléen	Non	
+	required	Indique si la case à cocher est obligatoire.	Booléen	Non	
