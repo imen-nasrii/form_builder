@@ -295,10 +295,10 @@ export function FormFieldProperties({ field, updateField, isDarkMode }: FormFiel
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="STRING">STRING</SelectItem>
-                        <SelectItem value="NUMERIC">NUMERIC</SelectItem>
-                        <SelectItem value="DATE">DATE</SelectItem>
-                        <SelectItem value="BOOLEAN">BOOLEAN</SelectItem>
+                        <SelectItem value="STRING">Chaîne de caractères</SelectItem>
+                        <SelectItem value="NUMERIC">Nombre</SelectItem>
+                        <SelectItem value="DATE">Chaîne de caractères</SelectItem>
+                        <SelectItem value="BOOLEAN">Booléen</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
