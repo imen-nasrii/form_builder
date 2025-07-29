@@ -11,7 +11,7 @@ export interface FormField {
   Id: string;
   Type: string;
   Label: string;
-  DataField?: string;
+  DataField: string;
   Entity?: string;
   Width?: string;
   Spacing?: string;

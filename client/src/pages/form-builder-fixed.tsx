@@ -53,7 +53,8 @@ import {
   Maximize2,
   Minimize2,
   Hash,
-  MoreHorizontal
+  MoreHorizontal,
+  User
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -4450,7 +4451,7 @@ export default function FormBuilderFixed() {
                 // Panneau admin pour affecter le formulaire
                 <div className="p-6 space-y-6">
                   <div className="text-center mb-6">
-                    <Users className="w-12 h-12 mx-auto mb-4 text-orange-500" />
+                    <User className="w-12 h-12 mx-auto mb-4 text-orange-500" />
                     <h3 className="font-semibold text-gray-900">Gestion Administrative</h3>
                     <p className="text-sm text-gray-600">Affecter ce formulaire à un utilisateur</p>
                   </div>
@@ -4474,7 +4475,7 @@ export default function FormBuilderFixed() {
                     {/* Liste des utilisateurs disponibles - à implémenter */}
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                       <p className="text-sm text-blue-700">
-                        <Users className="w-4 h-4 inline mr-1" />
+                        <User className="w-4 h-4 inline mr-1" />
                         Fonctionnalité d'affectation en cours de développement
                       </p>
                       <p className="text-xs text-blue-600 mt-1">
