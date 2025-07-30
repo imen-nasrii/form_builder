@@ -211,7 +211,7 @@ function DroppableCell({
         <div className="w-full h-full flex items-center justify-center text-gray-400">
           <div className="text-center">
             <Grid3X3 className="w-6 h-6 mx-auto mb-1 opacity-50" />
-            <div className="text-xs">Déposer ici</div>
+            <div className="text-xs">Drop here</div>
             {!hasSubGrid && (
               <Button 
                 size="sm" 
