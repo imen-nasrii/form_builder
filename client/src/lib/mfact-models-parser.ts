@@ -21,6 +21,105 @@ export interface MFactModel {
 // Real model definitions parsed from MfactModels folder
 export const REAL_MFACT_MODELS: MFactModel[] = [
   {
+    name: 'AATRR',
+    displayName: 'Asset Attributes',
+    description: 'Asset attribute and distribution management system',
+    category: 'Finance',
+    columns: [
+      { DataField: 'Fund', Caption: 'Fund', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'Dist_Date', Caption: 'Distribution Date', DataType: 'Date', Visible: true, Required: false },
+      { DataField: 'Eff_Date', Caption: 'Effective Date', DataType: 'Date', Visible: true, Required: false },
+      { DataField: 'Per_Shar', Caption: 'Per Share', DataType: 'Number', Visible: true, Required: false },
+      { DataField: 'Dist_Type', Caption: 'Distribution Type', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'Status', Caption: 'Status', DataType: 'Number', Visible: true, Required: false },
+      { DataField: 'Entry_Date', Caption: 'Entry Date', DataType: 'Date', Visible: true, Required: false },
+      { DataField: 'User_Id', Caption: 'User ID', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'Entry_Time', Caption: 'Entry Time', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'Class', Caption: 'Class', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'Rec_Date', Caption: 'Record Date', DataType: 'Date', Visible: true, Required: false },
+      { DataField: 'Pay_Date', Caption: 'Payment Date', DataType: 'Date', Visible: true, Required: false },
+      { DataField: 'Ae_Final', Caption: 'AE Final', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'Date_Delet', Caption: 'Date Deleted', DataType: 'Date', Visible: false, Required: false },
+      { DataField: 'User_Delet', Caption: 'User Deleted', DataType: 'String', Visible: false, Required: false },
+      { DataField: 'Time_Delet', Caption: 'Time Deleted', DataType: 'String', Visible: false, Required: false },
+      { DataField: 'Hash', Caption: 'Hash', DataType: 'Number', Visible: false, Required: false }
+    ]
+  },
+  {
+    name: 'AE',
+    displayName: 'Account Executives (Brokers)',
+    description: 'Broker and account executive information management',
+    category: 'General',
+    columns: [
+      { DataField: 'Broker', Caption: 'Broker', DataType: 'String', Visible: true, Required: true },
+      { DataField: 'Name', Caption: 'Name', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'Trader', Caption: 'Trader', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'Firm', Caption: 'Firm', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'Add1', Caption: 'Address 1', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'Add2', Caption: 'Address 2', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'City', Caption: 'City', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'State', Caption: 'State', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'Zip', Caption: 'ZIP Code', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'Phone', Caption: 'Phone', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'Trphon', Caption: 'Trade Phone', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'Bkrcom', Caption: 'Broker Commission', DataType: 'Number', Visible: true, Required: false },
+      { DataField: 'Owncom', Caption: 'Own Commission', DataType: 'Number', Visible: true, Required: false },
+      { DataField: 'Lei', Caption: 'LEI', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'Hash', Caption: 'Hash', DataType: 'Number', Visible: false, Required: false }
+    ]
+  },
+  {
+    name: 'CODES',
+    displayName: 'Code Tables',
+    description: 'System code table management and reference data',
+    category: 'General',
+    columns: [
+      { DataField: 'code', Caption: 'Code', DataType: 'String', Visible: true, Required: true },
+      { DataField: 'id', Caption: 'ID', DataType: 'String', Visible: true, Required: true },
+      { DataField: 'desc1', Caption: 'Description', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'id2', Caption: 'ID 2', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'hash', Caption: 'Hash', DataType: 'Number', Visible: false, Required: false }
+    ]
+  },
+  {
+    name: 'CURNCY',
+    displayName: 'Currencies',
+    description: 'Currency master data and exchange rate management',
+    category: 'Finance',
+    columns: [
+      { DataField: 'Currency', Caption: 'Currency', DataType: 'String', Visible: true, Required: true },
+      { DataField: 'Name', Caption: 'Name', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'Tkr', Caption: 'Ticker', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'Symbol', Caption: 'Symbol', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'Lcl_M_Decs', Caption: 'Local Money Decimals', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'Qty_Decs', Caption: 'Quantity Decimals', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'Price_Decs', Caption: 'Price Decimals', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'Reciprical', Caption: 'Reciprocal', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'Euro_Code', Caption: 'Euro Code', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'Euro_Rate', Caption: 'Euro Rate', DataType: 'Number', Visible: true, Required: false },
+      { DataField: 'Hash', Caption: 'Hash', DataType: 'Number', Visible: false, Required: false }
+    ]
+  },
+  {
+    name: 'USERS',
+    displayName: 'System Users',
+    description: 'User management and permissions system',
+    category: 'General',
+    columns: [
+      { DataField: 'user_id', Caption: 'User ID', DataType: 'String', Visible: true, Required: true },
+      { DataField: 'name', Caption: 'Name', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'email', Caption: 'Email', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'role', Caption: 'Role', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'allmenus', Caption: 'All Menus', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'glprm', Caption: 'GL Permission', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'edittkr', Caption: 'Edit Ticker', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'webportal', Caption: 'Web Portal', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'checker', Caption: 'Checker', DataType: 'String', Visible: true, Required: false },
+      { DataField: 'fails', Caption: 'Failed Attempts', DataType: 'Number', Visible: true, Required: false },
+      { DataField: 'hash', Caption: 'Hash', DataType: 'Number', Visible: false, Required: false }
+    ]
+  },
+  {
     name: 'ACTDATA',
     displayName: 'Account Data',
     description: 'Account activity data management system',
@@ -178,7 +277,8 @@ export const LEGACY_MODEL_MAPPING = {
   'BUYTYP': 'ACTYPE', 
   'PRIMNT': 'TRX',
   'SRCMNT': 'SECRTY',
-  'BUYLONG': 'FNDMAS'
+  'BUYLONG': 'FNDMAS',
+  'AATTRR': 'AATRR'
 };
 
 // Get model by name (supports both legacy and new names)
