@@ -1890,7 +1890,7 @@ function PropertiesPanel({ field, onUpdate }: {
                 id="field-multiple"
                 value={field.Value || "single"}
                 onChange={(e) => onUpdate({ Value: e.target.value })}
-                placeholder="single ou multiple"
+                placeholder="single or multiple"
                 className="text-sm"
               />
             </div>
@@ -1908,7 +1908,7 @@ function PropertiesPanel({ field, onUpdate }: {
                 id="field-source"
                 value={field.Entity}
                 onChange={(e) => onUpdate({ Entity: e.target.value })}
-                placeholder="Table ou vue source"
+                placeholder="Source table or view"
                 className="text-sm"
               />
             </div>
@@ -3468,7 +3468,7 @@ export default function FormBuilderFixed() {
       spacing: newComponentConfig.spacing || 'md',
       value: newComponentConfig.value || '',
       
-      // Options booléennes
+      // Boolean options
       required: newComponentConfig.required || false,
       inline: newComponentConfig.inline || false,
       outlined: newComponentConfig.outlined || false,
@@ -4403,7 +4403,7 @@ export default function FormBuilderFixed() {
                         <div className="w-full h-full flex items-center justify-center text-gray-400">
                           <div className="text-center">
                             <Grid3X3 className="w-6 h-6 mx-auto mb-1 opacity-50" />
-                            <div className="text-xs">Déposer ici</div>
+                            <div className="text-xs">Drop here</div>
                           </div>
                         </div>
                       )}
@@ -4411,26 +4411,26 @@ export default function FormBuilderFixed() {
                   ))}
                 </div>
 
-                    {/* Contrôles de cellule sélectionnée */}
+                    {/* Selected cell controls */}
                     {selectedGridCell && (
                       <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">
-                            <Label className="text-sm font-medium">Cellule sélectionnée:</Label>
+                            <Label className="text-sm font-medium">Selected Cell:</Label>
                             <Badge variant="outline" className="text-xs">{selectedGridCell}</Badge>
                           </div>
                           <div className="flex items-center space-x-2">
                             <Button size="sm" variant="outline" className="text-xs" onClick={mergeGridCells}>
                               <Maximize2 className="w-3 h-3 mr-1" />
-                              Étendre
+                              Extend
                             </Button>
                             <Button size="sm" variant="outline" className="text-xs" onClick={splitGridCell}>
                               <Minimize2 className="w-3 h-3 mr-1" />
-                              Réduire
+                              Reduce
                             </Button>
                             <Button size="sm" variant="outline" className="text-xs" onClick={() => clearGridCell(selectedGridCell)}>
                               <Trash2 className="w-3 h-3 mr-1" />
-                              Vider
+                              Clear
                             </Button>
                           </div>
                         </div>
@@ -4451,44 +4451,44 @@ export default function FormBuilderFixed() {
             
             <TabsContent value="properties" className="h-full">
               {isAdmin ? (
-                // Panneau admin pour affecter le formulaire
+                // Admin panel to assign the form
                 <div className="p-6 space-y-6">
                   <div className="text-center mb-6">
                     <User className="w-12 h-12 mx-auto mb-4 text-orange-500" />
-                    <h3 className="font-semibold text-gray-900">Gestion Administrative</h3>
-                    <p className="text-sm text-gray-600">Affecter ce formulaire à un utilisateur</p>
+                    <h3 className="font-semibold text-gray-900">Administrative Management</h3>
+                    <p className="text-sm text-gray-600">Assign this form to a user</p>
                   </div>
                   
-                  {/* Informations du formulaire */}
+                  {/* Form information */}
                   <div className="bg-gray-50 rounded-lg p-4 space-y-3">
-                    <h4 className="font-medium text-gray-900">Informations du formulaire</h4>
+                    <h4 className="font-medium text-gray-900">Form Information</h4>
                     <div className="space-y-2 text-sm">
                       <div><strong>ID:</strong> {formData.menuId}</div>
                       <div><strong>Label:</strong> {formData.label}</div>
-                      <div><strong>Largeur:</strong> {formData.formWidth}</div>
+                      <div><strong>Width:</strong> {formData.formWidth}</div>
                       <div><strong>Layout:</strong> {formData.layout}</div>
-                      <div><strong>Composants:</strong> {formData.fields.length}</div>
+                      <div><strong>Components:</strong> {formData.fields.length}</div>
                     </div>
                   </div>
 
-                  {/* Section d'affectation */}
+                  {/* Assignment section */}
                   <div className="space-y-4">
-                    <h4 className="font-medium text-gray-900">Affecter à un utilisateur</h4>
+                    <h4 className="font-medium text-gray-900">Assign to a user</h4>
                     
-                    {/* Liste des utilisateurs disponibles - à implémenter */}
+                    {/* Available users list - to be implemented */}
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                       <p className="text-sm text-blue-700">
                         <User className="w-4 h-4 inline mr-1" />
-                        Fonctionnalité d'affectation en cours de développement
+                        Assignment feature under development
                       </p>
                       <p className="text-xs text-blue-600 mt-1">
-                        Bientôt disponible: sélection d'utilisateur et affectation de formulaire
+                        Coming soon: user selection and form assignment
                       </p>
                     </div>
                   </div>
                 </div>
               ) : (
-                // Panneau propriétés normal pour les utilisateurs
+                // Normal properties panel for users
                 <ExcelPropertiesPanel
                   selectedField={selectedField}
                   onUpdateField={(fieldId, updates) => {
