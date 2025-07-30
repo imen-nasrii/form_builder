@@ -182,7 +182,7 @@ export default function MFactModelSelector({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Database className="w-5 h-5 text-blue-600" />
-            Sélection Modèle MFact et Colonnes
+            MFact Model and Columns Selection
           </DialogTitle>
         </DialogHeader>
 
@@ -193,7 +193,7 @@ export default function MFactModelSelector({
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <Input
-                  placeholder="Rechercher un modèle..."
+                  placeholder="Search for a model..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -203,9 +203,13 @@ export default function MFactModelSelector({
 
             <Tabs defaultValue="all" className="w-full">
               <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="all">Tous</TabsTrigger>
+                <TabsTrigger value="all">All</TabsTrigger>
                 {categories.map(category => (
-                  <TabsTrigger key={category} value={category}>{category}</TabsTrigger>
+                  <TabsTrigger key={category} value={category}>
+                    {category === 'Comptabilité' ? 'Accounting' : 
+                     category === 'Achats' ? 'Purchasing' : 
+                     category === 'Finance' ? 'Finance' : category}
+                  </TabsTrigger>
                 ))}
               </TabsList>
 
@@ -239,7 +243,7 @@ export default function MFactModelSelector({
                             <div className="flex items-center gap-1 mt-2">
                               <Table className="w-3 h-3 text-gray-400" />
                               <span className="text-xs text-gray-500">
-                                {model.columns.length} colonnes
+                                {model.columns.length} columns
                               </span>
                             </div>
                           </div>
@@ -293,7 +297,7 @@ export default function MFactModelSelector({
           {/* Panneau droit - Configuration des colonnes */}
           <div className="w-1/2 space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Configuration des Colonnes</h3>
+              <h3 className="text-lg font-semibold">Column Configuration</h3>
               {selectedModel && (
                 <Badge variant="outline" className="text-sm">
                   {selectedModel.displayName}
