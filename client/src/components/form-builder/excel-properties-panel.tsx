@@ -140,9 +140,9 @@ export default function ExcelPropertiesPanel({
               <Settings className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <div className="text-gray-900 dark:text-white">Propriétés Excel</div>
+              <div className="text-gray-900 dark:text-white">Excel Properties</div>
               <div className="text-sm text-gray-500 dark:text-gray-400 font-normal">
-                Aucun composant sélectionné
+                No component selected
               </div>
             </div>
           </CardTitle>
@@ -153,10 +153,10 @@ export default function ExcelPropertiesPanel({
               <Settings className="w-8 h-8 text-blue-600 dark:text-blue-400" />
             </div>
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
-              Sélectionnez un composant
+              Select a component
             </h3>
             <p className="text-gray-500 dark:text-gray-400 max-w-sm leading-relaxed">
-              Cliquez sur un composant dans la Zone de Construction pour voir ses propriétés Excel et les modifier en temps réel.
+              Click on a component in the Construction Zone to view and modify its Excel properties in real-time.
             </p>
           </div>
         </CardContent>
@@ -180,7 +180,7 @@ export default function ExcelPropertiesPanel({
               <Settings className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <div className="text-gray-900 dark:text-white">Propriétés Excel</div>
+              <div className="text-gray-900 dark:text-white">Excel Properties</div>
               <div className="text-sm text-gray-500 dark:text-gray-400 font-normal">
                 {selectedField.Type} - {selectedField.Label}
               </div>
@@ -194,7 +194,7 @@ export default function ExcelPropertiesPanel({
               className="shadow-md hover:shadow-lg transition-shadow"
             >
               <Trash2 className="w-3 h-3 mr-1" />
-              Supprimer
+              Delete
             </Button>
           )}
         </CardTitle>
@@ -227,7 +227,7 @@ export default function ExcelPropertiesPanel({
                       trigger={
                         <Button variant="outline" className="w-full justify-start bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600">
                           <Database className="w-4 h-4 mr-2" />
-                          {(selectedField as any)[property.id] ? `Modèle: ${(selectedField as any)[property.id]}` : 'Sélectionner un modèle MFact'}
+                          {(selectedField as any)[property.id] ? `Model: ${(selectedField as any)[property.id]}` : 'Select MFact Model'}
                         </Button>
                       }
                     />
@@ -252,13 +252,13 @@ export default function ExcelPropertiesPanel({
                   <Settings className="w-6 h-6 text-orange-600 dark:text-orange-400" />
                 </div>
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                  Aucune propriété Excel définie
+                  No Excel properties defined
                 </h3>
                 <p className="text-gray-500 dark:text-gray-400 mb-2">
-                  Le composant {selectedField.Type} n'a pas encore de spécifications Excel configurées.
+                  The {selectedField.Type} component doesn't have Excel specifications configured yet.
                 </p>
                 <p className="text-xs text-gray-400 dark:text-gray-500">
-                  Les spécifications doivent être ajoutées dans ComponentProperties
+                  Specifications must be added in ComponentProperties
                 </p>
               </div>
             )}
