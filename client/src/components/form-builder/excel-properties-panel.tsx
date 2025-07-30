@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Settings, Trash2 } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Settings, Trash2, Plus, Database, Grid3X3, Eye, EyeOff } from "lucide-react";
 import { ComponentSpecificProperties } from "@/components/enterprise-form-components";
 import type { FormField } from "@/lib/form-types";
 
@@ -207,6 +208,7 @@ export default function ExcelPropertiesPanel({
                   key={property.id}
                   property={property}
                   value={(selectedField as any)[property.id]}
+                  selectedField={selectedField}
                   onChange={(newValue) => {
                     updateField({ [property.id]: newValue });
                   }}

@@ -26,7 +26,7 @@ export type ComponentType =
 export interface ComponentProperty {
   id: string;
   label: string;
-  type: 'text' | 'number' | 'boolean' | 'select' | 'textarea';
+  type: 'text' | 'number' | 'boolean' | 'select' | 'textarea' | 'datamodel-columns';
   dataType?: 'Chaîne de caractères' | 'Booléen' | 'Nombre' | 'Objet' | 'Tableau d\'Objets';
   options?: string[];
   defaultValue?: any;
@@ -396,19 +396,20 @@ export const ComponentSpecificProperties: Record<ComponentType, ComponentPropert
     },
     {
       id: 'LoadDataInfo_DataModel',
-      label: 'Data Model',
-      type: 'text',
+      label: 'LoadDataInfo - DataModel',
+      type: 'select',
       dataType: 'Chaîne de caractères',
+      options: ['ACCADJ', 'BUYTYP', 'PRIMNT', 'SRCMNT', 'BUYLONG', 'Custom Model'],
       defaultValue: '',
-      description: 'Nom du modèle de données'
+      description: 'Sélectionner le modèle MFact à charger pour les données'
     },
     {
       id: 'LoadDataInfo_ColumnsDefinition',
-      label: 'Columns Definition',
-      type: 'textarea',
-      dataType: 'Chaîne de caractères',
-      defaultValue: '',
-      description: 'Définit les colonnes de la grille de recherche (JSON)'
+      label: 'LoadDataInfo - ColumnsDefinition',
+      type: 'datamodel-columns',
+      dataType: 'Tableau d\'Objets',
+      defaultValue: '[]',
+      description: 'Configuration des colonnes: DataField, Caption, DataType, Visible'
     }
   ],
   'LSTLKP': [
