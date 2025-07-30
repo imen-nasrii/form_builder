@@ -50,15 +50,15 @@ function PropertyField({
   };
 
   return (
-    <div className="space-y-3 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
+    <div className="space-y-2 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
       <div className="flex items-center justify-between">
-        <div className="space-y-1">
-          <Label className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+        <div className="space-y-0.5">
+          <Label className="text-xs font-semibold text-gray-900 dark:text-white flex items-center gap-1.5">
             {property.label}
             {property.required && <span className="text-red-500 text-xs">*</span>}
           </Label>
           {property.description && (
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            <p className="text-xs text-gray-500 dark:text-gray-400 leading-tight">
               {property.description}
             </p>
           )}
@@ -66,7 +66,7 @@ function PropertyField({
         {property.dataType && (
           <Badge 
             variant="outline" 
-            className={`text-xs px-3 py-1 font-medium ${getDataTypeBadgeColor(property.dataType)}`}
+            className={`text-xs px-2 py-0.5 font-medium ${getDataTypeBadgeColor(property.dataType)}`}
           >
             {property.dataType}
           </Badge>
@@ -76,14 +76,14 @@ function PropertyField({
 
 
       {property.type === 'boolean' ? (
-        <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+        <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600">
+          <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
             {Boolean(value) ? 'Activé' : 'Désactivé'}
           </span>
           <Switch
             checked={Boolean(value)}
             onCheckedChange={handleChange}
-            className="data-[state=checked]:bg-blue-600"
+            className="data-[state=checked]:bg-blue-600 scale-75"
           />
         </div>
       ) : property.type === 'textarea' ? (
@@ -103,7 +103,7 @@ function PropertyField({
             }
           }}
           placeholder={`Ex: ${property.defaultValue}`}
-          className="min-h-[100px] font-mono text-sm bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+          className="min-h-[80px] font-mono text-xs bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 transition-colors"
         />
       ) : property.type === 'number' ? (
         <Input
@@ -111,7 +111,7 @@ function PropertyField({
           value={value !== undefined ? value : property.defaultValue}
           onChange={(e) => handleChange(Number(e.target.value))}
           placeholder={`Ex: ${property.defaultValue}`}
-          className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+          className="h-8 text-xs bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 transition-colors"
         />
       ) : (
         <Input
@@ -119,7 +119,7 @@ function PropertyField({
           value={value !== undefined ? value : property.defaultValue || ''}
           onChange={(e) => handleChange(e.target.value)}
           placeholder={`Ex: ${property.defaultValue}`}
-          className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+          className="h-8 text-xs bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 transition-colors"
         />
       )}
     </div>
@@ -134,14 +134,14 @@ export default function ExcelPropertiesPanel({
   if (!selectedField) {
     return (
       <Card className="h-full border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
-        <CardHeader className="pb-4 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-800">
-          <CardTitle className="text-lg font-semibold flex items-center gap-3">
-            <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
-              <Settings className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+        <CardHeader className="pb-2 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-800">
+          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+            <div className="p-1.5 bg-blue-100 dark:bg-blue-900 rounded-md">
+              <Settings className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <div className="text-gray-900 dark:text-white">Excel Properties</div>
-              <div className="text-sm text-gray-500 dark:text-gray-400 font-normal">
+              <div className="text-gray-900 dark:text-white text-sm">Excel Properties</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400 font-normal">
                 No component selected
               </div>
             </div>
@@ -173,15 +173,15 @@ export default function ExcelPropertiesPanel({
 
   return (
     <Card className="h-full border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
-      <CardHeader className="pb-4 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-800">
-        <CardTitle className="text-lg font-semibold flex items-center justify-between">
-          <span className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
-              <Settings className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+      <CardHeader className="pb-2 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-800">
+        <CardTitle className="text-sm font-semibold flex items-center justify-between">
+          <span className="flex items-center gap-2">
+            <div className="p-1.5 bg-blue-100 dark:bg-blue-900 rounded-md">
+              <Settings className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <div className="text-gray-900 dark:text-white">Excel Properties</div>
-              <div className="text-sm text-gray-500 dark:text-gray-400 font-normal">
+              <div className="text-gray-900 dark:text-white text-sm">Excel Properties</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400 font-normal">
                 {selectedField.Type} - {selectedField.Label}
               </div>
             </div>
@@ -191,7 +191,7 @@ export default function ExcelPropertiesPanel({
               size="sm"
               variant="destructive"
               onClick={() => onRemoveField(selectedField.Id)}
-              className="shadow-md hover:shadow-lg transition-shadow"
+              className="h-7 px-2 text-xs shadow-sm hover:shadow-md transition-shadow"
             >
               <Trash2 className="w-3 h-3 mr-1" />
               Delete
@@ -201,17 +201,17 @@ export default function ExcelPropertiesPanel({
       </CardHeader>
       
       <CardContent className="p-0">
-        <ScrollArea className="h-[calc(100vh-220px)]">
-          <div className="p-4 space-y-4">
+        <ScrollArea className="h-[calc(100vh-200px)]">
+          <div className="p-3 space-y-3">
             {componentProperties.length > 0 ? (
               componentProperties.map((property) => 
                 property.id === 'LoadDataInfo_DataModel' ? (
-                  <div key={property.id} className="space-y-3 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm">
-                    <div className="flex items-center justify-between mb-3">
-                      <Label className="text-sm font-semibold text-gray-900 dark:text-white">
+                  <div key={property.id} className="space-y-2 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm">
+                    <div className="flex items-center justify-between mb-2">
+                      <Label className="text-xs font-semibold text-gray-900 dark:text-white">
                         {property.label}
                       </Label>
-                      <Badge variant="outline" className="text-xs px-3 py-1">
+                      <Badge variant="outline" className="text-xs px-2 py-0.5">
                         {property.dataType}
                       </Badge>
                     </div>
@@ -225,13 +225,13 @@ export default function ExcelPropertiesPanel({
                         updateField({ 'LoadDataInfo_ColumnsDefinition': columns });
                       }}
                       trigger={
-                        <Button variant="outline" className="w-full justify-start bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600">
-                          <Database className="w-4 h-4 mr-2" />
+                        <Button variant="outline" className="w-full justify-start h-8 text-xs bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600">
+                          <Database className="w-3 h-3 mr-1.5" />
                           {(selectedField as any)[property.id] ? `Model: ${(selectedField as any)[property.id]}` : 'Select MFact Model'}
                         </Button>
                       }
                     />
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 leading-tight">
                       {property.description}
                     </p>
                   </div>
