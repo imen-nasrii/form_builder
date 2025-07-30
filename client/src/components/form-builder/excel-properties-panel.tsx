@@ -10,6 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Settings, Trash2, Plus, Database, Grid3X3, Eye, EyeOff } from "lucide-react";
 import { ComponentSpecificProperties } from "@/components/enterprise-form-components";
+import MFactModelSelector from "@/components/mfact-model-selector";
 import type { FormField } from "@/lib/form-types";
 
 interface ExcelPropertiesPanelProps {
@@ -203,17 +204,48 @@ export default function ExcelPropertiesPanel({
         <ScrollArea className="h-[calc(100vh-220px)]">
           <div className="p-4 space-y-4">
             {componentProperties.length > 0 ? (
-              componentProperties.map((property) => (
-                <PropertyField
-                  key={property.id}
-                  property={property}
-                  value={(selectedField as any)[property.id]}
-                  selectedField={selectedField}
-                  onChange={(newValue) => {
-                    updateField({ [property.id]: newValue });
-                  }}
-                />
-              ))
+              componentProperties.map((property) => 
+                property.id === 'LoadDataInfo_DataModel' ? (
+                  <div key={property.id} className="space-y-3 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm">
+                    <div className="flex items-center justify-between mb-3">
+                      <Label className="text-sm font-semibold text-gray-900 dark:text-white">
+                        {property.label}
+                      </Label>
+                      <Badge variant="outline" className="text-xs px-3 py-1">
+                        {property.dataType}
+                      </Badge>
+                    </div>
+                    <MFactModelSelector
+                      value={(selectedField as any)[property.id]}
+                      selectedColumns={(selectedField as any)['LoadDataInfo_ColumnsDefinition'] || []}
+                      onModelSelect={(model) => {
+                        updateField({ [property.id]: model });
+                      }}
+                      onColumnsSelect={(columns) => {
+                        updateField({ 'LoadDataInfo_ColumnsDefinition': columns });
+                      }}
+                      trigger={
+                        <Button variant="outline" className="w-full justify-start bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600">
+                          <Database className="w-4 h-4 mr-2" />
+                          {(selectedField as any)[property.id] ? `Modèle: ${(selectedField as any)[property.id]}` : 'Sélectionner un modèle MFact'}
+                        </Button>
+                      }
+                    />
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                      {property.description}
+                    </p>
+                  </div>
+                ) : (
+                  <PropertyField
+                    key={property.id}
+                    property={property}
+                    value={(selectedField as any)[property.id]}
+                    onChange={(newValue) => {
+                      updateField({ [property.id]: newValue });
+                    }}
+                  />
+                )
+              )
             ) : (
               <div className="text-center py-12">
                 <div className="w-16 h-16 bg-gradient-to-br from-orange-100 to-red-100 dark:from-orange-900 dark:to-red-900 rounded-xl flex items-center justify-center mb-4 mx-auto shadow-lg">
