@@ -11,10 +11,24 @@ export interface FormField {
   Outlined: boolean;
   Value: string;
 
-  // Optional properties for specific component types
+  // GRIDLKP specific properties
   KeyColumn?: string;
-  LoadDataInfo?: string;
-  ItemInfo?: string;
+  ItemInfo?: {
+    MainProperty: string;
+    DescProperty: string;
+    ShowDescription: boolean;
+  };
+  LoadDataInfo?: {
+    DataModel: string;
+    ColumnsDefinition: Array<{
+      DataField: string;
+      Caption: string;
+      DataType: string;
+      Visible: boolean;
+    }>;
+  };
+  
+  // Other component specific properties
   UserIntKey?: boolean;
   OptionValues?: any;
   EnabledWhen?: string;

@@ -41,10 +41,31 @@ function DraggableComponent({
 
   const handleClick = () => {
     const newField: FormField = {
-      Id: `field_${Date.now()}`,
-      label,
-      type: type as keyof typeof import("@shared/schema").ComponentTypes,
-      required: false,
+      Id: `${type}_${Date.now()}`,
+      Type: type,
+      Label: label,
+      DataField: `field_${Date.now()}`,
+      Entity: "TableName",
+      Width: "100%",
+      Spacing: "md",
+      Required: false,
+      Inline: false,
+      Outlined: false,
+      Value: "",
+      
+      // GRIDLKP specific properties
+      ...(type === "GRIDLKP" && {
+        KeyColumn: "",
+        ItemInfo: {
+          MainProperty: "",
+          DescProperty: "",
+          ShowDescription: false
+        },
+        LoadDataInfo: {
+          DataModel: "",
+          ColumnsDefinition: []
+        }
+      })
     };
     onAddField(newField);
   };
