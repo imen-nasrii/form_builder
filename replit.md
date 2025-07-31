@@ -283,3 +283,6 @@ System Requirements: Admin users cannot access Construction Zone (read-only mode
 ✓ Created comprehensive Q&A documentation for advanced features: JSON Validator, AI Alex, External Components (July 31, 2025)
 ✓ Added practical usage guide with real-world scenarios and workflow examples for all advanced functionalities (July 31, 2025)
 ✓ Enhanced documentation covers integration patterns, best practices, and enterprise-grade usage scenarios (July 31, 2025)
+✓ Created comprehensive guide explaining internal vs external components architecture and practical usage (July 31, 2025)
+✓ Documented complete workflow for predefined APIs (internal components) vs dynamic APIs (external components) (July 31, 2025)
+✓ Added detailed explanation of hybrid component system with MFact models and external integrations (July 31, 2025)
