@@ -13,7 +13,7 @@ import { ComponentSpecificProperties } from "@/components/enterprise-form-compon
 import MFactModelSelector from "@/components/mfact-model-selector";
 import type { FormField } from "@/lib/form-types";
 
-interface ExcelPropertiesPanelProps {
+interface PropertiesPanelProps {
   selectedField: FormField | null;
   onUpdateField: (fieldId: string, updates: Partial<FormField>) => void;
   onRemoveField?: (fieldId: string) => void;
@@ -130,7 +130,7 @@ export default function ExcelPropertiesPanel({
   selectedField, 
   onUpdateField, 
   onRemoveField 
-}: ExcelPropertiesPanelProps) {
+}: PropertiesPanelProps) {
   if (!selectedField) {
     return (
       <Card className="h-full border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
@@ -140,7 +140,7 @@ export default function ExcelPropertiesPanel({
               <Settings className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <div className="text-gray-900 dark:text-white text-sm">Excel Properties</div>
+              <div className="text-gray-900 dark:text-white text-sm">Properties</div>
               <div className="text-xs text-gray-500 dark:text-gray-400 font-normal">
                 No component selected
               </div>
@@ -156,7 +156,7 @@ export default function ExcelPropertiesPanel({
               Select a component
             </h3>
             <p className="text-gray-500 dark:text-gray-400 max-w-sm leading-relaxed">
-              Click on a component in the Construction Zone to view and modify its Excel properties in real-time.
+              Click on a component in the Construction Zone to view and modify its properties in real-time.
             </p>
           </div>
         </CardContent>
@@ -180,7 +180,7 @@ export default function ExcelPropertiesPanel({
               <Settings className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <div className="text-gray-900 dark:text-white text-sm">Excel Properties</div>
+              <div className="text-gray-900 dark:text-white text-sm">Properties</div>
               <div className="text-xs text-gray-500 dark:text-gray-400 font-normal">
                 {selectedField.Type} - {selectedField.Label}
               </div>
@@ -252,10 +252,10 @@ export default function ExcelPropertiesPanel({
                   <Settings className="w-6 h-6 text-orange-600 dark:text-orange-400" />
                 </div>
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                  No Excel properties defined
+                  No properties defined
                 </h3>
                 <p className="text-gray-500 dark:text-gray-400 mb-2">
-                  The {selectedField.Type} component doesn't have Excel specifications configured yet.
+                  The {selectedField.Type} component doesn't have specifications configured yet.
                 </p>
                 <p className="text-xs text-gray-400 dark:text-gray-500">
                   Specifications must be added in ComponentProperties
