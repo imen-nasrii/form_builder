@@ -1,218 +1,266 @@
-# FormBuilder Pro - Guide Pratique d'Utilisation
+# Guide Pratique : Composants Internes vs Externes
 
-## 🚀 Démarrage Rapide avec les Fonctionnalités Avancées
+## 🎯 Architecture des Composants FormBuilder
 
-### Scenario 1 : Création d'un Programme ACCADJ avec Alex
+### ✅ Composants INTERNES (APIs Prédéfinies)
+**Stockés dans :** Code source + Base de données schema
+**Localisation :** `shared/mfact-models.ts` + `shared/schema.ts`
 
-**Étape 1 : Accéder à Alex**
-1. Connectez-vous à FormBuilder Pro
-2. Cliquez sur l'icône "AI Assistant" dans la barre de navigation
-3. Alex s'ouvre dans une interface de chat moderne
-
-**Étape 2 : Demander la génération**
-```
-Vous : "Alex, génère-moi un programme ACCADJ complet avec validation des montants"
-Alex : "Je vais créer un programme ACCADJ avec toutes les validations requises..."
-```
-
-**Étape 3 : Utiliser le JSON généré**
-1. Alex affiche le JSON complet dans le chat
-2. Copiez le code JSON
-3. Retournez au FormBuilder
-4. Utilisez "Import" pour charger le JSON
-5. Le programme apparaît automatiquement dans la Construction Zone
-
----
-
-## 🔍 Validation et Correction avec le JSON Validator
-
-### Scenario 2 : Corriger un Formulaire Existant
-
-**Problème** : Vous avez un formulaire qui ne fonctionne pas correctement
-
-**Solution avec le Validator :**
-
-1. **Accès au Validator**
-   - Menu Actions → "Validate JSON"
-   - Le Validator s'ouvre avec votre formulaire actuel
-
-2. **Analyse automatique**
-   ```
-   Errors Found: 3
-   - Field "Amount" missing required property "Required"
-   - Invalid component type "TEXTBOX" (should be "TEXT")
-   - EnabledWhen condition syntax error
-   ```
-
-3. **Correction automatique**
-   - Cliquez "Auto-Fix Simple Errors"
-   - Le Validator corrige automatiquement :
-     * "TEXTBOX" → "TEXT"
-     * Ajoute `"Required": true` à Amount
-     * Corrige la syntaxe EnabledWhen
-
-4. **Score de qualité**
-   ```
-   Quality Score: 85/100
-   Suggestions:
-   - Add accessibility labels (+5 points)
-   - Optimize field ordering (+3 points)
-   - Add validation messages (+7 points)
-   ```
-
----
-
-## 🧩 Extension avec External Components
-
-### Scenario 3 : Ajouter un Composant Personnalisé
-
-**Besoin** : Créer un composant "CURRENCY_SELECTOR" pour sélectionner des devises
-
-**Méthode JSON Directe :**
-
-1. **Accès aux External Components**
-   - Menu Admin → "External Components"
-   - Sélectionnez "JSON Validation Method"
-
-2. **Définition du composant**
-   ```json
-   {
-     "Id": "CurrencySelector",
-     "Type": "CURRENCY_SELECTOR",
-     "Label": "CURRENCY",
-     "DataField": "CurrencyCode",
-     "Entity": "Currency",
-     "Width": "150px",
-     "Spacing": "md",
-     "Required": true,
-     "Inline": true,
-     "Outlined": false,
-     "Value": "USD",
-     "CurrencyOptions": {
-       "USD": "US Dollar",
-       "EUR": "Euro", 
-       "GBP": "British Pound",
-       "JPY": "Japanese Yen"
-     },
-     "ShowFlag": true,
-     "ShowSymbol": true
-   }
-   ```
-
-3. **Validation et intégration**
-   - Le système valide automatiquement
-   - Le composant apparaît dans la palette
-   - Catégorie : "Selection Controls"
-
-**Méthode Formulaire Guidé :**
-
-1. Sélectionnez "Step-by-Step Form Method"
-2. **Étape 1 - Informations de base**
-   - Type: CURRENCY_SELECTOR
-   - Label: CURRENCY
-   - DataField: CurrencyCode
-   
-3. **Étape 2 - Propriétés spécifiques**
-   - Currency Options: USD, EUR, GBP, JPY
-   - Show Flag: Oui
-   - Show Symbol: Oui
-   
-4. **Étape 3 - Validation**
-   - Required: Oui
-   - Default Value: USD
-   
-5. **Prévisualisation et validation**
-
----
-
-## 🔄 Workflows Intégrés Avancés
-
-### Scenario 4 : Workflow Complet de A à Z
-
-**Objectif** : Créer un formulaire de transaction financière complexe
-
-**Étape 1 : Planification avec Alex**
-```
-Vous : "Alex, j'ai besoin d'un formulaire pour enregistrer des transactions financières. 
-Il doit inclure : fund selection, account, transaction type, amount, date, et validations."
-
-Alex : "Je vais créer une structure complète. Voulez-vous un modèle basé sur BUYTYP ou 
-une structure personnalisée ?"
-
-Vous : "Structure personnalisée avec validation de montant minimum 1000$"
+```typescript
+// Exemples de composants internes
+const INTERNAL_COMPONENTS = [
+  'GRIDLKP',   // Grid lookup avec MFact models
+  'LSTLKP',    // List lookup avec DataModel
+  'SELECT',    // Dropdown avec OptionValues
+  'DATEPICKER',// Date picker avec validations
+  'CHECKBOX',  // Boolean avec EnabledWhen
+  'RADIOGRP',  // Radio group avec options
+  'GROUP',     // Container avec ChildFields
+  'TEXT'       // Text input avec validations
+];
 ```
 
-**Étape 2 : Génération et validation**
-1. Alex génère le JSON complet
-2. Automatically analyse par le Validator
-3. Score initial : 78/100
-4. Corrections suggérées appliquées
-5. Score final : 94/100
+### 🔌 Composants EXTERNES (APIs Dynamiques)
+**Stockés dans :** Base de données PostgreSQL
+**Table :** `external_components`
 
-**Étape 3 : Extension avec composants externes**
-1. Ajout du CURRENCY_SELECTOR créé précédemment
-2. Ajout d'un composant APPROVAL_WORKFLOW
-3. Intégration dans la palette
-
-**Étape 4 : Construction finale**
-1. Import du JSON dans FormBuilder
-2. Placement des composants dans la grille 4x6
-3. Configuration des propriétés via le panneau
-4. Test de la logique conditionnelle
-
----
-
-## 💡 Conseils et Bonnes Pratiques
-
-### Optimisation avec Alex
-
-**Pour des résultats optimaux :**
-- Soyez précis dans vos demandes
-- Mentionnez les entités métier (Fndmas, Actdata)
-- Spécifiez les validations requises
-- Demandez des exemples concrets
-
-**Exemples de bonnes demandes :**
-```
-✅ "Génère un ACCADJ avec validation montant minimum 100$ et sélection fund obligatoire"
-✅ "Crée un BUYTYP avec grille de sélection de securities et date limite"
-❌ "Fais-moi un formulaire"
-❌ "Génère quelque chose"
+```sql
+-- Structure table external_components
+CREATE TABLE external_components (
+  id VARCHAR PRIMARY KEY,
+  name VARCHAR NOT NULL,
+  type VARCHAR NOT NULL,
+  category VARCHAR NOT NULL,
+  description TEXT,
+  icon VARCHAR DEFAULT 'Package',
+  properties JSONB NOT NULL,     -- Configuration API
+  config JSONB NOT NULL,         -- Paramètres dynamiques
+  created_by VARCHAR NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW(),
+  is_active BOOLEAN DEFAULT true
+);
 ```
 
-### Validation Efficace
+## 🔄 Différences Clés
 
-**Bonnes pratiques Validator :**
-- Validez après chaque import
-- Appliquez les corrections simples automatiquement
-- Examinez manuellement les suggestions complexes
-- Visez un score ≥ 90/100 pour la production
+### Composants INTERNES
+| Caractéristique | Description |
+|------------------|-------------|
+| **APIs** | Prédéfinies dans MFact models (ACCADJ, BUYTYP, etc.) |
+| **Structure** | Figée dans le code TypeScript |
+| **Validation** | Hardcodée avec types stricts |
+| **Évolution** | Nécessite modification du code |
+| **Performance** | Ultra-rapide (pas de DB lookup) |
+| **Exemples** | GRIDLKP, LSTLKP, SELECT, DATEPICKER |
 
-### Gestion des External Components
+### Composants EXTERNES
+| Caractéristique | Description |
+|------------------|-------------|
+| **APIs** | Définies dynamiquement par l'utilisateur |
+| **Structure** | Flexible, stockée en JSON |
+| **Validation** | Intelligente avec JSON Schema |
+| **Évolution** | Mise à jour sans redéploiement |
+| **Performance** | Légère latence (DB query) |
+| **Exemples** | Composants métier personnalisés |
 
-**Organisation recommandée :**
-- Créez des catégories logiques
-- Documentez chaque composant personnalisé
-- Testez l'intégration avant déploiement
-- Maintenez une bibliothèque de composants réutilisables
+## 🛠 Utilisation Pratique
 
----
+### Scenario 1: Programme ACCADJ Standard
+**Utilise :** Composants INTERNES
+```json
+{
+  "fields": [
+    {
+      "type": "GRIDLKP",
+      "DataModel": "ACCADJ",
+      "LoadDataInfo": {
+        "Entity": "ACCOUNTS",
+        "API": "/api/mfact/accounts"  // API prédéfinie
+      }
+    }
+  ]
+}
+```
 
-## 🎯 Cas d'Usage Métier Réels
+### Scenario 2: Composant Métier Personnalisé
+**Utilise :** Composants EXTERNES
+```json
+{
+  "id": "CUSTOM_TRADE_LOOKUP",
+  "name": "Trade Lookup Custom",
+  "type": "GRIDLKP",
+  "properties": {
+    "DataModel": "CUSTOM_TRADES",
+    "API": "https://api.votre-systeme.com/trades"  // API externe
+  },
+  "config": {
+    "headers": {"Authorization": "Bearer token"},
+    "method": "GET",
+    "responseMapping": {
+      "id": "trade_id",
+      "name": "trade_name"
+    }
+  }
+}
+```
 
-### Finance & Comptabilité
-- **ACCADJ** : Ajustements comptables avec validations de solde
-- **Reconciliation** : Rapprochements bancaires automatisés
-- **Budget Planning** : Saisie budgétaire avec contrôles d'autorisation
+## 🚀 Interface External Components
 
-### Trading & Investissement
-- **Trade Entry** : Saisie d'ordres avec validations marché
-- **Portfolio Management** : Gestion de portefeuille avec calculs automatiques
-- **Risk Assessment** : Évaluation des risques avec matrices de décision
+### Menu Administration
+```
+Navigation Admin → External Components
+├── Import Methods
+│   ├── JSON Validation (Direct)
+│   └── Step-by-Step Form
+├── Component Library
+│   ├── View All Components
+│   ├── Edit/Delete Components
+│   └── Export Component JSON
+└── Integration Test
+    ├── API Connection Test
+    └── Data Validation
+```
 
-### Compliance & Audit
-- **Regulatory Reports** : Formulaires réglementaires avec validations métier
-- **Audit Trails** : Journaux d'audit avec traçabilité complète
-- **Documentation** : Gestion documentaire avec workflow d'approbation
+### Création Composant Externe
 
-Cette approche intégrée garantit des formulaires robustes, maintenables et parfaitement adaptés aux besoins métier financiers.
+**Méthode 1: JSON Direct**
+```json
+{
+  "name": "CustomLookup",
+  "type": "GRIDLKP",
+  "category": "Custom",
+  "description": "Lookup personnalisé",
+  "properties": {
+    "DataModel": "CUSTOM_ENTITY",
+    "LoadDataInfo": {
+      "API": "https://your-api.com/data",
+      "Method": "GET",
+      "Headers": {
+        "Authorization": "Bearer your_token"
+      }
+    },
+    "ColumnsDefinition": [
+      {
+        "DataField": "id",
+        "Caption": "ID",
+        "DataType": "Chaîne de caractères",
+        "Visible": true
+      }
+    ]
+  },
+  "config": {
+    "authentication": "bearer",
+    "timeout": 5000,
+    "retries": 3
+  }
+}
+```
+
+**Méthode 2: Formulaire Étapes**
+1. **Informations de base** : Nom, type, catégorie
+2. **Configuration API** : URL, méthode, headers
+3. **Mapping de données** : Colonnes, types, validations
+4. **Test de connexion** : Validation automatique
+5. **Intégration** : Ajout à la palette
+
+## 📊 APIs et Intégration
+
+### Composants Internes → MFact APIs
+```typescript
+// Routes API prédéfinies
+app.get('/api/mfact/:model', (req, res) => {
+  const model = MFACT_MODELS[req.params.model];
+  // Données figées dans le code
+  res.json(model.data);
+});
+
+// Modèles disponibles
+const MFACT_MODELS = {
+  'ACCADJ': { /* 10 champs prédéfinis */ },
+  'BUYTYP': { /* 9 champs prédéfinis */ },
+  'PRIMNT': { /* Données price maintenance */ },
+  'SRCMNT': { /* Données source maintenance */ }
+};
+```
+
+### Composants Externes → APIs Dynamiques
+```typescript
+// Routes API configurables
+app.get('/api/external-components/:id/data', async (req, res) => {
+  const component = await db.select()
+    .from(externalComponents)
+    .where(eq(externalComponents.id, req.params.id));
+    
+  const apiConfig = component.config;
+  
+  // Appel API dynamique selon configuration
+  const response = await fetch(apiConfig.url, {
+    method: apiConfig.method,
+    headers: apiConfig.headers
+  });
+  
+  res.json(response.data);
+});
+```
+
+## 🎯 Cas d'Usage Recommandés
+
+### Utiliser Composants INTERNES pour :
+- ✅ Programmes financiers standards (ACCADJ, BUYTYP)
+- ✅ Logiques métier stables et éprouvées
+- ✅ Performance maximale requise
+- ✅ Validation stricte des données
+
+### Utiliser Composants EXTERNES pour :
+- ✅ Intégration APIs tierces (CRM, ERP)
+- ✅ Composants métier spécifiques à l'entreprise
+- ✅ Évolution rapide des besoins
+- ✅ Tests et prototypage
+
+## 🔧 Workflow d'Intégration
+
+### Étape 1: Analyse des Besoins
+```
+Nouveau composant requis ?
+├── Données MFact standards → Composant INTERNE
+├── API externe existante → Composant EXTERNE
+└── Logique métier custom → Composant EXTERNE
+```
+
+### Étape 2: Implémentation
+**Composant Interne:**
+1. Modifier `shared/mfact-models.ts`
+2. Ajouter validation TypeScript
+3. Redéployer application
+
+**Composant Externe:**
+1. Accéder External Components
+2. Configurer via interface web
+3. Test automatique de l'API
+4. Activation immédiate
+
+### Étape 3: Utilisation
+```
+FormBuilder → Palette Composants
+├── Section "Core Components" (Internes)
+└── Section "External Components" (Externes)
+```
+
+## 💡 Avantages de l'Architecture Hybride
+
+### Flexibilité
+- **Base solide** : Composants internes fiables
+- **Extensibilité** : Composants externes illimités
+- **Évolutivité** : Ajout sans redéploiement
+
+### Performance
+- **Composants critiques** : Performance native
+- **Composants auxiliaires** : Flexibilité maximale
+- **Cache intelligent** : Optimisation automatique
+
+### Maintenance
+- **Code stable** : Composants internes versionnés
+- **Configuration dynamique** : Composants externes modifiables
+- **Tests séparés** : Validation indépendante
+
+Votre système FormBuilder offre le meilleur des deux mondes : la robustesse des composants internes avec APIs prédéfinies pour les besoins standards, et la flexibilité des composants externes pour les intégrations personnalisées et l'évolution métier.
