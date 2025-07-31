@@ -2818,52 +2818,210 @@ export default function FormBuilderFixed() {
   const [isDragZoneCollapsed, setIsDragZoneCollapsed] = useState(false);
   const formBuilderRef = useRef<HTMLDivElement>(null);
 
-  // Create simple ACCADJ program matching your preferred structure (simplified baseline)
+  // Create complete original ACCADJ program with all fields and validations
   const createACCADJProgram = useCallback(() => {
-    // Simple structure based on your original ACCADJ_1750317607063.json preference
-    const simpleAccadjField: FormField = {
-      Id: "FundID",
-      Label: "FUND", 
-      Type: "GRIDLKP",
-      DataField: "FundID",
-      Entity: "Fndmas",
-      Width: "32",
-      Spacing: "md",
-      Required: false,
-      Inline: true,
-      Outlined: false,
-      Value: "",
-      KeyColumn: "fund",
-      ItemInfo: {
-        MainProperty: "fund",
-        DescProperty: "acnam1",
-        ShowDescription: true
+    // Complete original ACCADJ structure from ACCADJ_1750317607063.json
+    const originalAccadjFields: FormField[] = [
+      {
+        Id: "FundID",
+        Type: "GRIDLKP",
+        Label: "FUND",
+        DataField: "FundID",
+        Entity: "Fndmas",
+        Width: "32",
+        Spacing: "md",
+        Required: false,
+        Inline: true,
+        Outlined: false,
+        Value: "",
+        KeyColumn: "fund",
+        ItemInfo: {
+          MainProperty: "fund",
+          DescProperty: "acnam1",
+          ShowDescription: true
+        },
+        LoadDataInfo: {
+          DataModel: "Fndmas",
+          ColumnsDefinition: [
+            { DataField: "fund", Caption: "Fund ID", DataType: "STRING", Visible: true },
+            { DataField: "acnam1", Caption: "Fund Name", DataType: "STRING", Visible: true }
+          ]
+        }
       },
-      LoadDataInfo: {
-        DataModel: "Fndmas",
-        ColumnsDefinition: [
-          { DataField: "fund", Caption: "Fund ID", DataType: "STRING", Visible: true },
-          { DataField: "acnam1", Caption: "Fund Name", DataType: "STRING", Visible: true }
-        ]
+      {
+        Id: "AcctCode",
+        Type: "GRIDLKP", 
+        Label: "ACCT",
+        DataField: "AcctCode",
+        Entity: "Actdata",
+        Width: "32",
+        Spacing: "md",
+        Required: false,
+        Inline: true,
+        Outlined: false,
+        Value: "",
+        KeyColumn: "accnt",
+        ItemInfo: {
+          MainProperty: "accnt",
+          DescProperty: "acnam1",
+          ShowDescription: true
+        },
+        LoadDataInfo: {
+          DataModel: "Actdata",
+          ColumnsDefinition: [
+            { DataField: "accnt", Caption: "Account", DataType: "STRING", Visible: true },
+            { DataField: "acnam1", Caption: "Description", DataType: "STRING", Visible: true }
+          ]
+        }
+      },
+      {
+        Id: "AdjType",
+        Type: "SELECT",
+        Label: "ADJTYPE",
+        DataField: "AdjType", 
+        Entity: "",
+        Width: "32",
+        Spacing: "md",
+        Required: false,
+        Inline: true,
+        Outlined: false,
+        Value: "atIncome",
+        UserIntKey: false,
+        OptionValues: {
+          "atIncome": "ATINCOME",
+          "atPrincipal": "ATPRINCIPAL", 
+          "atCGLT": "ATCGLT",
+          "atCGST": "ATCGST",
+          "atUnreal": "ATUNREAL",
+          "atFX": "ATFX",
+          "atBalance": "ATBALANCE"
+        }
+      },
+      {
+        Id: "Amount",
+        Type: "TEXT",
+        Label: "AMOUNT",
+        DataField: "Amount",
+        Entity: "",
+        Width: "32", 
+        Spacing: "md",
+        Required: true,
+        Inline: true,
+        Outlined: false,
+        Value: "0.00"
+      },
+      {
+        Id: "Doasof",
+        Type: "SELECT",
+        Label: "ASOF", 
+        DataField: "Doasof",
+        Entity: "",
+        Width: "25",
+        Spacing: "md",
+        Required: false,
+        Inline: false,
+        Outlined: false,
+        Value: "dfCurrent",
+        UserIntKey: false,
+        OptionValues: {
+          "dfCurrent": "DFCURRENT",
+          "dfPosting": "DFPOST",
+          "dfReval": "DFVAL", 
+          "dfTrade": "DFTRADE"
+        }
+      },
+      {
+        Id: "ValDate",
+        Type: "DATEPKR",
+        Label: "VALDATE",
+        DataField: "ValDate",
+        Entity: "",
+        Width: "25",
+        Spacing: "md",
+        Required: false,
+        Inline: false,
+        Outlined: false,
+        Value: "",
+        EnabledWhen: "Doasof != dfCurrent"
+      },
+      {
+        Id: "AccrueType",
+        Type: "RADIOGRP",
+        Label: "ACCTYPE",
+        DataField: "AccrueType",
+        Entity: "",
+        Width: "600px",
+        Spacing: "md",
+        Required: false,
+        Inline: false,
+        Outlined: false,
+        Value: "atAll",
+        OptionValues: {
+          "atAll": "ATALL",
+          "atFixed": "ATFIXED",
+          "atVar": "ATVAR"
+        }
+      },
+      {
+        Id: "UpdateRates",
+        Type: "CHECKBOX",
+        Label: "UPDATERATE",
+        DataField: "UpdateRates",
+        Entity: "",
+        Width: "600px",
+        Spacing: "md",
+        Required: false,
+        Inline: false,
+        Outlined: false,
+        Value: "false",
+        CheckboxValue: true,
+        EnabledWhen: "ReportOnly == false"
+      },
+      {
+        Id: "Spool",
+        Type: "CHECKBOX",
+        Label: "PRINTRPT",
+        DataField: "Spool",
+        Entity: "",
+        Width: "100%",
+        Spacing: "md",
+        Required: false,
+        Inline: true,
+        Outlined: false,
+        Value: "true"
+      },
+      {
+        Id: "ReportOnly",
+        Type: "CHECKBOX",
+        Label: "RPTONLY",
+        DataField: "ReportOnly",
+        Entity: "",
+        Width: "100%",
+        Spacing: "md",
+        Required: false,
+        Inline: true,
+        Outlined: false,
+        Value: "false",
+        EnabledWhen: "UpdateRates == false"
       }
-    };
+    ];
 
-    // Set the form data to match the simple structure
+    // Set the complete original form structure
     setFormData({
       id: null,
       menuId: "ACCADJ",
-      label: "ACCADJ", 
+      label: "ACCADJ",
       formWidth: "700px",
       layout: "PROCESS",
-      fields: [simpleAccadjField]
+      fields: originalAccadjFields
     });
     
-    // Select the field
-    setSelectedField(simpleAccadjField);
+    // Select first field
+    setSelectedField(originalAccadjFields[0]);
 
     toast({
       title: "ACCADJ Program Created",
-      description: "Simple ACCADJ program created successfully (matching your preferred structure)",
+      description: "Complete original ACCADJ program with all fields and validations restored!",
     });
   }, [toast]);
 
