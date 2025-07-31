@@ -1,0 +1,43 @@
+Non, ces deux versions ne sont pas les mêmes. Elles représentent deux définitions JSON différentes pour un formulaire ayant le même objectif fonctionnel (ACCADJ - Account Adjustment Program), mais elles diffèrent sur plusieurs aspects.
+
+✅ Ce qui est identique (ou presque)
+Élément	Description
+MenuID, Label, FormWidth, Layout	Même structure de base du formulaire
+Champs comme FUND, Ticker, SECCAT, SECGRP, MBSTYPE, PROCDATE	Présents dans les deux versions
+Utilisation de types standards (GRIDLKP, LSTLKP, SELECT, DATEPICKER, CHECKBOX, GROUP)	Conservée
+Objectif fonctionnel	Les deux formulaires visent à ajuster un compte via des filtres et options
+
+❌ Différences majeures
+1. Structure et complexité
+Ancienne version	Nouvelle version
+Simple formulaire linéaire	Formulaire modulaire et conditionnel
+Pas de Actions, peu ou pas de validations	Intégration de Actions, Validations, EnabledWhen
+Champs souvent Inline: false	Champs en mode Inline: true pour une meilleure compacité
+
+2. Logique métier
+Ancienne version	Nouvelle version
+Pas de logique conditionnelle	Champs affichés ou activés en fonction d’autres (EnabledWhen)
+Pas de validation déclarative	Validation riche (ISN, NEQ, AND, OR, etc.)
+Pas de gestion d'états intermédiaires (ex: radio)	Utilisation de groupes avec radios + conditions logiques
+
+3. Champs spécifiques renommés ou modifiés
+Ancienne version	Nouvelle version	Remarques
+FUND	FundID	Même fonction, nom plus clair
+MBSTYPE	MSBTypeInput	Liste enrichie avec des codes spécifiques
+PROCAGAINST	Doasof + ValDate (dans un GROUP)	Réorganisé avec logique conditionnelle
+ResetDateGlobal, ResetGlobalOnly	❌ Supprimés ou déplacés	Peut être volontaire ou déplacé ailleurs
+
+4. Ergonomie et UI
+Ancienne version	Nouvelle version
+Largeurs en "100%"	Valeurs numériques (32, 600px)
+Disposition verticale	Formulaire plus compact, horizontal possible
+Peu personnalisée	Affichage conditionnel plus riche (ex : désactiver des champs selon conditions)
+
+📌 Conclusion
+Les deux JSON ont le même objectif fonctionnel, mais :
+
+La nouvelle version est plus avancée, plus structurée, et intègre des règles métier.
+
+Elle est plus proche d’un framework moderne UI/UX avec contrôle du flux utilisateur côté formulaire.
+
+Il ne s’agit pas d’une copie ni d’un simple renommage : c’est une réécriture évoluée.
