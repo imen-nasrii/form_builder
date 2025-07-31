@@ -2818,345 +2818,52 @@ export default function FormBuilderFixed() {
   const [isDragZoneCollapsed, setIsDragZoneCollapsed] = useState(false);
   const formBuilderRef = useRef<HTMLDivElement>(null);
 
-  // Function to create complete ACCADJ program matching original JSON structure exactly
+  // Create simple ACCADJ program matching your preferred structure (simplified baseline)
   const createACCADJProgram = useCallback(() => {
-    const accadjFields: FormField[] = [
-      {
-        Id: "FundID",
-        Type: "GRIDLKP",
-        Label: "FUND",
-        DataField: "FundID",
-        Entity: "Fndmas",
-        Width: "32",
-        Spacing: "md",
-        Required: false,
-        Inline: true,
-        Outlined: false,
-        Value: "",
-        KeyColumn: "fund",
-        ItemInfo: {
-          MainProperty: "fund",
-          DescProperty: "acnam1", 
-          ShowDescription: true
-        },
-        LoadDataInfo: {
-          DataModel: "Fndmas",
-          ColumnsDefinition: [
-            { DataField: "fund", Caption: "Fund ID", DataType: "STRING", Visible: true },
-            { DataField: "acnam1", Caption: "Fund Name", DataType: "STRING", Visible: true }
-          ]
-        }
+    // Simple structure based on your original ACCADJ_1750317607063.json preference
+    const simpleAccadjField: FormField = {
+      Id: "FundID",
+      Label: "FUND", 
+      Type: "GRIDLKP",
+      DataField: "FundID",
+      Entity: "Fndmas",
+      Width: "32",
+      Spacing: "md",
+      Required: false,
+      Inline: true,
+      Outlined: false,
+      Value: "",
+      KeyColumn: "fund",
+      ItemInfo: {
+        MainProperty: "fund",
+        DescProperty: "acnam1",
+        ShowDescription: true
       },
-      {
-        Id: "Ticker",
-        Type: "GRIDLKP", 
-        Label: "Ticker",
-        DataField: "Ticker",
-        Entity: "Secrty",
-        Width: "32",
-        Spacing: "md",
-        Required: false,
-        Inline: true,
-        Outlined: false,
-        Value: "",
-        KeyColumn: "tkr",
-        ItemInfo: {
-          MainProperty: "tkr",
-          DescProperty: "tkr_DESC",
-          ShowDescription: true
-        },
-        LoadDataInfo: {
-          DataModel: "Secrty",
-          ColumnsDefinition: [
-            { DataField: "tkr", Caption: "Ticker", DataType: "STRING", Visible: true },
-            { DataField: "tkr_DESC", Caption: "Description", DataType: "STRING", Visible: true },
-            { DataField: "desc2", Caption: "Description - Second Line", DataType: "STRING", Visible: false },
-            { DataField: "cusip", Caption: "CUSIP", DataType: "STRING", Visible: false }
-          ]
-        }
-      },
-      {
-        Id: "SecCat",
-        Type: "LSTLKP",
-        Label: "SECCAT",
-        DataField: "SecCat",
-        Entity: "Seccat",
-        Width: "32",
-        Spacing: "md",
-        Required: false,
-        Inline: true,
-        Outlined: false,
-        Value: "",
-        KeyColumn: "seccat",
-        LoadDataInfo: {
-          DataModel: "Seccat",
-          ColumnsDefinition: [
-            { DataField: "seccat", Caption: "Category", DataType: "STRING", Visible: true },
-            { DataField: "descr", Caption: "Description", DataType: "STRING", Visible: true }
-          ]
-        },
-        ItemInfo: {
-          MainProperty: "seccat",
-          DescProperty: "descr",
-          ShowDescription: true
-        }
-      },
-      {
-        Id: "SecGrp",
-        Type: "LSTLKP",
-        Label: "SECGRP", 
-        DataField: "SecGrp",
-        Entity: "Secgrp",
-        Width: "32",
-        Spacing: "md",
-        Required: false,
-        Inline: true,
-        Outlined: false,
-        Value: "",
-        KeyColumn: "secgrp",
-        LoadDataInfo: {
-          DataModel: "Secgrp",
-          ColumnsDefinition: [
-            { DataField: "secgrp", Caption: "Group", DataType: "STRING", Visible: true },
-            { DataField: "desc1", Caption: "Description", DataType: "STRING", Visible: true }
-          ]
-        },
-        ItemInfo: {
-          MainProperty: "secgrp",
-          DescProperty: "desc1",
-          ShowDescription: true
-        }
-      },
-      {
-        Id: "MSBTypeInput",
-        Type: "SELECT",
-        Label: "MBSTYPE",
-        DataField: "MSBTypeInput",
-        Entity: "",
-        Width: "32",
-        Spacing: "md",
-        Required: false,
-        Inline: true,
-        Outlined: true,
-        Value: "",
-        UserIntKey: true,
-        OptionValues: {
-          "0": "",
-          "1": "GNMA I",
-          "2": "GNMA II",
-          "3": "FNMA",
-          "4": "FHLMC",
-          "5": "CMO",
-          "6": "PO",
-          "7": "IO",
-          "8": "GPM"
-        }
-      },
-      {
-        Id: "AccrualDate",
-        Type: "DATEPICKER",
-        Label: "PROCDATE",
-        DataField: "AccrualDate",
-        Entity: "",
-        Width: "32",
-        Spacing: "30",
-        Required: true,
-        Inline: true,
-        Outlined: false,
-        Value: "",
-        Validations: [
-          {
-            Id: "6",
-            Type: "ERROR",
-            ConditionExpression: {
-              Conditions: [
-                {
-                  RightField: "AccrualDate",
-                  Operator: "ISN",
-                  ValueType: "DATE"
-                }
-              ]
-            }
-          }
-        ]
-      },
-      {
-        Id: "PROCAGAINST",
-        Type: "GROUP",
-        Label: "PROCAGAINST",
-        DataField: "",
-        Entity: "",
-        Width: "100%",
-        Spacing: "0",
-        Required: false,
-        Inline: false,
-        Outlined: false,
-        Value: "",
-        isGroup: true,
-        ChildFields: [
-          {
-            Id: "Doasof",
-            Type: "RADIOGRP",
-            Label: "",
-            DataField: "Doasof",
-            Entity: "",
-            Width: "100",
-            Spacing: "0",
-            Required: false,
-            Inline: false,
-            Outlined: false,
-            Value: "dfCurrent",
-            OptionValues: {
-              "dfCurrent": "DFCURRENT",
-              "dfPosting": "DFPOST",
-              "dfReval": "DFVAL",
-              "dfTrade": "DFTRADE"
-            }
-          },
-          {
-            Id: "ValDate",
-            Type: "DATEPKR",
-            Label: "VALDATE",
-            DataField: "ValDate",
-            Entity: "",
-            Width: "25",
-            Spacing: "0",
-            Required: false,
-            Inline: false,
-            Outlined: false,
-            Value: "",
-            EnabledWhen: "Doasof != dfCurrent",
-            Validations: [
-              {
-                Id: "3",
-                Type: "ERROR",
-                ConditionExpression: {
-                  LogicalOperator: "AND",
-                  Conditions: [
-                    {
-                      RightField: "ValDate",
-                      Operator: "ISN",
-                      ValueType: "DATE"
-                    },
-                    {
-                      RightField: "Doasof",
-                      Operator: "NEQ",
-                      Value: "dfCurrent",
-                      ValueType: "STRING"
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        Id: "AccrueTypeGroup",
-        Type: "GROUP",
-        Label: "ACCTYPE",
-        DataField: "",
-        Entity: "",
-        Width: "100%",
-        Spacing: "0",
-        Required: false,
-        Inline: false,
-        Outlined: false,
-        Value: "",
-        isGroup: true,
-        ChildFields: [
-          {
-            Id: "AccrueType",
-            Type: "RADIOGRP",
-            Label: "ACCTYPE",
-            DataField: "AccrueType",
-            Entity: "",
-            Width: "600px",
-            Spacing: "0",
-            Required: false,
-            Inline: false,
-            Outlined: false,
-            Value: "atAll",
-            OptionValues: {
-              "atAll": "ATALL",
-              "atFixed": "ATFIXED",
-              "atVar": "ATVAR"
-            }
-          }
-        ]
-      },
-      {
-        Id: "UpdateRates",
-        Type: "CHECKBOX",
-        Label: "UPDATERATE",
-        DataField: "UpdateRates",
-        Entity: "",
-        Width: "600px",
-        Spacing: "0",
-        Required: false,
-        Inline: false,
-        Outlined: false,
-        Value: "false",
-        CheckboxValue: true,
-        EnabledWhen: "ReportOnly == false"
-      },
-      {
-        Id: "RPTOPTS",
-        Type: "GROUP",
-        Label: "RPTOPTS",
-        DataField: "",
-        Entity: "",
-        Width: "100%",
-        Spacing: "md",
-        Required: false,
-        Inline: true,
-        Outlined: false,
-        Value: "",
-        isGroup: true,
-        ChildFields: [
-          {
-            Id: "Spool",
-            Type: "CHECKBOX",
-            Label: "PRINTRPT",
-            DataField: "Spool",
-            Entity: "",
-            Width: "100%",
-            Spacing: "md",
-            Required: false,
-            Inline: true,
-            Outlined: false,
-            Value: "true"
-          },
-          {
-            Id: "ReportOnly",
-            Type: "CHECKBOX",
-            Label: "RPTONLY",
-            DataField: "ReportOnly",
-            Entity: "",
-            Width: "100%",
-            Spacing: "md",
-            Required: false,
-            Inline: true,
-            Outlined: false,
-            Value: "false",
-            EnabledWhen: "UpdateRates == false"
-          }
+      LoadDataInfo: {
+        DataModel: "Fndmas",
+        ColumnsDefinition: [
+          { DataField: "fund", Caption: "Fund ID", DataType: "STRING", Visible: true },
+          { DataField: "acnam1", Caption: "Fund Name", DataType: "STRING", Visible: true }
         ]
       }
-    ];
+    };
 
-    setFormData(prev => ({
-      ...prev,
+    // Set the form data to match the simple structure
+    setFormData({
+      id: null,
       menuId: "ACCADJ",
-      label: "ACCADJ",
+      label: "ACCADJ", 
       formWidth: "700px",
       layout: "PROCESS",
-      fields: accadjFields
-    }));
+      fields: [simpleAccadjField]
+    });
+    
+    // Select the field
+    setSelectedField(simpleAccadjField);
 
     toast({
       title: "ACCADJ Program Created",
-      description: "Account Adjustment program with original structure generated successfully!",
+      description: "Simple ACCADJ program created successfully (matching your preferred structure)",
     });
   }, [toast]);
 
