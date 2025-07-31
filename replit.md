@@ -277,3 +277,5 @@ System Requirements: Admin users cannot access Construction Zone (read-only mode
 ✓ Enhanced popup with two-panel layout: model selection on left, column configuration on right (July 30, 2025)
 ✓ Integrated MFact selector directly into LoadDataInfo_DataModel property with custom trigger button (July 30, 2025)
 ✓ Added model-specific column presets with descriptions and proper French data types (July 30, 2025)
+✓ Successfully removed all "Excel Properties" text from interface components per user request (July 31, 2025)
+✓ Cleaned up UI terminology by replacing "Excel Properties" with "Properties" throughout the application (July 31, 2025)
