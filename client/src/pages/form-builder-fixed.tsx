@@ -2832,7 +2832,11 @@ export default function FormBuilderFixed() {
         Outlined: false,
         Value: "",
         KeyColumn: "fund",
-        ItemInfo: "fund",
+        ItemInfo: {
+          MainProperty: "fund",
+          DescProperty: "name", 
+          ShowDescription: true
+        },
         LoadDataInfo: {
           DataModel: "FNDMAS",
           ColumnsDefinition: [
@@ -2855,7 +2859,11 @@ export default function FormBuilderFixed() {
         Outlined: false,
         Value: "",
         KeyColumn: "tkr",
-        ItemInfo: "tkr",
+        ItemInfo: {
+          MainProperty: "tkr",
+          DescProperty: "cusip",
+          ShowDescription: true
+        },
         LoadDataInfo: {
           DataModel: "SECRTY",
           ColumnsDefinition: [
@@ -2877,8 +2885,18 @@ export default function FormBuilderFixed() {
         Inline: false,
         Outlined: false,
         Value: "",
-        LoadDataInfo: "SECCAT",
-        ItemInfo: "category_name"
+        LoadDataInfo: {
+          DataModel: "SECCAT",
+          ColumnsDefinition: [
+            { DataField: "id", Caption: "ID", DataType: "Chaîne de caractères", Visible: true },
+            { DataField: "category_name", Caption: "Category", DataType: "Chaîne de caractères", Visible: true }
+          ]
+        },
+        ItemInfo: {
+          MainProperty: "category_name",
+          DescProperty: "id",
+          ShowDescription: false
+        }
       },
       {
         Id: "SECGRP",
@@ -2892,8 +2910,18 @@ export default function FormBuilderFixed() {
         Inline: false,
         Outlined: false,
         Value: "",
-        LoadDataInfo: "SECGRP",
-        ItemInfo: "group_name"
+        LoadDataInfo: {
+          DataModel: "SECGRP",
+          ColumnsDefinition: [
+            { DataField: "id", Caption: "ID", DataType: "Chaîne de caractères", Visible: true },
+            { DataField: "group_name", Caption: "Group", DataType: "Chaîne de caractères", Visible: true }
+          ]
+        },
+        ItemInfo: {
+          MainProperty: "group_name",
+          DescProperty: "id",
+          ShowDescription: false
+        }
       },
       {
         Id: "MBSTYPE",
