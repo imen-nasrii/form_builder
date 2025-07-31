@@ -2816,6 +2816,225 @@ export default function FormBuilderFixed() {
   const [isDragZoneCollapsed, setIsDragZoneCollapsed] = useState(false);
   const formBuilderRef = useRef<HTMLDivElement>(null);
 
+  // Function to create complete ACCADJ program with all fields from JSON specification
+  const createACCADJProgram = useCallback(() => {
+    const accadjFields: FormField[] = [
+      {
+        Id: "FUND",
+        Type: "GRIDLKP",
+        Label: "FUND",
+        DataField: "FUND",
+        Entity: "FNDMAS",
+        Width: "100%",
+        Spacing: "md",
+        Required: true,
+        Inline: false,
+        Outlined: false,
+        Value: "",
+        KeyColumn: "fund",
+        ItemInfo: "fund",
+        LoadDataInfo: {
+          DataModel: "FNDMAS",
+          ColumnsDefinition: [
+            { DataField: "fund", Caption: "Fund", DataType: "Chaîne de caractères", Visible: true },
+            { DataField: "name", Caption: "Name", DataType: "Chaîne de caractères", Visible: true },
+            { DataField: "status", Caption: "Status", DataType: "Chaîne de caractères", Visible: true }
+          ]
+        }
+      },
+      {
+        Id: "Ticker",
+        Type: "GRIDLKP", 
+        Label: "Ticker",
+        DataField: "Ticker",
+        Entity: "SECRTY",
+        Width: "100%",
+        Spacing: "md",
+        Required: true,
+        Inline: false,
+        Outlined: false,
+        Value: "",
+        KeyColumn: "tkr",
+        ItemInfo: "tkr",
+        LoadDataInfo: {
+          DataModel: "SECRTY",
+          ColumnsDefinition: [
+            { DataField: "tkr", Caption: "Ticker", DataType: "Chaîne de caractères", Visible: true },
+            { DataField: "cusip", Caption: "CUSIP", DataType: "Chaîne de caractères", Visible: true },
+            { DataField: "sectyp", Caption: "Security Type", DataType: "Chaîne de caractères", Visible: true }
+          ]
+        }
+      },
+      {
+        Id: "SECCAT",
+        Type: "LSTLKP",
+        Label: "SECCAT",
+        DataField: "SECCAT",
+        Entity: "SECCAT",
+        Width: "100%",
+        Spacing: "md",
+        Required: false,
+        Inline: false,
+        Outlined: false,
+        Value: "",
+        LoadDataInfo: "SECCAT",
+        ItemInfo: "category_name"
+      },
+      {
+        Id: "SECGRP",
+        Type: "LSTLKP",
+        Label: "SECGRP", 
+        DataField: "SECGRP",
+        Entity: "SECGRP",
+        Width: "100%",
+        Spacing: "md",
+        Required: false,
+        Inline: false,
+        Outlined: false,
+        Value: "",
+        LoadDataInfo: "SECGRP",
+        ItemInfo: "group_name"
+      },
+      {
+        Id: "MBSTYPE",
+        Type: "SELECT",
+        Label: "MBSTYPE",
+        DataField: "MBSTYPE",
+        Entity: "",
+        Width: "100%",
+        Spacing: "md",
+        Required: false,
+        Inline: false,
+        Outlined: false,
+        Value: "",
+        UserIntKey: true,
+        OptionValues: [
+          { Value: "1", Label: "Agency" },
+          { Value: "2", Label: "Corporate" },
+          { Value: "3", Label: "Government" },
+          { Value: "4", Label: "Municipal" }
+        ]
+      },
+      {
+        Id: "PROCDATE",
+        Type: "DATEPICKER",
+        Label: "PROCDATE",
+        DataField: "PROCDATE",
+        Entity: "",
+        Width: "100%",
+        Spacing: "md",
+        Required: true,
+        Inline: false,
+        Outlined: false,
+        Value: "",
+        DefaultValue: "Today",
+        Format: "MM/dd/yyyy"
+      },
+      {
+        Id: "PROCAGAINST_GROUP",
+        Type: "GROUP",
+        Label: "PROCAGAINST",
+        DataField: "",
+        Entity: "",
+        Width: "100%",
+        Spacing: "md",
+        Required: false,
+        Inline: false,
+        Outlined: true,
+        Value: "",
+        ChildFields: [
+          {
+            Id: "PROCAGAINST",
+            Type: "RADIOGRP",
+            Label: "Process Against",
+            DataField: "PROCAGAINST",
+            Entity: "",
+            Width: "100%",
+            Spacing: "md",
+            Required: false,
+            Inline: false,
+            Outlined: false,
+            Value: "",
+            OptionValues: [
+              { Value: "Portfolio", Label: "Portfolio" },
+              { Value: "Security", Label: "Security" },
+              { Value: "Sector", Label: "Sector" }
+            ]
+          }
+        ]
+      },
+      {
+        Id: "ResetDateGlobal",
+        Type: "CHECKBOX",
+        Label: "Reset Date Global",
+        DataField: "ResetDateGlobal",
+        Entity: "",
+        Width: "50%",
+        Spacing: "md",
+        Required: false,
+        Inline: true,
+        Outlined: false,
+        Value: "false",
+        EnabledWhen: "PROCAGAINST == 'Portfolio'"
+      },
+      {
+        Id: "ResetGlobalOnly",
+        Type: "CHECKBOX",
+        Label: "Reset Global Only",
+        DataField: "ResetGlobalOnly",
+        Entity: "",
+        Width: "50%",
+        Spacing: "md",
+        Required: false,
+        Inline: true,
+        Outlined: false,
+        Value: "false",
+        EnabledWhen: "PROCAGAINST == 'Portfolio'"
+      },
+      {
+        Id: "ProcessExpenseRates",
+        Type: "CHECKBOX",
+        Label: "Process Expense Rates",
+        DataField: "ProcessExpenseRates",
+        Entity: "",
+        Width: "50%",
+        Spacing: "md",
+        Required: false,
+        Inline: true,
+        Outlined: false,
+        Value: "false"
+      },
+      {
+        Id: "ProcessIncomeRates",
+        Type: "CHECKBOX",
+        Label: "Process Income Rates",
+        DataField: "ProcessIncomeRates",
+        Entity: "",
+        Width: "50%",
+        Spacing: "md",
+        Required: false,
+        Inline: true,
+        Outlined: false,
+        Value: "false"
+      }
+    ];
+
+    // Update form data with ACCADJ program settings
+    setFormData({
+      id: null,
+      menuId: "ACCADJ",
+      label: "ACCADJ - Account Adjustment Program",
+      formWidth: "700px",
+      layout: "PROCESS",
+      fields: accadjFields
+    });
+
+    // Select the first field by default
+    setSelectedField(accadjFields[0]);
+
+    console.log("✅ ACCADJ Program created with", accadjFields.length, "fields");
+  }, []);
+
   // Grid configuration state for ultra-advanced grid system
   interface GridCell {
     id: string;
@@ -3758,6 +3977,16 @@ export default function FormBuilderFixed() {
                 >
                   <HelpCircle className="w-4 h-4 mr-2" />
                   Guide
+                </DropdownMenuItem>
+                
+                <DropdownMenuSeparator className={isDarkMode ? 'bg-gray-600' : ''} />
+                
+                <DropdownMenuItem
+                  onClick={createACCADJProgram}
+                  className={isDarkMode ? 'text-gray-300 hover:bg-gray-700' : ''}
+                >
+                  <Database className="w-4 h-4 mr-2" />
+                  Create ACCADJ Program
                 </DropdownMenuItem>
                 
                 <DropdownMenuSeparator className={isDarkMode ? 'bg-gray-600' : ''} />
