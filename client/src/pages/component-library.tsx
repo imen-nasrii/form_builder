@@ -20,12 +20,13 @@ import {
   CheckCircle,
   AlertCircle,
   Save,
-  Import,
-  Export
+  ArrowUp,
+  ArrowDown
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
+import PropertyManager, { ComponentProperty } from '@/components/property-manager';
 
 interface ExternalComponent {
   id: string;
@@ -67,12 +68,13 @@ export default function ComponentLibrary() {
   });
   const [jsonInput, setJsonInput] = useState('');
   const [currentStep, setCurrentStep] = useState(1);
+  const [parsedProperties, setParsedProperties] = useState<ComponentProperty[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   // Query for external components
-  const { data: components = [], isLoading } = useQuery({
+  const { data: components = [], isLoading } = useQuery<ExternalComponent[]>({
     queryKey: ['/api/external-components'],
   });
 
@@ -354,16 +356,17 @@ export default function ComponentLibrary() {
                     {currentStep === 2 && (
                       <div className="space-y-4">
                         <h3 className="text-lg font-medium">Propriétés du composant</h3>
-                        <div>
-                          <Label>Propriétés (JSON)</Label>
-                          <Textarea
-                            value={formData.properties}
-                            onChange={(e) => setFormData({...formData, properties: e.target.value})}
-                            rows={6}
-                            placeholder='{"defaultValue": "", "placeholder": "Entrez du texte...", "required": false}'
-                            className="font-mono"
-                          />
-                        </div>
+                        <PropertyManager
+                          properties={parsedProperties}
+                          onChange={(props) => {
+                            setParsedProperties(props);
+                            const propertiesObject = props.reduce((acc, prop) => {
+                              acc[prop.name] = prop.defaultValue;
+                              return acc;
+                            }, {} as Record<string, any>);
+                            setFormData({...formData, properties: JSON.stringify(propertiesObject, null, 2)});
+                          }}
+                        />
                         <div className="flex gap-2">
                           <Button variant="outline" onClick={() => setCurrentStep(1)}>
                             Précédent
