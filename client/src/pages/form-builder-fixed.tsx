@@ -4095,21 +4095,11 @@ export default function FormBuilderFixed() {
             />
 
             {/* Visual Component Creator Dialog */}
-            <Dialog open={showVisualComponentCreator} onOpenChange={setShowVisualComponentCreator}>
-              <DialogTrigger asChild>
-                <div style={{ display: 'none' }} />
-              </DialogTrigger>
-              <DialogContent className={`max-w-5xl max-h-[90vh] overflow-y-auto ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
-                <DialogHeader>
-                  <DialogTitle className={isDarkMode ? 'text-white' : ''}>External Components - CRUD Properties Manager</DialogTitle>
-                </DialogHeader>
-                <VisualComponentCreator 
-                  onCreateComponent={createExternalComponentWithProperties}
-                  onCancel={() => setShowVisualComponentCreator(false)}
-                  isDarkMode={isDarkMode}
-                />
-              </DialogContent>
-            </Dialog>
+            <VisualComponentCreator 
+              isOpen={showVisualComponentCreator}
+              onClose={() => setShowVisualComponentCreator(false)}
+              onSubmit={createExternalComponentWithProperties}
+            />
 
             {/* Add External Components Dialog */}
             <Dialog open={showAddComponent} onOpenChange={setShowAddComponent}>
