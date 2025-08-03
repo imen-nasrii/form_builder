@@ -61,11 +61,11 @@ const PropertyTypeIcons = {
 };
 
 const PropertyCategories = [
-  { value: 'basic', label: 'Propriétés de Base', color: 'bg-blue-100 text-blue-800' },
-  { value: 'api', label: 'Configuration API', color: 'bg-green-100 text-green-800' },
+  { value: 'basic', label: 'Basic Properties', color: 'bg-blue-100 text-blue-800' },
+  { value: 'api', label: 'API Configuration', color: 'bg-green-100 text-green-800' },
   { value: 'validation', label: 'Validation', color: 'bg-orange-100 text-orange-800' },
-  { value: 'display', label: 'Affichage', color: 'bg-purple-100 text-purple-800' },
-  { value: 'behavior', label: 'Comportement', color: 'bg-gray-100 text-gray-800' }
+  { value: 'display', label: 'Display', color: 'bg-purple-100 text-purple-800' },
+  { value: 'behavior', label: 'Behavior', color: 'bg-gray-100 text-gray-800' }
 ];
 
 export default function PropertyManager({ properties, onChange, className = '' }: PropertyManagerProps) {
@@ -92,11 +92,11 @@ export default function PropertyManager({ properties, onChange, className = '' }
       return;
     }
 
-    // Vérifier si le nom existe déjà
+    // Check if name already exists
     if (properties.some(p => p.name === newProperty.name)) {
       toast({
-        title: "Erreur",
-        description: "Une propriété avec ce nom existe déjà",
+        title: "Error",
+        description: "A property with this name already exists",
         variant: "destructive"
       });
       return;
@@ -126,8 +126,8 @@ export default function PropertyManager({ properties, onChange, className = '' }
     setIsAddDialogOpen(false);
 
     toast({
-      title: "Succès",
-      description: "Propriété ajoutée avec succès"
+      title: "Success",
+      description: "Property added successfully"
     });
   };
 
@@ -136,8 +136,8 @@ export default function PropertyManager({ properties, onChange, className = '' }
     setEditingProperty(null);
     
     toast({
-      title: "Succès",
-      description: "Propriété mise à jour"
+      title: "Success",
+      description: "Property updated successfully"
     });
   };
 
@@ -145,8 +145,8 @@ export default function PropertyManager({ properties, onChange, className = '' }
     onChange(properties.filter(p => p.id !== propertyId));
     
     toast({
-      title: "Succès",
-      description: "Propriété supprimée"
+      title: "Success",
+      description: "Property deleted successfully"
     });
   };
 
@@ -187,8 +187,8 @@ export default function PropertyManager({ properties, onChange, className = '' }
     const handleSave = () => {
       if (!formData.name?.trim()) {
         toast({
-          title: "Erreur",
-          description: "Le nom de la propriété est requis",
+          title: "Error",
+          description: "Property name is required",
           variant: "destructive"
         });
         return;
@@ -339,9 +339,9 @@ export default function PropertyManager({ properties, onChange, className = '' }
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold">Propriétés du Composant</h3>
+          <h3 className="text-lg font-semibold">Component Properties</h3>
           <p className="text-sm text-gray-600">
-            Définissez les propriétés configurables de votre composant externe
+            Define the configurable properties of your external component
           </p>
         </div>
         
@@ -349,12 +349,12 @@ export default function PropertyManager({ properties, onChange, className = '' }
           <DialogTrigger asChild>
             <Button>
               <Plus className="w-4 h-4 mr-2" />
-              Ajouter Propriété
+              Add Property
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Nouvelle Propriété</DialogTitle>
+              <DialogTitle>New Property</DialogTitle>
             </DialogHeader>
             <PropertyForm
               property={newProperty}
@@ -370,13 +370,13 @@ export default function PropertyManager({ properties, onChange, className = '' }
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <Code className="w-12 h-12 text-gray-400 mb-4" />
-            <h3 className="text-lg font-medium text-gray-600 mb-2">Aucune propriété définie</h3>
+            <h3 className="text-lg font-medium text-gray-600 mb-2">No properties defined</h3>
             <p className="text-gray-500 text-center mb-4">
-              Commencez par ajouter des propriétés pour configurer votre composant externe
+              Start by adding properties to configure your external component
             </p>
             <Button onClick={() => setIsAddDialogOpen(true)}>
               <Plus className="w-4 h-4 mr-2" />
-              Ajouter la première propriété
+              Add first property
             </Button>
           </CardContent>
         </Card>
@@ -411,7 +411,7 @@ export default function PropertyManager({ properties, onChange, className = '' }
                                 </Badge>
                                 {property.required && (
                                   <Badge variant="destructive" className="text-xs">
-                                    Requis
+                                    Required
                                   </Badge>
                                 )}
                               </div>
@@ -419,7 +419,7 @@ export default function PropertyManager({ properties, onChange, className = '' }
                                 <p className="text-sm text-gray-600">{property.description}</p>
                               )}
                               <p className="text-xs text-gray-500">
-                                Défaut: {typeof property.defaultValue === 'object' 
+                                Default: {typeof property.defaultValue === 'object' 
                                   ? JSON.stringify(property.defaultValue)
                                   : String(property.defaultValue)}
                               </p>
