@@ -127,10 +127,9 @@ export default function VisualComponentCreator({ isOpen, onClose, onSubmit }: Vi
   const { toast } = useToast();
 
   const steps = [
-    { number: 1, title: 'Basic Information', icon: Package },
-    { number: 2, title: 'Properties', icon: Settings },
-    { number: 3, title: 'Styling & Config', icon: Code },
-    { number: 4, title: 'Preview & Save', icon: Check }
+    { number: 1, title: 'Component & Properties', icon: Package },
+    { number: 2, title: 'Styling & Config', icon: Code },
+    { number: 3, title: 'Preview & Save', icon: Check }
   ];
 
   const updateFormData = (updates: Partial<ComponentFormData>) => {
@@ -138,7 +137,7 @@ export default function VisualComponentCreator({ isOpen, onClose, onSubmit }: Vi
   };
 
   const nextStep = () => {
-    if (currentStep < 4) {
+    if (currentStep < 3) {
       // Validation before moving to next step
       if (currentStep === 1 && (!formData.name || !formData.displayLabel)) {
         toast({
@@ -238,121 +237,116 @@ export default function VisualComponentCreator({ isOpen, onClose, onSubmit }: Vi
   };
 
   const renderStep1 = () => (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      {/* Basic Information Section */}
       <div>
         <h3 className="text-lg font-semibold mb-4">Basic Information</h3>
         <p className="text-sm text-gray-600 mb-6">
           Définissez les informations de base de votre nouveau composant
         </p>
-      </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label>Component Name *</Label>
-          <Input
-            value={formData.name}
-            onChange={(e) => updateFormData({ name: e.target.value })}
-            placeholder="customButton"
-          />
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <Label>Component Name *</Label>
+            <Input
+              value={formData.name}
+              onChange={(e) => updateFormData({ name: e.target.value })}
+              placeholder="customButton"
+            />
+          </div>
+          <div>
+            <Label>Display Label *</Label>
+            <Input
+              value={formData.displayLabel}
+              onChange={(e) => updateFormData({ displayLabel: e.target.value })}
+              placeholder="Custom Button"
+            />
+          </div>
         </div>
-        <div>
-          <Label>Display Label *</Label>
-          <Input
-            value={formData.displayLabel}
-            onChange={(e) => updateFormData({ displayLabel: e.target.value })}
-            placeholder="Custom Button"
-          />
-        </div>
-      </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label>Icon</Label>
-          <Select value={formData.icon} onValueChange={(v) => updateFormData({ icon: v })}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {iconOptions.map(option => {
-                const IconComponent = option.icon;
-                return (
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <Label>Icon</Label>
+            <Select value={formData.icon} onValueChange={(v) => updateFormData({ icon: v })}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {iconOptions.map(option => {
+                  const IconComponent = option.icon;
+                  return (
+                    <SelectItem key={option.value} value={option.value}>
+                      <div className="flex items-center gap-2">
+                        <IconComponent className="w-4 h-4" />
+                        {option.label}
+                      </div>
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label>Color</Label>
+            <Select value={formData.color} onValueChange={(v) => updateFormData({ color: v })}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {colorOptions.map(option => (
                   <SelectItem key={option.value} value={option.value}>
                     <div className="flex items-center gap-2">
-                      <IconComponent className="w-4 h-4" />
+                      <div 
+                        className="w-4 h-4 rounded" 
+                        style={{ backgroundColor: option.color }}
+                      />
                       {option.label}
                     </div>
                   </SelectItem>
-                );
-              })}
-            </SelectContent>
-          </Select>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
-        <div>
-          <Label>Color</Label>
-          <Select value={formData.color} onValueChange={(v) => updateFormData({ color: v })}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {colorOptions.map(option => (
-                <SelectItem key={option.value} value={option.value}>
-                  <div className="flex items-center gap-2">
-                    <div 
-                      className="w-4 h-4 rounded" 
-                      style={{ backgroundColor: option.color }}
-                    />
-                    {option.label}
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+
+        <div className="grid grid-cols-1 gap-4">
+          <div>
+            <Label>Category</Label>
+            <Select value={formData.category} onValueChange={(v) => updateFormData({ category: v })}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {categoryOptions.map(category => (
+                  <SelectItem key={category} value={category}>{category}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label>Description</Label>
+            <Textarea
+              value={formData.description}
+              onChange={(e) => updateFormData({ description: e.target.value })}
+              placeholder="Description de votre composant personnalisé..."
+              rows={3}
+            />
+          </div>
         </div>
       </div>
 
-      <div>
-        <Label>Category</Label>
-        <Select value={formData.category} onValueChange={(v) => updateFormData({ category: v })}>
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {categoryOptions.map(category => (
-              <SelectItem key={category} value={category}>{category}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div>
-        <Label>Description</Label>
-        <Textarea
-          value={formData.description}
-          onChange={(e) => updateFormData({ description: e.target.value })}
-          placeholder="Description de votre composant personnalisé..."
-          rows={3}
+      {/* Properties Section */}
+      <div className="border-t pt-6">
+        <PropertyManager
+          properties={formData.properties}
+          onChange={(properties) => updateFormData({ properties })}
         />
       </div>
     </div>
   );
 
   const renderStep2 = () => (
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-semibold mb-4">Component Properties</h3>
-        <p className="text-sm text-gray-600 mb-6">
-          Définissez les propriétés configurables de votre composant
-        </p>
-      </div>
-
-      <PropertyManager
-        properties={formData.properties}
-        onChange={(properties) => updateFormData({ properties })}
-      />
-    </div>
-  );
-
-  const renderStep3 = () => (
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-semibold mb-4">Styling & Configuration</h3>
@@ -451,7 +445,7 @@ export default function VisualComponentCreator({ isOpen, onClose, onSubmit }: Vi
     </div>
   );
 
-  const renderStep4 = () => {
+  const renderStep3 = () => {
     const selectedIcon = iconOptions.find(opt => opt.value === formData.icon)?.icon || Square;
     const selectedColor = colorOptions.find(opt => opt.value === formData.color)?.color || '#6B7280';
     const IconComponent = selectedIcon;
@@ -542,8 +536,11 @@ export default function VisualComponentCreator({ isOpen, onClose, onSubmit }: Vi
         <DialogHeader>
           <div className="flex items-center justify-between">
             <DialogTitle>Component Creation Assistant</DialogTitle>
-            <div className="text-sm text-gray-500">Step {currentStep} of 4</div>
+            <div className="text-sm text-gray-500">Step {currentStep} of 3</div>
           </div>
+          <p className="text-sm text-gray-600">
+            Créez votre composant externe personnalisé avec propriétés configurables
+          </p>
         </DialogHeader>
 
         {/* Step Indicator */}
@@ -565,7 +562,6 @@ export default function VisualComponentCreator({ isOpen, onClose, onSubmit }: Vi
           {currentStep === 1 && renderStep1()}
           {currentStep === 2 && renderStep2()}
           {currentStep === 3 && renderStep3()}
-          {currentStep === 4 && renderStep4()}
         </div>
 
         {/* Navigation */}
@@ -579,7 +575,7 @@ export default function VisualComponentCreator({ isOpen, onClose, onSubmit }: Vi
             Previous
           </Button>
           
-          {currentStep < 4 ? (
+          {currentStep < 3 ? (
             <Button onClick={nextStep}>
               Next
               <ChevronRight className="w-4 h-4 ml-2" />
