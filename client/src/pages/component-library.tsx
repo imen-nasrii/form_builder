@@ -27,6 +27,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import PropertyManager, { ComponentProperty } from '@/components/property-manager';
+import VisualComponentCreator from '@/components/visual-component-creator';
 
 interface ExternalComponent {
   id: string;
@@ -55,6 +56,7 @@ interface ComponentFormData {
 export default function ComponentLibrary() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
+  const [isVisualCreatorOpen, setIsVisualCreatorOpen] = useState(false);
   const [importMethod, setImportMethod] = useState<'json' | 'form'>('json');
   const [selectedComponent, setSelectedComponent] = useState<ExternalComponent | null>(null);
   const [formData, setFormData] = useState<ComponentFormData>({
@@ -251,10 +253,16 @@ export default function ComponentLibrary() {
               <ArrowUp className="w-4 h-4 mr-2" />
               Importer Fichier
             </Button>
+            
+            <Button onClick={() => setIsVisualCreatorOpen(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              Créer Composant
+            </Button>
+            
             <Dialog open={isImportDialogOpen} onOpenChange={setIsImportDialogOpen}>
               <DialogTrigger asChild>
                 <Button variant="outline">
-                  <Plus className="w-4 h-4 mr-2" />
+                  <Code className="w-4 h-4 mr-2" />
                   Importer JSON
                 </Button>
               </DialogTrigger>
@@ -412,6 +420,16 @@ export default function ComponentLibrary() {
             </Button>
           </div>
         </div>
+
+        {/* Visual Component Creator */}
+        <VisualComponentCreator
+          isOpen={isVisualCreatorOpen}
+          onClose={() => setIsVisualCreatorOpen(false)}
+          onSubmit={(component) => {
+            createComponentMutation.mutate(component);
+            setIsVisualCreatorOpen(false);
+          }}
+        />
 
         {/* Hidden file input */}
         <input
