@@ -535,7 +535,7 @@ export default function VisualComponentCreator({ isOpen, onClose, onSubmit }: Vi
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center justify-between">
-            <DialogTitle>Component Creation Assistant</DialogTitle>
+            <DialogTitle>External Components - CRUD Properties Manager</DialogTitle>
             <div className="text-sm text-gray-500">Step {currentStep} of 3</div>
           </div>
           <p className="text-sm text-gray-600">
