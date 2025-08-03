@@ -69,6 +69,8 @@ import { ComponentCategories as EnterpriseComponentCategories, ComponentSpecific
 import { FormFieldProperties } from '@/components/form-field-properties';
 import ExcelPropertiesPanel from '@/components/form-builder/excel-properties-panel';
 import { useToast } from '@/hooks/use-toast';
+import PropertyManager, { ComponentProperty } from '@/components/property-manager';
+import VisualComponentCreator from '@/components/visual-component-creator';
 
 // Model Dropdown Selector Component
 function ModelDropdownSelector({ 
@@ -2810,7 +2812,9 @@ export default function FormBuilderFixed() {
   });
   const [componentCreationStep, setComponentCreationStep] = useState(1);
   const [showAddComponent, setShowAddComponent] = useState(false);
+  const [showVisualComponentCreator, setShowVisualComponentCreator] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
+  const [componentProperties, setComponentProperties] = useState<ComponentProperty[]>([]);
 
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [importedData, setImportedData] = useState<any>(null);
@@ -3413,6 +3417,59 @@ export default function FormBuilderFixed() {
 
 
 
+  // Create External Component with Properties
+  const createExternalComponentWithProperties = (componentData: any) => {
+    try {
+      // Convert ComponentProperty[] to External Component format
+      const properties = componentData.properties?.reduce((acc: any, prop: ComponentProperty) => {
+        acc[prop.name] = prop.defaultValue;
+        return acc;
+      }, {}) || {};
+
+      const newComponent = {
+        id: componentData.name.toUpperCase(),
+        name: componentData.name,
+        label: componentData.displayLabel || componentData.name,
+        icon: componentData.icon || 'Square',
+        color: componentData.color || 'blue',
+        category: componentData.category || 'Custom',
+        description: componentData.description || '',
+        properties: properties,
+        config: componentData.config || {},
+        isCustom: true,
+        propertyDefinitions: componentData.properties || []
+      };
+      
+      // Check if component already exists
+      if (customComponents.some(comp => comp.id === newComponent.id)) {
+        toast({
+          title: "Erreur",
+          description: "Un composant avec ce nom existe déjà",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      setCustomComponents(prev => [...prev, newComponent]);
+      toast({
+        title: "Succès",
+        description: `Composant "${newComponent.label}" créé avec succès`,
+      });
+      
+      // Reset states
+      setShowVisualComponentCreator(false);
+      setComponentProperties([]);
+      
+    } catch (error) {
+      console.error('Error creating external component:', error);
+      toast({
+        title: "Erreur",
+        description: "Erreur lors de la création du composant",
+        variant: "destructive"
+      });
+    }
+  };
+
   // Method 1: JSON Configuration for External Components
   const addComponentFromJSON = (jsonConfig: string) => {
     try {
@@ -4000,7 +4057,7 @@ export default function FormBuilderFixed() {
                 <DropdownMenuSeparator className={isDarkMode ? 'bg-gray-600' : ''} />
                 
                 <DropdownMenuItem
-                  onClick={() => setShowAddComponent(true)}
+                  onClick={() => setShowVisualComponentCreator(true)}
                   className={isDarkMode ? 'text-gray-300 hover:bg-gray-700' : ''}
                 >
                   <Plus className="w-4 h-4 mr-2" />
@@ -4036,6 +4093,23 @@ export default function FormBuilderFixed() {
               style={{ display: 'none' }}
               id="json-file-input"
             />
+
+            {/* Visual Component Creator Dialog */}
+            <Dialog open={showVisualComponentCreator} onOpenChange={setShowVisualComponentCreator}>
+              <DialogTrigger asChild>
+                <div style={{ display: 'none' }} />
+              </DialogTrigger>
+              <DialogContent className={`max-w-5xl max-h-[90vh] overflow-y-auto ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
+                <DialogHeader>
+                  <DialogTitle className={isDarkMode ? 'text-white' : ''}>External Components - CRUD Properties Manager</DialogTitle>
+                </DialogHeader>
+                <VisualComponentCreator 
+                  onCreateComponent={createExternalComponentWithProperties}
+                  onCancel={() => setShowVisualComponentCreator(false)}
+                  isDarkMode={isDarkMode}
+                />
+              </DialogContent>
+            </Dialog>
 
             {/* Add External Components Dialog */}
             <Dialog open={showAddComponent} onOpenChange={setShowAddComponent}>
