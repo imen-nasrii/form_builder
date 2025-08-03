@@ -141,8 +141,8 @@ export default function VisualComponentCreator({ isOpen, onClose, onSubmit }: Vi
       // Validation before moving to next step
       if (currentStep === 1 && (!formData.name || !formData.displayLabel)) {
         toast({
-          title: "Champs requis",
-          description: "Veuillez remplir le nom et le label du composant",
+          title: "Required Fields",
+          description: "Please fill in the component name and display label",
           variant: "destructive"
         });
         return;
@@ -242,7 +242,7 @@ export default function VisualComponentCreator({ isOpen, onClose, onSubmit }: Vi
       <div>
         <h3 className="text-lg font-semibold mb-4">Basic Information</h3>
         <p className="text-sm text-gray-600 mb-6">
-          Définissez les informations de base de votre nouveau composant
+          Define the basic information for your new component
         </p>
 
         <div className="grid grid-cols-2 gap-4 mb-4">
@@ -329,7 +329,7 @@ export default function VisualComponentCreator({ isOpen, onClose, onSubmit }: Vi
             <Textarea
               value={formData.description}
               onChange={(e) => updateFormData({ description: e.target.value })}
-              placeholder="Description de votre composant personnalisé..."
+              placeholder="Description of your custom component..."
               rows={3}
             />
           </div>
@@ -351,7 +351,7 @@ export default function VisualComponentCreator({ isOpen, onClose, onSubmit }: Vi
       <div>
         <h3 className="text-lg font-semibold mb-4">Styling & Configuration</h3>
         <p className="text-sm text-gray-600 mb-6">
-          Configurez l'apparence et le comportement par défaut
+          Configure the default appearance and behavior
         </p>
       </div>
 
@@ -455,14 +455,14 @@ export default function VisualComponentCreator({ isOpen, onClose, onSubmit }: Vi
         <div>
           <h3 className="text-lg font-semibold mb-4">Preview & Save</h3>
           <p className="text-sm text-gray-600 mb-6">
-            Vérifiez votre composant avant de le sauvegarder
+            Review your component before saving
           </p>
         </div>
 
         {/* Component Preview */}
         <Card className="bg-gray-50">
           <CardHeader>
-            <CardTitle className="text-sm">Aperçu du Composant</CardTitle>
+            <CardTitle className="text-sm">Component Preview</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-3 p-4 bg-white rounded-lg border">
@@ -484,13 +484,13 @@ export default function VisualComponentCreator({ isOpen, onClose, onSubmit }: Vi
         <div className="grid grid-cols-2 gap-4">
           <Card>
             <CardContent className="pt-6">
-              <div className="text-sm text-gray-600">Propriétés définies</div>
+              <div className="text-sm text-gray-600">Properties defined</div>
               <div className="text-2xl font-bold">{formData.properties.length}</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="pt-6">
-              <div className="text-sm text-gray-600">Type de composant</div>
+              <div className="text-sm text-gray-600">Component type</div>
               <div className="text-2xl font-bold">
                 {formData.isContainer ? 'Container' : 'Standard'}
               </div>
@@ -502,7 +502,7 @@ export default function VisualComponentCreator({ isOpen, onClose, onSubmit }: Vi
         {formData.properties.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle className="text-sm">Propriétés Configurées</CardTitle>
+              <CardTitle className="text-sm">Configured Properties</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
@@ -539,7 +539,7 @@ export default function VisualComponentCreator({ isOpen, onClose, onSubmit }: Vi
             <div className="text-sm text-gray-500">Step {currentStep} of 3</div>
           </div>
           <p className="text-sm text-gray-600">
-            Créez votre composant externe personnalisé avec propriétés configurables
+            Create your custom external component with configurable properties
           </p>
         </DialogHeader>
 
