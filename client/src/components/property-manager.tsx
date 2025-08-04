@@ -82,8 +82,8 @@ export default function PropertyManager({ properties, onChange, className = '' }
 
   const generateId = () => `prop_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-  const addProperty = () => {
-    if (!newProperty.name?.trim()) {
+  const addProperty = (propertyData: Partial<ComponentProperty>) => {
+    if (!propertyData.name?.trim()) {
       toast({
         title: "Error",
         description: "Property name is required",
@@ -93,7 +93,7 @@ export default function PropertyManager({ properties, onChange, className = '' }
     }
 
     // Check if name already exists
-    if (properties.some(p => p.name === newProperty.name)) {
+    if (properties.some(p => p.name === propertyData.name)) {
       toast({
         title: "Error",
         description: "A property with this name already exists",
@@ -104,13 +104,13 @@ export default function PropertyManager({ properties, onChange, className = '' }
 
     const property: ComponentProperty = {
       id: generateId(),
-      name: newProperty.name!,
-      type: newProperty.type as ComponentProperty['type'],
-      defaultValue: getTypedDefaultValue(newProperty.type as ComponentProperty['type'], newProperty.defaultValue),
-      required: newProperty.required || false,
-      description: newProperty.description,
-      category: newProperty.category as ComponentProperty['category'],
-      validation: newProperty.validation
+      name: propertyData.name!,
+      type: propertyData.type as ComponentProperty['type'] || 'string',
+      defaultValue: getTypedDefaultValue(propertyData.type as ComponentProperty['type'] || 'string', propertyData.defaultValue),
+      required: propertyData.required || false,
+      description: propertyData.description,
+      category: propertyData.category as ComponentProperty['category'] || 'basic',
+      validation: propertyData.validation
     };
 
     onChange([...properties, property]);
@@ -179,7 +179,7 @@ export default function PropertyManager({ properties, onChange, className = '' }
     onCancel 
   }: { 
     property: Partial<ComponentProperty>; 
-    onSave: (prop: ComponentProperty) => void; 
+    onSave: (prop: Partial<ComponentProperty>) => void; 
     onCancel: () => void; 
   }) => {
     const [formData, setFormData] = useState<Partial<ComponentProperty>>(property);
@@ -194,16 +194,7 @@ export default function PropertyManager({ properties, onChange, className = '' }
         return;
       }
 
-      onSave({
-        id: formData.id || generateId(),
-        name: formData.name!,
-        type: formData.type as ComponentProperty['type'],
-        defaultValue: getTypedDefaultValue(formData.type as ComponentProperty['type'], formData.defaultValue),
-        required: formData.required || false,
-        description: formData.description,
-        category: formData.category as ComponentProperty['category'],
-        validation: formData.validation
-      });
+      onSave(formData);
     };
 
     return (
