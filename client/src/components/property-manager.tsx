@@ -131,7 +131,20 @@ export default function PropertyManager({ properties, onChange, className = '' }
     });
   };
 
-  const updateProperty = (updatedProperty: ComponentProperty) => {
+  const updateProperty = (propertyData: Partial<ComponentProperty>) => {
+    if (!propertyData.id) return;
+    
+    const updatedProperty: ComponentProperty = {
+      id: propertyData.id,
+      name: propertyData.name!,
+      type: propertyData.type as ComponentProperty['type'] || 'string',
+      defaultValue: getTypedDefaultValue(propertyData.type as ComponentProperty['type'] || 'string', propertyData.defaultValue),
+      required: propertyData.required || false,
+      description: propertyData.description,
+      category: propertyData.category as ComponentProperty['category'] || 'basic',
+      validation: propertyData.validation
+    };
+    
     onChange(properties.map(p => p.id === updatedProperty.id ? updatedProperty : p));
     setEditingProperty(null);
     
@@ -429,7 +442,7 @@ export default function PropertyManager({ properties, onChange, className = '' }
                               </DialogTrigger>
                               <DialogContent className="max-w-2xl">
                                 <DialogHeader>
-                                  <DialogTitle>Modifier la Propriété</DialogTitle>
+                                  <DialogTitle>Edit Property</DialogTitle>
                                 </DialogHeader>
                                 <PropertyForm
                                   property={property}

@@ -3421,10 +3421,12 @@ export default function FormBuilderFixed() {
   const createExternalComponentWithProperties = (componentData: any) => {
     try {
       // Convert ComponentProperty[] to External Component format
-      const properties = componentData.properties?.reduce((acc: any, prop: ComponentProperty) => {
-        acc[prop.name] = prop.defaultValue;
-        return acc;
-      }, {}) || {};
+      const properties = Array.isArray(componentData.properties) 
+        ? componentData.properties.reduce((acc: any, prop: ComponentProperty) => {
+            acc[prop.name] = prop.defaultValue;
+            return acc;
+          }, {}) 
+        : {};
 
       const newComponent = {
         id: componentData.name.toUpperCase(),
@@ -3437,14 +3439,14 @@ export default function FormBuilderFixed() {
         properties: properties,
         config: componentData.config || {},
         isCustom: true,
-        propertyDefinitions: componentData.properties || []
+        propertyDefinitions: Array.isArray(componentData.properties) ? componentData.properties : []
       };
       
       // Check if component already exists
       if (customComponents.some(comp => comp.id === newComponent.id)) {
         toast({
-          title: "Erreur",
-          description: "Un composant avec ce nom existe déjà",
+          title: "Error",
+          description: "A component with this name already exists",
           variant: "destructive"
         });
         return;
@@ -3452,8 +3454,8 @@ export default function FormBuilderFixed() {
       
       setCustomComponents(prev => [...prev, newComponent]);
       toast({
-        title: "Succès",
-        description: `Composant "${newComponent.label}" créé avec succès`,
+        title: "Success",
+        description: `Component "${newComponent.label}" created successfully`,
       });
       
       // Reset states
@@ -3463,8 +3465,8 @@ export default function FormBuilderFixed() {
     } catch (error) {
       console.error('Error creating external component:', error);
       toast({
-        title: "Erreur",
-        description: "Erreur lors de la création du composant",
+        title: "Error",
+        description: "Error creating component",
         variant: "destructive"
       });
     }
