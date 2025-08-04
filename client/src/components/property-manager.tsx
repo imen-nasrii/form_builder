@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { 
   Trash2, 
   Edit, 
@@ -85,8 +85,8 @@ export default function PropertyManager({ properties, onChange, className = '' }
   const addProperty = () => {
     if (!newProperty.name?.trim()) {
       toast({
-        title: "Erreur",
-        description: "Le nom de la propriété est requis",
+        title: "Error",
+        description: "Property name is required",
         variant: "destructive"
       });
       return;
@@ -355,6 +355,9 @@ export default function PropertyManager({ properties, onChange, className = '' }
           <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle>New Property</DialogTitle>
+              <DialogDescription>
+                Add a new configurable property to your external component
+              </DialogDescription>
             </DialogHeader>
             <PropertyForm
               property={newProperty}
@@ -472,8 +475,8 @@ export default function PropertyManager({ properties, onChange, className = '' }
             <div className="flex items-center gap-2 text-blue-800">
               <Key className="w-4 h-4" />
               <span className="text-sm font-medium">
-                Total: {properties.length} propriété{properties.length > 1 ? 's' : ''} • 
-                {properties.filter(p => p.required).length} requise{properties.filter(p => p.required).length > 1 ? 's' : ''}
+                Total: {properties.length} propert{properties.length > 1 ? 'ies' : 'y'} • 
+                {properties.filter(p => p.required).length} required
               </span>
             </div>
           </CardContent>
