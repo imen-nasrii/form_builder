@@ -210,7 +210,7 @@ export default function PropertyManager({ properties, onChange, className = '' }
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label>Nom de la propriété *</Label>
+            <Label>Property Name *</Label>
             <Input
               value={formData.name || ''}
               onChange={(e) => setFormData({...formData, name: e.target.value})}
@@ -227,11 +227,11 @@ export default function PropertyManager({ properties, onChange, className = '' }
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="string">Texte (string)</SelectItem>
-                <SelectItem value="number">Nombre (number)</SelectItem>
-                <SelectItem value="boolean">Booléen (true/false)</SelectItem>
-                <SelectItem value="array">Tableau (array)</SelectItem>
-                <SelectItem value="object">Objet (object)</SelectItem>
+                <SelectItem value="string">Text (string)</SelectItem>
+                <SelectItem value="number">Number (number)</SelectItem>
+                <SelectItem value="boolean">Boolean (true/false)</SelectItem>
+                <SelectItem value="array">Array (array)</SelectItem>
+                <SelectItem value="object">Object (object)</SelectItem>
                 <SelectItem value="date">Date</SelectItem>
                 <SelectItem value="url">URL</SelectItem>
                 <SelectItem value="email">Email</SelectItem>
@@ -242,7 +242,7 @@ export default function PropertyManager({ properties, onChange, className = '' }
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label>Catégorie</Label>
+            <Label>Category</Label>
             <Select 
               value={formData.category || 'basic'} 
               onValueChange={(v) => setFormData({...formData, category: v as ComponentProperty['category']})}
@@ -265,13 +265,13 @@ export default function PropertyManager({ properties, onChange, className = '' }
                 onChange={(e) => setFormData({...formData, required: e.target.checked})}
                 className="rounded border-gray-300"
               />
-              <span className="text-sm">Propriété requise</span>
+              <span className="text-sm">Required property</span>
             </label>
           </div>
         </div>
 
         <div>
-          <Label>Valeur par défaut</Label>
+          <Label>Default Value</Label>
           {formData.type === 'boolean' ? (
             <Select 
               value={String(formData.defaultValue)} 
@@ -297,18 +297,18 @@ export default function PropertyManager({ properties, onChange, className = '' }
             <Input
               value={formData.defaultValue || ''}
               onChange={(e) => setFormData({...formData, defaultValue: e.target.value})}
-              placeholder="Valeur par défaut..."
+              placeholder="Default value..."
               type={formData.type === 'number' ? 'number' : 'text'}
             />
           )}
         </div>
 
         <div>
-          <Label>Description (optionnelle)</Label>
+          <Label>Description (optional)</Label>
           <Textarea
             value={formData.description || ''}
             onChange={(e) => setFormData({...formData, description: e.target.value})}
-            placeholder="Description de cette propriété..."
+            placeholder="Description of this property..."
             rows={2}
           />
         </div>
@@ -316,11 +316,11 @@ export default function PropertyManager({ properties, onChange, className = '' }
         <div className="flex gap-2 pt-4">
           <Button onClick={handleSave}>
             <Save className="w-4 h-4 mr-2" />
-            Sauvegarder
+            Save
           </Button>
           <Button variant="outline" onClick={onCancel}>
             <X className="w-4 h-4 mr-2" />
-            Annuler
+            Cancel
           </Button>
         </div>
       </div>
