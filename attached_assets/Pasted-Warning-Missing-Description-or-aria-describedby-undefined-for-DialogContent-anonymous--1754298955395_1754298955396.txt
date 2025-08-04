@@ -1,0 +1,50 @@
+Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ @radix-ui_react-dialog.js?v=2bd801f4:342
+commitHookEffectListMount @ chunk-WERSD76P.js?v=2bd801f4:16915
+commitPassiveMountOnFiber @ chunk-WERSD76P.js?v=2bd801f4:18156
+commitPassiveMountEffects_complete @ chunk-WERSD76P.js?v=2bd801f4:18129
+commitPassiveMountEffects_begin @ chunk-WERSD76P.js?v=2bd801f4:18119
+commitPassiveMountEffects @ chunk-WERSD76P.js?v=2bd801f4:18109
+flushPassiveEffectsImpl @ chunk-WERSD76P.js?v=2bd801f4:19490
+flushPassiveEffects @ chunk-WERSD76P.js?v=2bd801f4:19447
+commitRootImpl @ chunk-WERSD76P.js?v=2bd801f4:19416
+commitRoot @ chunk-WERSD76P.js?v=2bd801f4:19277
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=2bd801f4:18895
+flushSyncCallbacks @ chunk-WERSD76P.js?v=2bd801f4:9119
+flushSync @ chunk-WERSD76P.js?v=2bd801f4:18959
+flushSync$1 @ chunk-WERSD76P.js?v=2bd801f4:21538
+dispatchDiscreteCustomEvent @ chunk-PALV7G7K.js?v=2bd801f4:53
+handleSelect @ @radix-ui_react-dropdown-menu.js?v=2bd801f4:432
+handleEvent @ chunk-5Q5YC75F.js?v=2bd801f4:6
+callCallback2 @ chunk-WERSD76P.js?v=2bd801f4:3674
+invokeGuardedCallbackDev @ chunk-WERSD76P.js?v=2bd801f4:3699
+invokeGuardedCallback @ chunk-WERSD76P.js?v=2bd801f4:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-WERSD76P.js?v=2bd801f4:3736
+executeDispatch @ chunk-WERSD76P.js?v=2bd801f4:7014
+processDispatchQueueItemsInOrder @ chunk-WERSD76P.js?v=2bd801f4:7034
+processDispatchQueue @ chunk-WERSD76P.js?v=2bd801f4:7043
+dispatchEventsForPlugins @ chunk-WERSD76P.js?v=2bd801f4:7051
+(anonymous) @ chunk-WERSD76P.js?v=2bd801f4:7174
+batchedUpdates$1 @ chunk-WERSD76P.js?v=2bd801f4:18913
+batchedUpdates @ chunk-WERSD76P.js?v=2bd801f4:3579
+dispatchEventForPluginEventSystem @ chunk-WERSD76P.js?v=2bd801f4:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-WERSD76P.js?v=2bd801f4:5478
+dispatchEvent @ chunk-WERSD76P.js?v=2bd801f4:5472
+dispatchDiscreteEvent @ chunk-WERSD76P.js?v=2bd801f4:5449Understand this warning
+@radix-ui_react-dialog.js?v=2bd801f4:342 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ @radix-ui_react-dialog.js?v=2bd801f4:342
+commitHookEffectListMount @ chunk-WERSD76P.js?v=2bd801f4:16915
+commitPassiveMountOnFiber @ chunk-WERSD76P.js?v=2bd801f4:18156
+commitPassiveMountEffects_complete @ chunk-WERSD76P.js?v=2bd801f4:18129
+commitPassiveMountEffects_begin @ chunk-WERSD76P.js?v=2bd801f4:18119
+commitPassiveMountEffects @ chunk-WERSD76P.js?v=2bd801f4:18109
+flushPassiveEffectsImpl @ chunk-WERSD76P.js?v=2bd801f4:19490
+flushPassiveEffects @ chunk-WERSD76P.js?v=2bd801f4:19447
+commitRootImpl @ chunk-WERSD76P.js?v=2bd801f4:19416
+commitRoot @ chunk-WERSD76P.js?v=2bd801f4:19277
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=2bd801f4:18895
+flushSyncCallbacks @ chunk-WERSD76P.js?v=2bd801f4:9119
+(anonymous) @ chunk-WERSD76P.js?v=2bd801f4:18627Understand this warning
+74:1 Blocked aria-hidden on an element because its descendant retained focus. The focus must not be hidden from assistive technology users. Avoid using aria-hidden on a focused element or its ancestor. Consider using the inert attribute instead, which will also prevent focus. For more details, see the aria-hidden section of the WAI-ARIA specification at https://w3c.github.io/aria/#aria-hidden.
+Element with focus: <div.fixed left-[50%] top-[50%] z-50 grid w-full translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg max-w-4xl max-h-[90vh] overflow-y-auto#radix-:ro:>
+Ancestor with aria-hidden: <div.fixed left-[50%] top-[50%] z-50 grid w-full translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg max-w-4xl max-h-[90vh] overflow-y-auto#radix-:ro:> <div role=​"dialog" id=​"radix-:​ro:​" aria-describedby=​"radix-:​rq:​" aria-labelledby=​"radix-:​rp:​" data-state=​"open" data-replit-metadata=​"client/​src/​components/​visual-component-creator.tsx:​535:​6" data-component-name=​"DialogContent" class=​"fixed left-[50%]​ top-[50%]​ z-50 grid w-full translate-x-[-50%]​ translate-y-[-50%]​ gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]​:​animate-in data-[state=closed]​:​animate-out data-[state=closed]​:​fade-out-0 data-[state=open]​:​fade-in-0 data-[state=closed]​:​zoom-out-95 data-[state=open]​:​zoom-in-95 data-[state=closed]​:​slide-out-to-left-1/​2 data-[state=closed]​:​slide-out-to-top-[48%]​ data-[state=open]​:​slide-in-from-left-1/​2 data-[state=open]​:​slide-in-from-top-[48%]​ sm:​rounded-lg max-w-4xl max-h-[90vh]​ overflow-y-auto" tabindex=​"-1" style=​"pointer-events:​ none;​" bis_skin_checked=​"1" data-aria-hidden=​"true" aria-hidden=​"true">​…​</div>​gridscroll
