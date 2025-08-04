@@ -546,14 +546,14 @@ export default function VisualComponentCreator({ isOpen, onClose, onSubmit }: Vi
         {/* Step Indicator */}
         <div className="flex items-center justify-between px-4 py-6">
           {steps.map((step, index) => (
-            <React.Fragment key={step.number}>
+            <div key={step.number} className="contents">
               <StepIndicator step={step} />
               {index < steps.length - 1 && (
                 <div className={`flex-1 h-1 mx-4 rounded ${
                   step.number < currentStep ? 'bg-green-500' : 'bg-gray-200'
                 }`} />
               )}
-            </React.Fragment>
+            </div>
           ))}
         </div>
 
