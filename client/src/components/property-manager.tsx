@@ -75,8 +75,7 @@ export default function PropertyManager({ properties, onChange, className = '' }
     name: '',
     type: 'string',
     defaultValue: '',
-    required: false,
-    category: 'basic'
+    required: false
   });
   const { toast } = useToast();
 
@@ -109,7 +108,7 @@ export default function PropertyManager({ properties, onChange, className = '' }
       defaultValue: getTypedDefaultValue(propertyData.type as ComponentProperty['type'] || 'string', propertyData.defaultValue),
       required: propertyData.required || false,
       description: propertyData.description,
-      category: propertyData.category as ComponentProperty['category'] || 'basic',
+      category: 'basic' as ComponentProperty['category'],
       validation: propertyData.validation
     };
 
@@ -120,8 +119,7 @@ export default function PropertyManager({ properties, onChange, className = '' }
       name: '',
       type: 'string',
       defaultValue: '',
-      required: false,
-      category: 'basic'
+      required: false
     });
     setIsAddDialogOpen(false);
 
@@ -141,7 +139,7 @@ export default function PropertyManager({ properties, onChange, className = '' }
       defaultValue: getTypedDefaultValue(propertyData.type as ComponentProperty['type'] || 'string', propertyData.defaultValue),
       required: propertyData.required || false,
       description: propertyData.description,
-      category: propertyData.category as ComponentProperty['category'] || 'basic',
+      category: 'basic' as ComponentProperty['category'],
       validation: propertyData.validation
     };
     
@@ -244,34 +242,16 @@ export default function PropertyManager({ properties, onChange, className = '' }
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label>Category</Label>
-            <Select 
-              value={formData.category || 'basic'} 
-              onValueChange={(v) => setFormData({...formData, category: v as ComponentProperty['category']})}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {PropertyCategories.map(cat => (
-                  <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex items-end">
-            <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                checked={formData.required || false}
-                onChange={(e) => setFormData({...formData, required: e.target.checked})}
-                className="rounded border-gray-300"
-              />
-              <span className="text-sm">Required property</span>
-            </label>
-          </div>
+        <div className="flex items-end">
+          <label className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              checked={formData.required || false}
+              onChange={(e) => setFormData({...formData, required: e.target.checked})}
+              className="rounded border-gray-300"
+            />
+            <span className="text-sm">Required property</span>
+          </label>
         </div>
 
         <div>
