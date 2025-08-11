@@ -28,7 +28,7 @@ import { useToast } from '@/hooks/use-toast';
 export interface ComponentProperty {
   id: string;
   name: string;
-  type: 'string' | 'number' | 'boolean' | 'array' | 'object' | 'date' | 'url' | 'email' | 'GRIDLKP' | 'LSTLKP' | 'SELECT' | 'DATEPICKER' | 'CHECKBOX' | 'RADIOGRP' | 'GROUP' | 'TEXTBOX';
+  type: 'string' | 'number' | 'boolean' | 'array' | 'object' | 'date' | 'url' | 'email' | 'enum' | 'GRIDLKP' | 'LSTLKP' | 'SELECT' | 'DATEPICKER' | 'CHECKBOX' | 'RADIOGRP' | 'GROUP' | 'TEXTBOX';
   defaultValue: any;
   required: boolean;
   description?: string;
@@ -94,7 +94,8 @@ const PropertyTypeIcons = {
   CHECKBOX: CheckSquare,
   RADIOGRP: CheckSquare,
   GROUP: Code,
-  TEXTBOX: Type
+  TEXTBOX: Type,
+  enum: List
 };
 
 const PropertyCategories = [
@@ -274,6 +275,7 @@ export default function PropertyManager({ properties, onChange, className = '' }
                 <SelectItem value="date">Date</SelectItem>
                 <SelectItem value="url">URL</SelectItem>
                 <SelectItem value="email">Email</SelectItem>
+                <SelectItem value="enum">Enum (dropdown)</SelectItem>
                 <SelectItem value="TEXTBOX">Text Box</SelectItem>
                 <SelectItem value="GRIDLKP">Grid Lookup</SelectItem>
                 <SelectItem value="LSTLKP">List Lookup</SelectItem>
@@ -322,6 +324,20 @@ export default function PropertyManager({ properties, onChange, className = '' }
               className="font-mono"
               rows={3}
             />
+          ) : formData.type === 'enum' ? (
+            <Select 
+              value={formData.defaultValue || ''} 
+              onValueChange={(v) => setFormData({...formData, defaultValue: v})}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select default option..." />
+              </SelectTrigger>
+              <SelectContent>
+                {formData.validation?.enum?.map((option) => (
+                  <SelectItem key={option} value={option}>{option}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           ) : (
             <Input
               value={formData.defaultValue || ''}
@@ -421,8 +437,8 @@ export default function PropertyManager({ properties, onChange, className = '' }
                     const parsed = JSON.parse(e.target.value);
                     setFormData({...formData, optionValues: parsed});
                   } catch {
-                    // Invalid JSON, store as string temporarily
-                    setFormData({...formData, optionValues: e.target.value});
+                    // Invalid JSON, keep the current valid value
+                    // setFormData({...formData, optionValues: e.target.value});
                   }
                 }}
                 placeholder={`{\n  "0": "",\n  "1": "GNMA I",\n  "2": "GNMA II"\n}`}
@@ -501,7 +517,7 @@ export default function PropertyManager({ properties, onChange, className = '' }
                     const parsed = JSON.parse(e.target.value);
                     setFormData({...formData, optionValues: parsed});
                   } catch {
-                    setFormData({...formData, optionValues: e.target.value});
+                    // Invalid JSON, keep the current valid value
                   }
                 }}
                 placeholder={`{\n  "dfCurrent": "DFCURRENT",\n  "dfPosting": "DFPOST",\n  "dfReval": "DFVAL"\n}`}
@@ -566,6 +582,28 @@ export default function PropertyManager({ properties, onChange, className = '' }
           </div>
         )}
 
+        {formData.type === 'enum' && (
+          <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+            <h4 className="font-medium text-sm">Enum Configuration</h4>
+            
+            <div>
+              <Label>Enum Options (one per line)</Label>
+              <Textarea
+                value={formData.validation?.enum?.join('\n') || ''}
+                onChange={(e) => {
+                  const options = e.target.value.split('\n').filter(opt => opt.trim());
+                  setFormData({
+                    ...formData, 
+                    validation: { ...formData.validation, enum: options }
+                  });
+                }}
+                placeholder={`Option 1\nOption 2\nOption 3`}
+                rows={4}
+              />
+            </div>
+          </div>
+        )}
+
         {formData.type === 'GROUP' && (
           <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
             <h4 className="font-medium text-sm">Group Configuration</h4>
@@ -599,7 +637,7 @@ export default function PropertyManager({ properties, onChange, className = '' }
                     const parsed = JSON.parse(e.target.value);
                     setFormData({...formData, childFields: parsed});
                   } catch {
-                    setFormData({...formData, childFields: e.target.value});
+                    // Invalid JSON, keep the current valid value
                   }
                 }}
                 placeholder={`[\n  {\n    "Id": "Doasof",\n    "type": "RADIOGRP",\n    "value": "dfCurrent"\n  }\n]`}
