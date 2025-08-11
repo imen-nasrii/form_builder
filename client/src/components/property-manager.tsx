@@ -28,7 +28,7 @@ import { useToast } from '@/hooks/use-toast';
 export interface ComponentProperty {
   id: string;
   name: string;
-  type: 'string' | 'number' | 'boolean' | 'array' | 'object' | 'date' | 'url' | 'email';
+  type: 'string' | 'number' | 'boolean' | 'array' | 'object' | 'date' | 'url' | 'email' | 'GRIDLKP' | 'LSTLKP' | 'SELECT' | 'DATEPICKER' | 'CHECKBOX' | 'RADIOGRP' | 'GROUP' | 'TEXTBOX';
   defaultValue: any;
   required: boolean;
   description?: string;
@@ -41,6 +41,35 @@ export interface ComponentProperty {
     enum?: string[];
   };
   category?: 'basic' | 'api' | 'validation' | 'display' | 'behavior';
+  // Additional properties for complex types
+  width?: string;
+  inline?: boolean;
+  keyColumn?: string;
+  itemInfo?: {
+    mainProperty?: string;
+    descProperty?: string;
+    showDescription?: boolean;
+  };
+  loadDataInfo?: {
+    dataModel?: string;
+    columnsDefinition?: Array<{
+      dataField: string;
+      caption: string;
+      dataType: string;
+      visible?: boolean;
+    }>;
+  };
+  optionValues?: { [key: string]: string };
+  childFields?: ComponentProperty[];
+  spacing?: string;
+  enabledWhen?: {
+    conditions: Array<{
+      rightField: string;
+      operator: string;
+      value?: any;
+      valueType?: string;
+    }>;
+  };
 }
 
 interface PropertyManagerProps {
@@ -57,7 +86,15 @@ const PropertyTypeIcons = {
   object: Code,
   date: Calendar,
   url: Globe,
-  email: Database
+  email: Database,
+  GRIDLKP: Database,
+  LSTLKP: List,
+  SELECT: List,
+  DATEPICKER: Calendar,
+  CHECKBOX: CheckSquare,
+  RADIOGRP: CheckSquare,
+  GROUP: Code,
+  TEXTBOX: Type
 };
 
 const PropertyCategories = [
@@ -237,6 +274,14 @@ export default function PropertyManager({ properties, onChange, className = '' }
                 <SelectItem value="date">Date</SelectItem>
                 <SelectItem value="url">URL</SelectItem>
                 <SelectItem value="email">Email</SelectItem>
+                <SelectItem value="TEXTBOX">Text Box</SelectItem>
+                <SelectItem value="GRIDLKP">Grid Lookup</SelectItem>
+                <SelectItem value="LSTLKP">List Lookup</SelectItem>
+                <SelectItem value="SELECT">Select Dropdown</SelectItem>
+                <SelectItem value="DATEPICKER">Date Picker</SelectItem>
+                <SelectItem value="CHECKBOX">Checkbox</SelectItem>
+                <SelectItem value="RADIOGRP">Radio Group</SelectItem>
+                <SelectItem value="GROUP">Group Container</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -286,6 +331,284 @@ export default function PropertyManager({ properties, onChange, className = '' }
             />
           )}
         </div>
+
+        {/* Conditional fields based on type */}
+        {(formData.type === 'GRIDLKP' || formData.type === 'LSTLKP') && (
+          <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+            <h4 className="font-medium text-sm">Lookup Configuration</h4>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Key Column</Label>
+                <Input
+                  value={formData.keyColumn || ''}
+                  onChange={(e) => setFormData({...formData, keyColumn: e.target.value})}
+                  placeholder="fund, tkr, seccat..."
+                />
+              </div>
+              <div>
+                <Label>Width</Label>
+                <Input
+                  value={formData.width || ''}
+                  onChange={(e) => setFormData({...formData, width: e.target.value})}
+                  placeholder="32, 100px..."
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label>Data Model</Label>
+              <Input
+                value={formData.loadDataInfo?.dataModel || ''}
+                onChange={(e) => setFormData({
+                  ...formData, 
+                  loadDataInfo: { ...formData.loadDataInfo, dataModel: e.target.value }
+                })}
+                placeholder="Fndmas, Secrty, Seccat..."
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Main Property</Label>
+                <Input
+                  value={formData.itemInfo?.mainProperty || ''}
+                  onChange={(e) => setFormData({
+                    ...formData, 
+                    itemInfo: { ...formData.itemInfo, mainProperty: e.target.value }
+                  })}
+                  placeholder="fund, tkr..."
+                />
+              </div>
+              <div>
+                <Label>Description Property</Label>
+                <Input
+                  value={formData.itemInfo?.descProperty || ''}
+                  onChange={(e) => setFormData({
+                    ...formData, 
+                    itemInfo: { ...formData.itemInfo, descProperty: e.target.value }
+                  })}
+                  placeholder="acnam1, tkr_DESC..."
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={formData.itemInfo?.showDescription || false}
+                onChange={(e) => setFormData({
+                  ...formData, 
+                  itemInfo: { ...formData.itemInfo, showDescription: e.target.checked }
+                })}
+                className="rounded border-gray-300"
+              />
+              <span className="text-sm">Show Description</span>
+            </div>
+          </div>
+        )}
+
+        {formData.type === 'SELECT' && (
+          <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+            <h4 className="font-medium text-sm">Select Options</h4>
+            
+            <div>
+              <Label>Option Values (JSON format)</Label>
+              <Textarea
+                value={formData.optionValues ? JSON.stringify(formData.optionValues, null, 2) : ''}
+                onChange={(e) => {
+                  try {
+                    const parsed = JSON.parse(e.target.value);
+                    setFormData({...formData, optionValues: parsed});
+                  } catch {
+                    // Invalid JSON, store as string temporarily
+                    setFormData({...formData, optionValues: e.target.value});
+                  }
+                }}
+                placeholder={`{\n  "0": "",\n  "1": "GNMA I",\n  "2": "GNMA II"\n}`}
+                className="font-mono"
+                rows={4}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Width</Label>
+                <Input
+                  value={formData.width || ''}
+                  onChange={(e) => setFormData({...formData, width: e.target.value})}
+                  placeholder="32, 100px..."
+                />
+              </div>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={formData.inline || false}
+                  onChange={(e) => setFormData({...formData, inline: e.target.checked})}
+                  className="rounded border-gray-300"
+                />
+                <span className="text-sm">Inline</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {(formData.type === 'DATEPICKER' || formData.type === 'TEXTBOX') && (
+          <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+            <h4 className="font-medium text-sm">Field Configuration</h4>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Width</Label>
+                <Input
+                  value={formData.width || ''}
+                  onChange={(e) => setFormData({...formData, width: e.target.value})}
+                  placeholder="32, 100px..."
+                />
+              </div>
+              <div>
+                <Label>Spacing</Label>
+                <Input
+                  value={formData.spacing || ''}
+                  onChange={(e) => setFormData({...formData, spacing: e.target.value})}
+                  placeholder="0, 30..."
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={formData.inline || false}
+                onChange={(e) => setFormData({...formData, inline: e.target.checked})}
+                className="rounded border-gray-300"
+              />
+              <span className="text-sm">Inline</span>
+            </div>
+          </div>
+        )}
+
+        {formData.type === 'RADIOGRP' && (
+          <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+            <h4 className="font-medium text-sm">Radio Group Options</h4>
+            
+            <div>
+              <Label>Option Values (JSON format)</Label>
+              <Textarea
+                value={formData.optionValues ? JSON.stringify(formData.optionValues, null, 2) : ''}
+                onChange={(e) => {
+                  try {
+                    const parsed = JSON.parse(e.target.value);
+                    setFormData({...formData, optionValues: parsed});
+                  } catch {
+                    setFormData({...formData, optionValues: e.target.value});
+                  }
+                }}
+                placeholder={`{\n  "dfCurrent": "DFCURRENT",\n  "dfPosting": "DFPOST",\n  "dfReval": "DFVAL"\n}`}
+                className="font-mono"
+                rows={4}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Width</Label>
+                <Input
+                  value={formData.width || ''}
+                  onChange={(e) => setFormData({...formData, width: e.target.value})}
+                  placeholder="100, 600px..."
+                />
+              </div>
+              <div>
+                <Label>Spacing</Label>
+                <Input
+                  value={formData.spacing || ''}
+                  onChange={(e) => setFormData({...formData, spacing: e.target.value})}
+                  placeholder="0, 30..."
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {formData.type === 'CHECKBOX' && (
+          <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+            <h4 className="font-medium text-sm">Checkbox Configuration</h4>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Width</Label>
+                <Input
+                  value={formData.width || ''}
+                  onChange={(e) => setFormData({...formData, width: e.target.value})}
+                  placeholder="600px..."
+                />
+              </div>
+              <div>
+                <Label>Spacing</Label>
+                <Input
+                  value={formData.spacing || ''}
+                  onChange={(e) => setFormData({...formData, spacing: e.target.value})}
+                  placeholder="0, 30..."
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={formData.inline || false}
+                onChange={(e) => setFormData({...formData, inline: e.target.checked})}
+                className="rounded border-gray-300"
+              />
+              <span className="text-sm">Inline</span>
+            </div>
+          </div>
+        )}
+
+        {formData.type === 'GROUP' && (
+          <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+            <h4 className="font-medium text-sm">Group Configuration</h4>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Spacing</Label>
+                <Input
+                  value={formData.spacing || ''}
+                  onChange={(e) => setFormData({...formData, spacing: e.target.value})}
+                  placeholder="0, 30..."
+                />
+              </div>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={formData.inline || false}
+                  onChange={(e) => setFormData({...formData, inline: e.target.checked})}
+                  className="rounded border-gray-300"
+                />
+                <span className="text-sm">Inline</span>
+              </div>
+            </div>
+
+            <div>
+              <Label>Child Fields (JSON format)</Label>
+              <Textarea
+                value={formData.childFields ? JSON.stringify(formData.childFields, null, 2) : ''}
+                onChange={(e) => {
+                  try {
+                    const parsed = JSON.parse(e.target.value);
+                    setFormData({...formData, childFields: parsed});
+                  } catch {
+                    setFormData({...formData, childFields: e.target.value});
+                  }
+                }}
+                placeholder={`[\n  {\n    "Id": "Doasof",\n    "type": "RADIOGRP",\n    "value": "dfCurrent"\n  }\n]`}
+                className="font-mono"
+                rows={6}
+              />
+            </div>
+          </div>
+        )}
 
         <div>
           <Label>Description (optional)</Label>
