@@ -26,6 +26,7 @@ import {
   X, 
   AlertTriangle,
   Trash2,
+  Edit2,
   Settings,
   ChevronRight,
   Moon,
@@ -236,12 +237,24 @@ const ComponentTypes = Object.values(ComponentCategories).reduce((acc, category)
   return { ...acc, ...category.components };
 }, {} as Record<string, { icon: any; label: string; color: string }>);
 
-function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMode = false }: {
+function DraggableComponent({ 
+  componentType, 
+  label, 
+  icon: Icon, 
+  color, 
+  isDarkMode = false, 
+  onEdit, 
+  onDelete, 
+  isCustom = false 
+}: {
   componentType: string;
   label: string;
   icon: any;
   color: string;
   isDarkMode?: boolean;
+  onEdit?: (componentType: string) => void;
+  onDelete?: (componentType: string) => void;
+  isCustom?: boolean;
 }) {
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -343,26 +356,66 @@ function DraggableComponent({ componentType, label, icon: Icon, color, isDarkMod
         {label}
       </span>
       
-      {/* Hover overlay with grab cursor indicator */}
-      <div className={`
-        absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200
-        ${isDarkMode ? 'bg-white/5' : 'bg-black/5'}
-        pointer-events-none
-      `}>
-        <div className="absolute top-1 right-1">
-          <div className={`
-            w-3 h-3 rounded-full flex items-center justify-center
-            ${isDarkMode ? 'bg-gray-600' : 'bg-gray-300'}
-          `}>
-            <div className="w-1.5 h-1.5 grid grid-cols-2 gap-0.5">
-              <div className={`w-0.5 h-0.5 rounded-full ${isDarkMode ? 'bg-gray-400' : 'bg-gray-600'}`} />
-              <div className={`w-0.5 h-0.5 rounded-full ${isDarkMode ? 'bg-gray-400' : 'bg-gray-600'}`} />
-              <div className={`w-0.5 h-0.5 rounded-full ${isDarkMode ? 'bg-gray-400' : 'bg-gray-600'}`} />
-              <div className={`w-0.5 h-0.5 rounded-full ${isDarkMode ? 'bg-gray-400' : 'bg-gray-600'}`} />
+      {/* Management Controls (only show for custom components or when onEdit/onDelete are provided) */}
+      {(isCustom || onEdit || onDelete) && (
+        <div className={`
+          absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200
+          ${isDarkMode ? 'bg-black/60' : 'bg-white/90'}
+          flex items-center justify-center gap-1
+        `}>
+          {onEdit && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                onEdit(componentType);
+              }}
+              className={`h-6 w-6 p-0 ${isDarkMode ? 'hover:bg-gray-600 text-white' : 'hover:bg-gray-200 text-gray-700'}`}
+            >
+              <Edit2 className="w-3 h-3" />
+            </Button>
+          )}
+          {onDelete && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                onDelete(componentType);
+              }}
+              className={`h-6 w-6 p-0 ${isDarkMode ? 'hover:bg-red-600 text-red-400' : 'hover:bg-red-200 text-red-600'}`}
+            >
+              <Trash2 className="w-3 h-3" />
+            </Button>
+          )}
+        </div>
+      )}
+      
+      {/* Default hover overlay with grab cursor indicator (for non-custom components) */}
+      {!isCustom && !onEdit && !onDelete && (
+        <div className={`
+          absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200
+          ${isDarkMode ? 'bg-white/5' : 'bg-black/5'}
+          pointer-events-none
+        `}>
+          <div className="absolute top-1 right-1">
+            <div className={`
+              w-3 h-3 rounded-full flex items-center justify-center
+              ${isDarkMode ? 'bg-gray-600' : 'bg-gray-300'}
+            `}>
+              <div className="w-1.5 h-1.5 grid grid-cols-2 gap-0.5">
+                <div className={`w-0.5 h-0.5 rounded-full ${isDarkMode ? 'bg-gray-400' : 'bg-gray-600'}`} />
+                <div className={`w-0.5 h-0.5 rounded-full ${isDarkMode ? 'bg-gray-400' : 'bg-gray-600'}`} />
+                <div className={`w-0.5 h-0.5 rounded-full ${isDarkMode ? 'bg-gray-400' : 'bg-gray-600'}`} />
+                <div className={`w-0.5 h-0.5 rounded-full ${isDarkMode ? 'bg-gray-400' : 'bg-gray-600'}`} />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -2820,6 +2873,127 @@ export default function FormBuilderFixed() {
   const [importedData, setImportedData] = useState<any>(null);
   const [isPaletteCollapsed, setIsPaletteCollapsed] = useState(false);
   const [isDragZoneCollapsed, setIsDragZoneCollapsed] = useState(false);
+  
+  // Component management state
+  const [editingComponent, setEditingComponent] = useState<any>(null);
+  const [showEditComponentDialog, setShowEditComponentDialog] = useState(false);
+  const [showDeleteConfirmDialog, setShowDeleteConfirmDialog] = useState(false);
+  const [componentToDelete, setComponentToDelete] = useState<string | null>(null);
+  const [editableCategories, setEditableCategories] = useState(ComponentCategories);
+
+  // Component CRUD handlers
+  const handleEditComponent = (componentType: string) => {
+    // Find the component in the categories
+    let foundComponent = null;
+    let foundCategory = null;
+    
+    for (const [categoryKey, category] of Object.entries(editableCategories)) {
+      if (category.components[componentType]) {
+        foundComponent = {
+          type: componentType,
+          ...category.components[componentType],
+          category: categoryKey
+        };
+        foundCategory = categoryKey;
+        break;
+      }
+    }
+    
+    if (foundComponent) {
+      setEditingComponent(foundComponent);
+      setShowEditComponentDialog(true);
+    }
+  };
+
+  const handleDeleteComponent = (componentType: string) => {
+    setComponentToDelete(componentType);
+    setShowDeleteConfirmDialog(true);
+  };
+
+  const confirmDeleteComponent = () => {
+    if (!componentToDelete) return;
+
+    setEditableCategories(prev => {
+      const newCategories = { ...prev };
+      
+      // Find and remove the component from its category
+      for (const [categoryKey, category] of Object.entries(newCategories)) {
+        if (category.components[componentToDelete]) {
+          const newComponents = { ...category.components };
+          delete newComponents[componentToDelete];
+          newCategories[categoryKey] = {
+            ...category,
+            components: newComponents
+          };
+          break;
+        }
+      }
+      
+      return newCategories;
+    });
+
+    // Also remove from custom components if it exists there
+    setCustomComponents(prev => prev.filter(comp => comp.id !== componentToDelete));
+
+    setShowDeleteConfirmDialog(false);
+    setComponentToDelete(null);
+
+    toast({
+      title: "Component Deleted",
+      description: `Component ${componentToDelete} has been removed from the palette.`,
+    });
+  };
+
+  const handleSaveEditedComponent = (updatedComponent: any) => {
+    if (!editingComponent) return;
+
+    setEditableCategories(prev => {
+      const newCategories = { ...prev };
+      const categoryKey = editingComponent.category;
+      
+      if (newCategories[categoryKey]) {
+        newCategories[categoryKey] = {
+          ...newCategories[categoryKey],
+          components: {
+            ...newCategories[categoryKey].components,
+            [editingComponent.type]: {
+              icon: updatedComponent.icon,
+              label: updatedComponent.label,
+              color: updatedComponent.color
+            }
+          }
+        };
+      }
+      
+      return newCategories;
+    });
+
+    setShowEditComponentDialog(false);
+    setEditingComponent(null);
+
+    toast({
+      title: "Component Updated",
+      description: `Component ${editingComponent.type} has been updated successfully.`,
+    });
+  };
+
+  const handleAddNewComponent = (newComponent: any) => {
+    const componentId = `CUSTOM_${Date.now()}`;
+    
+    // Add to custom components
+    setCustomComponents(prev => [...prev, {
+      id: componentId,
+      label: newComponent.label,
+      color: newComponent.color || 'blue',
+      icon: newComponent.icon || 'Package',
+      properties: newComponent.properties || {}
+    }]);
+
+    toast({
+      title: "Component Added",
+      description: `New component "${newComponent.label}" has been added to the palette.`,
+    });
+  };
   const formBuilderRef = useRef<HTMLDivElement>(null);
 
   // Create complete original ACCADJ program with all fields and validations
@@ -4103,6 +4277,111 @@ export default function FormBuilderFixed() {
               onSubmit={createExternalComponentWithProperties}
             />
 
+            {/* Edit Component Dialog */}
+            <Dialog open={showEditComponentDialog} onOpenChange={setShowEditComponentDialog}>
+              <DialogContent className={`max-w-md ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
+                <DialogHeader>
+                  <DialogTitle className={isDarkMode ? 'text-white' : ''}>
+                    Edit Component
+                  </DialogTitle>
+                </DialogHeader>
+                {editingComponent && (
+                  <div className="space-y-4">
+                    <div>
+                      <Label className={isDarkMode ? 'text-gray-300' : ''}>Component Type</Label>
+                      <Input
+                        value={editingComponent.type}
+                        disabled
+                        className={isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-300' : ''}
+                      />
+                    </div>
+                    <div>
+                      <Label className={isDarkMode ? 'text-gray-300' : ''}>Label</Label>
+                      <Input
+                        value={editingComponent.label}
+                        onChange={(e) => setEditingComponent({...editingComponent, label: e.target.value})}
+                        className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                      />
+                    </div>
+                    <div>
+                      <Label className={isDarkMode ? 'text-gray-300' : ''}>Color</Label>
+                      <select
+                        value={editingComponent.color}
+                        onChange={(e) => setEditingComponent({...editingComponent, color: e.target.value})}
+                        className={`w-full px-3 py-2 border rounded-md ${
+                          isDarkMode 
+                            ? 'bg-gray-700 border-gray-600 text-white' 
+                            : 'bg-white border-gray-300'
+                        }`}
+                      >
+                        <option value="blue">Blue</option>
+                        <option value="green">Green</option>
+                        <option value="orange">Orange</option>
+                        <option value="purple">Purple</option>
+                        <option value="cyan">Cyan</option>
+                        <option value="pink">Pink</option>
+                        <option value="indigo">Indigo</option>
+                        <option value="teal">Teal</option>
+                        <option value="violet">Violet</option>
+                        <option value="red">Red</option>
+                        <option value="yellow">Yellow</option>
+                        <option value="gray">Gray</option>
+                      </select>
+                    </div>
+                    <div className="flex justify-end space-x-2 pt-4">
+                      <Button
+                        variant="outline"
+                        onClick={() => setShowEditComponentDialog(false)}
+                        className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        onClick={() => handleSaveEditedComponent(editingComponent)}
+                        className={isDarkMode ? 'bg-blue-600 hover:bg-blue-700' : ''}
+                      >
+                        Save Changes
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </DialogContent>
+            </Dialog>
+
+            {/* Delete Confirmation Dialog */}
+            <Dialog open={showDeleteConfirmDialog} onOpenChange={setShowDeleteConfirmDialog}>
+              <DialogContent className={`max-w-md ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
+                <DialogHeader>
+                  <DialogTitle className={isDarkMode ? 'text-white' : ''}>
+                    Delete Component
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
+                    Are you sure you want to delete the component "{componentToDelete}"? 
+                    This action cannot be undone.
+                  </p>
+                  <div className="flex justify-end space-x-2 pt-4">
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowDeleteConfirmDialog(false)}
+                      className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      onClick={confirmDeleteComponent}
+                      className="bg-red-600 hover:bg-red-700 text-white"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Delete
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+
             {/* Add External Components Dialog */}
             <Dialog open={showAddComponent} onOpenChange={setShowAddComponent}>
               <DialogTrigger asChild>
@@ -4474,11 +4753,28 @@ export default function FormBuilderFixed() {
             </div>
             {!isPaletteCollapsed && (
               <div className="space-y-2">
-                {Object.entries(ComponentCategories).map(([categoryKey, category]) => (
+                {/* Add Component Button */}
+                <div className="mb-3">
+                  <Button
+                    onClick={() => setShowVisualComponentCreator(true)}
+                    size="sm"
+                    className={`w-full ${isDarkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-600 hover:bg-blue-700'} text-white`}
+                  >
+                    <Plus className="w-3 h-3 mr-2" />
+                    Add Component
+                  </Button>
+                </div>
+                
+                {Object.entries(editableCategories).map(([categoryKey, category]) => (
                   <div key={categoryKey} className="space-y-1">
-                    <div className={`flex items-center space-x-2 text-xs font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                      <category.icon className="w-3 h-3" />
-                      <span>{category.name}</span>
+                    <div className={`flex items-center justify-between text-xs font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                      <div className="flex items-center space-x-2">
+                        <category.icon className="w-3 h-3" />
+                        <span>{category.name}</span>
+                      </div>
+                      <span className="text-xs opacity-60">
+                        {Object.keys(category.components).length}
+                      </span>
                     </div>
                     <div className="grid grid-cols-3 gap-2 pl-2">
                       {Object.entries(category.components).map(([type, config]) => (
@@ -4489,6 +4785,8 @@ export default function FormBuilderFixed() {
                           icon={(config as any).icon}
                           color={(config as any).color}
                           isDarkMode={isDarkMode}
+                          onEdit={handleEditComponent}
+                          onDelete={handleDeleteComponent}
                         />
                       ))}
                     </div>
@@ -4500,37 +4798,35 @@ export default function FormBuilderFixed() {
             {customComponents.length > 0 && (
               <>
                 <Separator className="my-4" />
-                <h3 className={`font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Custom Components</h3>
-                <div className="grid grid-cols-1 gap-2">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Custom Components</h3>
+                  <span className="text-xs opacity-60">{customComponents.length}</span>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
                   {customComponents.map((component) => (
-                    <div
+                    <DraggableComponent
                       key={component.id}
-                      draggable
-                      onDragStart={(e) => {
-                        e.dataTransfer.setData('componentType', component.id);
+                      componentType={component.id}
+                      label={component.label}
+                      icon={Package}
+                      color={component.color}
+                      isDarkMode={isDarkMode}
+                      onEdit={(id) => {
+                        const comp = customComponents.find(c => c.id === id);
+                        if (comp) {
+                          setEditingComponent({
+                            type: comp.id,
+                            label: comp.label,
+                            color: comp.color,
+                            icon: comp.icon,
+                            category: 'custom'
+                          });
+                          setShowEditComponentDialog(true);
+                        }
                       }}
-                      className={`p-3 border-2 border-dashed rounded-lg cursor-move transition-all hover:shadow-md ${
-                        isDarkMode 
-                          ? `bg-${component.color}-900/20 border-${component.color}-600 hover:border-${component.color}-500`
-                          : `bg-${component.color}-50 border-${component.color}-200 hover:border-${component.color}-400`
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <div className={`w-4 h-4 rounded bg-${component.color}-600 flex items-center justify-center`}>
-                            <Package className="w-3 h-3 text-white" />
-                          </div>
-                          <span className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                            {component.label}
-                          </span>
-                        </div>
-                        <span className={`text-xs px-2 py-1 rounded ${
-                          isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-600'
-                        }`}>
-                          CUSTOM
-                        </span>
-                      </div>
-                    </div>
+                      onDelete={handleDeleteComponent}
+                      isCustom={true}
+                    />
                   ))}
                 </div>
               </>
