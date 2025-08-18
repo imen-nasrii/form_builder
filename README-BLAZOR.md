@@ -19,12 +19,33 @@ dotnet restore
 # 2. Set up database connection (update appsettings.json or set environment variable)
 export DATABASE_URL="Host=localhost;Database=formbuilder_pro;Username=postgres;Password=yourpassword"
 
-# 3. Run the application
+# 3. Run the application with hot reload (recommended for development)
+dotnet watch run
+
+# Alternative: Run without hot reload
 dotnet run
 
 # 4. Open browser to
 https://localhost:5001
 ```
+
+### 🔥 Development with Hot Reload
+For the best development experience, use `dotnet watch run`:
+
+```bash
+# Start with hot reload and custom URLs
+dotnet watch run --urls="https://localhost:5001;http://localhost:5000"
+
+# Or use the provided development script
+./dotnet-watch-workflow.sh
+```
+
+**Hot Reload Features:**
+- **Automatic restart** on C# code changes
+- **Live reload** of Razor pages and components
+- **CSS hot reload** without page refresh
+- **Real-time updates** as you edit files
+- **Faster development cycle** with instant feedback
 
 ## 📁 Project Structure
 
@@ -125,8 +146,17 @@ FormBuilderPro/
 # Build the project
 dotnet build
 
-# Run in development mode with hot reload
+# Run in development mode with hot reload (recommended)
 dotnet watch run
+
+# Run with custom URLs and hot reload
+dotnet watch run --urls="https://localhost:5001;http://localhost:5000"
+
+# Run without hot reload
+dotnet run
+
+# Run with specific environment
+ASPNETCORE_ENVIRONMENT=Development dotnet watch run
 
 # Create database migration
 dotnet ef migrations add InitialCreate
@@ -136,7 +166,27 @@ dotnet ef database update
 
 # Clean and rebuild
 dotnet clean && dotnet build
+
+# Run the development workflow script
+./dotnet-watch-workflow.sh
 ```
+
+### 🔧 .NET Watch Features
+
+`dotnet watch` provides automatic recompilation and restart when files change:
+
+- **C# Code Changes**: Automatic restart of the application
+- **Razor Pages (.razor)**: Live reload without losing state
+- **CSS Files**: Hot reload without page refresh
+- **Static Files**: Immediate refresh
+- **Configuration Changes**: Application restart
+
+**Example workflow:**
+1. Start: `dotnet watch run`
+2. Edit a Razor component
+3. Save the file
+4. Browser automatically updates
+5. Continue developing with instant feedback
 
 ## 🌐 Environment Variables
 
