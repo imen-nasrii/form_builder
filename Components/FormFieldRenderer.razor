@@ -1,0 +1,139 @@
+@using MudBlazor
+@using FormBuilderPro.Models
+
+<MudPaper Class="@GetFieldClass()" Elevation="@(IsSelected ? 2 : 1)" @onclick="OnSelect">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+            <MudIcon Icon="@GetFieldIcon()" Size="Size.Small" Color="@(IsSelected ? Color.Primary : Color.Default)" />
+            <MudStack Spacing="1">
+                <MudText Typo="Typo.body2" Style="font-weight: 500;">@Field.Label</MudText>
+                <MudText Typo="Typo.caption" Color="Color.Secondary">@Field.Type - @Field.DataField</MudText>
+            </MudStack>
+        </MudStack>
+        
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+            @if (Field.Required)
+            {
+                <MudChip Size="Size.Small" Color="Color.Error" Variant="Variant.Text">Required</MudChip>
+            }
+            <MudIconButton 
+                Icon="Icons.Material.Filled.Delete" 
+                Size="Size.Small" 
+                Color="Color.Error"
+                OnClick="@((MouseEventArgs e) => { e.StopPropagation(); OnDelete.InvokeAsync(); })" />
+        </MudStack>
+    </MudStack>
+    
+    <!-- Field Preview -->
+    <MudDivider Class="my-2" />
+    <div class="field-preview">
+        @switch (Field.Type)
+        {
+            case "TEXT":
+                <MudTextField Label="@Field.Label" Variant="@(Field.Outlined ? Variant.Outlined : Variant.Text)" 
+                             Required="@Field.Required" Disabled="true" Placeholder="Text input preview" />
+                break;
+            case "TEXTAREA":
+                <MudTextField Label="@Field.Label" Variant="@(Field.Outlined ? Variant.Outlined : Variant.Text)" 
+                             Required="@Field.Required" Disabled="true" Lines="3" Placeholder="Textarea preview" />
+                break;
+            case "NUMBER":
+                <MudNumericField Label="@Field.Label" Variant="@(Field.Outlined ? Variant.Outlined : Variant.Text)" 
+                                Required="@Field.Required" Disabled="true" T="int?" />
+                break;
+            case "EMAIL":
+                <MudTextField Label="@Field.Label" Variant="@(Field.Outlined ? Variant.Outlined : Variant.Text)" 
+                             Required="@Field.Required" Disabled="true" InputType="InputType.Email" 
+                             Placeholder="email@example.com" />
+                break;
+            case "PASSWORD":
+                <MudTextField Label="@Field.Label" Variant="@(Field.Outlined ? Variant.Outlined : Variant.Text)" 
+                             Required="@Field.Required" Disabled="true" InputType="InputType.Password" 
+                             Placeholder="Password" />
+                break;
+            case "SELECT":
+                <MudSelect Label="@Field.Label" Variant="@(Field.Outlined ? Variant.Outlined : Variant.Text)" 
+                          Required="@Field.Required" Disabled="true" T="string">
+                    <MudSelectItem Value="@("option1")">Option 1</MudSelectItem>
+                    <MudSelectItem Value="@("option2")">Option 2</MudSelectItem>
+                </MudSelect>
+                break;
+            case "RADIO":
+                <MudRadioGroup T="string" Label="@Field.Label" Required="@Field.Required" Disabled="true">
+                    <MudRadio Value="@("option1")">Option 1</MudRadio>
+                    <MudRadio Value="@("option2")">Option 2</MudRadio>
+                </MudRadioGroup>
+                break;
+            case "CHECKBOX":
+                <MudCheckBox Label="@Field.Label" Required="@Field.Required" Disabled="true" T="bool" />
+                break;
+            case "DATE":
+                <MudDatePicker Label="@Field.Label" Variant="@(Field.Outlined ? Variant.Outlined : Variant.Text)" 
+                              Required="@Field.Required" Disabled="true" />
+                break;
+            case "FILE":
+                <MudFileUpload Label="@Field.Label" Required="@Field.Required" Disabled="true" T="IBrowserFile">
+                    <ButtonTemplate>
+                        <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="Icons.Material.Filled.CloudUpload">
+                            @Field.Label
+                        </MudButton>
+                    </ButtonTemplate>
+                </MudFileUpload>
+                break;
+            case "BUTTON":
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="true">@Field.Label</MudButton>
+                break;
+            case "LABEL":
+                <MudText Typo="Typo.body1">@Field.Label</MudText>
+                break;
+            case "HEADING":
+                <MudText Typo="Typo.h6">@Field.Label</MudText>
+                break;
+            case "DIVIDER":
+                <MudDivider />
+                break;
+            default:
+                <MudAlert Severity="Severity.Info">Custom component: @Field.Type</MudAlert>
+                break;
+        }
+    </div>
+</MudPaper>
+
+@code {
+    [Parameter] public FormField Field { get; set; } = new();
+    [Parameter] public bool IsSelected { get; set; }
+    [Parameter] public EventCallback OnSelect { get; set; }
+    [Parameter] public EventCallback OnDelete { get; set; }
+
+    private string GetFieldClass()
+    {
+        var baseClass = "pa-3 ma-1 cursor-pointer transition-all";
+        return IsSelected ? $"{baseClass} border-primary" : baseClass;
+    }
+
+    private string GetFieldIcon()
+    {
+        return Field.Type switch
+        {
+            "TEXT" => Icons.Material.Filled.TextFields,
+            "TEXTAREA" => Icons.Material.Filled.Subject,
+            "NUMBER" => Icons.Material.Filled.Numbers,
+            "EMAIL" => Icons.Material.Filled.Email,
+            "PASSWORD" => Icons.Material.Filled.Lock,
+            "SELECT" => Icons.Material.Filled.ArrowDropDown,
+            "RADIO" => Icons.Material.Filled.RadioButtonChecked,
+            "CHECKBOX" => Icons.Material.Filled.CheckBox,
+            "DATE" => Icons.Material.Filled.DateRange,
+            "FILE" => Icons.Material.Filled.Upload,
+            "BUTTON" => Icons.Material.Filled.SmartButton,
+            "LINK" => Icons.Material.Filled.Link,
+            "LABEL" => Icons.Material.Filled.Label,
+            "HEADING" => Icons.Material.Filled.Title,
+            "DIVIDER" => Icons.Material.Filled.HorizontalRule,
+            "GROUP" => Icons.Material.Filled.Folder,
+            "GRID" => Icons.Material.Filled.GridOn,
+            "ACCORDION" => Icons.Material.Filled.ExpandMore,
+            _ => Icons.Material.Filled.Extension
+        };
+    }
+}

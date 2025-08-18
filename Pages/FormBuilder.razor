@@ -1,0 +1,382 @@
+@page "/form-builder"
+@page "/form-builder/{FormId:int}"
+@using MudBlazor
+@using FormBuilderPro.Models
+@using FormBuilderPro.Services
+@inject IFormService FormService
+@inject IComponentService ComponentService
+@inject ISnackbar Snackbar
+@inject NavigationManager Navigation
+
+<PageTitle>Form Builder - FormBuilder Pro</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.False" Class="pa-0">
+    <MudAppBar Bottom="false" Fixed="false" Dense="true" Color="Color.Surface" Elevation="1">
+        <MudIconButton Icon="Icons.Material.Filled.ArrowBack" Color="Color.Inherit" OnClick="GoBack" />
+        <MudText Typo="Typo.h6">@(FormId.HasValue ? "Edit Form" : "Create New Form")</MudText>
+        <MudSpacer />
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveForm" Disabled="@_isSaving">
+            @if (_isSaving)
+            {
+                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                <MudText Class="ms-2">Saving...</MudText>
+            }
+            else
+            {
+                <MudIcon Icon="Icons.Material.Filled.Save" Class="me-1" />
+                <MudText>Save Form</MudText>
+            }
+        </MudButton>
+        <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="PreviewForm" Class="ms-2">
+            <MudIcon Icon="Icons.Material.Filled.Preview" Class="me-1" />
+            Preview
+        </MudButton>
+    </MudAppBar>
+
+    <MudGrid Class="mt-4">
+        <!-- Component Palette -->
+        <MudItem xs="12" md="3">
+            <MudPaper Class="pa-4" Elevation="2" Style="height: calc(100vh - 200px); overflow-y: auto;">
+                <MudText Typo="Typo.h6" GutterBottom="true">Component Palette</MudText>
+                
+                <!-- Built-in Components -->
+                <MudExpansionPanels Elevation="0">
+                    @foreach (var category in _componentCategories)
+                    {
+                        <MudExpansionPanel>
+                            <TitleContent>
+                                <div class="d-flex align-items-center">
+                                    <MudIcon Icon="Icons.Material.Filled.Folder" class="mr-3" />
+                                    <MudText>@category.Key</MudText>
+                                    <MudSpacer />
+                                    <MudChip Size="Size.Small" Variant="Variant.Text">@category.Value.Count</MudChip>
+                                </div>
+                            </TitleContent>
+                            <ChildContent>
+                                <MudGrid>
+                                    @foreach (var componentType in category.Value)
+                                    {
+                                        <MudItem xs="12" sm="6">
+                                            <MudPaper 
+                                                Class="pa-2 ma-1 cursor-pointer hover-effect"
+                                                Elevation="1"
+                                                @ondragstart="@((DragEventArgs e) => OnDragStart(e, componentType))"
+                                                draggable="true"
+                                                @onclick="@(() => AddComponent(componentType))">
+                                                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                                    <MudIcon Icon="@GetComponentIcon(componentType)" Size="Size.Small" />
+                                                    <MudText Typo="Typo.caption">@GetComponentLabel(componentType)</MudText>
+                                                </MudStack>
+                                            </MudPaper>
+                                        </MudItem>
+                                    }
+                                </MudGrid>
+                            </ChildContent>
+                        </MudExpansionPanel>
+                    }
+                </MudExpansionPanels>
+
+                <!-- Custom Components -->
+                @if (_customComponents.Any())
+                {
+                    <MudDivider Class="my-4" />
+                    <MudText Typo="Typo.subtitle1" GutterBottom="true">Custom Components</MudText>
+                    <MudGrid>
+                        @foreach (var component in _customComponents)
+                        {
+                            <MudItem xs="12" sm="6">
+                                <MudPaper 
+                                    Class="pa-2 ma-1 cursor-pointer hover-effect"
+                                    Elevation="1"
+                                    @ondragstart="@((DragEventArgs e) => OnDragStart(e, component.Id))"
+                                    draggable="true"
+                                    @onclick="@(() => AddComponent(component.Id))">
+                                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Justify="Justify.SpaceBetween">
+                                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+                                            <MudIcon Icon="Icons.Material.Filled.Extension" Size="Size.Small" Color="Color.Secondary" />
+                                            <MudText Typo="Typo.caption">@component.Label</MudText>
+                                        </MudStack>
+                                        <MudIconButton Icon="Icons.Material.Filled.MoreVert" Size="Size.Small" />
+                                    </MudStack>
+                                </MudPaper>
+                            </MudItem>
+                        }
+                    </MudGrid>
+                }
+
+                <MudButton 
+                    Variant="Variant.Outlined" 
+                    Color="Color.Primary" 
+                    FullWidth="true"
+                    StartIcon="Icons.Material.Filled.Add"
+                    OnClick="OpenComponentCreator"
+                    Class="mt-4">
+                    Add Custom Component
+                </MudButton>
+            </MudPaper>
+        </MudItem>
+
+        <!-- Form Canvas -->
+        <MudItem xs="12" md="6">
+            <MudPaper Class="pa-4" Elevation="2" Style="height: calc(100vh - 200px); overflow-y: auto;">
+                <MudStack>
+                    <MudTextField @bind-Value="_currentForm.MenuId" Label="Menu ID" Variant="Variant.Outlined" />
+                    <MudTextField @bind-Value="_currentForm.Label" Label="Form Label" Variant="Variant.Outlined" />
+                    <MudGrid>
+                        <MudItem xs="6">
+                            <MudTextField @bind-Value="_currentForm.FormWidth" Label="Form Width" Variant="Variant.Outlined" />
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudSelect @bind-Value="_currentForm.Layout" Label="Layout" Variant="Variant.Outlined">
+                                <MudSelectItem Value="@("PROCESS")">Process</MudSelectItem>
+                                <MudSelectItem Value="@("MASTER")">Master</MudSelectItem>
+                                <MudSelectItem Value="@("REPORT")">Report</MudSelectItem>
+                            </MudSelect>
+                        </MudItem>
+                    </MudGrid>
+                </MudStack>
+
+                <MudDivider Class="my-4" />
+                
+                <MudText Typo="Typo.h6" GutterBottom="true">Form Fields</MudText>
+                
+                <!-- Drop Zone -->
+                <MudPaper 
+                    Class="pa-4 ma-2 drop-zone"
+                    Elevation="0"
+                    Style="min-height: 400px; border: 2px dashed #ccc;"
+                    @ondrop="@OnDrop"
+                    @ondragover="@OnDragOver"
+                    @ondragenter="@OnDragEnter">
+                    
+                    @if (!_currentForm.Fields.Any())
+                    {
+                        <MudStack AlignItems="AlignItems.Center" Justify="Justify.Center" Style="height: 200px;">
+                            <MudIcon Icon="Icons.Material.Filled.Add" Style="font-size: 3rem;" Color="Color.Secondary" />
+                            <MudText Typo="Typo.h6" Color="Color.Secondary">Drop components here</MudText>
+                            <MudText Typo="Typo.body2" Color="Color.Secondary">Drag components from the palette to build your form</MudText>
+                        </MudStack>
+                    }
+                    else
+                    {
+                        <MudStack Spacing="3">
+                            @foreach (var field in _currentForm.Fields)
+                            {
+                                <FormFieldRenderer 
+                                    Field="@field"
+                                    IsSelected="@(field.Id == _selectedFieldId)"
+                                    OnSelect="@(() => SelectField(field.Id))"
+                                    OnDelete="@(() => DeleteField(field.Id))" />
+                            }
+                        </MudStack>
+                    }
+                </MudPaper>
+            </MudPaper>
+        </MudItem>
+
+        <!-- Properties Panel -->
+        <MudItem xs="12" md="3">
+            <MudPaper Class="pa-4" Elevation="2" Style="height: calc(100vh - 200px); overflow-y: auto;">
+                <MudText Typo="Typo.h6" GutterBottom="true">Properties</MudText>
+                
+                @if (!string.IsNullOrEmpty(_selectedFieldId))
+                {
+                    var selectedField = _currentForm.Fields.FirstOrDefault(f => f.Id == _selectedFieldId);
+                    if (selectedField != null)
+                    {
+                        <FieldPropertiesEditor Field="@selectedField" OnFieldChanged="@OnFieldChanged" />
+                    }
+                }
+                else
+                {
+                    <MudText Typo="Typo.body2" Color="Color.Secondary">
+                        Select a field to edit its properties
+                    </MudText>
+                }
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    [Parameter] public int? FormId { get; set; }
+    
+    private Form _currentForm = new Form();
+    private List<CustomComponent> _customComponents = new();
+    private Dictionary<string, List<string>> _componentCategories = new();
+    private Dictionary<string, object> _componentTypes = new();
+    private string? _selectedFieldId;
+    private bool _isSaving = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _componentCategories = ComponentService.GetComponentCategories();
+        _componentTypes = ComponentService.GetDefaultComponentTypes();
+        _customComponents = (await ComponentService.GetUserComponentsAsync("user_1")).ToList();
+
+        if (FormId.HasValue)
+        {
+            _currentForm = await FormService.GetFormByIdAsync(FormId.Value, "user_1") ?? new Form();
+        }
+        else
+        {
+            _currentForm = new Form
+            {
+                UserId = "user_1",
+                MenuId = $"FORM_{DateTime.Now:yyyyMMddHHmmss}",
+                Label = "New Form",
+                FormWidth = "700px",
+                Layout = "PROCESS",
+                Fields = new List<FormField>()
+            };
+        }
+    }
+
+    private void OnDragStart(DragEventArgs e, string componentType)
+    {
+        e.DataTransfer.SetData("componentType", componentType);
+    }
+
+    private void OnDragOver(DragEventArgs e)
+    {
+        e.DataTransfer.DropEffect = "move";
+    }
+
+    private void OnDragEnter(DragEventArgs e)
+    {
+        e.DataTransfer.DropEffect = "move";
+    }
+
+    private void OnDrop(DragEventArgs e)
+    {
+        var componentType = e.DataTransfer.GetData("componentType");
+        if (!string.IsNullOrEmpty(componentType))
+        {
+            AddComponent(componentType);
+        }
+    }
+
+    private void AddComponent(string componentType)
+    {
+        var newField = new FormField
+        {
+            Id = $"field_{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid().ToString("N")[..8]}",
+            Type = componentType,
+            Label = GetComponentLabel(componentType),
+            DataField = $"data_{componentType.ToLower()}",
+            Width = "100%",
+            Spacing = "4",
+            Required = false,
+            Inline = false,
+            Outlined = true
+        };
+
+        _currentForm.Fields.Add(newField);
+        SelectField(newField.Id);
+        StateHasChanged();
+    }
+
+    private void SelectField(string fieldId)
+    {
+        _selectedFieldId = fieldId;
+        StateHasChanged();
+    }
+
+    private void DeleteField(string fieldId)
+    {
+        _currentForm.Fields.RemoveAll(f => f.Id == fieldId);
+        if (_selectedFieldId == fieldId)
+        {
+            _selectedFieldId = null;
+        }
+        StateHasChanged();
+    }
+
+    private void OnFieldChanged()
+    {
+        StateHasChanged();
+    }
+
+    private async Task SaveForm()
+    {
+        _isSaving = true;
+        try
+        {
+            if (FormId.HasValue)
+            {
+                _currentForm.Id = FormId.Value;
+                await FormService.UpdateFormAsync(_currentForm);
+                Snackbar.Add("Form updated successfully!", Severity.Success);
+            }
+            else
+            {
+                var savedForm = await FormService.CreateFormAsync(_currentForm);
+                Navigation.NavigateTo($"/form-builder/{savedForm.Id}");
+                Snackbar.Add("Form created successfully!", Severity.Success);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error saving form: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _isSaving = false;
+        }
+    }
+
+    private void PreviewForm()
+    {
+        // TODO: Implement form preview
+        Snackbar.Add("Preview functionality coming soon!", Severity.Info);
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/forms");
+    }
+
+    private void OpenComponentCreator()
+    {
+        // TODO: Implement component creator dialog
+        Snackbar.Add("Component creator coming soon!", Severity.Info);
+    }
+
+    private string GetComponentIcon(string componentType)
+    {
+        return componentType switch
+        {
+            "TEXT" => Icons.Material.Filled.TextFields,
+            "TEXTAREA" => Icons.Material.Filled.Subject,
+            "NUMBER" => Icons.Material.Filled.Numbers,
+            "EMAIL" => Icons.Material.Filled.Email,
+            "PASSWORD" => Icons.Material.Filled.Lock,
+            "SELECT" => Icons.Material.Filled.ArrowDropDown,
+            "RADIO" => Icons.Material.Filled.RadioButtonChecked,
+            "CHECKBOX" => Icons.Material.Filled.CheckBox,
+            "DATE" => Icons.Material.Filled.DateRange,
+            "FILE" => Icons.Material.Filled.Upload,
+            "BUTTON" => Icons.Material.Filled.SmartButton,
+            "LINK" => Icons.Material.Filled.Link,
+            "LABEL" => Icons.Material.Filled.Label,
+            "HEADING" => Icons.Material.Filled.Title,
+            "DIVIDER" => Icons.Material.Filled.HorizontalRule,
+            "GROUP" => Icons.Material.Filled.Folder,
+            "GRID" => Icons.Material.Filled.GridOn,
+            "ACCORDION" => Icons.Material.Filled.ExpandMore,
+            _ => Icons.Material.Filled.Extension
+        };
+    }
+
+    private string GetComponentLabel(string componentType)
+    {
+        if (_componentTypes.ContainsKey(componentType))
+        {
+            var component = _componentTypes[componentType] as dynamic;
+            return component?.label ?? componentType;
+        }
+
+        var customComponent = _customComponents.FirstOrDefault(c => c.Id == componentType);
+        return customComponent?.Label ?? componentType;
+    }
+}

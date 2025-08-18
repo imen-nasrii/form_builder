@@ -1,0 +1,106 @@
+@using MudBlazor
+@using FormBuilderPro.Models
+
+<MudStack Spacing="3">
+    <MudTextField @bind-Value="Field.Id" Label="Field ID" Variant="Variant.Outlined" Required="true" 
+                  OnTextChanged="@(() => OnFieldChanged.InvokeAsync())" />
+    
+    <MudTextField @bind-Value="Field.Label" Label="Label" Variant="Variant.Outlined" Required="true"
+                  OnTextChanged="@(() => OnFieldChanged.InvokeAsync())" />
+    
+    <MudTextField @bind-Value="Field.DataField" Label="Data Field" Variant="Variant.Outlined" Required="true"
+                  OnTextChanged="@(() => OnFieldChanged.InvokeAsync())" />
+    
+    <MudSelect @bind-Value="Field.Type" Label="Field Type" Variant="Variant.Outlined"
+               ValueChanged="@(() => OnFieldChanged.InvokeAsync())">
+        <MudSelectItem Value="@("TEXT")">Text Input</MudSelectItem>
+        <MudSelectItem Value="@("TEXTAREA")">Text Area</MudSelectItem>
+        <MudSelectItem Value="@("NUMBER")">Number</MudSelectItem>
+        <MudSelectItem Value="@("EMAIL")">Email</MudSelectItem>
+        <MudSelectItem Value="@("PASSWORD")">Password</MudSelectItem>
+        <MudSelectItem Value="@("SELECT")">Select Dropdown</MudSelectItem>
+        <MudSelectItem Value="@("RADIO")">Radio Button</MudSelectItem>
+        <MudSelectItem Value="@("CHECKBOX")">Checkbox</MudSelectItem>
+        <MudSelectItem Value="@("DATE")">Date Picker</MudSelectItem>
+        <MudSelectItem Value="@("FILE")">File Upload</MudSelectItem>
+        <MudSelectItem Value="@("BUTTON")">Button</MudSelectItem>
+        <MudSelectItem Value="@("LABEL")">Label</MudSelectItem>
+        <MudSelectItem Value="@("HEADING")">Heading</MudSelectItem>
+        <MudSelectItem Value="@("DIVIDER")">Divider</MudSelectItem>
+    </MudSelect>
+
+    <MudDivider />
+    
+    <MudText Typo="Typo.subtitle2">Layout Properties</MudText>
+    
+    <MudTextField @bind-Value="Field.Width" Label="Width" Variant="Variant.Outlined" 
+                  Placeholder="e.g., 100%, 300px"
+                  OnTextChanged="@(() => OnFieldChanged.InvokeAsync())" />
+    
+    <MudSelect @bind-Value="Field.Spacing" Label="Spacing" Variant="Variant.Outlined"
+               ValueChanged="@(() => OnFieldChanged.InvokeAsync())">
+        <MudSelectItem Value="@("0")">None</MudSelectItem>
+        <MudSelectItem Value="@("2")">Small</MudSelectItem>
+        <MudSelectItem Value="@("4")">Medium</MudSelectItem>
+        <MudSelectItem Value="@("6")">Large</MudSelectItem>
+        <MudSelectItem Value="@("8")">Extra Large</MudSelectItem>
+    </MudSelect>
+
+    <MudDivider />
+    
+    <MudText Typo="Typo.subtitle2">Field Options</MudText>
+    
+    <MudSwitch @bind-Value="Field.Required" Label="Required Field" Color="Color.Primary"
+               ValueChanged="@(() => OnFieldChanged.InvokeAsync())" />
+    
+    <MudSwitch @bind-Value="Field.Inline" Label="Inline Layout" Color="Color.Primary"
+               ValueChanged="@(() => OnFieldChanged.InvokeAsync())" />
+    
+    <MudSwitch @bind-Value="Field.Outlined" Label="Outlined Style" Color="Color.Primary"
+               ValueChanged="@(() => OnFieldChanged.InvokeAsync())" />
+
+    @if (Field.Type == "SELECT" || Field.Type == "RADIO")
+    {
+        <MudDivider />
+        <MudText Typo="Typo.subtitle2">Options</MudText>
+        <MudTextField @bind-Value="Field.Value" Label="Options (comma-separated)" Variant="Variant.Outlined" 
+                      Placeholder="Option 1, Option 2, Option 3"
+                      OnTextChanged="@(() => OnFieldChanged.InvokeAsync())" />
+    }
+
+    @if (Field.Type == "TEXTAREA")
+    {
+        <MudDivider />
+        <MudText Typo="Typo.subtitle2">Text Area Settings</MudText>
+        <MudNumericField @bind-Value="TextAreaLines" Label="Number of Lines" Variant="Variant.Outlined" 
+                         Min="1" Max="20"
+                         ValueChanged="@(() => OnFieldChanged.InvokeAsync())" T="int" />
+    }
+
+    @if (!string.IsNullOrEmpty(Field.Entity))
+    {
+        <MudDivider />
+        <MudText Typo="Typo.subtitle2">Advanced Properties</MudText>
+        <MudTextField @bind-Value="Field.Entity" Label="Entity" Variant="Variant.Outlined"
+                      OnTextChanged="@(() => OnFieldChanged.InvokeAsync())" />
+    }
+</MudStack>
+
+@code {
+    [Parameter] public FormField Field { get; set; } = new();
+    [Parameter] public EventCallback OnFieldChanged { get; set; }
+
+    private int TextAreaLines = 3;
+
+    protected override void OnParametersSet()
+    {
+        // Parse textarea lines from properties if available
+        if (Field.Type == "TEXTAREA" && Field.Properties.ContainsKey("lines"))
+        {
+            if (int.TryParse(Field.Properties["lines"].ToString(), out int lines))
+            {
+                TextAreaLines = lines;
+            }
+        }
+    }
+}

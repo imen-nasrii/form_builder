@@ -1,0 +1,213 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary-color: #1976d2;
+    --secondary-color: #424242;
+    --success-color: #4caf50;
+    --error-color: #f44336;
+    --warning-color: #ff9800;
+    --info-color: #2196f3;
+    --surface-color: #ffffff;
+    --background-color: #fafafa;
+    --text-primary: #212121;
+    --text-secondary: #757575;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-color: var(--background-color);
+    color: var(--text-primary);
+}
+
+#blazor-error-ui {
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.hover-effect {
+    transition: all 0.2s ease-in-out;
+}
+
+.hover-effect:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.drop-zone {
+    border: 2px dashed #ccc !important;
+    transition: all 0.3s ease;
+}
+
+.drop-zone:hover,
+.drop-zone.drag-over {
+    border-color: var(--primary-color) !important;
+    background-color: rgba(25, 118, 210, 0.05);
+}
+
+.field-preview {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.border-primary {
+    border: 2px solid var(--primary-color) !important;
+}
+
+.transition-all {
+    transition: all 0.2s ease-in-out;
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --surface-color: #1e1e1e;
+        --background-color: #121212;
+        --text-primary: #ffffff;
+        --text-secondary: #b3b3b3;
+    }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--background-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--text-secondary);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-primary);
+}
+
+/* MudBlazor overrides */
+.mud-paper {
+    background-color: var(--surface-color) !important;
+}
+
+.mud-drawer {
+    background-color: var(--surface-color) !important;
+}
+
+.mud-appbar {
+    background-color: var(--primary-color) !important;
+}
+
+/* Loading animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Form builder specific styles */
+.component-palette {
+    background: var(--surface-color);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.form-canvas {
+    background: var(--surface-color);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    min-height: 500px;
+}
+
+.properties-panel {
+    background: var(--surface-color);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.form-field-item {
+    margin: 8px 0;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    transition: all 0.2s ease;
+}
+
+.form-field-item:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.15);
+}
+
+.form-field-item.selected {
+    border-color: var(--primary-color);
+    background-color: rgba(25, 118, 210, 0.05);
+}
+
+/* Component dragging styles */
+.component-item {
+    cursor: grab;
+    transition: all 0.2s ease;
+}
+
+.component-item:active {
+    cursor: grabbing;
+    transform: scale(0.95);
+}
+
+.component-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .mud-container {
+        padding: 8px !important;
+    }
+    
+    .mud-grid-item {
+        padding: 4px !important;
+    }
+}
+
+/* Print styles */
+@media print {
+    .mud-appbar,
+    .mud-drawer,
+    .no-print {
+        display: none !important;
+    }
+    
+    .mud-main-content {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+}
