@@ -74,12 +74,24 @@ echo ""
 
 # Check if .NET is available (would work in proper .NET environment)
 if command -v dotnet &> /dev/null; then
-    echo "🎉 .NET Runtime detected! Ready to run with: dotnet run"
+    echo "🎉 .NET Runtime detected! Ready to run with: dotnet watch run"
     echo ""
-    echo "Starting application..."
-    dotnet run --urls="https://localhost:5001;http://localhost:5000"
+    echo "🔄 Starting application with hot reload..."
+    echo "   Command: dotnet watch run --urls=\"https://localhost:5001;http://localhost:5000\""
+    echo ""
+    dotnet watch run --urls="https://localhost:5001;http://localhost:5000"
 else
     echo "⚠️  .NET Runtime not found in current environment"
     echo "   Install .NET 8 SDK to run this Blazor application"
     echo "   Download from: https://dotnet.microsoft.com/download"
+    echo ""
+    echo "🔄 Once .NET is installed, you can run with hot reload:"
+    echo "   dotnet watch run"
+    echo "   dotnet watch run --urls=\"https://localhost:5001;http://localhost:5000\""
+    echo ""
+    echo "📝 Hot reload features with 'dotnet watch':"
+    echo "   • Automatic restart on file changes"
+    echo "   • Live reload of Razor pages"
+    echo "   • CSS hot reload"
+    echo "   • Faster development cycle"
 fi
