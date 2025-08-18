@@ -1,0 +1,72 @@
+@using MudBlazor
+@inherits LayoutComponentBase
+
+<MudThemeProvider Theme="@customTheme" />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudText Typo="Typo.h6" Class="ml-3">FormBuilder Pro</MudText>
+        <MudSpacer />
+        <MudIconButton Icon="Icons.Material.Filled.Brightness4" Color="Color.Inherit" OnClick="@ToggleDarkMode" />
+        <MudIconButton Icon="Icons.Material.Filled.Notifications" Color="Color.Inherit" />
+        <MudIconButton Icon="Icons.Material.Filled.AccountCircle" Color="Color.Inherit" />
+    </MudAppBar>
+    
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+        <NavMenu />
+    </MudDrawer>
+    
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.False" Class="mt-4">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private bool _drawerOpen = true;
+    private bool _isDarkMode = false;
+
+    private MudTheme customTheme = new()
+    {
+        Palette = new PaletteLight()
+        {
+            Primary = "#1976d2",
+            Secondary = "#424242",
+            AppbarBackground = "#1976d2",
+        },
+        PaletteDark = new PaletteDark()
+        {
+            Primary = "#90caf9",
+            Secondary = "#f5f5f5",
+            AppbarBackground = "#1e1e1e",
+        }
+    };
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    void ToggleDarkMode()
+    {
+        _isDarkMode = !_isDarkMode;
+        if (_isDarkMode)
+        {
+            customTheme = new MudTheme()
+            {
+                Palette = customTheme.PaletteDark
+            };
+        }
+        else
+        {
+            customTheme = new MudTheme()
+            {
+                Palette = customTheme.Palette
+            };
+        }
+    }
+}

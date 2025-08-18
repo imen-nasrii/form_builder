@@ -1,0 +1,110 @@
+@page "/"
+@using MudBlazor
+
+<PageTitle>FormBuilder Pro - Home</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large">
+    <MudGrid>
+        <MudItem xs="12">
+            <MudPaper Class="pa-4 ma-2" Elevation="3">
+                <MudText Typo="Typo.h4" GutterBottom="true">
+                    Welcome to FormBuilder Pro
+                </MudText>
+                <MudText Typo="Typo.body1" Class="mb-4">
+                    Advanced multi-platform enterprise AI form generation platform with cutting-edge technologies for comprehensive data management and dynamic form creation.
+                </MudText>
+                
+                <MudGrid>
+                    <MudItem xs="12" sm="6" md="4">
+                        <MudCard>
+                            <MudCardContent>
+                                <MudText Typo="Typo.h6">Quick Start</MudText>
+                                <MudText Typo="Typo.body2">Create your first form using our drag-and-drop builder</MudText>
+                            </MudCardContent>
+                            <MudCardActions>
+                                <MudButton Variant="Variant.Text" Color="Color.Primary" Href="/form-builder">
+                                    Start Building
+                                </MudButton>
+                            </MudCardActions>
+                        </MudCard>
+                    </MudItem>
+                    
+                    <MudItem xs="12" sm="6" md="4">
+                        <MudCard>
+                            <MudCardContent>
+                                <MudText Typo="Typo.h6">My Forms</MudText>
+                                <MudText Typo="Typo.body2">View and manage your existing forms</MudText>
+                            </MudCardContent>
+                            <MudCardActions>
+                                <MudButton Variant="Variant.Text" Color="Color.Primary" Href="/forms">
+                                    View Forms
+                                </MudButton>
+                            </MudCardActions>
+                        </MudCard>
+                    </MudItem>
+                    
+                    <MudItem xs="12" sm="6" md="4">
+                        <MudCard>
+                            <MudCardContent>
+                                <MudText Typo="Typo.h6">Templates</MudText>
+                                <MudText Typo="Typo.body2">Browse pre-built form templates</MudText>
+                            </MudCardContent>
+                            <MudCardActions>
+                                <MudButton Variant="Variant.Text" Color="Color.Primary" Href="/templates">
+                                    Explore Templates
+                                </MudButton>
+                            </MudCardActions>
+                        </MudCard>
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+        </MudItem>
+        
+        <MudItem xs="12">
+            <MudPaper Class="pa-4 ma-2" Elevation="2">
+                <MudText Typo="Typo.h5" GutterBottom="true">Key Features</MudText>
+                <MudGrid>
+                    <MudItem xs="12" sm="6" md="3">
+                        <MudStack AlignItems="AlignItems.Center" Class="pa-2">
+                            <MudIcon Icon="Icons.Material.Filled.Build" Style="font-size:3rem;" Color="Color.Primary" />
+                            <MudText Typo="Typo.h6">Drag & Drop Builder</MudText>
+                            <MudText Typo="Typo.body2" Align="Align.Center">
+                                Intuitive visual form creation with real-time preview
+                            </MudText>
+                        </MudStack>
+                    </MudItem>
+                    
+                    <MudItem xs="12" sm="6" md="3">
+                        <MudStack AlignItems="AlignItems.Center" Class="pa-2">
+                            <MudIcon Icon="Icons.Material.Filled.Extension" Style="font-size:3rem;" Color="Color.Secondary" />
+                            <MudText Typo="Typo.h6">Custom Components</MudText>
+                            <MudText Typo="Typo.body2" Align="Align.Center">
+                                Create and manage custom form components with properties
+                            </MudText>
+                        </MudStack>
+                    </MudItem>
+                    
+                    <MudItem xs="12" sm="6" md="3">
+                        <MudStack AlignItems="AlignItems.Center" Class="pa-2">
+                            <MudIcon Icon="Icons.Material.Filled.SmartToy" Style="font-size:3rem;" Color="Color.Tertiary" />
+                            <MudText Typo="Typo.h6">AI Assistant "Alex"</MudText>
+                            <MudText Typo="Typo.body2" Align="Align.Center">
+                                Intelligent form generation and component mapping
+                            </MudText>
+                        </MudStack>
+                    </MudItem>
+                    
+                    <MudItem xs="12" sm="6" md="3">
+                        <MudStack AlignItems="AlignItems.Center" Class="pa-2">
+                            <MudIcon Icon="Icons.Material.Filled.Code" Style="font-size:3rem;" Color="Color.Info" />
+                            <MudText Typo="Typo.h6">Multi-Framework Export</MudText>
+                            <MudText Typo="Typo.body2" Align="Align.Center">
+                                Export to React, Vue, Blazor, and more
+                            </MudText>
+                        </MudStack>
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudContainer>

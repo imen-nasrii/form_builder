@@ -1,0 +1,30 @@
+@using MudBlazor
+
+<MudNavMenu>
+    <MudText Typo="Typo.h6" Class="px-4 py-2">Navigation</MudText>
+    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="Icons.Material.Filled.Home">
+        Home
+    </MudNavLink>
+    <MudNavLink Href="/dashboard" Match="NavLinkMatch.Prefix" Icon="Icons.Material.Filled.Dashboard">
+        Dashboard
+    </MudNavLink>
+    <MudNavLink Href="/form-builder" Match="NavLinkMatch.Prefix" Icon="Icons.Material.Filled.Build">
+        Form Builder
+    </MudNavLink>
+    <MudNavLink Href="/forms" Match="NavLinkMatch.Prefix" Icon="Icons.Material.Filled.List">
+        My Forms
+    </MudNavLink>
+    <MudNavLink Href="/components" Match="NavLinkMatch.Prefix" Icon="Icons.Material.Filled.Extension">
+        Components
+    </MudNavLink>
+    <MudNavLink Href="/templates" Match="NavLinkMatch.Prefix" Icon="Icons.Material.Filled.FileCopy">
+        Templates
+    </MudNavLink>
+    <MudDivider Class="my-2" />
+    <MudNavLink Href="/settings" Match="NavLinkMatch.Prefix" Icon="Icons.Material.Filled.Settings">
+        Settings
+    </MudNavLink>
+    <MudNavLink Href="/help" Match="NavLinkMatch.Prefix" Icon="Icons.Material.Filled.Help">
+        Help
+    </MudNavLink>
+</MudNavMenu>
