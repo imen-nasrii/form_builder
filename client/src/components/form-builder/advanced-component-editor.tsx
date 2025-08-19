@@ -22,8 +22,6 @@ export default function AdvancedComponentEditor({
   onSave,
   isDarkMode
 }: AdvancedComponentEditorProps) {
-  const [newPropertyKey, setNewPropertyKey] = useState('');
-  const [newPropertyValue, setNewPropertyValue] = useState('');
   const [editingPropertyKey, setEditingPropertyKey] = useState<string | null>(null);
 
   if (!editingComponent) return null;
@@ -78,23 +76,18 @@ export default function AdvancedComponentEditor({
     setEditingComponent(updatedComponent);
   };
 
-  const handleAddProperty = () => {
-    console.log('handleAddProperty called:', newPropertyKey, newPropertyValue);
+  const addProperty = (propertyName: string, defaultValue: any = '') => {
+    console.log('addProperty called:', propertyName, defaultValue);
     
-    if (!newPropertyKey || !newPropertyValue || !editingComponent) {
-      console.log('Missing values or editingComponent');
-      return;
-    }
+    if (!editingComponent) return;
     
     const updatedComponent = {
       ...editingComponent,
-      [newPropertyKey.trim()]: newPropertyValue.trim()
+      [propertyName]: defaultValue
     };
     
     console.log('Adding property to component:', updatedComponent);
     setEditingComponent(updatedComponent);
-    setNewPropertyKey('');
-    setNewPropertyValue('');
   };
 
   const handleEditProperty = (oldKey: string, newKey: string, newValue: string) => {
@@ -254,32 +247,36 @@ export default function AdvancedComponentEditor({
               </div>
             </div>
 
-            {/* Add New Property Section */}
+            {/* Available Properties */}
             <div className="mt-6 p-4 border rounded-lg space-y-3" style={{ borderColor: isDarkMode ? '#374151' : '#e5e7eb' }}>
-              <h4 className={`font-medium ${isDarkMode ? 'text-white' : ''}`}>Add New Property</h4>
-              <div className="grid grid-cols-2 gap-2">
-                <Input
-                  value={newPropertyKey}
-                  onChange={(e) => setNewPropertyKey(e.target.value)}
-                  placeholder="Property name"
-                  className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-                />
-                <Input
-                  value={newPropertyValue}
-                  onChange={(e) => setNewPropertyValue(e.target.value)}
-                  placeholder="Property value"
-                  className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-                />
+              <h4 className={`font-medium ${isDarkMode ? 'text-white' : ''}`}>Available Properties</h4>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                {['width', 'height', 'margin', 'padding', 'fontSize', 'fontWeight', 'color', 'backgroundColor', 'border', 'borderRadius', 'opacity', 'zIndex', 'display', 'position', 'overflow', 'textAlign', 'lineHeight', 'letterSpacing', 'tabIndex', 'title', 'disabled', 'readonly', 'autocomplete', 'spellcheck'].map((propName) => (
+                  <Button
+                    key={propName}
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      if (!editingComponent[propName]) {
+                        setEditingComponent({
+                          ...editingComponent,
+                          [propName]: propName === 'disabled' || propName === 'readonly' || propName === 'spellcheck' ? false : ''
+                        });
+                      }
+                    }}
+                    className={`p-2 text-left justify-start ${
+                      editingComponent[propName] !== undefined 
+                        ? (isDarkMode ? 'bg-blue-900/30 border-blue-600 text-blue-300' : 'bg-blue-50 border-blue-300 text-blue-700')
+                        : (isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100')
+                    }`}
+                    title={editingComponent[propName] !== undefined ? 'Property already added' : `Add ${propName} property`}
+                    disabled={editingComponent[propName] !== undefined}
+                  >
+                    {propName}
+                  </Button>
+                ))}
               </div>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleAddProperty}
-                className={`w-full ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
-              >
-                <Plus size={16} className="mr-2" />
-                Add Property
-              </Button>
             </div>
           </div>
 
