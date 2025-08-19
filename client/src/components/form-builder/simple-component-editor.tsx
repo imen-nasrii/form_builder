@@ -209,9 +209,9 @@ export default function SimpleComponentEditor({
     }
   });
 
-  // Propriétés disponibles pour ajout (pas encore définies ET pas dans les requises)
+  // Propriétés disponibles pour ajout (pas encore définies ET pas dans les requises ET pas masquées)
   const propertiesForAddition = availableProperties.filter(prop => 
-    !(prop in editingComponent) && !requiredProperties.includes(prop)
+    !(prop in editingComponent) && !requiredProperties.includes(prop) && !hiddenProperties.includes(prop)
   );
 
   const handleDeleteProperty = (propertyKey: string) => {
@@ -236,15 +236,16 @@ export default function SimpleComponentEditor({
     setEditingComponent(updatedComponent);
   };
 
+  // État pour gérer les propriétés masquées
+  const [hiddenProperties, setHiddenProperties] = useState<string[]>([]);
+
   const handleRemoveProperty = (propertyName: string) => {
-    console.log('Removing property from available list:', propertyName);
+    console.log('Hiding property from available list:', propertyName);
     
-    // Cette fonction supprime temporairement la propriété de la liste disponible
-    // La propriété sera masquée jusqu'au prochain refresh
-    const updatedComponent = { ...editingComponent };
+    // Ajouter la propriété à la liste des propriétés masquées
+    setHiddenProperties(prev => [...prev, propertyName]);
     
-    console.log('Property removed from available list:', propertyName);
-    setEditingComponent(updatedComponent);
+    console.log('Property hidden from available list:', propertyName);
   };
 
   return (
