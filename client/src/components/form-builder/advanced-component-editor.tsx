@@ -30,36 +30,48 @@ export default function AdvancedComponentEditor({
 
   const handleDeleteProperty = (propertyKey: string) => {
     console.log('handleDeleteProperty called with:', propertyKey);
-    console.log('Current editingComponent before:', editingComponent);
+    
+    if (!editingComponent) return;
     
     const updatedComponent = { ...editingComponent };
     
-    // Reset the property to empty/default value instead of deleting
-    if (propertyKey === 'id') {
-      updatedComponent.id = '';
-    } else if (propertyKey === 'label') {
-      updatedComponent.label = '';
-    } else if (propertyKey === 'placeholder') {
-      updatedComponent.placeholder = '';
-    } else if (propertyKey === 'defaultValue') {
-      updatedComponent.defaultValue = '';
-    } else if (propertyKey === 'helpText') {
-      updatedComponent.helpText = '';
-    } else if (propertyKey === 'minLength') {
-      updatedComponent.minLength = null;
-    } else if (propertyKey === 'maxLength') {
-      updatedComponent.maxLength = null;
-    } else if (propertyKey === 'pattern') {
-      updatedComponent.pattern = '';
-    } else if (propertyKey === 'errorMessage') {
-      updatedComponent.errorMessage = '';
-    } else if (propertyKey === 'cssClasses') {
-      updatedComponent.cssClasses = '';
-    } else if (propertyKey === 'dataAttributes') {
-      updatedComponent.dataAttributes = '';
-    } else {
-      // For custom properties, actually delete them
-      delete updatedComponent[propertyKey];
+    // Clear the property value
+    switch (propertyKey) {
+      case 'id':
+        updatedComponent.id = '';
+        break;
+      case 'label':
+        updatedComponent.label = '';
+        break;
+      case 'placeholder':
+        updatedComponent.placeholder = '';
+        break;
+      case 'defaultValue':
+        updatedComponent.defaultValue = '';
+        break;
+      case 'helpText':
+        updatedComponent.helpText = '';
+        break;
+      case 'minLength':
+        updatedComponent.minLength = '';
+        break;
+      case 'maxLength':
+        updatedComponent.maxLength = '';
+        break;
+      case 'pattern':
+        updatedComponent.pattern = '';
+        break;
+      case 'errorMessage':
+        updatedComponent.errorMessage = '';
+        break;
+      case 'cssClasses':
+        updatedComponent.cssClasses = '';
+        break;
+      case 'dataAttributes':
+        updatedComponent.dataAttributes = '';
+        break;
+      default:
+        delete updatedComponent[propertyKey];
     }
     
     console.log('Updated component after:', updatedComponent);
@@ -67,14 +79,22 @@ export default function AdvancedComponentEditor({
   };
 
   const handleAddProperty = () => {
-    if (newPropertyKey && newPropertyValue) {
-      setEditingComponent({
-        ...editingComponent,
-        [newPropertyKey]: newPropertyValue
-      });
-      setNewPropertyKey('');
-      setNewPropertyValue('');
+    console.log('handleAddProperty called:', newPropertyKey, newPropertyValue);
+    
+    if (!newPropertyKey || !newPropertyValue || !editingComponent) {
+      console.log('Missing values or editingComponent');
+      return;
     }
+    
+    const updatedComponent = {
+      ...editingComponent,
+      [newPropertyKey.trim()]: newPropertyValue.trim()
+    };
+    
+    console.log('Adding property to component:', updatedComponent);
+    setEditingComponent(updatedComponent);
+    setNewPropertyKey('');
+    setNewPropertyValue('');
   };
 
   const handleEditProperty = (oldKey: string, newKey: string, newValue: string) => {
