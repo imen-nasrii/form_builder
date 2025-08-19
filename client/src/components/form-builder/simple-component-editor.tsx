@@ -259,107 +259,14 @@ export default function SimpleComponentEditor({
           </DialogTitle>
         </DialogHeader>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Current Properties */}
-          <div className="space-y-4">
-            <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : ''}`}>
-              Current Properties ({ensuredCurrentProperties.length})
-            </h3>
-            
-            <div className="space-y-2">
-              {ensuredCurrentProperties.length > 0 ? (
-                ensuredCurrentProperties.map(([propertyKey, propertyValue]) => {
-                  const propDef = propertyDefinitions[propertyKey] || { name: propertyKey, description: '', type: 'String' };
-                  const displayValue = (() => {
-                    if (propertyValue === null || propertyValue === undefined) {
-                      return 'null';
-                    }
-                    if (typeof propertyValue === 'boolean') {
-                      return propertyValue ? 'true' : 'false';
-                    }
-                    if (typeof propertyValue === 'object') {
-                      if (Array.isArray(propertyValue)) {
-                        return propertyValue.length === 0 ? '[]' : JSON.stringify(propertyValue, null, 2);
-                      }
-                      return Object.keys(propertyValue).length === 0 ? '{}' : JSON.stringify(propertyValue, null, 2);
-                    }
-                    if (typeof propertyValue === 'string' && propertyValue === '') {
-                      return '""';  // Empty string representation
-                    }
-                    if (typeof propertyValue === 'string' && propertyValue === 'Ex:') {
-                      return '""';  // Replace "Ex:" with proper empty string
-                    }
-                    return String(propertyValue);
-                  })();
-                  
-                  return (
-                    <div key={propertyKey} className={`p-4 rounded-lg border ${isDarkMode ? 'border-gray-600 bg-gray-700/30' : 'border-gray-200 bg-gray-50'}`}>
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <h4 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                            {propDef.name}
-                          </h4>
-                          {(requiredProperties.includes(propertyKey.toLowerCase()) || 
-                            requiredProperties.includes(propertyKey) ||
-                            Object.values(requiredPropertyMappings).includes(propertyKey.toLowerCase())) && (
-                            <span className={`text-xs px-2 py-1 rounded ${isDarkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>
-                              Required
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className={`text-xs px-2 py-1 rounded ${isDarkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-100 text-gray-600'}`}>
-                            {propDef.type}
-                          </span>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDeleteProperty(propertyKey)}
-                            disabled={requiredProperties.includes(propertyKey.toLowerCase()) || 
-                                     requiredProperties.includes(propertyKey) ||
-                                     Object.values(requiredPropertyMappings).includes(propertyKey.toLowerCase())}
-                            className={`p-1 ${
-                              (requiredProperties.includes(propertyKey.toLowerCase()) || 
-                               requiredProperties.includes(propertyKey) ||
-                               Object.values(requiredPropertyMappings).includes(propertyKey.toLowerCase()))
-                                ? (isDarkMode ? 'text-gray-600 cursor-not-allowed' : 'text-gray-400 cursor-not-allowed')
-                                : (isDarkMode ? 'text-red-400 hover:bg-red-900/20' : 'text-red-500 hover:bg-red-50')
-                            }`}
-                            title={(requiredProperties.includes(propertyKey.toLowerCase()) || 
-                                   requiredProperties.includes(propertyKey) ||
-                                   Object.values(requiredPropertyMappings).includes(propertyKey.toLowerCase())) ? 
-                                   'Required property cannot be deleted' : `Remove ${propertyKey}`}
-                          >
-                            <Trash2 size={14} />
-                          </Button>
-                        </div>
-                      </div>
-                      <p className={`text-sm mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                        {propDef.description}
-                      </p>
-                      <div className={`p-2 rounded border font-mono text-sm ${isDarkMode ? 'bg-gray-800 border-gray-600 text-green-300' : 'bg-white border-gray-200 text-gray-800'}`}>
-                        {displayValue}
-                      </div>
-                    </div>
-                  );
-                })
-              ) : (
-                <div className={`text-center py-8 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                  <p>No properties added yet.</p>
-                  <p className="text-sm">Add properties from the palette →</p>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Available Properties Palette */}
+        <div className="w-full">
+          {/* Available Properties Palette Only */}
           <div className="space-y-4">
             <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : ''}`}>
               Available Properties for {editingComponent.type} ({propertiesForAddition.length})
             </h3>
             
-            <div className="grid grid-cols-1 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               {propertiesForAddition.map((propertyName) => {
                 const propDef = propertyDefinitions[propertyName] || { name: propertyName, description: '', type: 'String' };
                 return (
