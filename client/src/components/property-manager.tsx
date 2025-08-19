@@ -649,14 +649,32 @@ export default function PropertyManager({ properties, onChange, className = '' }
                 className="font-mono resize-none"
                 style={{ whiteSpace: 'pre-wrap' }}
                 onKeyDown={(e) => {
-                  // Allow Enter key to create new lines
+                  // Force Enter key to work in textarea
                   if (e.key === 'Enter') {
                     e.stopPropagation();
+                    e.preventDefault();
+                    const target = e.target as HTMLTextAreaElement;
+                    const start = target.selectionStart;
+                    const end = target.selectionEnd;
+                    const currentValue = target.value;
+                    const newValue = currentValue.substring(0, start) + '\n' + currentValue.substring(end);
+                    
+                    // Update the form data
+                    const options = newValue.split('\n').filter(opt => opt.trim());
+                    setFormData({
+                      ...formData, 
+                      validation: { ...formData.validation, enum: options }
+                    });
+                    
+                    // Set cursor position after the inserted newline
+                    setTimeout(() => {
+                      target.selectionStart = target.selectionEnd = start + 1;
+                    }, 0);
                   }
                 }}
               />
               <p className="text-xs text-gray-500 mt-1">
-                Appuyez sur Entrée pour aller à la ligne suivante
+                💡 Appuyez sur <kbd className="px-1 py-0.5 bg-gray-200 rounded text-xs">Entrée</kbd> pour ajouter une nouvelle option
               </p>
             </div>
           </div>
