@@ -209,6 +209,9 @@ export default function SimpleComponentEditor({
     }
   });
 
+  // État pour gérer les propriétés masquées - déplacé avant son utilisation
+  const [hiddenProperties, setHiddenProperties] = useState<string[]>([]);
+
   // Propriétés disponibles pour ajout (pas encore définies ET pas dans les requises ET pas masquées)
   const propertiesForAddition = availableProperties.filter(prop => 
     !(prop in editingComponent) && !requiredProperties.includes(prop) && !hiddenProperties.includes(prop)
@@ -235,9 +238,6 @@ export default function SimpleComponentEditor({
     console.log('Updated component after deletion:', updatedComponent);
     setEditingComponent(updatedComponent);
   };
-
-  // État pour gérer les propriétés masquées
-  const [hiddenProperties, setHiddenProperties] = useState<string[]>([]);
 
   const handleRemoveProperty = (propertyName: string) => {
     console.log('Hiding property from available list:', propertyName);
