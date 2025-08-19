@@ -645,8 +645,19 @@ export default function PropertyManager({ properties, onChange, className = '' }
                   });
                 }}
                 placeholder={`Option 1\nOption 2\nOption 3`}
-                rows={4}
+                rows={6}
+                className="font-mono resize-none"
+                style={{ whiteSpace: 'pre-wrap' }}
+                onKeyDown={(e) => {
+                  // Allow Enter key to create new lines
+                  if (e.key === 'Enter') {
+                    e.stopPropagation();
+                  }
+                }}
               />
+              <p className="text-xs text-gray-500 mt-1">
+                Appuyez sur Entrée pour aller à la ligne suivante
+              </p>
             </div>
           </div>
         )}
