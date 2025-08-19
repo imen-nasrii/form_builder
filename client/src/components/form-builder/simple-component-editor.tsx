@@ -26,15 +26,55 @@ export default function SimpleComponentEditor({
   // Propriétés requises qui ne peuvent pas être supprimées
   const requiredProperties = ['type', 'id', 'label'];
   
+  // Définitions détaillées des propriétés avec descriptions
+  const propertyDefinitions: Record<string, { name: string; description: string; type: string }> = {
+    id: { name: 'Id', description: 'Unique field identifier.', type: 'String' },
+    label: { name: 'Label', description: 'Field display label.', type: 'String' },
+    inline: { name: 'Inline', description: 'Indicates if the field should be displayed inline.', type: 'Boolean' },
+    width: { name: 'Width', description: 'Field width (e.g. "32")', type: 'String' },
+    keyColumn: { name: 'Key Column', description: 'Key column in the data model for search', type: 'String' },
+    mainProperty: { name: 'Main Property', description: 'Main property to display for the element', type: 'String' },
+    descriptionProperty: { name: 'Description Property', description: 'Property containing the element description', type: 'String' },
+    showDescription: { name: 'Show Description', description: 'Indicates if the description should be displayed', type: 'Boolean' },
+    loadDataInfo: { name: 'LoadDataInfo - DataModel', description: 'Select the MFact model to load for data', type: 'String' },
+    columnsDefinition: { name: 'LoadDataInfo - ColumnsDefinition', description: 'Columns configuration: DataField, Caption, DataType, Visible', type: 'Array of Objects' },
+    placeholder: { name: 'Placeholder', description: 'Placeholder text for the input field', type: 'String' },
+    defaultValue: { name: 'Default Value', description: 'Default value for the field', type: 'String' },
+    helpText: { name: 'Help Text', description: 'Help text displayed below the field', type: 'String' },
+    required: { name: 'Required', description: 'Indicates if the field is mandatory', type: 'Boolean' },
+    disabled: { name: 'Disabled', description: 'Indicates if the field is disabled', type: 'Boolean' },
+    readonly: { name: 'Read Only', description: 'Indicates if the field is read-only', type: 'Boolean' },
+    minLength: { name: 'Min Length', description: 'Minimum length for text input', type: 'Number' },
+    maxLength: { name: 'Max Length', description: 'Maximum length for text input', type: 'Number' },
+    pattern: { name: 'Pattern', description: 'Regular expression pattern for validation', type: 'String' },
+    errorMessage: { name: 'Error Message', description: 'Custom error message for validation', type: 'String' },
+    cssClasses: { name: 'CSS Classes', description: 'Custom CSS classes for styling', type: 'String' },
+    dataAttributes: { name: 'Data Attributes', description: 'Custom data attributes', type: 'String' },
+    height: { name: 'Height', description: 'Field height', type: 'String' },
+    margin: { name: 'Margin', description: 'Field margin', type: 'String' },
+    padding: { name: 'Padding', description: 'Field padding', type: 'String' },
+    fontSize: { name: 'Font Size', description: 'Text font size', type: 'String' },
+    fontWeight: { name: 'Font Weight', description: 'Text font weight', type: 'String' },
+    color: { name: 'Color', description: 'Text color', type: 'String' },
+    backgroundColor: { name: 'Background Color', description: 'Background color', type: 'String' },
+    border: { name: 'Border', description: 'Border style', type: 'String' },
+    borderRadius: { name: 'Border Radius', description: 'Border radius', type: 'String' },
+    opacity: { name: 'Opacity', description: 'Element opacity', type: 'Number' },
+    zIndex: { name: 'Z-Index', description: 'Z-index for layering', type: 'Number' },
+    display: { name: 'Display', description: 'CSS display property', type: 'String' },
+    position: { name: 'Position', description: 'CSS position property', type: 'String' },
+    overflow: { name: 'Overflow', description: 'CSS overflow property', type: 'String' },
+    textAlign: { name: 'Text Align', description: 'Text alignment', type: 'String' },
+    lineHeight: { name: 'Line Height', description: 'Line height', type: 'String' },
+    letterSpacing: { name: 'Letter Spacing', description: 'Letter spacing', type: 'String' },
+    tabIndex: { name: 'Tab Index', description: 'Tab navigation index', type: 'Number' },
+    title: { name: 'Title', description: 'Element title attribute', type: 'String' },
+    autocomplete: { name: 'Autocomplete', description: 'Autocomplete attribute', type: 'String' },
+    spellcheck: { name: 'Spellcheck', description: 'Enable/disable spellcheck', type: 'Boolean' }
+  };
+
   // Liste des propriétés disponibles
-  const availableProperties = [
-    'placeholder', 'defaultValue', 'helpText', 'required', 'disabled', 'readonly',
-    'minLength', 'maxLength', 'pattern', 'errorMessage', 'cssClasses', 'dataAttributes',
-    'width', 'height', 'margin', 'padding', 'fontSize', 'fontWeight', 'color', 'backgroundColor',
-    'border', 'borderRadius', 'opacity', 'zIndex', 'display', 'position', 'overflow',
-    'textAlign', 'lineHeight', 'letterSpacing', 'tabIndex', 'title', 'autocomplete', 'spellcheck',
-    'inline', 'keyColumn', 'mainProperty', 'descriptionProperty', 'showDescription', 'loadDataInfo'
-  ];
+  const availableProperties = Object.keys(propertyDefinitions);
 
   // Propriétés actuellement définies (existent dans l'objet et ne sont pas type)
   const currentProperties = Object.entries(editingComponent).filter(([key, value]) => 
@@ -96,35 +136,57 @@ export default function SimpleComponentEditor({
             
             <div className="space-y-2">
               {currentProperties.length > 0 ? (
-                currentProperties.map(([propertyKey, propertyValue]) => (
-                  <div key={propertyKey} className={`flex items-center justify-between p-3 rounded-lg border ${isDarkMode ? 'border-gray-600 bg-gray-700/30' : 'border-gray-200 bg-gray-50'}`}>
-                    <div className="flex items-center gap-2">
-                      <span className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                        {propertyKey}
-                      </span>
-                      {requiredProperties.includes(propertyKey) && (
-                        <span className={`text-xs px-2 py-1 rounded ${isDarkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>
-                          Required
-                        </span>
-                      )}
+                currentProperties.map(([propertyKey, propertyValue]) => {
+                  const propDef = propertyDefinitions[propertyKey] || { name: propertyKey, description: '', type: 'String' };
+                  const displayValue = typeof propertyValue === 'boolean' 
+                    ? (propertyValue ? 'Activé' : 'Désactivé')
+                    : typeof propertyValue === 'object' && propertyValue !== null
+                      ? (Array.isArray(propertyValue) ? `[${propertyValue.length} items]` : JSON.stringify(propertyValue))
+                      : String(propertyValue || 'Ex:');
+                  
+                  return (
+                    <div key={propertyKey} className={`p-4 rounded-lg border ${isDarkMode ? 'border-gray-600 bg-gray-700/30' : 'border-gray-200 bg-gray-50'}`}>
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <h4 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                            {propDef.name}
+                          </h4>
+                          {requiredProperties.includes(propertyKey) && (
+                            <span className={`text-xs px-2 py-1 rounded ${isDarkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>
+                              Required
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className={`text-xs px-2 py-1 rounded ${isDarkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-100 text-gray-600'}`}>
+                            {propDef.type}
+                          </span>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteProperty(propertyKey)}
+                            disabled={requiredProperties.includes(propertyKey)}
+                            className={`p-1 ${
+                              requiredProperties.includes(propertyKey) 
+                                ? (isDarkMode ? 'text-gray-600 cursor-not-allowed' : 'text-gray-400 cursor-not-allowed')
+                                : (isDarkMode ? 'text-red-400 hover:bg-red-900/20' : 'text-red-500 hover:bg-red-50')
+                            }`}
+                            title={requiredProperties.includes(propertyKey) ? 'Required property cannot be deleted' : `Remove ${propertyKey}`}
+                          >
+                            <Trash2 size={14} />
+                          </Button>
+                        </div>
+                      </div>
+                      <p className={`text-sm mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                        {propDef.description}
+                      </p>
+                      <div className={`p-2 rounded border ${isDarkMode ? 'bg-gray-800 border-gray-600 text-gray-300' : 'bg-white border-gray-200 text-gray-700'}`}>
+                        {displayValue}
+                      </div>
                     </div>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDeleteProperty(propertyKey)}
-                      disabled={requiredProperties.includes(propertyKey)}
-                      className={`p-2 ${
-                        requiredProperties.includes(propertyKey) 
-                          ? (isDarkMode ? 'text-gray-600 cursor-not-allowed' : 'text-gray-400 cursor-not-allowed')
-                          : (isDarkMode ? 'text-red-400 hover:bg-red-900/20' : 'text-red-500 hover:bg-red-50')
-                      }`}
-                      title={requiredProperties.includes(propertyKey) ? 'Required property cannot be deleted' : `Remove ${propertyKey}`}
-                    >
-                      <Trash2 size={16} />
-                    </Button>
-                  </div>
-                ))
+                  );
+                })
               ) : (
                 <div className={`text-center py-8 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                   <p>No properties added yet.</p>
