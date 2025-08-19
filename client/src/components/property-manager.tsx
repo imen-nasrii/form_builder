@@ -271,8 +271,24 @@ export default function PropertyManager({ properties, onChange, className = '' }
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="string">Text (string)</SelectItem>
                 <SelectItem value="number">Number (number)</SelectItem>
-                <SelectItem value="string">Text Area (textarea)</SelectItem>
+                <SelectItem value="boolean">Boolean (boolean)</SelectItem>
+                <SelectItem value="date">Date (date)</SelectItem>
+                <SelectItem value="email">Email (email)</SelectItem>
+                <SelectItem value="url">URL (url)</SelectItem>
+                <SelectItem value="textarea">Text Area (textarea)</SelectItem>
+                <SelectItem value="enum">Dropdown (enum)</SelectItem>
+                <SelectItem value="array">Array (array)</SelectItem>
+                <SelectItem value="object">Object (object)</SelectItem>
+                <SelectItem value="TEXTBOX">Text Box</SelectItem>
+                <SelectItem value="GRIDLKP">Grid Lookup</SelectItem>
+                <SelectItem value="LSTLKP">List Lookup</SelectItem>
+                <SelectItem value="SELECT">Select List</SelectItem>
+                <SelectItem value="DATEPICKER">Date Picker</SelectItem>
+                <SelectItem value="CHECKBOX">Checkbox</SelectItem>
+                <SelectItem value="RADIOGRP">Radio Group</SelectItem>
+                <SelectItem value="GROUP">Group Container</SelectItem>
               </SelectContent>
             </Select>
           </div>
