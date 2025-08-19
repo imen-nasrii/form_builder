@@ -13,6 +13,7 @@ This repository includes **7 comprehensive documentation files** that cover ever
 | **[📖 Complete Setup Guide](./COMPREHENSIVE_SETUP_GUIDE.md)** | End-to-end setup for any developer | All developers |
 | **[⚡ Quick Start Guide](./QUICK_START_GUIDE.md)** | 5-minute setup | New developers |
 | **[🚀 Localhost Setup Rapide](./LOCALHOST_SETUP_RAPIDE.md)** | Configuration localhost étape par étape | Développeurs français |
+| **[🤖 AI Integration Guide](./AI_INTEGRATION_GUIDE.md)** | Configuration IA et assistant Alex | Tous développeurs |
 | **[🔧 API Documentation](./API_DOCUMENTATION.md)** | Complete API reference | API consumers |
 | **[🏗️ Architecture Guide](./ARCHITECTURE_GUIDE.md)** | Technical deep-dive | Architects/Senior devs |
 | **[🚀 Deployment Guide](./DEPLOYMENT_GUIDE.md)** | Production deployment | DevOps/SysAdmins |
