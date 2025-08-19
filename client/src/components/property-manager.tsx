@@ -150,7 +150,11 @@ export default function PropertyManager({ properties, onChange, className = '' }
       validation: propertyData.validation
     };
 
-    onChange([...properties, property]);
+    console.log("Adding property:", property);
+    console.log("Current properties before adding:", properties);
+    const updatedProperties = [...properties, property];
+    console.log("Updated properties after adding:", updatedProperties);
+    onChange(updatedProperties);
     
     // Reset form
     setNewProperty({
@@ -671,12 +675,18 @@ export default function PropertyManager({ properties, onChange, className = '' }
     );
   };
 
+  // Debug logging
+  console.log("PropertyManager - Current properties:", properties);
+  console.log("PropertyManager - Properties length:", properties.length);
+  
   const groupedProperties = properties.reduce((acc, prop) => {
     const category = prop.category || 'basic';
     if (!acc[category]) acc[category] = [];
     acc[category].push(prop);
     return acc;
   }, {} as Record<string, ComponentProperty[]>);
+  
+  console.log("PropertyManager - Grouped properties:", groupedProperties);
 
   return (
     <div className={`space-y-6 ${className}`}>
@@ -713,6 +723,11 @@ export default function PropertyManager({ properties, onChange, className = '' }
       </div>
 
       {/* Properties List */}
+      <div className="border border-red-300 p-4 bg-red-50">
+        <p className="text-sm text-red-700">DEBUG: Properties count: {properties.length}</p>
+        <p className="text-xs text-red-600">Properties: {JSON.stringify(properties, null, 2)}</p>
+      </div>
+      
       {properties.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
