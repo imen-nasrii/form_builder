@@ -4289,11 +4289,9 @@ export default function FormBuilderFixed() {
             />
 
             {/* Delete Confirmation Dialog */}
-            <Dialog open={showDeleteConfirmDialog} onOpenChange={setShowDeleteConfirmDialog}>
-              <DialogContent className={`max-w-md ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
                 <DialogHeader>
                   <DialogTitle className={isDarkMode ? 'text-white' : ''}>
-                    Delete Component
+                    Edit Component - Advanced Properties
                   </DialogTitle>
                 </DialogHeader>
                 {editingComponent && (
@@ -4601,6 +4599,27 @@ export default function FormBuilderFixed() {
 
                     {/* Action Buttons */}
                     <div className="flex justify-end space-x-2 pt-6 md:col-span-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => setShowEditComponentDialog(false)}
+                        className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        onClick={() => handleSaveEditedComponent(editingComponent)}
+                        className={isDarkMode ? 'bg-blue-600 hover:bg-blue-700' : ''}
+                      >
+                        Save Changes
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </DialogContent>
+            </Dialog>
+                      </select>
+                    </div>
+                    <div className="flex justify-end space-x-2 pt-4">
                       <Button
                         variant="outline"
                         onClick={() => setShowEditComponentDialog(false)}
