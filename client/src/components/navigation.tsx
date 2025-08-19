@@ -29,7 +29,7 @@ import {
 } from "lucide-react";
 import LanguageToggle from "@/components/language-toggle";
 import NotificationBell from "@/components/notification-bell";
-import formBuilderLogo from "@/assets/formbuilder-logo-3d.png";
+// Logo removed - using text instead
 
 export default function Navigation() {
   const { user } = useAuth() as { user: User | null };
@@ -60,14 +60,12 @@ export default function Navigation() {
           {/* FormBuilder Logo */}
           <Link href="/">
             <div className="flex items-center gap-2 cursor-pointer group">
-              <img 
-                src={formBuilderLogo}
-                alt="FormBuilder Logo" 
-                className="h-10 w-auto transition-all duration-300 group-hover:scale-105"
-              />
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-105">
+                <span className="text-white font-bold text-lg">F</span>
+              </div>
               <div className="flex flex-col">
                 <span className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  FormBuilder
+                  FormBuilder Pro
                 </span>
               </div>
             </div>
