@@ -42,13 +42,13 @@ export default function SimpleComponentEditor({
     inline: { name: 'Inline', description: 'Indicates if the field should be displayed inline.', type: 'Boolean' },
     width: { name: 'Width', description: 'Field width (e.g. "32")', type: 'String' },
     
-    // Propriétés spécifiques aux Radio Group
-    keyColumn: { name: 'Key Column', description: 'Key column in the data model for search', type: 'String' },
+    // Propriétés spécifiques aux lookups et grilles (GRIDLKP, LSTLKP)
+    keyColumn: { name: 'Key Column', description: 'Key column in the data model for search/lookup', type: 'String' },
     mainProperty: { name: 'Main Property', description: 'Main property to display for the element', type: 'String' },
     descriptionProperty: { name: 'Description Property', description: 'Property containing the element description', type: 'String' },
     showDescription: { name: 'Show Description', description: 'Indicates if the description should be displayed', type: 'Boolean' },
-    loadDataInfo: { name: 'LoadDataInfo - DataModel', description: 'Select the MFact model to load for data', type: 'String' },
-    columnsDefinition: { name: 'LoadDataInfo - ColumnsDefinition', description: 'Columns configuration: DataField, Caption, DataType, Visible', type: 'Array of Objects' },
+    loadDataInfo: { name: 'Data Model', description: 'MFact model name for data loading', type: 'String' },
+    columnsDefinition: { name: 'Columns Definition', description: 'Defines columns configuration (JSON format)', type: 'Array of Objects' },
     
     // Propriétés spécifiques aux options (Radio, Select, Checkbox)
     options: { name: 'Options', description: 'List of available options', type: 'Array of Objects' },
@@ -150,8 +150,12 @@ export default function SimpleComponentEditor({
         'keyColumn', 'mainProperty', 'loadDataInfo'
       ],
       'GRIDLKP': [
-        'columns', 'rows', 'sortable', 'filterable', 'keyColumn', 'mainProperty',
-        'loadDataInfo', 'columnsDefinition', 'dataSource'
+        'keyColumn', 'mainProperty', 'descriptionProperty', 'showDescription',
+        'loadDataInfo', 'columnsDefinition', 'dataSource', 'sortable', 'filterable'
+      ],
+      'LSTLKP': [
+        'keyColumn', 'mainProperty', 'descriptionProperty', 'showDescription',
+        'loadDataInfo', 'columnsDefinition', 'dataSource', 'displayField', 'valueField'
       ],
       'TABLE': [
         'columns', 'rows', 'sortable', 'filterable', 'height'
@@ -239,10 +243,16 @@ export default function SimpleComponentEditor({
                       return propertyValue ? 'true' : 'false';
                     }
                     if (typeof propertyValue === 'object') {
-                      return Array.isArray(propertyValue) ? `Array[${propertyValue.length}]` : JSON.stringify(propertyValue, null, 2);
+                      if (Array.isArray(propertyValue)) {
+                        return propertyValue.length === 0 ? '[]' : JSON.stringify(propertyValue, null, 2);
+                      }
+                      return Object.keys(propertyValue).length === 0 ? '{}' : JSON.stringify(propertyValue, null, 2);
                     }
                     if (typeof propertyValue === 'string' && propertyValue === '') {
-                      return '(empty string)';
+                      return '""';  // Empty string representation
+                    }
+                    if (typeof propertyValue === 'string' && propertyValue === 'Ex:') {
+                      return '""';  // Replace "Ex:" with proper empty string
                     }
                     return String(propertyValue);
                   })();
