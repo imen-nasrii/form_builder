@@ -72,7 +72,7 @@ import ExcelPropertiesPanel from '@/components/form-builder/excel-properties-pan
 import { useToast } from '@/hooks/use-toast';
 import PropertyManager, { ComponentProperty } from '@/components/property-manager';
 import VisualComponentCreator from '@/components/visual-component-creator';
-import AdvancedComponentEditor from '@/components/form-builder/advanced-component-editor';
+import SimpleComponentEditor from '@/components/form-builder/simple-component-editor';
 
 // Model Dropdown Selector Component
 function ModelDropdownSelector({ 
@@ -4279,7 +4279,7 @@ export default function FormBuilderFixed() {
             />
 
             {/* Advanced Component Editor */}
-            <AdvancedComponentEditor
+            <SimpleComponentEditor
               isOpen={showEditComponentDialog}
               onClose={() => setShowEditComponentDialog(false)}
               editingComponent={editingComponent}
