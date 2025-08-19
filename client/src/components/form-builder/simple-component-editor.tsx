@@ -178,6 +178,14 @@ export default function SimpleComponentEditor({
     key in editingComponent  // Affiche toutes les propriétés du composant, quel que soit le type
   );
 
+  // S'assurer que les propriétés requises sont toujours affichées
+  const ensuredCurrentProperties = [...currentProperties];
+  requiredProperties.forEach(reqProp => {
+    if (!ensuredCurrentProperties.find(([key]) => key === reqProp) && editingComponent[reqProp] !== undefined) {
+      ensuredCurrentProperties.push([reqProp, editingComponent[reqProp]]);
+    }
+  });
+
   // Propriétés disponibles pour ajout (pas encore définies ET pas dans les requises)
   const propertiesForAddition = availableProperties.filter(prop => 
     !(prop in editingComponent) && !requiredProperties.includes(prop)
@@ -228,12 +236,12 @@ export default function SimpleComponentEditor({
           {/* Current Properties */}
           <div className="space-y-4">
             <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : ''}`}>
-              Current Properties ({currentProperties.length})
+              Current Properties ({ensuredCurrentProperties.length})
             </h3>
             
             <div className="space-y-2">
-              {currentProperties.length > 0 ? (
-                currentProperties.map(([propertyKey, propertyValue]) => {
+              {ensuredCurrentProperties.length > 0 ? (
+                ensuredCurrentProperties.map(([propertyKey, propertyValue]) => {
                   const propDef = propertyDefinitions[propertyKey] || { name: propertyKey, description: '', type: 'String' };
                   const displayValue = (() => {
                     if (propertyValue === null || propertyValue === undefined) {
