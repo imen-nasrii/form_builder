@@ -357,6 +357,34 @@ export default function PropertyManager({ properties, onChange, className = '' }
               placeholder="Default text area content..."
               rows={3}
             />
+          ) : formData.type === 'date' ? (
+            <Input
+              type="date"
+              value={formData.defaultValue || ''}
+              onChange={(e) => setFormData({...formData, defaultValue: e.target.value})}
+              placeholder="YYYY-MM-DD"
+            />
+          ) : formData.type === 'email' ? (
+            <Input
+              type="email"
+              value={formData.defaultValue || ''}
+              onChange={(e) => setFormData({...formData, defaultValue: e.target.value})}
+              placeholder="example@email.com"
+            />
+          ) : formData.type === 'url' ? (
+            <Input
+              type="url"
+              value={formData.defaultValue || ''}
+              onChange={(e) => setFormData({...formData, defaultValue: e.target.value})}
+              placeholder="https://example.com"
+            />
+          ) : formData.type === 'textarea' ? (
+            <Textarea
+              value={formData.defaultValue || ''}
+              onChange={(e) => setFormData({...formData, defaultValue: e.target.value})}
+              placeholder="Default text area content..."
+              rows={4}
+            />
           ) : (
             <Input
               value={formData.defaultValue || ''}
