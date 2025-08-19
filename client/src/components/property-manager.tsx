@@ -267,23 +267,8 @@ export default function PropertyManager({ properties, onChange, className = '' }
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="string">Text (string)</SelectItem>
                 <SelectItem value="number">Number (number)</SelectItem>
-                <SelectItem value="boolean">Boolean (true/false)</SelectItem>
-                <SelectItem value="array">Array (array)</SelectItem>
-                <SelectItem value="object">Object (object)</SelectItem>
-                <SelectItem value="date">Date</SelectItem>
-                <SelectItem value="url">URL</SelectItem>
-                <SelectItem value="email">Email</SelectItem>
-                <SelectItem value="enum">Enum (dropdown)</SelectItem>
-                <SelectItem value="TEXTBOX">Text Box</SelectItem>
-                <SelectItem value="GRIDLKP">Grid Lookup</SelectItem>
-                <SelectItem value="LSTLKP">List Lookup</SelectItem>
-                <SelectItem value="SELECT">Select Dropdown</SelectItem>
-                <SelectItem value="DATEPICKER">Date Picker</SelectItem>
-                <SelectItem value="CHECKBOX">Checkbox</SelectItem>
-                <SelectItem value="RADIOGRP">Radio Group</SelectItem>
-                <SelectItem value="GROUP">Group Container</SelectItem>
+                <SelectItem value="string">Text Area (textarea)</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -338,6 +323,20 @@ export default function PropertyManager({ properties, onChange, className = '' }
                 ))}
               </SelectContent>
             </Select>
+          ) : formData.type === 'number' ? (
+            <Input
+              type="number"
+              value={formData.defaultValue || ''}
+              onChange={(e) => setFormData({...formData, defaultValue: e.target.value ? Number(e.target.value) : ''})}
+              placeholder="0"
+            />
+          ) : formData.type === 'string' ? (
+            <Textarea
+              value={formData.defaultValue || ''}
+              onChange={(e) => setFormData({...formData, defaultValue: e.target.value})}
+              placeholder="Default text area content..."
+              rows={3}
+            />
           ) : (
             <Input
               value={formData.defaultValue || ''}
