@@ -30,7 +30,33 @@ export default function AdvancedComponentEditor({
 
   const handleDeleteProperty = (propertyKey: string) => {
     const updatedComponent = { ...editingComponent };
-    delete updatedComponent[propertyKey];
+    // Reset the property to empty/default value instead of deleting
+    if (propertyKey === 'id') {
+      updatedComponent.id = '';
+    } else if (propertyKey === 'label') {
+      updatedComponent.label = '';
+    } else if (propertyKey === 'placeholder') {
+      updatedComponent.placeholder = '';
+    } else if (propertyKey === 'defaultValue') {
+      updatedComponent.defaultValue = '';
+    } else if (propertyKey === 'helpText') {
+      updatedComponent.helpText = '';
+    } else if (propertyKey === 'minLength') {
+      updatedComponent.minLength = null;
+    } else if (propertyKey === 'maxLength') {
+      updatedComponent.maxLength = null;
+    } else if (propertyKey === 'pattern') {
+      updatedComponent.pattern = '';
+    } else if (propertyKey === 'errorMessage') {
+      updatedComponent.errorMessage = '';
+    } else if (propertyKey === 'cssClasses') {
+      updatedComponent.cssClasses = '';
+    } else if (propertyKey === 'dataAttributes') {
+      updatedComponent.dataAttributes = '';
+    } else {
+      // For custom properties, actually delete them
+      delete updatedComponent[propertyKey];
+    }
     setEditingComponent(updatedComponent);
   };
 
@@ -92,7 +118,8 @@ export default function AdvancedComponentEditor({
                   variant="outline"
                   size="sm"
                   onClick={() => handleDeleteProperty('id')}
-                  className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+                  className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+                  title="Clear Component ID"
                 >
                   <Trash2 size={14} />
                 </Button>
@@ -112,7 +139,8 @@ export default function AdvancedComponentEditor({
                   variant="outline"
                   size="sm"
                   onClick={() => handleDeleteProperty('label')}
-                  className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+                  className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+                  title="Clear Label"
                 >
                   <Trash2 size={14} />
                 </Button>
@@ -133,7 +161,8 @@ export default function AdvancedComponentEditor({
                   variant="outline"
                   size="sm"
                   onClick={() => handleDeleteProperty('placeholder')}
-                  className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+                  className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+                  title="Clear Placeholder"
                 >
                   <Trash2 size={14} />
                 </Button>
@@ -154,7 +183,8 @@ export default function AdvancedComponentEditor({
                   variant="outline"
                   size="sm"
                   onClick={() => handleDeleteProperty('defaultValue')}
-                  className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+                  className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+                  title="Clear Default Value"
                 >
                   <Trash2 size={14} />
                 </Button>
@@ -180,7 +210,8 @@ export default function AdvancedComponentEditor({
                   variant="outline"
                   size="sm"
                   onClick={() => handleDeleteProperty('helpText')}
-                  className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+                  className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+                  title="Clear Help Text"
                 >
                   <Trash2 size={14} />
                 </Button>
@@ -351,7 +382,8 @@ export default function AdvancedComponentEditor({
                     variant="outline"
                     size="sm"
                     onClick={() => handleDeleteProperty('minLength')}
-                    className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+                    className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+                    title="Clear Min Length"
                   >
                     <Trash2 size={14} />
                   </Button>
@@ -373,7 +405,8 @@ export default function AdvancedComponentEditor({
                     variant="outline"
                     size="sm"
                     onClick={() => handleDeleteProperty('maxLength')}
-                    className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+                    className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+                    title="Clear Max Length"
                   >
                     <Trash2 size={14} />
                   </Button>
@@ -394,7 +427,8 @@ export default function AdvancedComponentEditor({
                     variant="outline"
                     size="sm"
                     onClick={() => handleDeleteProperty('pattern')}
-                    className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+                    className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+                    title="Clear Pattern"
                   >
                     <Trash2 size={14} />
                   </Button>
@@ -415,7 +449,8 @@ export default function AdvancedComponentEditor({
                     variant="outline"
                     size="sm"
                     onClick={() => handleDeleteProperty('errorMessage')}
-                    className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+                    className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+                    title="Clear Error Message"
                   >
                     <Trash2 size={14} />
                   </Button>
@@ -436,7 +471,8 @@ export default function AdvancedComponentEditor({
                     variant="outline"
                     size="sm"
                     onClick={() => handleDeleteProperty('cssClasses')}
-                    className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+                    className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+                    title="Clear CSS Classes"
                   >
                     <Trash2 size={14} />
                   </Button>
@@ -457,7 +493,8 @@ export default function AdvancedComponentEditor({
                     variant="outline"
                     size="sm"
                     onClick={() => handleDeleteProperty('dataAttributes')}
-                    className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+                    className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+                    title="Clear Data Attributes"
                   >
                     <Trash2 size={14} />
                   </Button>
