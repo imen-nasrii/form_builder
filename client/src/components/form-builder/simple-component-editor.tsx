@@ -23,8 +23,15 @@ export default function SimpleComponentEditor({
 }: SimpleComponentEditorProps) {
   if (!editingComponent) return null;
 
-  // Propriétés requises qui ne peuvent pas être supprimées
+  // Propriétés requises qui ne peuvent pas être supprimées (keys en minuscule selon les composants)
   const requiredProperties = ['type', 'id', 'label'];
+  
+  // Mapping des clés alternatives pour les propriétés requises
+  const requiredPropertyMappings: Record<string, string> = {
+    'Type': 'type',
+    'Id': 'id', 
+    'Label': 'label'
+  };
   
   // Définitions détaillées des propriétés avec descriptions
   const propertyDefinitions: Record<string, { name: string; description: string; type: string }> = {
@@ -181,8 +188,24 @@ export default function SimpleComponentEditor({
   // S'assurer que les propriétés requises sont toujours affichées
   const ensuredCurrentProperties = [...currentProperties];
   requiredProperties.forEach(reqProp => {
-    if (!ensuredCurrentProperties.find(([key]) => key === reqProp) && editingComponent[reqProp] !== undefined) {
-      ensuredCurrentProperties.push([reqProp, editingComponent[reqProp]]);
+    // Vérifier les variations de noms de propriétés (type vs Type, id vs Id, etc.)
+    const existsInCurrent = ensuredCurrentProperties.find(([key]) => 
+      key.toLowerCase() === reqProp.toLowerCase() || 
+      key === reqProp ||
+      Object.keys(requiredPropertyMappings).includes(key)
+    );
+    
+    if (!existsInCurrent) {
+      // Chercher la propriété dans le composant avec différentes variations
+      const componentKeys = Object.keys(editingComponent);
+      const foundKey = componentKeys.find(key => 
+        key.toLowerCase() === reqProp.toLowerCase() ||
+        requiredPropertyMappings[key] === reqProp
+      );
+      
+      if (foundKey && editingComponent[foundKey] !== undefined) {
+        ensuredCurrentProperties.push([foundKey, editingComponent[foundKey]]);
+      }
     }
   });
 
@@ -192,8 +215,12 @@ export default function SimpleComponentEditor({
   );
 
   const handleDeleteProperty = (propertyKey: string) => {
-    // Vérifier si la propriété est requise
-    if (requiredProperties.includes(propertyKey)) {
+    // Vérifier si la propriété est requise (avec variations de noms)
+    const isRequired = requiredProperties.includes(propertyKey.toLowerCase()) || 
+                      requiredProperties.includes(propertyKey) ||
+                      Object.values(requiredPropertyMappings).includes(propertyKey.toLowerCase());
+    
+    if (isRequired) {
       console.log('Cannot delete required property:', propertyKey);
       return;
     }
@@ -272,7 +299,9 @@ export default function SimpleComponentEditor({
                           <h4 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                             {propDef.name}
                           </h4>
-                          {requiredProperties.includes(propertyKey) && (
+                          {(requiredProperties.includes(propertyKey.toLowerCase()) || 
+                            requiredProperties.includes(propertyKey) ||
+                            Object.values(requiredPropertyMappings).includes(propertyKey.toLowerCase())) && (
                             <span className={`text-xs px-2 py-1 rounded ${isDarkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>
                               Required
                             </span>
@@ -287,13 +316,20 @@ export default function SimpleComponentEditor({
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDeleteProperty(propertyKey)}
-                            disabled={requiredProperties.includes(propertyKey)}
+                            disabled={requiredProperties.includes(propertyKey.toLowerCase()) || 
+                                     requiredProperties.includes(propertyKey) ||
+                                     Object.values(requiredPropertyMappings).includes(propertyKey.toLowerCase())}
                             className={`p-1 ${
-                              requiredProperties.includes(propertyKey) 
+                              (requiredProperties.includes(propertyKey.toLowerCase()) || 
+                               requiredProperties.includes(propertyKey) ||
+                               Object.values(requiredPropertyMappings).includes(propertyKey.toLowerCase()))
                                 ? (isDarkMode ? 'text-gray-600 cursor-not-allowed' : 'text-gray-400 cursor-not-allowed')
                                 : (isDarkMode ? 'text-red-400 hover:bg-red-900/20' : 'text-red-500 hover:bg-red-50')
                             }`}
-                            title={requiredProperties.includes(propertyKey) ? 'Required property cannot be deleted' : `Remove ${propertyKey}`}
+                            title={(requiredProperties.includes(propertyKey.toLowerCase()) || 
+                                   requiredProperties.includes(propertyKey) ||
+                                   Object.values(requiredPropertyMappings).includes(propertyKey.toLowerCase())) ? 
+                                   'Required property cannot be deleted' : `Remove ${propertyKey}`}
                           >
                             <Trash2 size={14} />
                           </Button>
