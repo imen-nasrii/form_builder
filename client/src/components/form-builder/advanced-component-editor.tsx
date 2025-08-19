@@ -29,7 +29,11 @@ export default function AdvancedComponentEditor({
   if (!editingComponent) return null;
 
   const handleDeleteProperty = (propertyKey: string) => {
+    console.log('handleDeleteProperty called with:', propertyKey);
+    console.log('Current editingComponent before:', editingComponent);
+    
     const updatedComponent = { ...editingComponent };
+    
     // Reset the property to empty/default value instead of deleting
     if (propertyKey === 'id') {
       updatedComponent.id = '';
@@ -57,6 +61,8 @@ export default function AdvancedComponentEditor({
       // For custom properties, actually delete them
       delete updatedComponent[propertyKey];
     }
+    
+    console.log('Updated component after:', updatedComponent);
     setEditingComponent(updatedComponent);
   };
 
@@ -117,7 +123,12 @@ export default function AdvancedComponentEditor({
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => handleDeleteProperty('id')}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Delete ID button clicked');
+                    handleDeleteProperty('id');
+                  }}
                   className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
                   title="Clear Component ID"
                 >
@@ -138,7 +149,12 @@ export default function AdvancedComponentEditor({
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => handleDeleteProperty('label')}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Delete Label button clicked');
+                    handleDeleteProperty('label');
+                  }}
                   className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
                   title="Clear Label"
                 >
