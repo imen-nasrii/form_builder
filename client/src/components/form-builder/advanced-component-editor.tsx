@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Trash2, Plus, Edit2 } from 'lucide-react';
 
 interface AdvancedComponentEditorProps {
   isOpen: boolean;
@@ -21,7 +22,38 @@ export default function AdvancedComponentEditor({
   onSave,
   isDarkMode
 }: AdvancedComponentEditorProps) {
+  const [newPropertyKey, setNewPropertyKey] = useState('');
+  const [newPropertyValue, setNewPropertyValue] = useState('');
+  const [editingPropertyKey, setEditingPropertyKey] = useState<string | null>(null);
+
   if (!editingComponent) return null;
+
+  const handleDeleteProperty = (propertyKey: string) => {
+    const updatedComponent = { ...editingComponent };
+    delete updatedComponent[propertyKey];
+    setEditingComponent(updatedComponent);
+  };
+
+  const handleAddProperty = () => {
+    if (newPropertyKey && newPropertyValue) {
+      setEditingComponent({
+        ...editingComponent,
+        [newPropertyKey]: newPropertyValue
+      });
+      setNewPropertyKey('');
+      setNewPropertyValue('');
+    }
+  };
+
+  const handleEditProperty = (oldKey: string, newKey: string, newValue: string) => {
+    const updatedComponent = { ...editingComponent };
+    if (oldKey !== newKey) {
+      delete updatedComponent[oldKey];
+    }
+    updatedComponent[newKey] = newValue;
+    setEditingComponent(updatedComponent);
+    setEditingPropertyKey(null);
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -46,58 +78,141 @@ export default function AdvancedComponentEditor({
               />
             </div>
 
-            <div>
+            <div className="relative">
               <Label className={isDarkMode ? 'text-gray-300' : ''}>Component ID</Label>
-              <Input
-                value={editingComponent.id || ''}
-                onChange={(e) => setEditingComponent({...editingComponent, id: e.target.value})}
-                placeholder="uniqueComponentId"
-                className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-              />
+              <div className="flex items-center space-x-2">
+                <Input
+                  value={editingComponent.id || ''}
+                  onChange={(e) => setEditingComponent({...editingComponent, id: e.target.value})}
+                  placeholder="uniqueComponentId"
+                  className={`flex-1 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDeleteProperty('id')}
+                  className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+                >
+                  <Trash2 size={14} />
+                </Button>
+              </div>
             </div>
             
-            <div>
+            <div className="relative">
               <Label className={isDarkMode ? 'text-gray-300' : ''}>Label</Label>
-              <Input
-                value={editingComponent.label}
-                onChange={(e) => setEditingComponent({...editingComponent, label: e.target.value})}
-                className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-              />
+              <div className="flex items-center space-x-2">
+                <Input
+                  value={editingComponent.label}
+                  onChange={(e) => setEditingComponent({...editingComponent, label: e.target.value})}
+                  className={`flex-1 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDeleteProperty('label')}
+                  className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+                >
+                  <Trash2 size={14} />
+                </Button>
+              </div>
             </div>
 
-            <div>
+            <div className="relative">
               <Label className={isDarkMode ? 'text-gray-300' : ''}>Placeholder Text</Label>
-              <Input
-                value={editingComponent.placeholder || ''}
-                onChange={(e) => setEditingComponent({...editingComponent, placeholder: e.target.value})}
-                placeholder="Enter placeholder text..."
-                className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-              />
+              <div className="flex items-center space-x-2">
+                <Input
+                  value={editingComponent.placeholder || ''}
+                  onChange={(e) => setEditingComponent({...editingComponent, placeholder: e.target.value})}
+                  placeholder="Enter placeholder text..."
+                  className={`flex-1 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDeleteProperty('placeholder')}
+                  className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+                >
+                  <Trash2 size={14} />
+                </Button>
+              </div>
             </div>
 
-            <div>
+            <div className="relative">
               <Label className={isDarkMode ? 'text-gray-300' : ''}>Default Value</Label>
-              <Input
-                value={editingComponent.defaultValue || ''}
-                onChange={(e) => setEditingComponent({...editingComponent, defaultValue: e.target.value})}
-                placeholder="Default value..."
-                className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-              />
+              <div className="flex items-center space-x-2">
+                <Input
+                  value={editingComponent.defaultValue || ''}
+                  onChange={(e) => setEditingComponent({...editingComponent, defaultValue: e.target.value})}
+                  placeholder="Default value..."
+                  className={`flex-1 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDeleteProperty('defaultValue')}
+                  className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+                >
+                  <Trash2 size={14} />
+                </Button>
+              </div>
             </div>
 
-            <div>
+            <div className="relative">
               <Label className={isDarkMode ? 'text-gray-300' : ''}>Help Text</Label>
-              <textarea
-                value={editingComponent.helpText || ''}
-                onChange={(e) => setEditingComponent({...editingComponent, helpText: e.target.value})}
-                placeholder="Help text for users..."
-                rows={3}
-                className={`w-full px-3 py-2 border rounded-md ${
-                  isDarkMode 
-                    ? 'bg-gray-700 border-gray-600 text-white' 
-                    : 'bg-white border-gray-300'
-                }`}
-              />
+              <div className="flex items-start space-x-2">
+                <textarea
+                  value={editingComponent.helpText || ''}
+                  onChange={(e) => setEditingComponent({...editingComponent, helpText: e.target.value})}
+                  placeholder="Help text for users..."
+                  rows={3}
+                  className={`flex-1 px-3 py-2 border rounded-md ${
+                    isDarkMode 
+                      ? 'bg-gray-700 border-gray-600 text-white' 
+                      : 'bg-white border-gray-300'
+                  }`}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDeleteProperty('helpText')}
+                  className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+                >
+                  <Trash2 size={14} />
+                </Button>
+              </div>
+            </div>
+
+            {/* Add New Property Section */}
+            <div className="mt-6 p-4 border rounded-lg space-y-3" style={{ borderColor: isDarkMode ? '#374151' : '#e5e7eb' }}>
+              <h4 className={`font-medium ${isDarkMode ? 'text-white' : ''}`}>Add New Property</h4>
+              <div className="grid grid-cols-2 gap-2">
+                <Input
+                  value={newPropertyKey}
+                  onChange={(e) => setNewPropertyKey(e.target.value)}
+                  placeholder="Property name"
+                  className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                />
+                <Input
+                  value={newPropertyValue}
+                  onChange={(e) => setNewPropertyValue(e.target.value)}
+                  placeholder="Property value"
+                  className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                />
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleAddProperty}
+                className={`w-full ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+              >
+                <Plus size={16} className="mr-2" />
+                Add Property
+              </Button>
             </div>
           </div>
 
@@ -221,66 +336,132 @@ export default function AdvancedComponentEditor({
             <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : ''}`}>Validation & Advanced</h3>
             
             <div className="grid grid-cols-1 gap-4">
-              <div>
+              <div className="relative">
                 <Label className={isDarkMode ? 'text-gray-300' : ''}>Min Length</Label>
-                <Input
-                  type="number"
-                  value={editingComponent.minLength || ''}
-                  onChange={(e) => setEditingComponent({...editingComponent, minLength: parseInt(e.target.value) || null})}
-                  placeholder="0"
-                  className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-                />
+                <div className="flex items-center space-x-2">
+                  <Input
+                    type="number"
+                    value={editingComponent.minLength || ''}
+                    onChange={(e) => setEditingComponent({...editingComponent, minLength: parseInt(e.target.value) || null})}
+                    placeholder="0"
+                    className={`flex-1 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDeleteProperty('minLength')}
+                    className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+                  >
+                    <Trash2 size={14} />
+                  </Button>
+                </div>
               </div>
 
-              <div>
+              <div className="relative">
                 <Label className={isDarkMode ? 'text-gray-300' : ''}>Max Length</Label>
-                <Input
-                  type="number"
-                  value={editingComponent.maxLength || ''}
-                  onChange={(e) => setEditingComponent({...editingComponent, maxLength: parseInt(e.target.value) || null})}
-                  placeholder="255"
-                  className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-                />
+                <div className="flex items-center space-x-2">
+                  <Input
+                    type="number"
+                    value={editingComponent.maxLength || ''}
+                    onChange={(e) => setEditingComponent({...editingComponent, maxLength: parseInt(e.target.value) || null})}
+                    placeholder="255"
+                    className={`flex-1 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDeleteProperty('maxLength')}
+                    className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+                  >
+                    <Trash2 size={14} />
+                  </Button>
+                </div>
               </div>
 
-              <div>
+              <div className="relative">
                 <Label className={isDarkMode ? 'text-gray-300' : ''}>Pattern (Regex)</Label>
-                <Input
-                  value={editingComponent.pattern || ''}
-                  onChange={(e) => setEditingComponent({...editingComponent, pattern: e.target.value})}
-                  placeholder="^[a-zA-Z0-9]+$"
-                  className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-                />
+                <div className="flex items-center space-x-2">
+                  <Input
+                    value={editingComponent.pattern || ''}
+                    onChange={(e) => setEditingComponent({...editingComponent, pattern: e.target.value})}
+                    placeholder="^[a-zA-Z0-9]+$"
+                    className={`flex-1 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDeleteProperty('pattern')}
+                    className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+                  >
+                    <Trash2 size={14} />
+                  </Button>
+                </div>
               </div>
 
-              <div>
+              <div className="relative">
                 <Label className={isDarkMode ? 'text-gray-300' : ''}>Error Message</Label>
-                <Input
-                  value={editingComponent.errorMessage || ''}
-                  onChange={(e) => setEditingComponent({...editingComponent, errorMessage: e.target.value})}
-                  placeholder="This field is invalid"
-                  className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-                />
+                <div className="flex items-center space-x-2">
+                  <Input
+                    value={editingComponent.errorMessage || ''}
+                    onChange={(e) => setEditingComponent({...editingComponent, errorMessage: e.target.value})}
+                    placeholder="This field is invalid"
+                    className={`flex-1 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDeleteProperty('errorMessage')}
+                    className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+                  >
+                    <Trash2 size={14} />
+                  </Button>
+                </div>
               </div>
 
-              <div>
+              <div className="relative">
                 <Label className={isDarkMode ? 'text-gray-300' : ''}>CSS Classes</Label>
-                <Input
-                  value={editingComponent.cssClasses || ''}
-                  onChange={(e) => setEditingComponent({...editingComponent, cssClasses: e.target.value})}
-                  placeholder="custom-class another-class"
-                  className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-                />
+                <div className="flex items-center space-x-2">
+                  <Input
+                    value={editingComponent.cssClasses || ''}
+                    onChange={(e) => setEditingComponent({...editingComponent, cssClasses: e.target.value})}
+                    placeholder="custom-class another-class"
+                    className={`flex-1 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDeleteProperty('cssClasses')}
+                    className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+                  >
+                    <Trash2 size={14} />
+                  </Button>
+                </div>
               </div>
 
-              <div>
+              <div className="relative">
                 <Label className={isDarkMode ? 'text-gray-300' : ''}>Data Attributes</Label>
-                <Input
-                  value={editingComponent.dataAttributes || ''}
-                  onChange={(e) => setEditingComponent({...editingComponent, dataAttributes: e.target.value})}
-                  placeholder="data-test=component data-id=123"
-                  className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-                />
+                <div className="flex items-center space-x-2">
+                  <Input
+                    value={editingComponent.dataAttributes || ''}
+                    onChange={(e) => setEditingComponent({...editingComponent, dataAttributes: e.target.value})}
+                    placeholder="data-test=component data-id=123"
+                    className={`flex-1 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}`}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDeleteProperty('dataAttributes')}
+                    className={`p-2 ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}`}
+                  >
+                    <Trash2 size={14} />
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
