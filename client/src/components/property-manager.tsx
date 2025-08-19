@@ -717,9 +717,9 @@ export default function PropertyManager({ properties, onChange, className = '' }
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <Code className="w-12 h-12 text-gray-400 mb-4" />
-            <h3 className="text-lg font-medium text-gray-600 mb-2">No properties defined</h3>
+            <h3 className="text-lg font-medium text-gray-600 mb-2">No properties defined yet</h3>
             <p className="text-gray-500 text-center mb-4">
-              Start by adding properties to configure your external component
+              Click "Add Property" above to start creating your component properties
             </p>
             <Button onClick={() => setIsAddDialogOpen(true)}>
               <Plus className="w-4 h-4 mr-2" />
