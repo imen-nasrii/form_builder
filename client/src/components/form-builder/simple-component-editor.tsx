@@ -50,11 +50,34 @@ export default function SimpleComponentEditor({
     loadDataInfo: { name: 'LoadDataInfo - DataModel', description: 'Select the MFact model to load for data', type: 'String' },
     columnsDefinition: { name: 'LoadDataInfo - ColumnsDefinition', description: 'Columns configuration: DataField, Caption, DataType, Visible', type: 'Array of Objects' },
     
-    // Propriétés spécifiques aux options
-    options: { name: 'Options', description: 'Radio button options list', type: 'Array of Objects' },
+    // Propriétés spécifiques aux options (Radio, Select, Checkbox)
+    options: { name: 'Options', description: 'List of available options', type: 'Array of Objects' },
     orientation: { name: 'Orientation', description: 'Layout orientation (horizontal/vertical)', type: 'String' },
-    selectedValue: { name: 'Selected Value', description: 'Currently selected radio option', type: 'String' },
-    name: { name: 'Name', description: 'Radio group name attribute', type: 'String' },
+    selectedValue: { name: 'Selected Value', description: 'Currently selected option value', type: 'String' },
+    name: { name: 'Name', description: 'Field name attribute', type: 'String' },
+    
+    // Propriétés spécifiques aux inputs
+    size: { name: 'Size', description: 'Field size (small, medium, large)', type: 'String' },
+    variant: { name: 'Variant', description: 'Field variant style', type: 'String' },
+    
+    // Propriétés spécifiques aux boutons
+    buttonType: { name: 'Button Type', description: 'Type of button (submit, button, reset)', type: 'String' },
+    buttonStyle: { name: 'Button Style', description: 'Button visual style', type: 'String' },
+    
+    // Propriétés spécifiques aux grilles/tables
+    columns: { name: 'Columns', description: 'Table column definitions', type: 'Array of Objects' },
+    rows: { name: 'Rows', description: 'Table row data', type: 'Array of Objects' },
+    sortable: { name: 'Sortable', description: 'Enable column sorting', type: 'Boolean' },
+    filterable: { name: 'Filterable', description: 'Enable column filtering', type: 'Boolean' },
+    
+    // Propriétés spécifiques aux lookup/dropdown
+    dataSource: { name: 'Data Source', description: 'Data source for lookup values', type: 'String' },
+    displayField: { name: 'Display Field', description: 'Field to display in dropdown', type: 'String' },
+    valueField: { name: 'Value Field', description: 'Field to use as value', type: 'String' },
+    
+    // Propriétés de validation avancées
+    validationRules: { name: 'Validation Rules', description: 'Custom validation rules', type: 'Array of Objects' },
+    customValidator: { name: 'Custom Validator', description: 'Custom validation function', type: 'Function' },
     placeholder: { name: 'Placeholder', description: 'Placeholder text for the input field', type: 'String' },
     defaultValue: { name: 'Default Value', description: 'Default value for the field', type: 'String' },
     helpText: { name: 'Help Text', description: 'Help text displayed below the field', type: 'String' },
@@ -87,15 +110,30 @@ export default function SimpleComponentEditor({
     tabIndex: { name: 'Tab Index', description: 'Tab navigation index', type: 'Number' },
     title: { name: 'Title', description: 'Element title attribute', type: 'String' },
     autocomplete: { name: 'Autocomplete', description: 'Autocomplete attribute', type: 'String' },
-    spellcheck: { name: 'Spellcheck', description: 'Enable/disable spellcheck', type: 'Boolean' }
+    spellcheck: { name: 'Spellcheck', description: 'Enable/disable spellcheck', type: 'Boolean' },
+    
+    // Propriétés de conteneur et layout
+    containerClass: { name: 'Container Class', description: 'CSS class for container element', type: 'String' },
+    flexDirection: { name: 'Flex Direction', description: 'Flex container direction', type: 'String' },
+    justifyContent: { name: 'Justify Content', description: 'Flex justify content alignment', type: 'String' },
+    alignItems: { name: 'Align Items', description: 'Flex align items alignment', type: 'String' },
+    
+    // Propriétés d'état et interaction
+    loading: { name: 'Loading', description: 'Loading state indicator', type: 'Boolean' },
+    error: { name: 'Error', description: 'Error state indicator', type: 'Boolean' },
+    success: { name: 'Success', description: 'Success state indicator', type: 'Boolean' },
+    onClick: { name: 'On Click', description: 'Click event handler', type: 'Function' },
+    onChange: { name: 'On Change', description: 'Change event handler', type: 'Function' },
+    onFocus: { name: 'On Focus', description: 'Focus event handler', type: 'Function' },
+    onBlur: { name: 'On Blur', description: 'Blur event handler', type: 'Function' }
   };
 
   // Liste des propriétés disponibles
   const availableProperties = Object.keys(propertyDefinitions);
 
-  // Propriétés actuellement définies - inclure TOUTES les propriétés (même vides) pour RADIOGRP
+  // Propriétés actuellement définies - inclure TOUTES les propriétés pour TOUS les composants
   const currentProperties = Object.entries(editingComponent).filter(([key, value]) => 
-    key in editingComponent  // Affiche toutes les propriétés du composant
+    key in editingComponent  // Affiche toutes les propriétés du composant, quel que soit le type
   );
 
   // Propriétés disponibles pour ajout (pas encore définies ET pas dans les requises)
