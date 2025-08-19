@@ -128,8 +128,46 @@ export default function SimpleComponentEditor({
     onBlur: { name: 'On Blur', description: 'Blur event handler', type: 'Function' }
   };
 
-  // Liste des propriétés disponibles
-  const availableProperties = Object.keys(propertyDefinitions);
+  // Propriétés pertinentes par type de composant
+  const getRelevantProperties = (componentType: string): string[] => {
+    const commonProperties = ['inline', 'width', 'required', 'disabled', 'readonly', 'placeholder', 'defaultValue', 'helpText', 'cssClasses', 'title'];
+    
+    const typeSpecificProperties: Record<string, string[]> = {
+      'RADIOGRP': [
+        'options', 'orientation', 'selectedValue', 'name', 
+        'keyColumn', 'mainProperty', 'descriptionProperty', 'showDescription',
+        'loadDataInfo', 'columnsDefinition'
+      ],
+      'INPUT': [
+        'size', 'variant', 'minLength', 'maxLength', 'pattern', 'errorMessage',
+        'autocomplete', 'spellcheck'
+      ],
+      'BUTTON': [
+        'buttonType', 'buttonStyle', 'onClick', 'loading', 'size', 'variant'
+      ],
+      'SELECT': [
+        'options', 'selectedValue', 'dataSource', 'displayField', 'valueField',
+        'keyColumn', 'mainProperty', 'loadDataInfo'
+      ],
+      'GRIDLKP': [
+        'columns', 'rows', 'sortable', 'filterable', 'keyColumn', 'mainProperty',
+        'loadDataInfo', 'columnsDefinition', 'dataSource'
+      ],
+      'TABLE': [
+        'columns', 'rows', 'sortable', 'filterable', 'height'
+      ],
+      'CHECKBOX': [
+        'options', 'selectedValue', 'orientation'
+      ]
+    };
+    
+    const specificProps = typeSpecificProperties[componentType] || [];
+    return [...commonProperties, ...specificProps];
+  };
+  
+  // Liste des propriétés disponibles selon le type de composant
+  const relevantProperties = getRelevantProperties(editingComponent.type || 'INPUT');
+  const availableProperties = relevantProperties.filter(prop => propertyDefinitions[prop]);
 
   // Propriétés actuellement définies - inclure TOUTES les propriétés pour TOUS les composants
   const currentProperties = Object.entries(editingComponent).filter(([key, value]) => 
@@ -264,7 +302,7 @@ export default function SimpleComponentEditor({
           {/* Available Properties Palette */}
           <div className="space-y-4">
             <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : ''}`}>
-              Available Properties ({propertiesForAddition.length})
+              Available Properties for {editingComponent.type} ({propertiesForAddition.length})
             </h3>
             
             <div className="grid grid-cols-1 gap-2">
