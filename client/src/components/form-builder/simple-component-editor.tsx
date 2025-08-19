@@ -193,11 +193,21 @@ export default function SimpleComponentEditor({
               {currentProperties.length > 0 ? (
                 currentProperties.map(([propertyKey, propertyValue]) => {
                   const propDef = propertyDefinitions[propertyKey] || { name: propertyKey, description: '', type: 'String' };
-                  const displayValue = typeof propertyValue === 'boolean' 
-                    ? (propertyValue ? 'Activé' : 'Désactivé')
-                    : typeof propertyValue === 'object' && propertyValue !== null
-                      ? (Array.isArray(propertyValue) ? `[${propertyValue.length} items]` : JSON.stringify(propertyValue))
-                      : String(propertyValue || 'Ex:');
+                  const displayValue = (() => {
+                    if (propertyValue === null || propertyValue === undefined) {
+                      return 'null';
+                    }
+                    if (typeof propertyValue === 'boolean') {
+                      return propertyValue ? 'true' : 'false';
+                    }
+                    if (typeof propertyValue === 'object') {
+                      return Array.isArray(propertyValue) ? `Array[${propertyValue.length}]` : JSON.stringify(propertyValue, null, 2);
+                    }
+                    if (typeof propertyValue === 'string' && propertyValue === '') {
+                      return '(empty string)';
+                    }
+                    return String(propertyValue);
+                  })();
                   
                   return (
                     <div key={propertyKey} className={`p-4 rounded-lg border ${isDarkMode ? 'border-gray-600 bg-gray-700/30' : 'border-gray-200 bg-gray-50'}`}>
@@ -236,7 +246,7 @@ export default function SimpleComponentEditor({
                       <p className={`text-sm mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                         {propDef.description}
                       </p>
-                      <div className={`p-2 rounded border ${isDarkMode ? 'bg-gray-800 border-gray-600 text-gray-300' : 'bg-white border-gray-200 text-gray-700'}`}>
+                      <div className={`p-2 rounded border font-mono text-sm ${isDarkMode ? 'bg-gray-800 border-gray-600 text-green-300' : 'bg-white border-gray-200 text-gray-800'}`}>
                         {displayValue}
                       </div>
                     </div>
