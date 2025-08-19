@@ -88,14 +88,9 @@ export default function SimpleComponentEditor({
               {currentProperties.length > 0 ? (
                 currentProperties.map(([propertyKey, propertyValue]) => (
                   <div key={propertyKey} className={`flex items-center justify-between p-3 rounded-lg border ${isDarkMode ? 'border-gray-600 bg-gray-700/30' : 'border-gray-200 bg-gray-50'}`}>
-                    <div className="flex flex-col">
-                      <span className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                        {propertyKey}
-                      </span>
-                      <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                        {typeof propertyValue === 'boolean' ? (propertyValue ? 'true' : 'false') : String(propertyValue)}
-                      </span>
-                    </div>
+                    <span className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                      {propertyKey}
+                    </span>
                     <Button
                       type="button"
                       variant="ghost"
