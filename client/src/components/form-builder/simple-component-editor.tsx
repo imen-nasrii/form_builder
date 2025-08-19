@@ -23,13 +23,17 @@ export default function SimpleComponentEditor({
 }: SimpleComponentEditorProps) {
   if (!editingComponent) return null;
 
+  // Propriétés requises qui ne peuvent pas être supprimées
+  const requiredProperties = ['type', 'id', 'label'];
+  
   // Liste des propriétés disponibles
   const availableProperties = [
-    'id', 'label', 'placeholder', 'defaultValue', 'helpText', 'required', 'disabled', 'readonly',
+    'placeholder', 'defaultValue', 'helpText', 'required', 'disabled', 'readonly',
     'minLength', 'maxLength', 'pattern', 'errorMessage', 'cssClasses', 'dataAttributes',
     'width', 'height', 'margin', 'padding', 'fontSize', 'fontWeight', 'color', 'backgroundColor',
     'border', 'borderRadius', 'opacity', 'zIndex', 'display', 'position', 'overflow',
-    'textAlign', 'lineHeight', 'letterSpacing', 'tabIndex', 'title', 'autocomplete', 'spellcheck'
+    'textAlign', 'lineHeight', 'letterSpacing', 'tabIndex', 'title', 'autocomplete', 'spellcheck',
+    'inline', 'keyColumn', 'mainProperty', 'descriptionProperty', 'showDescription', 'loadDataInfo'
   ];
 
   // Propriétés actuellement définies (existent dans l'objet et ne sont pas type)
@@ -43,6 +47,12 @@ export default function SimpleComponentEditor({
   );
 
   const handleDeleteProperty = (propertyKey: string) => {
+    // Vérifier si la propriété est requise
+    if (requiredProperties.includes(propertyKey)) {
+      console.log('Cannot delete required property:', propertyKey);
+      return;
+    }
+    
     console.log('Deleting property:', propertyKey);
     const updatedComponent = { ...editingComponent };
     
@@ -88,16 +98,28 @@ export default function SimpleComponentEditor({
               {currentProperties.length > 0 ? (
                 currentProperties.map(([propertyKey, propertyValue]) => (
                   <div key={propertyKey} className={`flex items-center justify-between p-3 rounded-lg border ${isDarkMode ? 'border-gray-600 bg-gray-700/30' : 'border-gray-200 bg-gray-50'}`}>
-                    <span className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                      {propertyKey}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                        {propertyKey}
+                      </span>
+                      {requiredProperties.includes(propertyKey) && (
+                        <span className={`text-xs px-2 py-1 rounded ${isDarkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>
+                          Required
+                        </span>
+                      )}
+                    </div>
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
                       onClick={() => handleDeleteProperty(propertyKey)}
-                      className={`p-2 ${isDarkMode ? 'text-red-400 hover:bg-red-900/20' : 'text-red-500 hover:bg-red-50'}`}
-                      title={`Remove ${propertyKey}`}
+                      disabled={requiredProperties.includes(propertyKey)}
+                      className={`p-2 ${
+                        requiredProperties.includes(propertyKey) 
+                          ? (isDarkMode ? 'text-gray-600 cursor-not-allowed' : 'text-gray-400 cursor-not-allowed')
+                          : (isDarkMode ? 'text-red-400 hover:bg-red-900/20' : 'text-red-500 hover:bg-red-50')
+                      }`}
+                      title={requiredProperties.includes(propertyKey) ? 'Required property cannot be deleted' : `Remove ${propertyKey}`}
                     >
                       <Trash2 size={16} />
                     </Button>
