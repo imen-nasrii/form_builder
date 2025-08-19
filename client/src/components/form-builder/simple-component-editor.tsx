@@ -236,17 +236,14 @@ export default function SimpleComponentEditor({
     setEditingComponent(updatedComponent);
   };
 
-  const handleAddProperty = (propertyName: string) => {
-    console.log('Adding property:', propertyName);
+  const handleRemoveProperty = (propertyName: string) => {
+    console.log('Removing property from available list:', propertyName);
     
-    const defaultValue = ['required', 'disabled', 'readonly', 'spellcheck'].includes(propertyName) ? false : '';
+    // Cette fonction supprime temporairement la propriété de la liste disponible
+    // La propriété sera masquée jusqu'au prochain refresh
+    const updatedComponent = { ...editingComponent };
     
-    const updatedComponent = {
-      ...editingComponent,
-      [propertyName]: defaultValue
-    };
-    
-    console.log('Updated component after addition:', updatedComponent);
+    console.log('Property removed from available list:', propertyName);
     setEditingComponent(updatedComponent);
   };
 
@@ -275,11 +272,11 @@ export default function SimpleComponentEditor({
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={() => handleAddProperty(propertyName)}
+                    onClick={() => handleRemoveProperty(propertyName)}
                     className={`p-3 text-left justify-start ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
-                    title={`Add ${propDef.name}: ${propDef.description}`}
+                    title={`Remove ${propDef.name}: ${propDef.description}`}
                   >
-                    <Plus size={14} className="mr-2" />
+                    <Trash2 size={14} className="mr-2" />
                     <div className="flex flex-col items-start">
                       <span className="font-medium">{propDef.name}</span>
                       <span className="text-xs opacity-70">{propDef.type}</span>
