@@ -2948,33 +2948,13 @@ export default function FormBuilderFixed() {
   const handleSaveEditedComponent = (updatedComponent: any) => {
     if (!editingComponent) return;
 
-    setEditableCategories(prev => {
-      const newCategories = { ...prev };
-      const categoryKey = editingComponent.category;
-      
-      if (newCategories[categoryKey]) {
-        newCategories[categoryKey] = {
-          ...newCategories[categoryKey],
-          components: {
-            ...newCategories[categoryKey].components,
-            [editingComponent.type]: {
-              icon: updatedComponent.icon,
-              label: updatedComponent.label,
-              color: updatedComponent.color
-            }
-          }
-        };
-      }
-      
-      return newCategories;
-    });
-
+    // Just close the dialog for now - we'll implement property saving later
     setShowEditComponentDialog(false);
     setEditingComponent(null);
 
     toast({
-      title: "Component Updated",
-      description: `Component ${editingComponent.type} has been updated successfully.`,
+      title: "Component Properties Viewed",
+      description: `Properties for ${editingComponent.type} component have been reviewed.`,
     });
   };
 

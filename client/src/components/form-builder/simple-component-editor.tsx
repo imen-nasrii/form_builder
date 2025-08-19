@@ -9,7 +9,7 @@ interface SimpleComponentEditorProps {
   isOpen: boolean;
   onClose: () => void;
   setEditingComponent: (component: FormField) => void;
-  onSave: () => void;
+  onSave: (updatedComponent: any) => void;
   isDarkMode: boolean;
 }
 
@@ -308,7 +308,7 @@ export default function SimpleComponentEditor({
           </Button>
           <Button
             type="button"
-            onClick={onSave}
+            onClick={() => onSave(editingComponent)}
             className={isDarkMode ? 'bg-blue-600 hover:bg-blue-700 text-white' : ''}
           >
             Save Changes
