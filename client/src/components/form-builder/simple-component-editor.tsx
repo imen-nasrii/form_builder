@@ -32,26 +32,24 @@ export default function SimpleComponentEditor({
     'textAlign', 'lineHeight', 'letterSpacing', 'tabIndex', 'title', 'autocomplete', 'spellcheck'
   ];
 
-  // Propriétés actuellement définies (non-vides)
+  // Propriétés actuellement définies (existent dans l'objet et ne sont pas type)
   const currentProperties = Object.entries(editingComponent).filter(([key, value]) => 
-    value !== '' && value !== null && value !== undefined && key !== 'type'
+    key !== 'type' && key in editingComponent
   );
 
-  // Propriétés disponibles pour ajout (pas encore définies)
+  // Propriétés disponibles pour ajout (pas encore définies ou supprimées)
   const propertiesForAddition = availableProperties.filter(prop => 
-    !(prop in editingComponent) || 
-    editingComponent[prop] === '' || 
-    editingComponent[prop] === null || 
-    editingComponent[prop] === undefined
+    !(prop in editingComponent) // La propriété n'existe pas dans l'objet
   );
 
   const handleDeleteProperty = (propertyKey: string) => {
     console.log('Deleting property:', propertyKey);
     const updatedComponent = { ...editingComponent };
     
-    // Supprimer complètement la propriété
+    // Supprimer complètement la propriété pour qu'elle retourne dans la palette
     delete updatedComponent[propertyKey];
     
+    console.log('Property deleted and will return to palette:', propertyKey);
     console.log('Updated component after deletion:', updatedComponent);
     setEditingComponent(updatedComponent);
   };
