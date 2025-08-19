@@ -81,9 +81,9 @@ export default function SimpleComponentEditor({
     key !== 'type' && key in editingComponent
   );
 
-  // Propriétés disponibles pour ajout (pas encore définies ou supprimées)
+  // Propriétés disponibles pour ajout (pas encore définies ET pas dans les requises)
   const propertiesForAddition = availableProperties.filter(prop => 
-    !(prop in editingComponent) // La propriété n'existe pas dans l'objet
+    !(prop in editingComponent) && !requiredProperties.includes(prop)
   );
 
   const handleDeleteProperty = (propertyKey: string) => {
@@ -202,21 +202,27 @@ export default function SimpleComponentEditor({
               Available Properties ({propertiesForAddition.length})
             </h3>
             
-            <div className="grid grid-cols-2 gap-2">
-              {propertiesForAddition.map((propertyName) => (
-                <Button
-                  key={propertyName}
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleAddProperty(propertyName)}
-                  className={`p-3 text-left justify-start ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
-                  title={`Add ${propertyName} property`}
-                >
-                  <Plus size={14} className="mr-2" />
-                  {propertyName}
-                </Button>
-              ))}
+            <div className="grid grid-cols-1 gap-2">
+              {propertiesForAddition.map((propertyName) => {
+                const propDef = propertyDefinitions[propertyName] || { name: propertyName, description: '', type: 'String' };
+                return (
+                  <Button
+                    key={propertyName}
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleAddProperty(propertyName)}
+                    className={`p-3 text-left justify-start ${isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+                    title={`Add ${propDef.name}: ${propDef.description}`}
+                  >
+                    <Plus size={14} className="mr-2" />
+                    <div className="flex flex-col items-start">
+                      <span className="font-medium">{propDef.name}</span>
+                      <span className="text-xs opacity-70">{propDef.type}</span>
+                    </div>
+                  </Button>
+                );
+              })}
             </div>
             
             {propertiesForAddition.length === 0 && (
