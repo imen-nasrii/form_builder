@@ -28,10 +28,21 @@ export default function SimpleComponentEditor({
   
   // Définitions détaillées des propriétés avec descriptions
   const propertyDefinitions: Record<string, { name: string; description: string; type: string }> = {
+    // Propriétés de base
+    type: { name: 'Component Type', description: 'Type of the form component', type: 'String' },
     id: { name: 'Id', description: 'Unique field identifier.', type: 'String' },
     label: { name: 'Label', description: 'Field display label.', type: 'String' },
+    
+    // Propriétés d'apparence et comportement
+    icon: { name: 'Icon', description: 'Icon configuration for the component', type: 'Object' },
+    color: { name: 'Color', description: 'Color theme for the component', type: 'String' },
+    category: { name: 'Category', description: 'Component category classification', type: 'String' },
+    
+    // Propriétés de mise en page
     inline: { name: 'Inline', description: 'Indicates if the field should be displayed inline.', type: 'Boolean' },
     width: { name: 'Width', description: 'Field width (e.g. "32")', type: 'String' },
+    
+    // Propriétés spécifiques aux données
     keyColumn: { name: 'Key Column', description: 'Key column in the data model for search', type: 'String' },
     mainProperty: { name: 'Main Property', description: 'Main property to display for the element', type: 'String' },
     descriptionProperty: { name: 'Description Property', description: 'Property containing the element description', type: 'String' },
@@ -55,7 +66,7 @@ export default function SimpleComponentEditor({
     padding: { name: 'Padding', description: 'Field padding', type: 'String' },
     fontSize: { name: 'Font Size', description: 'Text font size', type: 'String' },
     fontWeight: { name: 'Font Weight', description: 'Text font weight', type: 'String' },
-    color: { name: 'Color', description: 'Text color', type: 'String' },
+    textColor: { name: 'Text Color', description: 'Text color', type: 'String' },
     backgroundColor: { name: 'Background Color', description: 'Background color', type: 'String' },
     border: { name: 'Border', description: 'Border style', type: 'String' },
     borderRadius: { name: 'Border Radius', description: 'Border radius', type: 'String' },
