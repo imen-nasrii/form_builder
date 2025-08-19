@@ -42,13 +42,19 @@ export default function SimpleComponentEditor({
     inline: { name: 'Inline', description: 'Indicates if the field should be displayed inline.', type: 'Boolean' },
     width: { name: 'Width', description: 'Field width (e.g. "32")', type: 'String' },
     
-    // Propriétés spécifiques aux données
+    // Propriétés spécifiques aux Radio Group
     keyColumn: { name: 'Key Column', description: 'Key column in the data model for search', type: 'String' },
     mainProperty: { name: 'Main Property', description: 'Main property to display for the element', type: 'String' },
     descriptionProperty: { name: 'Description Property', description: 'Property containing the element description', type: 'String' },
     showDescription: { name: 'Show Description', description: 'Indicates if the description should be displayed', type: 'Boolean' },
     loadDataInfo: { name: 'LoadDataInfo - DataModel', description: 'Select the MFact model to load for data', type: 'String' },
     columnsDefinition: { name: 'LoadDataInfo - ColumnsDefinition', description: 'Columns configuration: DataField, Caption, DataType, Visible', type: 'Array of Objects' },
+    
+    // Propriétés spécifiques aux options
+    options: { name: 'Options', description: 'Radio button options list', type: 'Array of Objects' },
+    orientation: { name: 'Orientation', description: 'Layout orientation (horizontal/vertical)', type: 'String' },
+    selectedValue: { name: 'Selected Value', description: 'Currently selected radio option', type: 'String' },
+    name: { name: 'Name', description: 'Radio group name attribute', type: 'String' },
     placeholder: { name: 'Placeholder', description: 'Placeholder text for the input field', type: 'String' },
     defaultValue: { name: 'Default Value', description: 'Default value for the field', type: 'String' },
     helpText: { name: 'Help Text', description: 'Help text displayed below the field', type: 'String' },
@@ -87,9 +93,9 @@ export default function SimpleComponentEditor({
   // Liste des propriétés disponibles
   const availableProperties = Object.keys(propertyDefinitions);
 
-  // Propriétés actuellement définies (existent dans l'objet et ne sont pas type)
+  // Propriétés actuellement définies - inclure TOUTES les propriétés (même vides) pour RADIOGRP
   const currentProperties = Object.entries(editingComponent).filter(([key, value]) => 
-    key !== 'type' && key in editingComponent
+    key in editingComponent  // Affiche toutes les propriétés du composant
   );
 
   // Propriétés disponibles pour ajout (pas encore définies ET pas dans les requises)
