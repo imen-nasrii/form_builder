@@ -2,7 +2,9 @@
 
 ## Overview
 
-FormBuilder Pro is a comprehensive full-stack application for creating and managing dynamic forms with AI assistance. It combines a React frontend with an Express/Node.js backend, featuring Drizzle ORM for database operations, real-time collaboration, and AI-powered form generation capabilities. The application specializes in financial form templates (ACCADJ, BUYTYP, PRIMNT, SRCMNT) with support for complex component types like Grid Lookups (GRIDLKP) and List Lookups (LSTLKP).
+FormBuilder Pro is a comprehensive form creation and management platform that specializes in converting legacy form definitions (DFM files) into modern JSON-based form structures. The application supports MFact business models and provides intelligent form generation using AI assistance. It features a React frontend with TypeScript, Express.js backend, and PostgreSQL database with Drizzle ORM.
+
+The platform serves financial and enterprise applications, providing specialized components like Grid Lookups, List Lookups, and various data entry controls designed for business processes. It includes user management, role-based access control, real-time notifications, and an AI-powered assistant for form generation and validation.
 
 ## User Preferences
 
@@ -10,67 +12,85 @@ Preferred communication style: Simple, everyday language.
 
 ## System Architecture
 
-### Frontend Architecture
-- **Framework**: React 18 with TypeScript, built using Vite for development and production builds
-- **UI Library**: Shadcn/ui components with Radix UI primitives and Tailwind CSS for styling
-- **State Management**: TanStack Query (React Query) for server state management and caching
-- **Drag & Drop**: @dnd-kit for sophisticated form builder drag-and-drop functionality
-- **Routing**: Wouter for lightweight client-side routing
-- **Form Management**: React Hook Form with Zod validation schemas
+**Frontend Architecture**
+- React 18 with TypeScript for type safety and component-based UI
+- Shadcn/UI components with Tailwind CSS for consistent design system
+- Tanstack React Query for server state management and caching
+- Drag-and-drop form building using @dnd-kit libraries
+- Wouter for lightweight client-side routing
+- Vite for fast development and optimized builds
 
-### Backend Architecture
-- **Runtime**: Node.js with TypeScript and ES modules
-- **Framework**: Express.js with session-based authentication
-- **Database ORM**: Drizzle ORM with support for both PostgreSQL (primary) and MySQL (local development)
-- **Real-time Features**: RESTful APIs with real-time polling for notifications and updates
-- **AI Integration**: Anthropic Claude API for intelligent form generation and assistance
-- **File Processing**: Support for DFM and Info file parsing for legacy system migration
+**Backend Architecture**
+- Express.js server with TypeScript
+- Modular route organization with authentication middleware
+- Session-based authentication with PostgreSQL session storage
+- Role-based access control (admin/user roles)
+- RESTful API design with consistent error handling
+- Real-time notification system
+- AI integration using Anthropic's Claude API
 
-### Data Storage Solutions
-- **Primary Database**: PostgreSQL (Neon serverless) with connection pooling
-- **Local Development**: MySQL support via XAMPP configuration
-- **Session Storage**: Database-backed sessions using connect-pg-simple
-- **Schema Management**: Drizzle migrations with push-based deployment
+**Data Storage Solutions**
+- PostgreSQL as primary database via Neon serverless platform
+- Drizzle ORM for type-safe database operations and schema management
+- Database connection pooling for performance optimization
+- Separate schemas for users, forms, templates, notifications, and sessions
 
-### Authentication and Authorization
-- **Authentication**: Session-based auth with bcrypt password hashing
-- **Role-based Access**: Admin and user roles with middleware protection
-- **Security Features**: 2FA support, email verification, password reset workflows
-- **Enhanced Security**: Rate limiting, input validation, and secure session configuration
+**Authentication and Authorization**
+- Session-based authentication with secure cookie handling
+- Password hashing using bcrypt
+- Two-factor authentication support with TOTP tokens
+- Email verification system for user registration
+- Password reset functionality with secure tokens
+- Role-based route protection (admin/user permissions)
 
-### External Dependencies
+**Form Building System**
+- JSON-based form definitions with validation rules
+- Support for MFact business models and component types
+- Drag-and-drop form construction with visual properties panel
+- Real-time form preview and validation
+- Template system for reusable form structures
+- Advanced grid layout support with cell merging and spanning
 
-#### Database Services
-- **Neon PostgreSQL**: Primary production database with serverless architecture
-- **@neondatabase/serverless**: Database driver with WebSocket support for serverless environments
+**AI Integration**
+- Claude AI assistant for form generation and validation
+- Intelligent field suggestions based on business context
+- DFM to JSON conversion capabilities
+- Natural language form creation guidance
+- JSON structure validation and optimization
 
-#### AI Services
-- **Anthropic Claude**: Primary AI assistant using claude-sonnet-4-20250514 model for form generation and validation
-- **@anthropic-ai/sdk**: Official Anthropic SDK for AI interactions
+## External Dependencies
 
-#### Authentication & Security
-- **bcryptjs**: Password hashing and verification
-- **express-session**: Session management middleware
-- **connect-pg-simple**: PostgreSQL session store adapter
-- **speakeasy & QRCode**: Two-factor authentication implementation
+**Database Services**
+- Neon PostgreSQL for serverless database hosting
+- Drizzle Kit for database migrations and schema management
 
-#### Email Services
-- **nodemailer**: Email delivery service for verification and notifications
-- **@sendgrid/mail**: SendGrid integration for production email delivery
+**AI Services**
+- Anthropic Claude API for form generation and assistance
+- Custom AI helpers for JSON validation and suggestions
 
-#### Development & Build Tools
-- **Vite**: Frontend build tool and development server
-- **ESBuild**: Backend bundling for production deployment
-- **TSX**: TypeScript execution for development
-- **Drizzle Kit**: Database schema management and migrations
+**Authentication Services**
+- Express-session for session management
+- Connect-pg-simple for PostgreSQL session storage
+- Speakeasy for two-factor authentication TOTP generation
 
-#### Component Libraries
-- **@radix-ui/***: Comprehensive set of accessible UI primitives
-- **@dnd-kit/***: Modern drag-and-drop toolkit for React
-- **@hookform/resolvers**: Form validation resolvers for React Hook Form
-- **Zod**: TypeScript-first schema validation library
+**Email Services**
+- Nodemailer for email delivery
+- SendGrid integration support for transactional emails
+- Custom email templates for verification and notifications
 
-#### Financial System Integration
-- **MFact Models**: Comprehensive business models for financial programs
-- **Component Registry**: Standardized form components (GRIDLKP, LSTLKP, DATEPICKER, etc.)
-- **Legacy Support**: DFM and Info file parsing for system migration
+**UI/UX Libraries**
+- Radix UI components for accessible, unstyled primitives
+- Lucide React for consistent iconography
+- Tailwind CSS for utility-first styling
+- React Hook Form with Zod validation
+
+**Development Tools**
+- Vite for build tooling and hot module replacement
+- ESBuild for server-side bundling
+- PostCSS with Autoprefixer for CSS processing
+- TypeScript compiler for type checking
+
+**Real-time Features**
+- WebSocket support preparation for real-time form collaboration
+- Polling-based notification updates with configurable intervals
+- Live form validation and error reporting
