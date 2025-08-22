@@ -11,13 +11,7 @@ FormBuilder Pro/
 └── ia/         # Python Streamlit + AI Assistant
 ```
 
-## 🚀 Quick Start
 
-### Prerequisites
-- Node.js 20.x
-- .NET 8.0 SDK
-- Python 3.11+
-- PostgreSQL database
 
 ### Installation
 ```bash
@@ -42,37 +36,7 @@ npm run dev
 ```
 Access: http://localhost:5000
 
-## 🎯 Features
 
-- **Visual Form Builder**: Drag & drop interface
-- **AI Assistant "Alex"**: Claude-powered intelligent helper
-- **Multi-Stack**: React + Blazor + Python options
-- **18+ Property Types**: Complete form customization
-- **Authentication**: Secure user management + 2FA
-- **Database**: PostgreSQL with Drizzle ORM
-- **Real-time**: Live form preview and editing
-
-## 🛠️ Tech Stack
-
-### Backend
-- Node.js 20.x + Express.js
-- TypeScript + Drizzle ORM
-- PostgreSQL database
-- Anthropic Claude API
-
-### Frontend
-- React 18 + TypeScript + Vite
-- shadcn/ui + Tailwind CSS
-- @dnd-kit drag & drop
-- TanStack Query
-
-### AI Assistant
-- Python Streamlit
-- Anthropic Claude API
-- DFM file parsing
-- 100+ MFact models
-
-## 📁 Project Structure
 
 - `backend/server/` - Express API server
 - `backend/shared/` - Shared schemas and types
