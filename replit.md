@@ -1,103 +1,96 @@
-# FormBuilder Pro - Replit Configuration
+# FormBuilder Pro
 
 ## Overview
-FormBuilder Pro is a visual form builder application enabling users to create, customize, and manage forms via a drag-and-drop interface. It offers enterprise-grade features including user management, role-based access control, API integrations, and multi-framework export capabilities. The project's business vision is to provide a comprehensive solution for rapid form development, addressing market needs for intuitive and powerful form creation tools.
+
+FormBuilder Pro is a comprehensive form creation and management platform that specializes in converting legacy form definitions (DFM files) into modern JSON-based form structures. The application supports MFact business models and provides intelligent form generation using AI assistance. It features a React frontend with TypeScript, Express.js backend, and PostgreSQL database with Drizzle ORM.
+
+The platform serves financial and enterprise applications, providing specialized components like Grid Lookups, List Lookups, and various data entry controls designed for business processes. It includes user management, role-based access control, real-time notifications, and an AI-powered assistant for form generation and validation.
 
 ## User Preferences
-Preferred communication style: Simple, everyday language (English interface, French communication).
-System Requirements: Admin users cannot access Construction Zone (read-only mode), users have full form building access.
-Interface Language: Complete English translation implemented for all PropertyManager and VisualComponentCreator components.
+
+Preferred communication style: Simple, everyday language.
 
 ## System Architecture
 
-### Tri-Stack Structure
-```
-FormBuilder Pro/
-├── backend/     # Primary backend services
-├── frontend/    # User interface layers  
-└── ia/         # AI assistant services
-```
+**Frontend Architecture**
+- React 18 with TypeScript for type safety and component-based UI
+- Shadcn/UI components with Tailwind CSS for consistent design system
+- Tanstack React Query for server state management and caching
+- Drag-and-drop form building using @dnd-kit libraries
+- Wouter for lightweight client-side routing
+- Vite for fast development and optimized builds
 
-### Backend Stack (primary)
-- **Framework**: Node.js 20.x + Express.js
-- **Language**: TypeScript with modern ES modules
-- **Database ORM**: Drizzle ORM with PostgreSQL
-- **Authentication**: Express Sessions + bcrypt
-- **AI Integration**: Anthropic Claude API
-- **File Structure**: Modular services with shared schemas
+**Backend Architecture**
+- Express.js server with TypeScript
+- Modular route organization with authentication middleware
+- Session-based authentication with PostgreSQL session storage
+- Role-based access control (admin/user roles)
+- RESTful API design with consistent error handling
+- Real-time notification system
+- AI integration using Anthropic's Claude API
 
-### Frontend Stack (dual interface)
-**React Application (primary):**
-- **Framework**: React 18 + TypeScript + Vite
-- **UI Components**: shadcn/ui + Tailwind CSS
-- **Styling**: Tailwind CSS with custom components
-- **Drag & Drop**: @dnd-kit library
-- **State Management**: TanStack Query
+**Data Storage Solutions**
+- PostgreSQL as primary database via Neon serverless platform
+- Drizzle ORM for type-safe database operations and schema management
+- Database connection pooling for performance optimization
+- Separate schemas for users, forms, templates, notifications, and sessions
 
-**Blazor Server (alternative):**
-- **Framework**: .NET 8.0 Blazor Server
-- **UI Components**: MudBlazor component library
-- **Styling**: MudBlazor theming with custom CSS
-- **Rendering**: Server-side rendering with SignalR
-- **Database ORM**: Entity Framework Core
+**Authentication and Authorization**
+- Session-based authentication with secure cookie handling
+- Password hashing using bcrypt
+- Two-factor authentication support with TOTP tokens
+- Email verification system for user registration
+- Password reset functionality with secure tokens
+- Role-based route protection (admin/user permissions)
 
-### Database Design
-- **Primary Database**: PostgreSQL with Entity Framework Core
-- **Schema Management**: EF Core Migrations
-- **Key Tables**: `AspNetUsers`, `Forms`, `Notifications`
-- **Connection**: Environment-based configuration with DATABASE_URL support
+**Form Building System**
+- JSON-based form definitions with validation rules
+- Support for MFact business models and component types
+- Drag-and-drop form construction with visual properties panel
+- Real-time form preview and validation
+- Template system for reusable form structures
+- Advanced grid layout support with cell merging and spanning
 
-### Key Components
-- **Form Builder Engine**: Drag & Drop interface (@dnd-kit), Universal Configurator, Component Palette, JSON Schema Validation, Multi-Framework Export (React, Vue, Blazor).
-- **User Management System**: Role-Based Access (Admin/User), Enhanced Authentication (email verification, password reset, 2FA), Admin Panel, Secure Session Management.
-- **Data Integration**: API Service for external data, Data Source Manager, Authentication Support (Bearer, API Key, Basic Auth), Response Mapping.
-- **AI Assistant "Alex"**: ChatGPT-style interface for DFM file processing, Delphi component mapping to JSON, OpenAI API integration for interactive discussions, AI system prompt specializing in financial program JSON generation (ACCADJ, BUYTYP, PRIMNT, SRCMNT). It processes complex DFM files and integrates real production templates.
-- **MFact Form Builder**: Advanced drag-and-drop construction zone, MFact Properties Panel with tabbed interface, MFact models system supporting 25+ component types, integrated MFact model selector with authentic data types and real model structures (e.g., ACCADJ, BUYTYP, PRIMNT, SRCMNT, BUYLONG, and 100+ C# models like AATRR, AE, CODES, CURNCY, USERS, ACTDATA, ACTYPE, ADJUST, TRX, SECRTY, FNDMAS, GL, TAXLOT, OPNPOS, INCOME, NAVHST, AUTTRX, EXCHNG, DIVTYP, ASOFUNSETL, SHRMAS, TRXTYP, TRXCUR, UNSETL, GLCAT, MKTVAL, SECCAT, SECGRP).
-- **Import/Export System**: Support for multiple formats, External Component Library with JSON validation and step-by-step form import.
-- **JSON Validator**: Intelligent validation with auto-correction and quality scoring.
-- **UI/UX**: Clean white/light design, simplified interfaces, removal of unnecessary elements for cleaner navigation, personalized user dashboards. Component properties now display exact Excel specifications with proper French descriptions and localized data types.
+**AI Integration**
+- Claude AI assistant for form generation and validation
+- Intelligent field suggestions based on business context
+- DFM to JSON conversion capabilities
+- Natural language form creation guidance
+- JSON structure validation and optimization
 
 ## External Dependencies
-- **React Ecosystem**: React 18, React Hook Form, React Query
-- **UI Components**: Radix UI primitives
-- **Drag & Drop**: @dnd-kit
-- **Database**: Drizzle ORM, @neondatabase/serverless, mysql2
-- **Authentication**: bcryptjs, express-session, connect-pg-simple
-- **Email**: Nodemailer
-- **Two-Factor Auth**: Speakeasy
-- **AI**: OpenAI API, Streamlit (for Python AI chatbot)
-- **Build Tools**: Vite, esbuild, TypeScript
-- **Code Quality**: ESLint
 
-## Recent Updates
-✓ Created comprehensive PropertyManager component with CRUD functionality for External Components (August 1, 2025)
-✓ Implemented dynamic property management with Add/Edit/Delete operations, type validation, and categorization (August 1, 2025)
-✓ Enhanced External Components system with visual property editor supporting all data types and validation rules (August 1, 2025)
-✓ Built Visual Component Creator with 4-step wizard interface matching user requirements (August 1, 2025)
-✓ Completed full English translation of PropertyManager and VisualComponentCreator interfaces (August 4, 2025)
-✓ Fixed React.Fragment error by replacing with div element using CSS 'contents' class (August 4, 2025)
-✓ Resolved property name validation issues and accessibility warnings with DialogDescription (August 4, 2025)
-✓ **MAJOR ARCHITECTURAL MIGRATION**: Complete migration from React + Vite.js + Express.js to .NET 8.0 Blazor Server architecture (August 18, 2025)
-✓ Implemented full .NET Blazor Server application with MudBlazor UI components and ASP.NET Core backend (August 18, 2025)
-✓ Created Entity Framework Core data models for Forms, Users, and Notifications with PostgreSQL support (August 18, 2025)
-✓ Built comprehensive service layer with FormService, ComponentService, and NotificationService (August 18, 2025)
-✓ Developed Blazor pages for Form Builder, Forms Management, and Home with drag-and-drop functionality (August 18, 2025)
-✓ Configured ASP.NET Core Identity authentication and PostgreSQL database integration (August 18, 2025)
-✓ Application ready to run with "dotnet run" command in proper .NET 8 environment (August 18, 2025)
-✓ Successfully removed 258+ image files to optimize repository size for GitHub deployment (August 19, 2025)
-✓ **ADVANCED COMPONENT EDITOR**: Created comprehensive component property editor with 3-column layout supporting all component details (August 19, 2025)
-✓ **COMPLETE PROFESSIONAL DOCUMENTATION SUITE**: Created 9 comprehensive documentation files covering all aspects for any person to configure and use the application (August 19, 2025)
-  - COMPREHENSIVE_SETUP_GUIDE.md: Complete end-to-end setup for any developer
-  - QUICK_START_GUIDE.md: 5-minute quick start guide
-  - LOCALHOST_SETUP_RAPIDE.md: Configuration localhost étape par étape en français
-  - AI_INTEGRATION_GUIDE.md: Guide complet d'intégration IA avec assistant Alex et Claude API
-  - API_DOCUMENTATION.md: Complete API reference with examples
-  - ARCHITECTURE_GUIDE.md: Technical deep-dive for architects
-  - DEPLOYMENT_GUIDE.md: Production deployment guide for DevOps
-  - TROUBLESHOOTING.md: Comprehensive problem resolution guide
-  - PROJECT_OVERVIEW.md: Complete project summary for all stakeholders
-✓ **WINDOWS DEPLOYMENT SUCCESS**: Successfully configured Windows environment with PostgreSQL Neon database and Anthropic API integration (August 20, 2025)
-✓ **APPLICATION RUNNING**: FormBuilder Pro now successfully running on localhost:5000 with full functionality including drag & drop, authentication, AI assistant, and 18+ property types (August 20, 2025)
-✓ **TRI-STACK ARCHITECTURE RESTRUCTURATION**: Complete reorganization into 3 main folders: backend/ (Node.js + Express), frontend/ (React + Blazor), ia/ (Python Streamlit) (August 22, 2025)
-✓ **MODULAR DEPLOYMENT READY**: Each stack can now run independently with proper configuration files and documentation (August 22, 2025)
-✓ **COMPREHENSIVE INSTALLATION GUIDE**: Created complete installation guide with direct links to Node.js, .NET 8, Python, and all required tools (August 22, 2025)
+**Database Services**
+- Neon PostgreSQL for serverless database hosting
+- Drizzle Kit for database migrations and schema management
+
+**AI Services**
+- Anthropic Claude API for form generation and assistance
+- Custom AI helpers for JSON validation and suggestions
+
+**Authentication Services**
+- Express-session for session management
+- Connect-pg-simple for PostgreSQL session storage
+- Speakeasy for two-factor authentication TOTP generation
+
+**Email Services**
+- Nodemailer for email delivery
+- SendGrid integration support for transactional emails
+- Custom email templates for verification and notifications
+
+**UI/UX Libraries**
+- Radix UI components for accessible, unstyled primitives
+- Lucide React for consistent iconography
+- Tailwind CSS for utility-first styling
+- React Hook Form with Zod validation
+
+**Development Tools**
+- Vite for build tooling and hot module replacement
+- ESBuild for server-side bundling
+- PostCSS with Autoprefixer for CSS processing
+- TypeScript compiler for type checking
+
+**Real-time Features**
+- WebSocket support preparation for real-time form collaboration
+- Polling-based notification updates with configurable intervals
+- Live form validation and error reporting
