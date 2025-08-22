@@ -10,18 +10,36 @@ Interface Language: Complete English translation implemented for all PropertyMan
 
 ## System Architecture
 
-### Frontend
+### Tri-Stack Structure
+```
+FormBuilder Pro/
+├── backend/     # Primary backend services
+├── frontend/    # User interface layers  
+└── ia/         # AI assistant services
+```
+
+### Backend Stack (primary)
+- **Framework**: Node.js 20.x + Express.js
+- **Language**: TypeScript with modern ES modules
+- **Database ORM**: Drizzle ORM with PostgreSQL
+- **Authentication**: Express Sessions + bcrypt
+- **AI Integration**: Anthropic Claude API
+- **File Structure**: Modular services with shared schemas
+
+### Frontend Stack (dual interface)
+**React Application (primary):**
+- **Framework**: React 18 + TypeScript + Vite
+- **UI Components**: shadcn/ui + Tailwind CSS
+- **Styling**: Tailwind CSS with custom components
+- **Drag & Drop**: @dnd-kit library
+- **State Management**: TanStack Query
+
+**Blazor Server (alternative):**
 - **Framework**: .NET 8.0 Blazor Server
 - **UI Components**: MudBlazor component library
 - **Styling**: MudBlazor theming with custom CSS
 - **Rendering**: Server-side rendering with SignalR
-
-### Backend
-- **Runtime**: ASP.NET Core 8.0
-- **Language**: C# with .NET 8
 - **Database ORM**: Entity Framework Core
-- **Authentication**: ASP.NET Core Identity with bcrypt
-- **File Structure**: Clean architecture with Models, Services, Data layers
 
 ### Database Design
 - **Primary Database**: PostgreSQL with Entity Framework Core
@@ -80,3 +98,6 @@ Interface Language: Complete English translation implemented for all PropertyMan
   - PROJECT_OVERVIEW.md: Complete project summary for all stakeholders
 ✓ **WINDOWS DEPLOYMENT SUCCESS**: Successfully configured Windows environment with PostgreSQL Neon database and Anthropic API integration (August 20, 2025)
 ✓ **APPLICATION RUNNING**: FormBuilder Pro now successfully running on localhost:5000 with full functionality including drag & drop, authentication, AI assistant, and 18+ property types (August 20, 2025)
+✓ **TRI-STACK ARCHITECTURE RESTRUCTURATION**: Complete reorganization into 3 main folders: backend/ (Node.js + Express), frontend/ (React + Blazor), ia/ (Python Streamlit) (August 22, 2025)
+✓ **MODULAR DEPLOYMENT READY**: Each stack can now run independently with proper configuration files and documentation (August 22, 2025)
+✓ **COMPREHENSIVE INSTALLATION GUIDE**: Created complete installation guide with direct links to Node.js, .NET 8, Python, and all required tools (August 22, 2025)
